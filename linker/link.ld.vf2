@@ -1,0 +1,10 @@
+ENTRY (start);
+
+SECTIONS
+{
+  . = 0x40000000;
+  .text : { build/vf2/main.o(.text) }
+  .text : { *(.text) }
+  .data : { *(.data) }
+  .bss  : { *(.bss) }
+}
