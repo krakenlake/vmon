@@ -11,12 +11,12 @@
 
 cmd_M:
     mv      a0, s4
-    jal     ra, skip_whitespace
-    jal     ra, get_hex_addr        # read start addr from text buffer
+    jal     skip_whitespace
+    jal     get_hex_addr            # read start addr from text buffer
     bnez    a2, cmd_M_from_last     # none given? continue from last saved addr
     mv      s5, a1                  # save start addr of dump
-    jal     ra, skip_whitespace
-    jal     ra, get_hex_addr        # read end addr from text buffer
+    jal     skip_whitespace
+    jal     get_hex_addr            # read end addr from text buffer
     mv      s7, a1                  # save end addr of dump
     beqz    a2, cmd_M_next_line
     j       cmd_M_add_default 
@@ -25,14 +25,15 @@ cmd_M_from_last:
     la      a1, last_address
     LOAD_X  s5, 0(a1)
 cmd_M_add_default:
-    addi    s7, s5, DEFAULT_M_LINES*8-1 # no end addr? use default 
+    # no end addr? use default
+    addi    s7, s5, DEFAULT_M_LINES*8-1  
     # start addr now in s5, end addr now in s7
 cmd_M_next_line:
     # output line prefix
     la      a0, string_line_prefix_M
-    jal     ra, print_string
+    jal     print_string
     mv      a0, s5
-    jal     ra, print_hex_addr
+    jal     print_hex_addr
     # output hex bytes 
     addi    s6, s5, 8               # set end addr for output line
  cmd_M_next_byte:
@@ -40,7 +41,7 @@ cmd_M_next_line:
     li      t0, ' '
     sb      t0, 0(s1)               # print to UART 
     lbu      a0, 0(s5)              # get byte from memory address
-    jal     ra, print_hex_byte
+    jal     print_hex_byte
     addi    s5, s5, 1
     j       cmd_M_next_byte
     # output the same hex bytes again, this time as ASCII chars
@@ -51,7 +52,7 @@ cmd_M_print_ascii:
 cmd_M_next_char:
     beq     s5, s6, cmd_M_ascii_done
     lbu      a0, 0(s5)              # get byte from memory address
-    jal     ra, print_ascii
+    jal     print_ascii
     addi    s5, s5, 1
     j       cmd_M_next_char
 cmd_M_ascii_done:

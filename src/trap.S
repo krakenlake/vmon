@@ -43,7 +43,6 @@ traphandler:
     and     t0, t0, t1
     beqz    t0, traphandler_done
 traphandler_keypress:
-    jal     ra, print_star
 
     # read byte from UART
     lbu     a0, 0(s1)               # get input from UART  
@@ -54,6 +53,6 @@ traphandler_keypress:
 
 
 traphandler_done:
-    #jal     ra, print_star
+    #jal     print_star
     mret
 

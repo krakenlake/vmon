@@ -10,7 +10,7 @@
 
 cmd_X:
     la      a0, string_exit
-    jal     ra, print_string
+    jal     print_string
 
     # restore registers
     LOAD_X  ra, 0(sp)      

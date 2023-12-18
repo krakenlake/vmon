@@ -12,46 +12,46 @@ cmd_I:
     la      a0, string_info_text
     jal     print_string
     la      a0, start    
-    jal     ra, print_hex_addr
+    jal     print_hex_addr
 
     la      a0, string_info_data
     jal     print_string
     la      a0, start_data    
-    jal     ra, print_hex_addr
+    jal     print_hex_addr
 
     la      a0, string_info_bss
     jal     print_string
     la      a0, start_bss    
-    jal     ra, print_hex_addr
+    jal     print_hex_addr
 
     la      a0, string_info_buffer
     jal     print_string
     la      a0, buffer   
-    jal     ra, print_hex_addr
+    jal     print_hex_addr
 
 #ifdef BARE_METAL
     la      a0, string_info_stackstart
     jal     print_string
     la      a0, stack   
-    jal     ra, print_hex_addr
+    jal     print_hex_addr
 
     la      a0, string_info_stackend
     jal     print_string
     la      a0, stack + STACK_SIZE   
-    jal     ra, print_hex_addr
+    jal     print_hex_addr
 
     la      a0, string_info_stacksize
     jal     print_string
     la      t0, stack    
     sub     a0, sp, t0
-    jal     ra, print_hex_word
+    jal     print_hex_word
 #endif /* BARE_METAL */
 
 #ifdef WITH_TESTCODE
     la      a0, string_info_testcode
     jal     print_string
     la      a0, testcode 
-    jal     ra, print_hex_addr
+    jal     print_hex_addr
 #endif /* WITH_TESTCODE */
 
     j       prompt

@@ -28,17 +28,17 @@ print_hex_addr:
     SAVE_X  s2, (XLEN_BYTES*1)(sp)
     SAVE_X  a0, (XLEN_BYTES*2)(sp)
     # output prefix
-	jal     ra, print_hex_prefix
+	jal     print_hex_prefix
 
     # split 64 bit into 32-bit words
     mv      s2, a0
     srli    a0, a0, 16
     srli    a0, a0, 16
 #if XLEN >= 64
-    jal     ra, print_hex_word
+    jal     print_hex_word
 #endif
     mv      a0, s2
-    jal     ra, print_hex_word
+    jal     print_hex_word
 
     LOAD_X  ra, 0(sp)             
     LOAD_X  s2, (XLEN_BYTES*1)(sp)
@@ -57,15 +57,15 @@ print_hex_word:
     li      t0, 0xffffffff
     and     s2, a0, t0              # save lower 32 bits
     srli    a0, s2, 24
-    jal     ra, print_hex_byte
+    jal     print_hex_byte
     srli    a0, s2, 16
     andi    a0, a0, 0xff
-    jal     ra, print_hex_byte
+    jal     print_hex_byte
     srli    a0, s2, 8
     andi    a0, a0, 0xff
-    jal     ra, print_hex_byte
+    jal     print_hex_byte
     andi    a0, s2, 0xff
-    jal     ra, print_hex_byte
+    jal     print_hex_byte
     LOAD_X  ra, 0(sp)             
     LOAD_X  s2, (XLEN_BYTES*1)(sp)               
     LOAD_X  a0, (XLEN_BYTES*2)(sp)               
@@ -100,13 +100,13 @@ print_ascii:
     mv      t1, a0
     # consider only chars from 0x20-0x7e as printable
     li      t0, 0x20
-    blt     t1, t0, print_substitute
+    blt     t1, t0, print_ascii_substitute
     li      t0, 0x7e
-    bgt     t1, t0, print_substitute
-    j       out_ascii               # char is printable
-print_substitute:
+    bgt     t1, t0, print_ascii_substitute
+    j       print_ascii_out         # char is printable
+print_ascii_substitute:
     li      t1, '.'                 # print dot if char is not printable
-out_ascii:
+print_ascii_out:
     sb      t1, 0(s1)               # print to UART
     ret
 
@@ -161,7 +161,7 @@ print_decimal_loop:
 print_decimal_skip_minus:
     # output buffer, starting at last written location
     mv      a0, t2
-    jal     ra, print_string
+    jal     print_string
     j       print_decimal_done
 print_decimal_zero:
     li      t0, '0'
@@ -169,17 +169,6 @@ print_decimal_zero:
 
 print_decimal_done:
     LOAD_X     ra, 0(sp)             
-    addi    sp, sp, (XLEN_BYTES*1)
-    ret
-
-
-# nice to have for debugging
-print_star:
-    addi    sp, sp, -(XLEN_BYTES*1)         
-    SAVE_X  s0, 0(sp)
-    li      s0, '*'
-    sb      s0, 0(s1)
-    LOAD_X  s0, 0(sp)         
     addi    sp, sp, (XLEN_BYTES*1)
     ret
 

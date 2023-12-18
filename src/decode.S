@@ -105,13 +105,13 @@ decode_U_type:
     mv      s2, a0
     
     # extract rd
-    jal     ra, print_rd_name
+    jal     print_rd_name
     # comma
     la      a0, string_asm_sep3
-    jal     ra, print_string  
+    jal     print_string  
     # extract imm
     srli    a0, s2, 12 
-    jal     ra, print_hex_addr
+    jal     print_hex_addr
     
     LOAD_X  ra, 0(sp)               
     LOAD_X  s2, (XLEN_BYTES*1)(sp)               
@@ -129,10 +129,10 @@ decode_JAL:
     mv      s2, a0
     
     # extract rd
-    jal     ra, print_rd_name  
+    jal     print_rd_name  
     # comma
     la      a0, string_asm_sep3
-    jal     ra, print_string 
+    jal     print_string 
     # inst[30:21] -> imm[10:1]
     srli    a0, s2, 20
     andi    a0, a0, 0b11111111110    
@@ -158,7 +158,7 @@ decode_JAL:
     or      a1, a0, a1 
     # add relative immediate to instruction address
     add     a0, s5, a1
-    jal     ra, print_hex_addr
+    jal     print_hex_addr
 
     LOAD_X  ra, 0(sp)               
     LOAD_X  s2, (XLEN_BYTES*1)(sp)               
@@ -175,10 +175,10 @@ decode_JALR:
     mv      s2, a0
     
     # extract rd
-    jal     ra, print_rd_name
+    jal     print_rd_name
     # comma
     la      a0, string_asm_sep3
-    jal     ra, print_string 
+    jal     print_string 
     # print offset
 #if XLEN >=64
     slli    a0, s2, 32                      # sign-extend to 64 bits
@@ -193,7 +193,7 @@ decode_JALR:
     mv      a0, s2
     jal     insn_get_rs1
     mv      a0, a1
-    jal     ra, print_register_name
+    jal     print_register_name
     li      t0, ')'
     sb      t0, 0(s1)
 
@@ -211,22 +211,22 @@ decode_R_type:
     mv      s2, a0
     
     # extract rd
-    jal     ra, print_rd_name
+    jal     print_rd_name
     # comma
     la      a0, string_asm_sep3
-    jal     ra, print_string
+    jal     print_string
     # extract rs1 
     mv      a0, s2
-    jal     ra, insn_get_rs1
+    jal     insn_get_rs1
     mv      a0, a1
-    jal     ra, print_register_name
+    jal     print_register_name
     la      a0, string_asm_sep3
-    jal     ra, print_string
+    jal     print_string
     # extract rs2 
     mv      a0, s2
-    jal     ra, insn_get_rs2
+    jal     insn_get_rs2
     mv      a0, a1
-    jal     ra, print_register_name
+    jal     print_register_name
     
     LOAD_X  ra, 0(sp)               
     LOAD_X  s2, (XLEN_BYTES*1)(sp)               
@@ -245,14 +245,14 @@ decode_I_type:
     jal     ra, print_rd_name
     # comma
     la      a0, string_asm_sep3
-    jal     ra, print_string
+    jal     print_string
     # extract rs1 
     mv      a0, s2
-    jal     ra, insn_get_rs1
+    jal     insn_get_rs1
     mv      a0, a1
-    jal     ra, print_register_name
+    jal     print_register_name
     la      a0, string_asm_sep3
-    jal     ra, print_string
+    jal     print_string
     # inst[30:20] -> imm[10:0]
     # inst[31] -> imm[63:11]
 #if XLEN >=64
@@ -261,8 +261,8 @@ decode_I_type:
 #else
     srai    a0, s2, 20
 #endif
-    # TODO: print decimal
-    jal     ra, print_hex_word
+    # TODO: print decimal?
+    jal     print_hex_word
     
     LOAD_X  ra, 0(sp)               
     LOAD_X  s2, (XLEN_BYTES*1)(sp)               
@@ -280,9 +280,9 @@ decode_S_type:
     # extract rs2 
     jal     ra, insn_get_rs2
     mv      a0, a1
-    jal     ra, print_register_name
+    jal     print_register_name
     la      a0, string_asm_sep3
-    jal     ra, print_string
+    jal     print_string
     # inst[11:7] -> imm[4:0]
     srli    a0, s2, 7
     andi    a0, a0, 0b11111 
@@ -302,14 +302,14 @@ decode_S_type:
     and     t0, t0, t1
     or      a0, a0, t0 
     # TODO: print nicer
-    jal     ra, print_hex_word
+    jal     print_hex_word
     li      t0, '('
     sb      t0, 0(s1)
     # extract rs1 
     mv      a0, s2
-    jal     ra, insn_get_rs1
+    jal     insn_get_rs1
     mv      a0, a1
-    jal     ra, print_register_name
+    jal     print_register_name
     li      t0, ')'
     sb      t0, 0(s1)
     
@@ -330,16 +330,16 @@ decode_B_type:
     # extract rs1 
     jal     ra, insn_get_rs1
     mv      a0, a1
-    jal     ra, print_register_name
+    jal     print_register_name
     la      a0, string_asm_sep3
-    jal     ra, print_string
+    jal     print_string
     # extract rs2 
     mv      a0, s2
-    jal     ra, insn_get_rs2
+    jal     insn_get_rs2
     mv      a0, a1
-    jal     ra, print_register_name
+    jal     print_register_name
     la      a0, string_asm_sep3
-    jal     ra, print_string
+    jal     print_string
     # imm[0] := 0
     # inst[11:8] -> imm[4:1] 
     srli    a0, s2, 7
@@ -366,7 +366,7 @@ decode_B_type:
     # add relative immediate to instruction address
     add     a0, s5, a0
     # print absolute target address
-    jal     ra, print_hex_addr
+    jal     print_hex_addr
     
     # TODO: show relative value as well in decimal?
     
@@ -393,17 +393,17 @@ decode_LRSC:
     mv      s2, a0
 
     # print rd
-    jal     ra, print_rd_name
+    jal     print_rd_name
     la      a0, string_asm_sep3
-    jal     ra, print_string 
+    jal     print_string 
     # 
     li      t0, '('
     sb      t0, 0(s1)
     # print addr 
     mv      a0, s2
-    jal     ra, insn_get_rs1
+    jal     insn_get_rs1
     mv      a0, a1
-    jal     ra, print_register_name
+    jal     print_register_name
     #
     li      t0, ')'
     sb      t0, 0(s1)
@@ -422,25 +422,25 @@ decode_AMO:
     mv      s2, a0
     
     # print rd
-    jal     ra, print_rd_name 
+    jal     print_rd_name 
     la      a0, string_asm_sep3
-    jal     ra, print_string  
+    jal     print_string  
     # print rs2 = src
     mv      a0, s2
-    jal     ra, insn_get_rs2
+    jal     insn_get_rs2
     mv      a0, a1
-    jal     ra, print_register_name
+    jal     print_register_name
     # comma
     la      a0, string_asm_sep3
-    jal     ra, print_string  
+    jal     print_string  
     #
     li      t0, '('
     sb      t0, 0(s1)
     # print rs1 = addr
     mv      a0, s2
-    jal     ra, insn_get_rs1
+    jal     insn_get_rs1
     mv      a0, a1
-    jal     ra, print_register_name
+    jal     print_register_name
     #
     li      t0, ')'
     sb      t0, 0(s1)
@@ -459,25 +459,25 @@ decode_CSR:
     mv      s2, a0
     
     # extract rd
-    jal     ra, print_rd_name
+    jal     print_rd_name
     # comma
     la      a0, string_asm_sep3
-    jal     ra, print_string  
+    jal     print_string  
     # 0x
-    jal     ra, print_hex_prefix
+    jal     print_hex_prefix
     # extract csr
     mv      a0, s2
-    jal     ra, insn_get_csr
+    jal     insn_get_csr
     # TODO: print decimal
-    jal     ra, print_hex_word
+    jal     print_hex_word
     # comma
     la      a0, string_asm_sep3
-    jal     ra, print_string
+    jal     print_string
     # extract rs1
     mv      a0, s2
-    jal     ra, insn_get_rs1
+    jal     insn_get_rs1
     mv      a0, a1 
-    jal     ra, print_register_name
+    jal     print_register_name
     
     LOAD_X  ra, 0(sp)               
     LOAD_X  s2, (XLEN_BYTES*1)(sp)               
@@ -493,27 +493,27 @@ decode_CSRI:
     mv      s2, a0
 
     # extract rd
-    jal     ra, print_rd_name
+    jal     print_rd_name
     # comma
     la      a0, string_asm_sep3
-    jal     ra, print_string  
+    jal     print_string  
     # 0x
-    jal     ra, print_hex_prefix
+    jal     print_hex_prefix
     # extract csr
     mv      a0, s2
-    jal     ra, insn_get_csr
+    jal     insn_get_csr
     # TODO: print decimal
-    jal     ra, print_hex_word
+    jal     print_hex_word
     # comma
     la      a0, string_asm_sep3
-    jal     ra, print_string
+    jal     print_string
     # 0x
-    jal     ra, print_hex_prefix
+    jal     print_hex_prefix
     # extract uimm[4:0] 
     mv      a0, s2
-    jal     ra, insn_get_rs1
+    jal     insn_get_rs1
     mv      a0, a1
-    jal     ra, print_hex_byte
+    jal     print_hex_byte
     
     LOAD_X  ra, 0(sp)               
     LOAD_X  s2, (XLEN_BYTES*1)(sp)               
@@ -525,8 +525,8 @@ print_rd_name:
     addi    sp, sp, -(XLEN_BYTES*1)              
     SAVE_X  ra, 0(sp)
     
-    jal     ra, insn_get_rd
-    jal     ra, print_register_name
+    jal     insn_get_rd
+    jal     print_register_name
     
     LOAD_X  ra, 0(sp)               
     addi    sp, sp, (XLEN_BYTES*1)
@@ -555,7 +555,7 @@ print_register_next_zero:
     j       print_register_search
  print_register_found:
     mv      a0, s0
-    jal     ra, print_string
+    jal     print_string
     
     LOAD_X  ra, 0(sp)               
     LOAD_X  s0, (XLEN_BYTES*1)(sp)               
@@ -621,13 +621,13 @@ print_instruction:
     mv      s3, a0                  # save for later
     
     mv      a0, a2
-    jal     ra, print_string        # print opcode
+    jal     print_string            # print opcode
 #ifdef ENABLE_RVA
     mv      a0, s3
-    jal     ra, print_AMO_postfix   # prints aq/lr postfix for RVA opcodes
+    jal     print_AMO_postfix       # prints aq/lr postfix for RVA opcodes
 #endif
     la      a0, string_asm_sep2
-    jal     ra, print_string
+    jal     print_string
     # call decoder routine (only if address is non-zero)
     beqz    s2, print_instruction_done  
     mv      a0, s3
@@ -654,22 +654,22 @@ print_AMO_postfix:
     bne     t1, t2, print_AMO_postfix_done
 
     # decode ac/rl bits and print fitting postfix
-    jal     ra, insn_get_aqrl
+    jal     insn_get_aqrl
     beqz    a1, print_AMO_postfix_done
     li      t0, 1
     bne     a1, t0, print_AMO_postfix_case2
     la      a0, string_OP_POSTFIX_RL
-    jal     ra, print_string
+    jal     print_string
     j       print_AMO_postfix_done
 print_AMO_postfix_case2:
     li      t0, 2
     bne     a1, t0, print_AMO_postfix_case3
     la      a0, string_OP_POSTFIX_AQ
-    jal     ra, print_string
+    jal     print_string
     j       print_AMO_postfix_done
 print_AMO_postfix_case3:
     la      a0, string_OP_POSTFIX_AQRL
-    jal     ra, print_string
+    jal     print_string
 
 print_AMO_postfix_done:    
     LOAD_X  ra, 0(sp)               
