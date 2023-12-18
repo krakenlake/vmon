@@ -130,20 +130,16 @@ print_decimal:
     SAVE_X  ra, 0(sp)
 
     beqz    a0, print_decimal_zero
-
     # save a0
     mv      t6, a0
-
     # terminate buffer at the end
     la      t2, decbuf
     addi    t2, t2, (DECBUFFER_SIZE-1)
     sb      zero, 0(t2)
-
     # invert if negative
-    bgtz    t6, print_decimal_no_invert
+    bgtz    t6, print_decimal_skip_invert
     neg     a0, a0
-
-print_decimal_no_invert:
+print_decimal_skip_invert:
     # write ASCII digits to buffer backward starting at the end
     li      t3, 10
 print_decimal_loop:
@@ -153,24 +149,20 @@ print_decimal_loop:
     rem     t4, a0, t3
     # a0 = a0 / 10
     div     a0, a0, t3  
-    # output digit as ASCII
+    # output digit as ASCII to buffer
     addi    t0, t4, 48
     sb      t0, 0(t2)
     # repeat
-    bnez    a0, print_decimal_loop
-    
-    # add minus if negative
-    bgtz    t6, print_decimal_positive
+    bnez    a0, print_decimal_loop   
+    # print minus if negative
+    bgtz    t6, print_decimal_skip_minus
     li      t0, '-'
-    addi    t2, t2, -1
-    sb      t0, 0(t2)
-
-print_decimal_positive:
+    sb      t0, 0(s1)               # print to UART
+print_decimal_skip_minus:
     # output buffer, starting at last written location
     mv      a0, t2
     jal     ra, print_string
     j       print_decimal_done
-
 print_decimal_zero:
     li      t0, '0'
     sb      t0, 0(s1)               # print to UART
