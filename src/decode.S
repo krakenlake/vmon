@@ -177,26 +177,23 @@ decode_JALR:
     # comma
     la      a0, string_asm_sep3
     jal     ra, print_string 
-    # inst[30:21] -> imm[10:1]
-    srli    a0, s2, 20
-    andi    a0, a0, 0b11111111110    
-    # inst[20] -> imm[11]
-    srli    t0, s2, 20
-    li      t1, 0b100000000000 
-    and    t0, t0, t1
-    or      a0, a0, t0
-    # inst[19:12] -> imm[19:12]
-    li      t1, 0b11111111000000000000
-    and     t0, s2, t1
-    or      a0, a0, t0
-    # inst[31] -> imm[63:20]
+    # print offset
 #if XLEN >=64
-    slli    t0, a0, 32                      # sign-extend to 64 bits
-    srai    t0, t0, 32+11
+    slli    a0, s2, 32                      # sign-extend to 64 bits
+    srai    a0, a0, 32+20
 #else
-    srai    t0, a0, 11
+    srai    a0, s2, 20
 #endif
     jal     ra, print_decimal
+    # print rs1
+    li      t0, '('
+    sb      t0, 0(s1)
+    mv      a0, s2
+    jal     insn_get_rs1
+    mv      a0, a1
+    jal     ra, print_register_name
+    li      t0, ')'
+    sb      t0, 0(s1)
 
     LOAD_X  ra, 0(sp)               
     LOAD_X  s2, (XLEN_BYTES*1)(sp)               
