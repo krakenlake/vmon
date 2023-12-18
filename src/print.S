@@ -24,9 +24,9 @@ print_hex_prefix:
 print_hex_addr:
     # print addr passed in a0 in hex
     addi    sp, sp, -(XLEN_BYTES*3)             
-    SAVE_X    ra, 0(sp)
-    SAVE_X    s2, (XLEN_BYTES*1)(sp)
-    SAVE_X    a0, (XLEN_BYTES*2)(sp)
+    SAVE_X  ra, 0(sp)
+    SAVE_X  s2, (XLEN_BYTES*1)(sp)
+    SAVE_X  a0, (XLEN_BYTES*2)(sp)
     # output prefix
 	jal     ra, print_hex_prefix
 
@@ -40,9 +40,9 @@ print_hex_addr:
     mv      a0, s2
     jal     ra, print_hex_word
 
-    LOAD_X     ra, 0(sp)             
-    LOAD_X     s2, (XLEN_BYTES*1)(sp)
-    LOAD_X     a0, (XLEN_BYTES*2)(sp)
+    LOAD_X  ra, 0(sp)             
+    LOAD_X  s2, (XLEN_BYTES*1)(sp)
+    LOAD_X  a0, (XLEN_BYTES*2)(sp)
     addi    sp, sp, (XLEN_BYTES*3)
     ret
 
@@ -51,9 +51,9 @@ print_hex_word:
     # in: word in a0
     # out: word in a0
     addi    sp, sp, -(XLEN_BYTES*3)           
-    SAVE_X    ra, 0(sp)
-    SAVE_X    s2, (XLEN_BYTES*1)(sp)
-    SAVE_X    a0, (XLEN_BYTES*2)(sp)
+    SAVE_X  ra, 0(sp)
+    SAVE_X  s2, (XLEN_BYTES*1)(sp)
+    SAVE_X  a0, (XLEN_BYTES*2)(sp)
     li      t0, 0xffffffff
     and     s2, a0, t0              # save lower 32 bits
     srli    a0, s2, 24
@@ -66,9 +66,9 @@ print_hex_word:
     jal     ra, print_hex_byte
     andi    a0, s2, 0xff
     jal     ra, print_hex_byte
-    LOAD_X     ra, 0(sp)             
-    LOAD_X     s2, (XLEN_BYTES*1)(sp)               
-    LOAD_X     a0, (XLEN_BYTES*2)(sp)               
+    LOAD_X  ra, 0(sp)             
+    LOAD_X  s2, (XLEN_BYTES*1)(sp)               
+    LOAD_X  a0, (XLEN_BYTES*2)(sp)               
     addi    sp, sp, (XLEN_BYTES*3)
     ret
 
@@ -176,10 +176,10 @@ print_decimal_done:
 # nice to have for debugging
 print_star:
     addi    sp, sp, -(XLEN_BYTES*1)         
-    SAVE_X    s0, 0(sp)
+    SAVE_X  s0, 0(sp)
     li      s0, '*'
     sb      s0, 0(s1)
-    LOAD_X     s0, 0(sp)         
+    LOAD_X  s0, 0(sp)         
     addi    sp, sp, (XLEN_BYTES*1)
     ret
 
