@@ -6,7 +6,7 @@ communication written in RISC-V assembly language.
 ## Features
 - hex and ASCII monitor 
 - disassembler with hex and decimal output
-- can be build for 32 or 64 bit targets
+- can be built for 32 or 64 bit targets
 - runs in QEMU or on RISC-V hardware
 - runs bare-metal or can be called from outside
 - terminal I/O via UART
