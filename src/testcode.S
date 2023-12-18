@@ -9,12 +9,15 @@
 
 testcode:
 
+
+# pseudo opcodes
+    jalr    x0, x1, 0           # ret
+    addi    x0, x0, 0           # nop
+
 # privileged
     wfi
 
-
 # RV32I
-    ret
     fence 
     fence.i
     ecall

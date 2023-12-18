@@ -28,9 +28,8 @@ register_names:
 # RV32I
 string_OP_LUI:      .string "lui";		#
 string_OP_AUIPC:    .string "auipc";	#	
-string_OP_J:	    .string "j";		
-string_OP_JAL:      .string "jal";		
-string_OP_JALR:     .string "jalr";		
+string_OP_JAL:      .string "jal";		#
+string_OP_JALR:     .string "jalr";		#
 string_OP_BEQ:      .string "beq";		#
 string_OP_BNE:      .string "bne";		#
 string_OP_BLT:      .string "blt";		#
@@ -155,12 +154,24 @@ string_OP_CSRRCI:	.string "csrrci";	#
 
 # RVC
 
+# Pseudo
+#ifdef ENABLE_PSEUDO
+	string_OP_RET:		.string "ret";	
+	string_OP_NOP:		.string "nop";	
+#endif /* ENABLE_PSEUDO */
 
 
 .align 4
 
 encoding_table:
 # format: MASK, MATCH, decode function ptr, opcode string
+
+# pseudo opcodes
+# order is important, these have to be at the beginning of the table
+#ifdef ENABLE_PSEUDO
+	.word 0xffffffff, 0x00008067, decode_EMPTY, string_OP_RET
+	.word 0xffffffff, 0x00000013, decode_EMPTY, string_OP_NOP
+#endif /* ENABLE_PSEUDO */
 
 # RV32I
 .word MASK_ADD, MATCH_ADD, decode_R_type, string_OP_ADD

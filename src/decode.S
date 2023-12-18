@@ -19,6 +19,7 @@
 .global decode_FENCE_I
 .global decode_AMO
 .global decode_LRSC
+.global decode_EMPTY
 
 
 .text
@@ -115,6 +116,7 @@ decode_U_type:
     LOAD_X  ra, 0(sp)               
     LOAD_X  s2, (XLEN_BYTES*1)(sp)               
     addi    sp, sp, (XLEN_BYTES*2)
+decode_EMPTY:
     ret
 
 

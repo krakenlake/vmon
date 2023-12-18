@@ -44,6 +44,9 @@
 // enable C extension disassembly?
 #define ENABLE_RVC
 
+// enable printing of pseudo opcodes in disassembly?
+#define ENABLE_PSEUDO
+
 // default number of lines for the "d" command if no end address is given
 #define	DEFAULT_D_LINES		16
 
