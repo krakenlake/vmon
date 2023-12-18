@@ -60,8 +60,8 @@ DEP = $(OBJ:%.o=%.d)
 -include $(DEP)
 
 
-all: $(BUILD) $(BUILD)/$(NAME).img $(BUILD)/$(NAME)-mini.img
-	ls -al $(BUILD)/$(NAME).img $(BUILD)/$(NAME)-mini.img
+all: $(BUILD) $(BUILD)/$(NAME).img $(BUILD)/$(NAME)-stripped.img
+	ls -al $(BUILD)/$(NAME).img $(BUILD)/$(NAME)-stripped.img
 	
 $(BUILD):
 	mkdir -p $(BUILD)
@@ -69,7 +69,7 @@ $(BUILD):
 $(BUILD)/$(NAME).img: $(BUILD)/$(NAME).elf
 	$(OBJCOPY) $(BUILD)/$(NAME).elf -I binary $@
 
-$(BUILD)/$(NAME)-mini.img: $(BUILD)/$(NAME).img
+$(BUILD)/$(NAME)-stripped.img: $(BUILD)/$(NAME).img
 	$(STRIP) $< -o $@
 
 $(BUILD)/$(NAME).elf: linker/link.ld.$(TARGET) Makefile $(OBJ)
