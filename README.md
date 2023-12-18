@@ -1,8 +1,11 @@
 # VMON - a RISC-V machine code monitor 
 
 VMON is a tiny machine code monitor for RISC-V systems with UART 
-communication written in RISC-V assembly language:
+communication written in RISC-V assembly language.
 
+## Features
+- hex and ASCII monitor 
+- disassembler
 - can be build for 32 or 64 bit targets
 - runs in QEMU or on RISC-V hardware
 - runs bare-metal or can be called from outside
