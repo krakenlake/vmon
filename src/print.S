@@ -9,6 +9,8 @@
 .global print_decimal
 .global print_star
 
+#define DECBUFFER_SIZE      32
+
 .text
 
 print_hex_prefix:
@@ -123,17 +125,59 @@ print_string_done:
 
 
 # print 32-bit signed decimal in a0 to terminal
-# TODO:
 print_decimal:
-    mv      t1, a0
-    bnez    t1, print_decimal_nonzero
+    addi    sp, sp, -(XLEN_BYTES*1)           
+    SAVE_X  ra, 0(sp)
+
+    beqz    a0, print_decimal_zero
+
+    # save a0
+    mv      t6, a0
+
+    # terminate buffer at the end
+    la      t2, decbuf
+    addi    t2, t2, (DECBUFFER_SIZE-1)
+    sb      zero, 0(t2)
+
+    # invert if negative
+    bgtz    t6, print_decimal_no_invert
+    neg     a0, a0
+
+print_decimal_no_invert:
+    # write ASCII digits to buffer backward starting at the end
+    li      t3, 10
+print_decimal_loop:
+    # dec buffer ptr
+    addi    t2, t2, -1
+    # t4 = a0 mod 10
+    rem     t4, a0, t3
+    # a0 = a0 / 10
+    div     a0, a0, t3  
+    # output digit as ASCII
+    addi    t0, t4, 48
+    sb      t0, 0(t2)
+    # repeat
+    bnez    a0, print_decimal_loop
+    
+    # add minus if negative
+    bgtz    t6, print_decimal_positive
+    li      t0, '-'
+    addi    t2, t2, -1
+    sb      t0, 0(t2)
+
+print_decimal_positive:
+    # output buffer, starting at last written location
+    mv      a0, t2
+    jal     ra, print_string
+    j       print_decimal_done
+
+print_decimal_zero:
     li      t0, '0'
-    j       print_decimal_digit
-print_decimal_nonzero:
-    li      t0, 'n'
-print_decimal_digit:
     sb      t0, 0(s1)               # print to UART
+
 print_decimal_done:
+    LOAD_X     ra, 0(sp)             
+    addi    sp, sp, (XLEN_BYTES*1)
     ret
 
 
@@ -152,5 +196,5 @@ print_star:
 
 .align 8
 
-.comm decbuf, 32
+.comm decbuf, DECBUFFER_SIZE
 

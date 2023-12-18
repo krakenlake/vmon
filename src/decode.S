@@ -9,6 +9,8 @@
 .global decode_R_type
 .global decode_S_type
 .global decode_U_type
+.global decode_JAL
+.global decode_JALR
 .global decode_CSR
 .global decode_CSRI
 .global decode_EBREAK
@@ -116,7 +118,53 @@ decode_U_type:
     ret
 
 
-decode_J_type:
+decode_JAL:
+    # in: instruction word in a0
+    # in: current instruction address in s5 (global)
+    addi    sp, sp, -(XLEN_BYTES*2)             
+    SAVE_X  ra, 0(sp)
+    SAVE_X  s2, (XLEN_BYTES*1)(sp)
+    mv      s2, a0
+    
+    # extract rd
+    jal     ra, print_rd_name  
+    # comma
+    la      a0, string_asm_sep3
+    jal     ra, print_string 
+    # inst[30:21] -> imm[10:1]
+    srli    a0, s2, 20
+    andi    a0, a0, 0b11111111110    
+    # inst[20] -> imm[11]
+    srli    t0, s2, 20
+    li      t1, 0b100000000000 
+    and     t0, t0, t1
+    or      a0, a0, t0
+    # inst[19:12] -> imm[19:12]
+    li      t1, 0b11111111000000000000
+    and     t0, s2, t1
+    or      a0, a0, t0
+    # inst[31] -> imm[63:20]
+#if XLEN >=64
+    slli    a1, a0, 32                      # sign-extend to 64 bits
+    srai    a1, a1, 32+11
+#else
+    srai    a1, a0, 11
+#endif
+    # print target address as hex
+    li      t1, 0xfffffffffff00000          
+    and     a1, a1, t1
+    or      a1, a0, a1 
+    # add relative immediate to instruction address
+    add     a0, s5, a1
+    jal     ra, print_hex_addr
+
+    LOAD_X  ra, 0(sp)               
+    LOAD_X  s2, (XLEN_BYTES*1)(sp)               
+    addi    sp, sp, (XLEN_BYTES*2)
+    ret
+
+
+decode_JALR:
     # in: instruction word in a0
     # in: current instruction address in s5 (global)
     addi    sp, sp, -(XLEN_BYTES*2)             
@@ -143,19 +191,13 @@ decode_J_type:
     or      a0, a0, t0
     # inst[31] -> imm[63:20]
 #if XLEN >=64
-    slli    t0, s2, 32                      # sign-extend to 64 bits
+    slli    t0, a0, 32                      # sign-extend to 64 bits
     srai    t0, t0, 32+11
 #else
-    srai    t0, s2, 11
+    srai    t0, a0, 11
 #endif
-    li      t1, 0xfffffffffff00000          
-    and     t0, t0, t1
-    or      a0, a0, t0 
-    # add relative immediate to instruction address
-    add     a0, s5, a0
-    # print absolute target address
-    jal     ra, print_hex_addr
-    
+    jal     ra, print_decimal
+
     LOAD_X  ra, 0(sp)               
     LOAD_X  s2, (XLEN_BYTES*1)(sp)               
     addi    sp, sp, (XLEN_BYTES*2)
@@ -343,10 +385,6 @@ decode_FENCE_I:
     # do nothing
     ret
 
-decode_JAL:
-    # TODO
-    # display "jalr	zero, 0x0000000080008ac4" as "ret"?
-    ret
 
 #ifdef ENABLE_RVA
 decode_LRSC:

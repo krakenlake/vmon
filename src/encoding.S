@@ -28,8 +28,9 @@ register_names:
 # RV32I
 string_OP_LUI:      .string "lui";		#
 string_OP_AUIPC:    .string "auipc";	#	
-string_OP_JAL:      .string "jal";		#
-string_OP_JALR:     .string "jalr";		#
+string_OP_J:	    .string "j";		
+string_OP_JAL:      .string "jal";		
+string_OP_JALR:     .string "jalr";		
 string_OP_BEQ:      .string "beq";		#
 string_OP_BNE:      .string "bne";		#
 string_OP_BLT:      .string "blt";		#
@@ -195,8 +196,8 @@ encoding_table:
 .word MASK_BGE, MATCH_BGE, decode_B_type, string_OP_BGE
 .word MASK_BLTU, MATCH_BLTU, decode_B_type, string_OP_BLTU
 .word MASK_BGEU, MATCH_BGEU, decode_B_type, string_OP_BGEU
-.word MASK_JAL, MATCH_JAL, decode_J_type, string_OP_JAL
-.word MASK_JALR, MATCH_JALR, decode_J_type, string_OP_JALR
+.word MASK_JAL, MATCH_JAL, decode_JAL, string_OP_JAL
+.word MASK_JALR, MATCH_JALR, decode_JALR, string_OP_JALR
 .word MASK_LUI, MATCH_LUI, decode_U_type, string_OP_LUI
 .word MASK_AUIPC, MATCH_AUIPC, decode_I_type, string_OP_AUIPC
 .word MASK_ECALL, MATCH_ECALL, decode_ECALL, string_OP_ECALL
