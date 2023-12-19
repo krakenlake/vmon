@@ -23,27 +23,21 @@ print_hex_prefix:
 
 print_hex_addr:
     # print addr passed in a0 in hex
-    addi    sp, sp, -(XLEN_BYTES*3)             
+    addi    sp, sp, -(XLEN_BYTES*2)             
     SAVE_X  ra, 0(sp)
-    SAVE_X  s2, (XLEN_BYTES*1)(sp)
-    SAVE_X  a0, (XLEN_BYTES*2)(sp)
+    SAVE_X  a0, (XLEN_BYTES*1)(sp)
     # output prefix
 	jal     print_hex_prefix
-
     # split 64 bit into 32-bit words
-    mv      s2, a0
     srli    a0, a0, 16
     srli    a0, a0, 16
 #if XLEN >= 64
     jal     print_hex_word
 #endif
-    mv      a0, s2
+    LOAD_X  a0, (XLEN_BYTES*1)(sp)
     jal     print_hex_word
-
     LOAD_X  ra, 0(sp)             
-    LOAD_X  s2, (XLEN_BYTES*1)(sp)
-    LOAD_X  a0, (XLEN_BYTES*2)(sp)
-    addi    sp, sp, (XLEN_BYTES*3)
+    addi    sp, sp, (XLEN_BYTES*2)
     ret
 
 
