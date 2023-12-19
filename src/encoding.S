@@ -1,6 +1,8 @@
 #include "vmon/config.h"
 #include "riscv/riscv-opc.h"
 
+#ifdef WITH_CMD_D
+
 .global encoding_table
 .global register_names
 .global string_OP_UNKNOWN
@@ -298,3 +300,4 @@ encoding_table:
 # table end marker
 .word 0, 0, 0, 0
 
+#endif /* WITH_CMD_D */

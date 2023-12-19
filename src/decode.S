@@ -1,5 +1,6 @@
 #include "vmon/config.h"
 
+#ifdef WITH_CMD_D
 
 .global print_instruction
 .global decode_opcode
@@ -679,3 +680,6 @@ string_OP_POSTFIX_AQ:   .string ".aq";
 string_OP_POSTFIX_RL:	.string ".rl";
 string_OP_POSTFIX_AQRL:	.string ".aqrl";
 #endif
+
+
+#endif /* WITH_CMD_D */

@@ -98,6 +98,7 @@ print_string_next_byte:
 print_string_done:
     ret
 
+#ifdef WITH_CMD_D
 
 # print 32-bit signed decimal in a0 to terminal
 print_decimal:
@@ -147,6 +148,7 @@ print_decimal_done:
     addi    sp, sp, (XLEN_BYTES*1)
     ret
 
+#endif /* WITH_CMD_D */
 
 .data
 
