@@ -44,10 +44,9 @@ print_hex_addr:
 print_hex_word:
     # in: word in a0
     # out: word in a0
-    addi    sp, sp, -(XLEN_BYTES*3)           
+    addi    sp, sp, -(XLEN_BYTES*2)           
     SAVE_X  ra, 0(sp)
     SAVE_X  s2, (XLEN_BYTES*1)(sp)
-    SAVE_X  a0, (XLEN_BYTES*2)(sp)
     li      t0, 0xffffffff
     and     s2, a0, t0              # save lower 32 bits
     srli    a0, s2, 24
@@ -62,8 +61,7 @@ print_hex_word:
     jal     print_hex_byte
     LOAD_X  ra, 0(sp)             
     LOAD_X  s2, (XLEN_BYTES*1)(sp)               
-    LOAD_X  a0, (XLEN_BYTES*2)(sp)               
-    addi    sp, sp, (XLEN_BYTES*3)
+    addi    sp, sp, (XLEN_BYTES*2)
     ret
 
 
