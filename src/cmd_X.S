@@ -11,6 +11,8 @@
 cmd_X:
     la      a0, string_exit
     jal     print_string
+    LOAD_X  a0, 0(sp)      
+    jal     print_hex
 
     # restore registers
     LOAD_X  ra, 0(sp)      
@@ -33,6 +35,6 @@ cmd_X:
 
 
 .data
-string_exit:            .string "(exiting)\n";
+string_exit:            .string "exiting: ret, ra=";
 
 #endif /* WITH_CMD_X */

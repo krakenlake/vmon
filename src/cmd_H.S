@@ -16,7 +16,7 @@ cmd_H:
 
 .data
 string_help:
-.string "Commands:  
+.string "\nCommands:  
     d <start_addr> - disassemble 16 instructions starting at start_addr 
     d <start_addr> <end_addr> - disassemble from start_addr to end_addr
     d - continue disassembly from last address
@@ -26,5 +26,6 @@ string_help:
     m <start_addr> - memory dump 128 bytes starting at start_addr
     m <start_addr> <end_addr> - memory dump from start_addr to end_addr
     m - continue memory dump from last address
-Addresses entry is in hex (without 0x prefix)."
+    x - exit to caller
+Address entry is in hex (without 0x prefix).\n"
 #endif /* WITH_CMD_H */
