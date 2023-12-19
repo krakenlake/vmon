@@ -6,6 +6,8 @@ communication written in RISC-V assembly language.
 ## Features
 - hex and ASCII monitor 
 - disassembler with hex and decimal output
+- currently disassembles RV32/64IMA opcodes 
+- (some) pseudo opcodes supported
 - can be built for 32 or 64 bit targets
 - runs in QEMU or on RISC-V hardware
 - runs bare-metal or can be called from outside
