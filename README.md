@@ -12,7 +12,6 @@ communication written in RISC-V assembly language.
 - terminal I/O via UART
 - set of included commands configurable
 - executable can be build with or without RISC-V example code included
-- minimal stripped executable without test code < 8KB
 
 ## Requirements
 - riscv32/riscv64 GNU toolchain for building (depending on target) 
