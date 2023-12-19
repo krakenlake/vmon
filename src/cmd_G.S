@@ -16,10 +16,9 @@ cmd_G:
     jal     get_hex_addr            # read start addr from text buffer
     bnez    a2, cmd_G_error         # abort command if not found
     mv      a0, a1
-    jal     print_hex_addr
+    jal     print_hex
     # TODO: what about stack?
-#    jalr    a1                      # execute jump
-    jalr    ra, a0, 0
+    jalr    ra, a1, 0
     j       start                   # start over if the call returns
 cmd_G_error:
     la      a0, error_no_addr

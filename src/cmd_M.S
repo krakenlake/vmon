@@ -33,14 +33,14 @@ cmd_M_next_line:
     la      a0, string_line_prefix_M
     jal     print_string
     mv      a0, s5
-    jal     print_hex_addr
+    jal     print_hex
     # output hex bytes 
     addi    s6, s5, 8               # set end addr for output line
  cmd_M_next_byte:
     beq     s5, s6, cmd_M_print_ascii  
     li      t0, ' '
     sb      t0, 0(s1)               # print to UART 
-    lbu      a0, 0(s5)              # get byte from memory address
+    lbu     a0, 0(s5)               # get byte from memory address
     jal     print_hex_byte
     addi    s5, s5, 1
     j       cmd_M_next_byte
@@ -60,9 +60,6 @@ cmd_M_ascii_done:
     li      t0, ASCII_NEWLINE
     sb      t0, 0(s1)               # print to UART
     j       cmd_M_next_line
-cmd_M_error:
-#    la      a0, error_no_addr
-#    jal     ra, print_string
 cmd_M_done:
     la      a0, last_address 
     SAVE_X  s5, 0(a0)

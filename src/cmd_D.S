@@ -34,21 +34,26 @@ cmd_D_next_instruction:
     jal     print_string
     # print memory address
     mv      a0, s5                  # print current address
-    jal     print_hex_addr
+    jal     print_hex
     la      a0, string_asm_sep1
     jal     print_string
-    # print word at memory address as hex
+    # print word at this memory address
+    lbu     a0, 3(s5)
+    jal     print_hex_byte
+    lbu     a0, 2(s5)
+    jal     print_hex_byte
+    lbu     a0, 1(s5)
+    jal     print_hex_byte
+    lbu     a0, 0(s5)
+    jal     print_hex_byte
+    la      a0, string_asm_sep2     
+    jal     print_string
+    # disassemble this word
 #if XLEN >= 64
     lwu     a0, 0(s5)               # load instruction word from addr
 #else
     lw      a0, 0(s5)               # load instruction word from addr
 #endif
-    mv      s2, a0                  # save for later
-    jal     print_hex_word
-    la      a0, string_asm_sep2     
-    jal     print_string
-    # disassemble this word
-    mv      a0, s2
     jal     decode_opcode
     beqz    a1, cmd_D_opcode_unknown
     jal     print_instruction
@@ -58,7 +63,7 @@ cmd_D_opcode_unknown:
     jal     print_string
     j       cmd_D_advance
 cmd_D_advance:
-    # TODO: advance only 2 bytes if compressed opcode
+    # TODO: advance only 2 bytes if RVC opcode
     addi    s5, s5, 4               # point to next instruction
     bgt     s5, s7, cmd_D_done
     li      t0, ASCII_NEWLINE

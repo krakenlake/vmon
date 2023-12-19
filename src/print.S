@@ -1,8 +1,8 @@
 #include "vmon/config.h"
 
-.global print_hex_prefix
-.global print_hex_addr
-.global print_hex_word
+
+.global print_hex
+.global print_hex_raw
 .global print_hex_byte
 .global print_ascii
 .global print_string
@@ -13,81 +13,64 @@
 
 .text
 
-print_hex_prefix:
-    # output prefix
+
+print_hex:
+    # in: print value in a0 in hex with "0x" prefix
     li      t1, '0'
     sb      t1, 0(s1)               # print to UART
     li      t1, 'x'
     sb      t1, 0(s1)               # print to UART
-    ret
-
-print_hex_addr:
-    # print addr passed in a0 in hex
-    addi    sp, sp, -(XLEN_BYTES*2)             
+print_hex_raw:
+    # in: print value in a0 in hex
+    # no trailing zeroes, no prefix
+    addi    sp, sp, -(XLEN_BYTES*1)             
     SAVE_X  ra, 0(sp)
-    SAVE_X  a0, (XLEN_BYTES*1)(sp)
-    # output prefix
-	jal     print_hex_prefix
-    # split 64 bit into 32-bit words
-    srli    a0, a0, 16
-    srli    a0, a0, 16
-#if XLEN >= 64
-    jal     print_hex_word
-#endif
-    LOAD_X  a0, (XLEN_BYTES*1)(sp)
-    jal     print_hex_word
-    LOAD_X  ra, 0(sp)             
-    addi    sp, sp, (XLEN_BYTES*2)
-    ret
 
+    # terminate buffer at the end
+    # TODO: do buffer termination only once
+    la      t2, decbuf
+    addi    t2, t2, (DECBUFFER_SIZE-1)
+    sb      zero, 0(t2)
+    # print to output buffer backwards
+    li      t3, 9
+print_hex_new_next_nibble:
+    addi    t2, t2, -1
+    andi    t0, a0, 0x0f
+    # digit < 10?
+    ble     t0, t3, print_hex_new_decimal
+    addi    t0, t0, 39
+print_hex_new_decimal:    
+    addi    t0, t0, 48
+    sb      t0, 0(t2)                       # to buffer
+    srli    a0, a0, 4                       # next nibble
+    bnez    a0, print_hex_new_next_nibble   # only if more to come
+    # print buffer
+    mv      a0, t2
+    jal     print_string
 
-print_hex_word:
-    # in: word in a0
-    # out: word in a0
-    addi    sp, sp, -(XLEN_BYTES*2)           
-    SAVE_X  ra, 0(sp)
-    SAVE_X  s2, (XLEN_BYTES*1)(sp)
-    li      t0, 0xffffffff
-    and     s2, a0, t0              # save lower 32 bits
-    srli    a0, s2, 24
-    jal     print_hex_byte
-    srli    a0, s2, 16
-    andi    a0, a0, 0xff
-    jal     print_hex_byte
-    srli    a0, s2, 8
-    andi    a0, a0, 0xff
-    jal     print_hex_byte
-    andi    a0, s2, 0xff
-    jal     print_hex_byte
     LOAD_X  ra, 0(sp)             
-    LOAD_X  s2, (XLEN_BYTES*1)(sp)               
-    addi    sp, sp, (XLEN_BYTES*2)
+    addi    sp, sp, (XLEN_BYTES*1)
     ret
 
 
 print_hex_byte:
-    # print byte passed in a0 in hex
-    mv      a1, a0                  # duplicate a0 for later
-    li      a2, 10
-    # left nibble
-    and     a0, a0, 0x000000f0
-    srli    a0, a0, 4
-    blt     a0, a2, print_hex_byte_is_digit
-    add     a0, a0, 7+32           
-print_hex_byte_is_digit:
-    add     a0, a0, 0x30           
-    sb      a0, 0(s1)               # print to UART
-    # right nibble
-    and     a0, a1, 0x0000000f
-    blt     a0, a2, print_hex_byte_is_digit2
-    add     a0, a0, 7+32           
-print_hex_byte_is_digit2:
-    add     a0, a0, 0x30           
-    sb      a0, 0(s1)               # print to UART
+    # print a 2-digit hex value (with leading zero for 1-digit values)
+    # in: byte value in a0
+    addi    sp, sp, -(XLEN_BYTES*1)             
+    SAVE_X  ra, 0(sp)
+    li      t0, 15
+    bgt     a0, t0, print_hex_byte_two_digits
+    # print a leading zero if necessary
+    li      t0, '0'
+    sb      t0, 0(s1)               # print to UART 
+print_hex_byte_two_digits:
+    jal     print_hex_raw
+    LOAD_X  ra, 0(sp)             
+    addi    sp, sp, (XLEN_BYTES*1)
     ret
 
 
-# print char in a0 to terminal
+# print char in a0 to terminal (if printable, else '.')
 print_ascii:
     mv      t1, a0
     # consider only chars from 0x20-0x7e as printable

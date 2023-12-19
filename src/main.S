@@ -62,16 +62,16 @@ start:
 
     # startup message
     la      a0, string_startup
-    jal     ra, print_string
+    jal     print_string
 
     # main loop
 prompt:
     la      a0, string_prompt
-    jal     ra, print_string
+    jal     print_string
     # reset text buffer boundaries in s2, s3
     la      s2, buffer              # s2:= buffer start
     mv      s3, s2
-    jal     ra, clear_buffer
+    jal     clear_buffer
 
 get_char:
     # wait for key pressed

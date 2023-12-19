@@ -111,7 +111,7 @@ decode_U_type:
     jal     print_string  
     # extract imm
     srli    a0, s2, 12 
-    jal     print_hex_addr
+    jal     print_hex
     
     LOAD_X  ra, 0(sp)               
     LOAD_X  s2, (XLEN_BYTES*1)(sp)               
@@ -158,7 +158,7 @@ decode_JAL:
     or      a1, a0, a1 
     # add relative immediate to instruction address
     add     a0, s5, a1
-    jal     print_hex_addr
+    jal     print_hex
 
     LOAD_X  ra, 0(sp)               
     LOAD_X  s2, (XLEN_BYTES*1)(sp)               
@@ -262,7 +262,7 @@ decode_I_type:
     srai    a0, s2, 20
 #endif
     # TODO: print decimal?
-    jal     print_hex_word
+    jal     print_hex
     
     LOAD_X  ra, 0(sp)               
     LOAD_X  s2, (XLEN_BYTES*1)(sp)               
@@ -302,7 +302,7 @@ decode_S_type:
     and     t0, t0, t1
     or      a0, a0, t0 
     # TODO: print nicer
-    jal     print_hex_word
+    jal     print_hex
     li      t0, '('
     sb      t0, 0(s1)
     # extract rs1 
@@ -366,7 +366,7 @@ decode_B_type:
     # add relative immediate to instruction address
     add     a0, s5, a0
     # print absolute target address
-    jal     print_hex_addr
+    jal     print_hex
     
     # TODO: show relative value as well in decimal?
     
@@ -463,13 +463,11 @@ decode_CSR:
     # comma
     la      a0, string_asm_sep3
     jal     print_string  
-    # 0x
-    jal     print_hex_prefix
     # extract csr
     mv      a0, s2
     jal     insn_get_csr
     # TODO: print decimal
-    jal     print_hex_word
+    jal     print_hex
     # comma
     la      a0, string_asm_sep3
     jal     print_string
@@ -497,23 +495,19 @@ decode_CSRI:
     # comma
     la      a0, string_asm_sep3
     jal     print_string  
-    # 0x
-    jal     print_hex_prefix
     # extract csr
     mv      a0, s2
     jal     insn_get_csr
     # TODO: print decimal
-    jal     print_hex_word
+    jal     print_hex
     # comma
     la      a0, string_asm_sep3
     jal     print_string
-    # 0x
-    jal     print_hex_prefix
     # extract uimm[4:0] 
     mv      a0, s2
     jal     insn_get_rs1
     mv      a0, a1
-    jal     print_hex_byte
+    jal     print_hex
     
     LOAD_X  ra, 0(sp)               
     LOAD_X  s2, (XLEN_BYTES*1)(sp)               
