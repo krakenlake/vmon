@@ -7,12 +7,18 @@
 .global print_ascii
 .global print_string
 .global print_decimal
-.global print_star
+.global print_comma
 
 #define OUTBUFFER_SIZE      32
 
 .text
 
+print_comma:
+    li      t1, ','
+    sb      t1, 0(s1)               # print to UART
+    li      t1, ' '
+    sb      t1, 0(s1)               # print to UART
+    ret
 
 print_hex:
     # in: print value in a0 in hex with "0x" prefix
