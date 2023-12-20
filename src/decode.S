@@ -43,15 +43,6 @@ insn_get_funct7:
     ret
 
 
-insn_get_rs1:
-	# in: instruction word in a0
-	# out: instruction word in a0
-	# out: rs1 register number in a1
-    srli    a1, a0, 15
-    and     a1, a1, 0b11111
-    ret
-
-
 insn_get_rs2:
 	# in: instruction word in a0
 	# out: instruction word in a0
@@ -82,12 +73,9 @@ decode_B_type:
     addi    sp, sp, -(XLEN_BYTES*2)              
     SAVE_X  ra, 0(sp)
     SAVE_X  s2, (XLEN_BYTES*1)(sp)
-    mv      s2, a0
     
-    # extract rs1 
-    jal     ra, insn_get_rs1
-    mv      a0, a1
-    jal     print_register_name
+    mv      s2, a0   
+    jal     print_rs1
     la      a0, string_asm_sep3
     jal     print_string
     # extract rs2 
@@ -137,14 +125,11 @@ decode_I_type:
     addi    sp, sp, -(XLEN_BYTES*2)              
     SAVE_X  ra, 0(sp)
     SAVE_X  s2, (XLEN_BYTES*1)(sp)   
-    mv      s2, a0
     
+    mv      s2, a0   
     jal     print_rd
-    # extract rs1 
     mv      a0, s2
-    jal     insn_get_rs1
-    mv      a0, a1
-    jal     print_register_name
+    jal     print_rs1
     la      a0, string_asm_sep3
     jal     print_string
     # inst[30:20] -> imm[10:0]
@@ -168,14 +153,11 @@ decode_I_type_shift:
     addi    sp, sp, -(XLEN_BYTES*2)              
     SAVE_X  ra, 0(sp)
     SAVE_X  s2, (XLEN_BYTES*1)(sp)   
-    mv      s2, a0
     
+    mv      s2, a0
     jal     print_rd
-    # extract rs1 
     mv      a0, s2
-    jal     insn_get_rs1
-    mv      a0, a1
-    jal     print_register_name
+    jal     print_rs1
     la      a0, string_asm_sep3
     jal     print_string
     # inst[24:20] -> imm[5:0]
@@ -198,14 +180,11 @@ decode_R_type:
     addi    sp, sp, -(XLEN_BYTES*2)              
     SAVE_X  ra, 0(sp)
     SAVE_X  s2, (XLEN_BYTES*1)(sp) 
-    mv      s2, a0
-    
+
+    mv      s2, a0   
     jal     print_rd
-    # extract rs1 
     mv      a0, s2
-    jal     insn_get_rs1
-    mv      a0, a1
-    jal     print_register_name
+    jal     print_rs1
     la      a0, string_asm_sep3
     jal     print_string
     # extract rs2 
@@ -225,8 +204,8 @@ decode_S_type:
     addi    sp, sp, -(XLEN_BYTES*2)             
     SAVE_X  ra, 0(sp)
     SAVE_X  s2, (XLEN_BYTES*1)(sp)    
+ 
     mv      s2, a0
-
     # extract rs2 
     jal     ra, insn_get_rs2
     mv      a0, a1
@@ -256,9 +235,7 @@ decode_S_type:
     sb      t0, 0(s1)
     # extract rs1 
     mv      a0, s2
-    jal     insn_get_rs1
-    mv      a0, a1
-    jal     print_register_name
+    jal     print_rs1
     li      t0, ')'
     sb      t0, 0(s1)
     
@@ -273,8 +250,8 @@ decode_U_type:
     addi    sp, sp, -(XLEN_BYTES*2)              
     SAVE_X  ra, 0(sp)
     SAVE_X  s2, (XLEN_BYTES*1)(sp)  
-    mv      s2, a0
     
+    mv      s2, a0    
     jal     print_rd
     # extract imm
     srli    a0, s2, 12 
@@ -292,9 +269,8 @@ decode_JAL:
     addi    sp, sp, -(XLEN_BYTES*2)             
     SAVE_X  ra, 0(sp)
     SAVE_X  s2, (XLEN_BYTES*1)(sp)
-    mv      s2, a0
     
-    # extract rd
+    mv      s2, a0
     jal     print_rd  
     # inst[30:21] -> imm[10:1]
     srli    a0, s2, 20
@@ -335,8 +311,8 @@ decode_JALR:
     addi    sp, sp, -(XLEN_BYTES*2)             
     SAVE_X  ra, 0(sp)
     SAVE_X  s2, (XLEN_BYTES*1)(sp)
-    mv      s2, a0
     
+    mv      s2, a0
     jal     print_rd
     # print offset
 #if XLEN >=64
@@ -350,9 +326,7 @@ decode_JALR:
     li      t0, '('
     sb      t0, 0(s1)
     mv      a0, s2
-    jal     insn_get_rs1
-    mv      a0, a1
-    jal     print_register_name
+    jal     print_rs1
     li      t0, ')'
     sb      t0, 0(s1)
 
@@ -376,17 +350,15 @@ decode_LRSC:
     addi    sp, sp, -(XLEN_BYTES*2)              
     SAVE_X  ra, 0(sp)
     SAVE_X  s2, (XLEN_BYTES*1)(sp)  
-    mv      s2, a0
 
+    mv      s2, a0
     jal     print_rd
     # 
     li      t0, '('
     sb      t0, 0(s1)
     # print addr 
     mv      a0, s2
-    jal     insn_get_rs1
-    mv      a0, a1
-    jal     print_register_name
+    jal     print_rs1
     #
     li      t0, ')'
     sb      t0, 0(s1)
@@ -402,8 +374,8 @@ decode_AMO:
     addi    sp, sp, -(XLEN_BYTES*2)              
     SAVE_X  ra, 0(sp)
     SAVE_X  s2, (XLEN_BYTES*1)(sp)  
-    mv      s2, a0
     
+    mv      s2, a0   
     jal     print_rd
     # print rs2 = src
     mv      a0, s2
@@ -418,9 +390,7 @@ decode_AMO:
     sb      t0, 0(s1)
     # print rs1 = addr
     mv      a0, s2
-    jal     insn_get_rs1
-    mv      a0, a1
-    jal     print_register_name
+    jal     print_rs1
     #
     li      t0, ')'
     sb      t0, 0(s1)
@@ -436,16 +406,13 @@ decode_CSR:
     addi    sp, sp, -(XLEN_BYTES*2)              
     SAVE_X  ra, 0(sp)
     SAVE_X  s2, (XLEN_BYTES*1)(sp) 
-    mv      s2, a0
     
+    mv      s2, a0
     jal     print_rd
     mv      a0, s2
     jal     print_csr
-    # extract rs1
     mv      a0, s2
-    jal     insn_get_rs1
-    mv      a0, a1 
-    jal     print_register_name
+    jal     print_rs1
     
     LOAD_X  ra, 0(sp)               
     LOAD_X  s2, (XLEN_BYTES*1)(sp)               
@@ -458,15 +425,15 @@ decode_CSRI:
     addi    sp, sp, -(XLEN_BYTES*2)              
     SAVE_X  ra, 0(sp)
     SAVE_X  s2, (XLEN_BYTES*1)(sp)
-    mv      s2, a0
 
+    mv      s2, a0
     jal     print_rd
     mv      a0, s2
     jal     print_csr
     # extract uimm[4:0] 
     mv      a0, s2
-    jal     insn_get_rs1
-    mv      a0, a1
+    srli    a0, a0, 15
+    and     a0, a0, 0b11111
     jal     print_decimal
     
     LOAD_X  ra, 0(sp)               
@@ -493,6 +460,20 @@ print_rd:
     ret
 
 
+print_rs1:
+	# in: instruction word in a0
+    addi    sp, sp, -(XLEN_BYTES*1)              
+    SAVE_X  ra, 0(sp) 
+
+    srli    a0, a0, 15
+    and     a0, a0, 0b11111
+    jal     print_register_name
+
+    LOAD_X  ra, 0(sp)               
+    addi    sp, sp, (XLEN_BYTES*1)
+    ret
+
+
 print_csr:
 	# in: instruction word in a0
     addi    sp, sp, -(XLEN_BYTES*1)              
@@ -507,7 +488,6 @@ print_csr:
     LOAD_X  ra, 0(sp)               
     addi    sp, sp, (XLEN_BYTES*1)
     ret
-
 
 
 print_register_name:
@@ -594,9 +574,9 @@ print_instruction:
     SAVE_X  ra, 0(sp)
     SAVE_X  s2, (XLEN_BYTES*1)(sp)
     SAVE_X  s3, (XLEN_BYTES*2)(sp)
-    mv      s2, a1                  # save for later
-    mv      s3, a0                  # save for later
     
+    mv      s2, a1                  # save for later
+    mv      s3, a0                  # save for later    
     mv      a0, a2
     jal     print_string            # print opcode
 #ifdef ENABLE_RVA
