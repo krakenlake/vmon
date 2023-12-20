@@ -56,7 +56,7 @@ insn_get_opcode:
     andi    a1, a0, 0x7f
     ret
 
-
+/*
 insn_get_rd:
 	# in: instruction word in a0
 	# out: instruction word in a0
@@ -64,7 +64,7 @@ insn_get_rd:
     srli    a0, a0, 7
     and     a0, a0, 0b11111
     ret
-
+*/
 
 insn_get_rs1:
 	# in: instruction word in a0
