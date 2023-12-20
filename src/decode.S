@@ -4,13 +4,14 @@
 
 .global print_instruction
 .global decode_opcode
+
 .global decode_B_type
 .global decode_I_type
 .global decode_I_type_shift
-.global decode_J_type
 .global decode_R_type
 .global decode_S_type
 .global decode_U_type
+
 .global decode_JAL
 .global decode_JALR
 .global decode_CSR
@@ -56,15 +57,6 @@ insn_get_opcode:
     andi    a1, a0, 0x7f
     ret
 
-/*
-insn_get_rd:
-	# in: instruction word in a0
-	# out: instruction word in a0
-	# out: rd register number in a1
-    srli    a0, a0, 7
-    and     a0, a0, 0b11111
-    ret
-*/
 
 insn_get_rs1:
 	# in: instruction word in a0
@@ -97,6 +89,198 @@ insn_get_aqrl:
     srli    a1, a1, 25
     ret
 #endif
+
+
+decode_B_type:
+    # in: instruction word in a0
+    # in: current instruction address in s5 (global)
+    addi    sp, sp, -(XLEN_BYTES*2)              
+    SAVE_X  ra, 0(sp)
+    SAVE_X  s2, (XLEN_BYTES*1)(sp)
+    mv      s2, a0
+    
+    # extract rs1 
+    jal     ra, insn_get_rs1
+    mv      a0, a1
+    jal     print_register_name
+    la      a0, string_asm_sep3
+    jal     print_string
+    # extract rs2 
+    mv      a0, s2
+    jal     insn_get_rs2
+    mv      a0, a1
+    jal     print_register_name
+    la      a0, string_asm_sep3
+    jal     print_string
+    # imm[0] := 0
+    # inst[11:8] -> imm[4:1] 
+    srli    a0, s2, 7
+    andi    a0, a0, 0b11110
+    # inst[30:25] -> imm[10:5]
+    srli    t0, s2, 20
+    li      t1, 0b11111100000
+    and     t0, t0, t1
+    or      a0, a0, t0 
+    # inst[7] -> imm[11]
+    and     t0, s2, 0b10000000
+    slli    t0, t0, 4
+    or      a0, a0, t0 
+    # inst[31] -> imm[63:12]
+#if XLEN >=64
+    slli    t0, s2, 32                      # sign-extend to 64 bits
+    srai    t0, t0, 32+19
+#else
+    srai    t0, s2, 19
+#endif
+    li      t1, 0xfffffffffffff000          
+    and     t0, t0, t1
+    or      a0, a0, t0 
+    # add relative immediate to instruction address
+    add     a0, s5, a0
+    # print absolute target address
+    jal     print_hex
+    
+    LOAD_X  ra, 0(sp)               
+    LOAD_X  s2, (XLEN_BYTES*1)(sp)               
+    addi    sp, sp, (XLEN_BYTES*2)
+    ret
+
+
+
+decode_I_type:
+    # in: instruction word in a0
+    addi    sp, sp, -(XLEN_BYTES*2)              
+    SAVE_X  ra, 0(sp)
+    SAVE_X  s2, (XLEN_BYTES*1)(sp)   
+    mv      s2, a0
+    
+    jal     print_rd
+    # extract rs1 
+    mv      a0, s2
+    jal     insn_get_rs1
+    mv      a0, a1
+    jal     print_register_name
+    la      a0, string_asm_sep3
+    jal     print_string
+    # inst[30:20] -> imm[10:0]
+    # inst[31] -> imm[63:11]
+#if XLEN >=64
+    sext.w  a0, s2              # sign-extend to 64 bits
+    srai    a0, a0, 20
+#else
+    srai    a0, s2, 20
+#endif
+    jal     print_decimal
+    
+    LOAD_X  ra, 0(sp)               
+    LOAD_X  s2, (XLEN_BYTES*1)(sp)               
+    addi    sp, sp, (XLEN_BYTES*2)
+    ret
+
+
+decode_I_type_shift:
+    # in: instruction word in a0
+    addi    sp, sp, -(XLEN_BYTES*2)              
+    SAVE_X  ra, 0(sp)
+    SAVE_X  s2, (XLEN_BYTES*1)(sp)   
+    mv      s2, a0
+    
+    jal     print_rd
+    # extract rs1 
+    mv      a0, s2
+    jal     insn_get_rs1
+    mv      a0, a1
+    jal     print_register_name
+    la      a0, string_asm_sep3
+    jal     print_string
+    # inst[24:20] -> imm[5:0]
+#if XLEN >=64
+    slli    a0, s2, 32+6                      # sign-extend to 64 bits
+    srli    a0, a0, 32+20+6
+#else
+    srli    a0, s2, 20+6
+#endif
+    jal     print_hex
+    
+    LOAD_X  ra, 0(sp)               
+    LOAD_X  s2, (XLEN_BYTES*1)(sp)               
+    addi    sp, sp, (XLEN_BYTES*2)
+    ret
+
+
+decode_R_type:
+    # in: instruction word in a0
+    addi    sp, sp, -(XLEN_BYTES*2)              
+    SAVE_X  ra, 0(sp)
+    SAVE_X  s2, (XLEN_BYTES*1)(sp) 
+    mv      s2, a0
+    
+    jal     print_rd
+    # extract rs1 
+    mv      a0, s2
+    jal     insn_get_rs1
+    mv      a0, a1
+    jal     print_register_name
+    la      a0, string_asm_sep3
+    jal     print_string
+    # extract rs2 
+    mv      a0, s2
+    jal     insn_get_rs2
+    mv      a0, a1
+    jal     print_register_name
+    
+    LOAD_X  ra, 0(sp)               
+    LOAD_X  s2, (XLEN_BYTES*1)(sp)               
+    addi    sp, sp, (XLEN_BYTES*2)
+    ret
+
+
+decode_S_type:
+    # in: instruction word in a0
+    addi    sp, sp, -(XLEN_BYTES*2)             
+    SAVE_X  ra, 0(sp)
+    SAVE_X  s2, (XLEN_BYTES*1)(sp)    
+    mv      s2, a0
+
+    # extract rs2 
+    jal     ra, insn_get_rs2
+    mv      a0, a1
+    jal     print_register_name
+    la      a0, string_asm_sep3
+    jal     print_string
+    # inst[11:7] -> imm[4:0]
+    srli    a0, s2, 7
+    andi    a0, a0, 0b11111 
+    # inst[30:25] -> imm[10:5]
+    srli    t0, s2, 20
+    li      t1, 0b11111100000
+    and     t0, t0, t1
+    or      a0, a0, t0 
+    # inst[31] -> imm[63:12]
+#if XLEN >=64
+    slli    t0, s2, 32                      # sign-extend to 64 bits
+    srai    t0, t0, 32+20
+#else
+    srai    t0, s2, 20
+#endif
+    li      t1, 0xfffffffffffff800          
+    and     t0, t0, t1
+    or      a0, a0, t0 
+    jal     print_decimal
+    li      t0, '('
+    sb      t0, 0(s1)
+    # extract rs1 
+    mv      a0, s2
+    jal     insn_get_rs1
+    mv      a0, a1
+    jal     print_register_name
+    li      t0, ')'
+    sb      t0, 0(s1)
+    
+    LOAD_X  ra, 0(sp)               
+    LOAD_X  s2, (XLEN_BYTES*1)(sp)               
+    addi    sp, sp, (XLEN_BYTES*2)
+    ret
 
 
 decode_U_type:
@@ -187,200 +371,6 @@ decode_JALR:
     li      t0, ')'
     sb      t0, 0(s1)
 
-    LOAD_X  ra, 0(sp)               
-    LOAD_X  s2, (XLEN_BYTES*1)(sp)               
-    addi    sp, sp, (XLEN_BYTES*2)
-    ret
-
-
-decode_R_type:
-    # in: instruction word in a0
-    addi    sp, sp, -(XLEN_BYTES*2)              
-    SAVE_X  ra, 0(sp)
-    SAVE_X  s2, (XLEN_BYTES*1)(sp) 
-    mv      s2, a0
-    
-    jal     print_rd
-    # extract rs1 
-    mv      a0, s2
-    jal     insn_get_rs1
-    mv      a0, a1
-    jal     print_register_name
-    la      a0, string_asm_sep3
-    jal     print_string
-    # extract rs2 
-    mv      a0, s2
-    jal     insn_get_rs2
-    mv      a0, a1
-    jal     print_register_name
-    
-    LOAD_X  ra, 0(sp)               
-    LOAD_X  s2, (XLEN_BYTES*1)(sp)               
-    addi    sp, sp, (XLEN_BYTES*2)
-    ret
-
-
-decode_I_type:
-    # in: instruction word in a0
-    addi    sp, sp, -(XLEN_BYTES*2)              
-    SAVE_X  ra, 0(sp)
-    SAVE_X  s2, (XLEN_BYTES*1)(sp)   
-    mv      s2, a0
-    
-    jal     print_rd
-    # extract rs1 
-    mv      a0, s2
-    jal     insn_get_rs1
-    mv      a0, a1
-    jal     print_register_name
-    la      a0, string_asm_sep3
-    jal     print_string
-    # inst[30:20] -> imm[10:0]
-    # inst[31] -> imm[63:11]
-#if XLEN >=64
-    sext.w  a0, s2              # sign-extend to 64 bits
-    srai    a0, a0, 20
-#else
-    srai    a0, s2, 20
-#endif
-    jal     print_decimal
-    
-    LOAD_X  ra, 0(sp)               
-    LOAD_X  s2, (XLEN_BYTES*1)(sp)               
-    addi    sp, sp, (XLEN_BYTES*2)
-    ret
-
-
-decode_I_type_shift:
-    # in: instruction word in a0
-    addi    sp, sp, -(XLEN_BYTES*2)              
-    SAVE_X  ra, 0(sp)
-    SAVE_X  s2, (XLEN_BYTES*1)(sp)   
-    mv      s2, a0
-    
-    jal     print_rd
-    # extract rs1 
-    mv      a0, s2
-    jal     insn_get_rs1
-    mv      a0, a1
-    jal     print_register_name
-    la      a0, string_asm_sep3
-    jal     print_string
-    # inst[24:20] -> imm[5:0]
-#if XLEN >=64
-    slli    a0, s2, 32+6                      # sign-extend to 64 bits
-    srli    a0, a0, 32+20+6
-#else
-    srli    a0, s2, 20+6
-#endif
-    jal     print_hex
-    
-    LOAD_X  ra, 0(sp)               
-    LOAD_X  s2, (XLEN_BYTES*1)(sp)               
-    addi    sp, sp, (XLEN_BYTES*2)
-    ret
-
-
-
-decode_S_type:
-    # in: instruction word in a0
-    addi    sp, sp, -(XLEN_BYTES*2)             
-    SAVE_X  ra, 0(sp)
-    SAVE_X  s2, (XLEN_BYTES*1)(sp)    
-    mv      s2, a0
-
-    # extract rs2 
-    jal     ra, insn_get_rs2
-    mv      a0, a1
-    jal     print_register_name
-    la      a0, string_asm_sep3
-    jal     print_string
-    # inst[11:7] -> imm[4:0]
-    srli    a0, s2, 7
-    andi    a0, a0, 0b11111 
-    # inst[30:25] -> imm[10:5]
-    srli    t0, s2, 20
-    li      t1, 0b11111100000
-    and     t0, t0, t1
-    or      a0, a0, t0 
-    # inst[31] -> imm[63:12]
-#if XLEN >=64
-    slli    t0, s2, 32                      # sign-extend to 64 bits
-    srai    t0, t0, 32+20
-#else
-    srai    t0, s2, 20
-#endif
-    li      t1, 0xfffffffffffff800          
-    and     t0, t0, t1
-    or      a0, a0, t0 
-    jal     print_decimal
-    li      t0, '('
-    sb      t0, 0(s1)
-    # extract rs1 
-    mv      a0, s2
-    jal     insn_get_rs1
-    mv      a0, a1
-    jal     print_register_name
-    li      t0, ')'
-    sb      t0, 0(s1)
-    
-    LOAD_X  ra, 0(sp)               
-    LOAD_X  s2, (XLEN_BYTES*1)(sp)               
-    addi    sp, sp, (XLEN_BYTES*2)
-    ret
-
-
-decode_B_type:
-    # in: instruction word in a0
-    # in: current instruction address in s5 (global)
-    addi    sp, sp, -(XLEN_BYTES*2)              
-    SAVE_X  ra, 0(sp)
-    SAVE_X  s2, (XLEN_BYTES*1)(sp)
-    mv      s2, a0
-    
-    # extract rs1 
-    jal     ra, insn_get_rs1
-    mv      a0, a1
-    jal     print_register_name
-    la      a0, string_asm_sep3
-    jal     print_string
-    # extract rs2 
-    mv      a0, s2
-    jal     insn_get_rs2
-    mv      a0, a1
-    jal     print_register_name
-    la      a0, string_asm_sep3
-    jal     print_string
-    # imm[0] := 0
-    # inst[11:8] -> imm[4:1] 
-    srli    a0, s2, 7
-    andi    a0, a0, 0b11110
-    # inst[30:25] -> imm[10:5]
-    srli    t0, s2, 20
-    li      t1, 0b11111100000
-    and     t0, t0, t1
-    or      a0, a0, t0 
-    # inst[7] -> imm[11]
-    and     t0, s2, 0b10000000
-    slli    t0, t0, 4
-    or      a0, a0, t0 
-    # inst[31] -> imm[63:12]
-#if XLEN >=64
-    slli    t0, s2, 32                      # sign-extend to 64 bits
-    srai    t0, t0, 32+19
-#else
-    srai    t0, s2, 19
-#endif
-    li      t1, 0xfffffffffffff000          
-    and     t0, t0, t1
-    or      a0, a0, t0 
-    # add relative immediate to instruction address
-    add     a0, s5, a0
-    # print absolute target address
-    jal     print_hex
-    
-    # TODO: show relative value as well in decimal?
-    
     LOAD_X  ra, 0(sp)               
     LOAD_X  s2, (XLEN_BYTES*1)(sp)               
     addi    sp, sp, (XLEN_BYTES*2)
