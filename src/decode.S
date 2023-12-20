@@ -28,14 +28,6 @@
 .text
 
 
-insn_get_csr:
-    # in: instruction word in a0
-    # out: csr value in a0
-    # inst[31:20] -> imm[10:0]
-    srai    a0, a0, 20
-    ret
-
-
 insn_get_funct3:
     # in: instruction word in a0
     # out: funct3 value in a1
@@ -48,13 +40,6 @@ insn_get_funct7:
     # in: instruction word in a0
     # out: funct7 value in a1
     srli    a1, a0, 25 
-    ret
-
-
-insn_get_opcode:
-	# in: instruction word in a0
-	# out: opcode value in a1
-    andi    a1, a0, 0x7f
     ret
 
 
@@ -454,13 +439,8 @@ decode_CSR:
     mv      s2, a0
     
     jal     print_rd
-    # extract csr
     mv      a0, s2
-    jal     insn_get_csr
-    jal     print_hex
-    # comma
-    la      a0, string_asm_sep3
-    jal     print_string
+    jal     print_csr
     # extract rs1
     mv      a0, s2
     jal     insn_get_rs1
@@ -481,13 +461,8 @@ decode_CSRI:
     mv      s2, a0
 
     jal     print_rd
-    # extract csr
     mv      a0, s2
-    jal     insn_get_csr
-    jal     print_hex
-    # comma
-    la      a0, string_asm_sep3
-    jal     print_string
+    jal     print_csr
     # extract uimm[4:0] 
     mv      a0, s2
     jal     insn_get_rs1
@@ -516,6 +491,23 @@ print_rd:
     LOAD_X  ra, 0(sp)               
     addi    sp, sp, (XLEN_BYTES*1)
     ret
+
+
+print_csr:
+	# in: instruction word in a0
+    addi    sp, sp, -(XLEN_BYTES*1)              
+    SAVE_X  ra, 0(sp) 
+
+    srai    a0, a0, 20
+    jal     print_hex
+    # comma
+    la      a0, string_asm_sep3
+    jal     print_string
+
+    LOAD_X  ra, 0(sp)               
+    addi    sp, sp, (XLEN_BYTES*1)
+    ret
+
 
 
 print_register_name:
