@@ -229,7 +229,7 @@ encoding_table:
 	.word MASK_SRAW, MATCH_SRAW, decode_R_type, string_OP_SRAW
 	.word MASK_LD, MATCH_LD, decode_I_type, string_OP_LD
 	.word MASK_LWU, MATCH_LWU, decode_I_type, string_OP_LWU
-	.word MASK_SD, MATCH_SD, decode_I_type, string_OP_SD
+	.word MASK_SD, MATCH_SD, decode_S_type, string_OP_SD
 	.word MASK_FENCE, MATCH_FENCE, decode_FENCE, string_OP_FENCE
 #endif
 
