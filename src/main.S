@@ -116,7 +116,7 @@ get_command:
     # advance to next non-whitespace char in buffer
     # TODO: should be an error if there is not at least 1 space
     mv      a0, s4
-    jal     ra, skip_whitespace
+    jal     skip_whitespace
     mv      s4, a0
     # take first non-whitespace char in line as command
     lb      t1, 0(s4)               # get byte from buffer
@@ -159,7 +159,7 @@ get_command:
 
 unknown_command:
     la      a0, error_unknown_command
-    jal     ra, print_string
+    jal     print_string
     j       prompt
     # end of main loop
 
