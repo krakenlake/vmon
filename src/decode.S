@@ -28,21 +28,6 @@
 .text
 
 
-insn_get_funct3:
-    # in: instruction word in a0
-    # out: funct3 value in a1
-    srli    a1, a0, 12 
-    andi    a1, a1, 0b111
-    ret
-
-
-insn_get_funct7:
-    # in: instruction word in a0
-    # out: funct7 value in a1
-    srli    a1, a0, 25 
-    ret
-
-
 #ifdef ENABLE_RVA
 insn_get_aqrl:
     # for RVA
@@ -627,7 +612,9 @@ print_AMO_postfix_done:
     ret
 #endif
 
+
 .data
+
 
 #ifdef ENABLE_RVA
 .align 4
