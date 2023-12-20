@@ -52,12 +52,10 @@ decode_B_type:
     
     mv      s2, a0   
     jal     print_rs1
-    la      a0, string_asm_sep3
-    jal     print_string
+    jal     print_comma
     mv      a0, s2
     jal     print_rs2
-    la      a0, string_asm_sep3
-    jal     print_string
+    jal     print_comma
     # imm[0] := 0
     # inst[11:8] -> imm[4:1] 
     srli    a0, s2, 7
@@ -103,8 +101,7 @@ decode_I_type:
     jal     print_rd
     mv      a0, s2
     jal     print_rs1
-    la      a0, string_asm_sep3
-    jal     print_string
+    jal     print_comma
     # inst[30:20] -> imm[10:0]
     # inst[31] -> imm[63:11]
 #if XLEN >=64
@@ -131,8 +128,7 @@ decode_I_type_shift:
     jal     print_rd
     mv      a0, s2
     jal     print_rs1
-    la      a0, string_asm_sep3
-    jal     print_string
+    jal     print_comma
     # inst[24:20] -> imm[5:0]
 #if XLEN >=64
     slli    a0, s2, 32+6                      # sign-extend to 64 bits
@@ -158,8 +154,7 @@ decode_R_type:
     jal     print_rd
     mv      a0, s2
     jal     print_rs1
-    la      a0, string_asm_sep3
-    jal     print_string
+    jal     print_comma
     mv      a0, s2
     jal     print_rs2
     
@@ -177,8 +172,7 @@ decode_S_type:
  
     mv      s2, a0
     jal     ra, print_rs2
-    la      a0, string_asm_sep3
-    jal     print_string
+    jal     print_comma
     # inst[11:7] -> imm[4:0]
     srli    a0, s2, 7
     andi    a0, a0, 0b11111 
@@ -346,9 +340,7 @@ decode_AMO:
     jal     print_rd
     mv      a0, s2
     jal     print_rs2
-    # comma
-    la      a0, string_asm_sep3
-    jal     print_string  
+    jal     print_comma  
     #
     li      t0, '('
     sb      t0, 0(s1)
@@ -415,9 +407,7 @@ print_rd:
     srli    a0, a0, 7
     andi    a0, a0, 0b11111
     jal     print_register_name
-    # comma
-    la      a0, string_asm_sep3
-    jal     print_string  
+    jal     print_comma
 
     LOAD_X  ra, 0(sp)               
     addi    sp, sp, (XLEN_BYTES*1)
@@ -459,9 +449,7 @@ print_csr:
 
     srai    a0, a0, 20
     jal     print_hex
-    # comma
-    la      a0, string_asm_sep3
-    jal     print_string
+    jal     print_comma
 
     LOAD_X  ra, 0(sp)               
     addi    sp, sp, (XLEN_BYTES*1)
