@@ -19,6 +19,7 @@
 .global string_asm_sep1
 .global string_asm_sep2
 .global string_asm_sep3
+.global string_asm_comment
 .global string_OP_UNKNOWN
 .global start_data
 .global start_bss
@@ -190,6 +191,7 @@ string_prompt:      .string "\n.";
 string_asm_sep1:    .string ":";
 string_asm_sep2:    .string "\t";
 string_asm_sep3:    .string ", ";
+string_asm_comment: .string "\t# ";
 
 .bss
 start_bss:

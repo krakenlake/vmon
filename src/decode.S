@@ -243,7 +243,7 @@ decode_I_type:
     mv      s2, a0
     
     # extract rd
-    jal     ra, print_rd_name
+    jal     print_rd_name
     # comma
     la      a0, string_asm_sep3
     jal     print_string
@@ -257,12 +257,19 @@ decode_I_type:
     # inst[30:20] -> imm[10:0]
     # inst[31] -> imm[63:11]
 #if XLEN >=64
-    slli    a0, s2, 32                      # sign-extend to 64 bits
-    srai    a0, a0, 32+20
+    sext.w  a0, s2              # sign-extend to 64 bits
+    srai    a0, a0, 20
 #else
+    mv      a0, s2
     srai    a0, s2, 20
 #endif
+    mv  s2, a0                  # save value for hex printing 
     jal     print_decimal
+
+    la      a0, string_asm_comment
+    jal     print_string
+    mv      a0, s2
+    jal     print_hex
     
     LOAD_X  ra, 0(sp)               
     LOAD_X  s2, (XLEN_BYTES*1)(sp)               
