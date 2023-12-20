@@ -106,11 +106,7 @@ decode_U_type:
     SAVE_X  s2, (XLEN_BYTES*1)(sp)  
     mv      s2, a0
     
-    # extract rd
-    jal     print_rd_name
-    # comma
-    la      a0, string_asm_sep3
-    jal     print_string  
+    jal     print_rd
     # extract imm
     srli    a0, s2, 12 
     jal     print_hex
@@ -130,10 +126,7 @@ decode_JAL:
     mv      s2, a0
     
     # extract rd
-    jal     print_rd_name  
-    # comma
-    la      a0, string_asm_sep3
-    jal     print_string 
+    jal     print_rd  
     # inst[30:21] -> imm[10:1]
     srli    a0, s2, 20
     andi    a0, a0, 0b11111111110    
@@ -175,11 +168,7 @@ decode_JALR:
     SAVE_X  s2, (XLEN_BYTES*1)(sp)
     mv      s2, a0
     
-    # extract rd
-    jal     print_rd_name
-    # comma
-    la      a0, string_asm_sep3
-    jal     print_string 
+    jal     print_rd
     # print offset
 #if XLEN >=64
     slli    a0, s2, 32                      # sign-extend to 64 bits
@@ -211,11 +200,7 @@ decode_R_type:
     SAVE_X  s2, (XLEN_BYTES*1)(sp) 
     mv      s2, a0
     
-    # extract rd
-    jal     print_rd_name
-    # comma
-    la      a0, string_asm_sep3
-    jal     print_string
+    jal     print_rd
     # extract rs1 
     mv      a0, s2
     jal     insn_get_rs1
@@ -242,11 +227,7 @@ decode_I_type:
     SAVE_X  s2, (XLEN_BYTES*1)(sp)   
     mv      s2, a0
     
-    # extract rd
-    jal     print_rd_name
-    # comma
-    la      a0, string_asm_sep3
-    jal     print_string
+    jal     print_rd
     # extract rs1 
     mv      a0, s2
     jal     insn_get_rs1
@@ -277,11 +258,7 @@ decode_I_type_shift:
     SAVE_X  s2, (XLEN_BYTES*1)(sp)   
     mv      s2, a0
     
-    # extract rd
-    jal     ra, print_rd_name
-    # comma
-    la      a0, string_asm_sep3
-    jal     print_string
+    jal     print_rd
     # extract rs1 
     mv      a0, s2
     jal     insn_get_rs1
@@ -426,10 +403,7 @@ decode_LRSC:
     SAVE_X  s2, (XLEN_BYTES*1)(sp)  
     mv      s2, a0
 
-    # print rd
-    jal     print_rd_name
-    la      a0, string_asm_sep3
-    jal     print_string 
+    jal     print_rd
     # 
     li      t0, '('
     sb      t0, 0(s1)
@@ -455,10 +429,7 @@ decode_AMO:
     SAVE_X  s2, (XLEN_BYTES*1)(sp)  
     mv      s2, a0
     
-    # print rd
-    jal     print_rd_name 
-    la      a0, string_asm_sep3
-    jal     print_string  
+    jal     print_rd
     # print rs2 = src
     mv      a0, s2
     jal     insn_get_rs2
@@ -492,11 +463,7 @@ decode_CSR:
     SAVE_X  s2, (XLEN_BYTES*1)(sp) 
     mv      s2, a0
     
-    # extract rd
-    jal     print_rd_name
-    # comma
-    la      a0, string_asm_sep3
-    jal     print_string  
+    jal     print_rd
     # extract csr
     mv      a0, s2
     jal     insn_get_csr
@@ -523,11 +490,7 @@ decode_CSRI:
     SAVE_X  s2, (XLEN_BYTES*1)(sp)
     mv      s2, a0
 
-    # extract rd
-    jal     print_rd_name
-    # comma
-    la      a0, string_asm_sep3
-    jal     print_string  
+    jal     print_rd
     # extract csr
     mv      a0, s2
     jal     insn_get_csr
@@ -547,13 +510,19 @@ decode_CSRI:
     ret
 
 
-print_rd_name:
+print_rd:
+	# in: instruction word in a0
     addi    sp, sp, -(XLEN_BYTES*1)              
-    SAVE_X  ra, 0(sp)
+    SAVE_X  ra, 0(sp) 
     
-    jal     insn_get_rd
+    # isolate rd from a0
+    srli    a0, a0, 7
+    andi    a0, a0, 0b11111
     jal     print_register_name
-    
+    # comma
+    la      a0, string_asm_sep3
+    jal     print_string  
+
     LOAD_X  ra, 0(sp)               
     addi    sp, sp, (XLEN_BYTES*1)
     ret
