@@ -212,7 +212,7 @@ encoding_table:
 .word MASK_JAL, MATCH_JAL, decode_JAL, string_OP_JAL
 .word MASK_JALR, MATCH_JALR, decode_JALR, string_OP_JALR
 .word MASK_LUI, MATCH_LUI, decode_U_type, string_OP_LUI
-.word MASK_AUIPC, MATCH_AUIPC, decode_I_type, string_OP_AUIPC
+.word MASK_AUIPC, MATCH_AUIPC, decode_U_type, string_OP_AUIPC
 .word MASK_ECALL, MATCH_ECALL, decode_ECALL, string_OP_ECALL
 .word MASK_EBREAK, MATCH_EBREAK, decode_EBREAK, string_OP_EBREAK
 
