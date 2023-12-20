@@ -6,6 +6,7 @@
 .global decode_opcode
 .global decode_B_type
 .global decode_I_type
+.global decode_I_type_shift
 .global decode_J_type
 .global decode_R_type
 .global decode_S_type
@@ -261,13 +262,47 @@ decode_I_type:
 #else
     srai    a0, s2, 20
 #endif
-    # TODO: print decimal?
+    jal     print_decimal
+    
+    LOAD_X  ra, 0(sp)               
+    LOAD_X  s2, (XLEN_BYTES*1)(sp)               
+    addi    sp, sp, (XLEN_BYTES*2)
+    ret
+
+
+decode_I_type_shift:
+    # in: instruction word in a0
+    addi    sp, sp, -(XLEN_BYTES*2)              
+    SAVE_X  ra, 0(sp)
+    SAVE_X  s2, (XLEN_BYTES*1)(sp)   
+    mv      s2, a0
+    
+    # extract rd
+    jal     ra, print_rd_name
+    # comma
+    la      a0, string_asm_sep3
+    jal     print_string
+    # extract rs1 
+    mv      a0, s2
+    jal     insn_get_rs1
+    mv      a0, a1
+    jal     print_register_name
+    la      a0, string_asm_sep3
+    jal     print_string
+    # inst[24:20] -> imm[5:0]
+#if XLEN >=64
+    slli    a0, s2, 32+6                      # sign-extend to 64 bits
+    srli    a0, a0, 32+20+6
+#else
+    srli    a0, s2, 20+6
+#endif
     jal     print_hex
     
     LOAD_X  ra, 0(sp)               
     LOAD_X  s2, (XLEN_BYTES*1)(sp)               
     addi    sp, sp, (XLEN_BYTES*2)
     ret
+
 
 
 decode_S_type:
@@ -466,7 +501,6 @@ decode_CSR:
     # extract csr
     mv      a0, s2
     jal     insn_get_csr
-    # TODO: print decimal
     jal     print_hex
     # comma
     la      a0, string_asm_sep3
