@@ -43,15 +43,6 @@ insn_get_funct7:
     ret
 
 
-insn_get_rs2:
-	# in: instruction word in a0
-	# out: instruction word in a0
-	# out: rs2 register number in a1
-    srli    a1, a0, 20
-    and     a1, a1, 0b11111
-    ret
-
-
 #ifdef ENABLE_RVA
 insn_get_aqrl:
     # for RVA
@@ -78,11 +69,8 @@ decode_B_type:
     jal     print_rs1
     la      a0, string_asm_sep3
     jal     print_string
-    # extract rs2 
     mv      a0, s2
-    jal     insn_get_rs2
-    mv      a0, a1
-    jal     print_register_name
+    jal     print_rs2
     la      a0, string_asm_sep3
     jal     print_string
     # imm[0] := 0
@@ -187,11 +175,8 @@ decode_R_type:
     jal     print_rs1
     la      a0, string_asm_sep3
     jal     print_string
-    # extract rs2 
     mv      a0, s2
-    jal     insn_get_rs2
-    mv      a0, a1
-    jal     print_register_name
+    jal     print_rs2
     
     LOAD_X  ra, 0(sp)               
     LOAD_X  s2, (XLEN_BYTES*1)(sp)               
@@ -206,10 +191,7 @@ decode_S_type:
     SAVE_X  s2, (XLEN_BYTES*1)(sp)    
  
     mv      s2, a0
-    # extract rs2 
-    jal     ra, insn_get_rs2
-    mv      a0, a1
-    jal     print_register_name
+    jal     ra, print_rs2
     la      a0, string_asm_sep3
     jal     print_string
     # inst[11:7] -> imm[4:0]
@@ -377,11 +359,8 @@ decode_AMO:
     
     mv      s2, a0   
     jal     print_rd
-    # print rs2 = src
     mv      a0, s2
-    jal     insn_get_rs2
-    mv      a0, a1
-    jal     print_register_name
+    jal     print_rs2
     # comma
     la      a0, string_asm_sep3
     jal     print_string  
@@ -466,6 +445,20 @@ print_rs1:
     SAVE_X  ra, 0(sp) 
 
     srli    a0, a0, 15
+    and     a0, a0, 0b11111
+    jal     print_register_name
+
+    LOAD_X  ra, 0(sp)               
+    addi    sp, sp, (XLEN_BYTES*1)
+    ret
+
+
+print_rs2:
+	# in: instruction word in a0
+    addi    sp, sp, -(XLEN_BYTES*1)              
+    SAVE_X  ra, 0(sp) 
+
+    srli    a0, a0, 20
     and     a0, a0, 0b11111
     jal     print_register_name
 
