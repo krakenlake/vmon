@@ -117,7 +117,6 @@ decode_U_type:
     LOAD_X  ra, 0(sp)               
     LOAD_X  s2, (XLEN_BYTES*1)(sp)               
     addi    sp, sp, (XLEN_BYTES*2)
-decode_EMPTY:
     ret
 
 
@@ -381,7 +380,7 @@ decode_FENCE:
 decode_ECALL:
 decode_EBREAK:
 decode_FENCE_I:
-    # in: instruction word in a0 
+decode_EMPTY:
     # do nothing
     ret
 

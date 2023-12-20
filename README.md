@@ -12,13 +12,13 @@ communication written in RISC-V assembly language.
 - runs in QEMU or on RISC-V hardware
 - runs bare-metal or can be called from outside
 - terminal I/O via UART
-- set of included commands configurable
-- executable can be build with or without RISC-V example code included
+- set of included commands configurable in build process
+- executable can be built with or without RISC-V example code included
 
 ## Requirements
 - riscv32/riscv64 GNU toolchain for building (depending on target) 
 - Make to build executables
-- QEMU or RISC-V hardware
+- QEMU or RISC-V hardware to run on
 
 ## Building
 - set up TARGET in Makefile 
