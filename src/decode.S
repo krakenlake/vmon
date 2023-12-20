@@ -260,16 +260,9 @@ decode_I_type:
     sext.w  a0, s2              # sign-extend to 64 bits
     srai    a0, a0, 20
 #else
-    mv      a0, s2
     srai    a0, s2, 20
 #endif
-    mv  s2, a0                  # save value for hex printing 
     jal     print_decimal
-
-    la      a0, string_asm_comment
-    jal     print_string
-    mv      a0, s2
-    jal     print_hex
     
     LOAD_X  ra, 0(sp)               
     LOAD_X  s2, (XLEN_BYTES*1)(sp)               
@@ -343,8 +336,7 @@ decode_S_type:
     li      t1, 0xfffffffffffff800          
     and     t0, t0, t1
     or      a0, a0, t0 
-    # TODO: print nicer
-    jal     print_hex
+    jal     print_decimal
     li      t0, '('
     sb      t0, 0(s1)
     # extract rs1 
@@ -539,7 +531,6 @@ decode_CSRI:
     # extract csr
     mv      a0, s2
     jal     insn_get_csr
-    # TODO: print decimal
     jal     print_hex
     # comma
     la      a0, string_asm_sep3
@@ -548,7 +539,7 @@ decode_CSRI:
     mv      a0, s2
     jal     insn_get_rs1
     mv      a0, a1
-    jal     print_hex
+    jal     print_decimal
     
     LOAD_X  ra, 0(sp)               
     LOAD_X  s2, (XLEN_BYTES*1)(sp)               
