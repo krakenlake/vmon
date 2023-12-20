@@ -32,12 +32,12 @@ print_hex_raw:
     addi    t2, t2, (OUTBUFFER_SIZE-1)
     sb      zero, 0(t2)
     # print to output buffer backwards
-    li      t3, 9
 print_hex_new_next_nibble:
-    addi    t2, t2, -1
+    addi    t2, t2, -1 
     andi    t0, a0, 0x0f
     # digit < 10?
-    ble     t0, t3, print_hex_new_decimal
+    sltiu   t3, t0, 10
+    bnez    t3, print_hex_new_decimal
     addi    t0, t0, 39
 print_hex_new_decimal:    
     addi    t0, t0, 48
