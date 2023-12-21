@@ -219,9 +219,9 @@ encoding_table:
 # RV64I
 #if XLEN >= 64
 	.word MASK_ADDIW, MATCH_ADDIW, decode_I_type, string_OP_ADDIW
-	.word MASK_SLLIW, MATCH_SLLIW, decode_R_type, string_OP_SLLIW
-	.word MASK_SRLIW, MATCH_SRLIW, decode_R_type, string_OP_SRLIW
-	.word MASK_SRAIW, MATCH_SRAIW, decode_R_type, string_OP_SRAIW
+	.word MASK_SLLIW, MATCH_SLLIW, decode_I_type_SHIFT, string_OP_SLLIW
+	.word MASK_SRLIW, MATCH_SRLIW, decode_I_type_SHIFT, string_OP_SRLIW
+	.word MASK_SRAIW, MATCH_SRAIW, decode_I_type_SHIFT, string_OP_SRAIW
 	.word MASK_ADDW, MATCH_ADDW, decode_R_type, string_OP_ADDW
 	.word MASK_SUBW, MATCH_SUBW, decode_R_type, string_OP_SUBW
 	.word MASK_SLLW, MATCH_SLLW, decode_R_type, string_OP_SLLW
