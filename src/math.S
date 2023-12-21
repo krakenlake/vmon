@@ -6,11 +6,12 @@
 .text
 
 divrem:
+	# Division without using M extension
+	# Thanks to Bruce Hoult!
 	# in: a0 = dividend
 	# in: a1 = divisor
 	# out: a0 = quotient 
 	# out: a1 = remainder
-	# Thanks to Bruce Hoult!
 
 	#define Q a0
 	#define R a1
@@ -37,3 +38,10 @@ divrem2:
 	srli	bit, bit, 1
 	bnez	bit, divrem1
 	ret
+
+	#undef Q
+	#undef R
+	#undef N
+	#undef D
+	#undef tmp
+	#undef bit
