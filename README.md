@@ -25,6 +25,7 @@ communication written in RISC-V assembly language.
 ## Building
 - set up TARGET in Makefile 
 - review config.h and define/undefine to taste
+- review src/include/vmon/UART.h for target UART settings
 - make
 
 ## Running
