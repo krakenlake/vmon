@@ -71,7 +71,7 @@ string_info_stackstart:
 string_info_stackend:
     .string "\nstack end addr: ";
 string_info_stacksize:
-    .string "\ncurrent stacksize: ";
+    .string "\nstack bytes free: ";
 string_info_testcode:
     .string "\ntestcode addr: ";
 
