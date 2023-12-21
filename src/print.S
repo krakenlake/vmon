@@ -106,6 +106,7 @@ print_string_done:
 
 #ifdef WITH_CMD_D
 
+
 # print 32-bit signed decimal in a0 to terminal
 print_decimal:
     addi    sp, sp, -(XLEN_BYTES*1)           
@@ -123,16 +124,14 @@ print_decimal:
     neg     a0, a0
 print_decimal_skip_invert:
     # write ASCII digits to buffer backward starting at the end
-    li      t3, 10
 print_decimal_loop:
     # dec buffer ptr
     addi    t2, t2, -1
-    # t4 = a0 mod 10
-    rem     t4, a0, t3
-    # a0 = a0 / 10
-    div     a0, a0, t3  
+    li      a1, 10
+    # a0 = quotient, a1 = divisor
+    jal     divrem
     # output digit as ASCII to buffer
-    addi    t0, t4, 48
+    addi    t0, a1, 48
     sb      t0, 0(t2)
     # repeat
     bnez    a0, print_decimal_loop   
