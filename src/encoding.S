@@ -190,16 +190,16 @@ encoding_table:
 .word MASK_XORI, MATCH_XORI, decode_I_type, string_OP_XORI
 .word MASK_ORI, MATCH_ORI, decode_I_type, string_OP_ORI
 .word MASK_ANDI, MATCH_ANDI, decode_I_type, string_OP_ANDI
-.word MASK_SLLI, MATCH_SLLI, decode_I_type_shift, string_OP_SLLI
-.word MASK_SRLI, MATCH_SRLI, decode_I_type_shift, string_OP_SRLI
-.word MASK_SRAI, MATCH_SRAI, decode_I_type_shift, string_OP_SRAI
+.word MASK_SLLI, MATCH_SLLI, decode_I_type_SHIFT, string_OP_SLLI
+.word MASK_SRLI, MATCH_SRLI, decode_I_type_SHIFT, string_OP_SRLI
+.word MASK_SRAI, MATCH_SRAI, decode_I_type_SHIFT, string_OP_SRAI
 .word MASK_SLTI, MATCH_SLTI, decode_I_type, string_OP_SLTI
 .word MASK_SLTIU, MATCH_SLTIU, decode_I_type, string_OP_SLTIU
-.word MASK_LB, MATCH_LB, decode_I_type, string_OP_LB
-.word MASK_LH, MATCH_LH, decode_I_type, string_OP_LH
-.word MASK_LW, MATCH_LW, decode_I_type, string_OP_LW
-.word MASK_LBU, MATCH_LBU, decode_I_type, string_OP_LBU
-.word MASK_LHU, MATCH_LHU, decode_I_type, string_OP_LHU
+.word MASK_LB, MATCH_LB, decode_I_type_LOAD, string_OP_LB
+.word MASK_LH, MATCH_LH, decode_I_type_LOAD, string_OP_LH
+.word MASK_LW, MATCH_LW, decode_I_type_LOAD, string_OP_LW
+.word MASK_LBU, MATCH_LBU, decode_I_type_LOAD, string_OP_LBU
+.word MASK_LHU, MATCH_LHU, decode_I_type_LOAD, string_OP_LHU
 .word MASK_SB, MATCH_SB, decode_S_type, string_OP_SB
 .word MASK_SH, MATCH_SH, decode_S_type, string_OP_SH 
 .word MASK_SW, MATCH_SW, decode_S_type, string_OP_SW
@@ -227,8 +227,8 @@ encoding_table:
 	.word MASK_SLLW, MATCH_SLLW, decode_R_type, string_OP_SLLW
 	.word MASK_SRLW, MATCH_SRLW, decode_R_type, string_OP_SRLW
 	.word MASK_SRAW, MATCH_SRAW, decode_R_type, string_OP_SRAW
-	.word MASK_LD, MATCH_LD, decode_I_type, string_OP_LD
-	.word MASK_LWU, MATCH_LWU, decode_I_type, string_OP_LWU
+	.word MASK_LD, MATCH_LD, decode_I_type_LOAD, string_OP_LD
+	.word MASK_LWU, MATCH_LWU, decode_I_type_LOAD, string_OP_LWU
 	.word MASK_SD, MATCH_SD, decode_S_type, string_OP_SD
 	.word MASK_FENCE, MATCH_FENCE, decode_FENCE, string_OP_FENCE
 #endif

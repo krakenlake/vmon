@@ -7,7 +7,8 @@
 
 .global decode_B_type
 .global decode_I_type
-.global decode_I_type_shift
+.global decode_I_type_LOAD
+.global decode_I_type_SHIFT
 .global decode_R_type
 .global decode_S_type
 .global decode_U_type
@@ -90,7 +91,6 @@ decode_B_type:
     ret
 
 
-
 decode_I_type:
     # in: instruction word in a0
     addi    sp, sp, -(XLEN_BYTES*2)              
@@ -118,7 +118,37 @@ decode_I_type:
     ret
 
 
-decode_I_type_shift:
+decode_I_type_LOAD:
+    # in: instruction word in a0
+    addi    sp, sp, -(XLEN_BYTES*2)              
+    SAVE_X  ra, 0(sp)
+    SAVE_X  s2, (XLEN_BYTES*1)(sp)   
+    
+    mv      s2, a0
+    jal     print_rd
+    # inst[24:20] -> imm[5:0]
+#if XLEN >=64
+    slli    a0, s2, 32                      # sign-extend to 64 bits
+    srai    a0, a0, 32+20
+#else
+    srai    a0, s2, 20
+#endif
+    jal     print_decimal
+    li      t0, '('
+    sb      t0, 0(s1)
+    # extract rs1 
+    mv      a0, s2
+    jal     print_rs1
+    li      t0, ')'
+    sb      t0, 0(s1)
+    
+    LOAD_X  ra, 0(sp)               
+    LOAD_X  s2, (XLEN_BYTES*1)(sp)               
+    addi    sp, sp, (XLEN_BYTES*2)
+    ret
+
+
+decode_I_type_SHIFT:
     # in: instruction word in a0
     addi    sp, sp, -(XLEN_BYTES*2)              
     SAVE_X  ra, 0(sp)
