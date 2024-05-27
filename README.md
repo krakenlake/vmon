@@ -60,3 +60,8 @@ memory dump from <start_addr> to <end_addr>
 
 **m**   
 continue memory dump from last address used
+
+## Known Problems
+This has only been tested on QEMU so far. Running this on real hardware
+will not work properly work in most cases, as proper UART flow control 
+is not implemented.
