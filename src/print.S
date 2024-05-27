@@ -149,7 +149,7 @@ print_decimal_zero:
     sb      t0, 0(s1)               # print to UART
 
 print_decimal_done:
-    LOAD_X     ra, 0(sp)             
+    LOAD_X  ra, 0(sp)             
     addi    sp, sp, (XLEN_BYTES*1)
     ret
 
