@@ -10,7 +10,7 @@
 
 
 #include "vmon/config.h"
-#include "vmon/UART.h"
+#include "vmon/drivers/uart/ns16550.h"
 #include "vmon/ASCII.h"
 
 

@@ -9,7 +9,7 @@
 .global print_decimal
 .global print_comma
 
-#define OUTBUFFER_SIZE      32
+#define DEC_BUFFER_SIZE      32
 
 .text
 
@@ -34,8 +34,8 @@ print_hex_raw:
 
     # terminate buffer at the end
     # TODO: do buffer termination only once
-    la      t2, outbuf
-    addi    t2, t2, (OUTBUFFER_SIZE-1)
+    la      t2, dec_buf
+    addi    t2, t2, (DEC_BUFFER_SIZE-1)
     sb      zero, 0(t2)
     # print to output buffer backwards
 print_hex_new_next_nibble:
@@ -116,8 +116,8 @@ print_decimal:
     # save a0
     mv      t6, a0
     # terminate buffer at the end
-    la      t2, outbuf
-    addi    t2, t2, (OUTBUFFER_SIZE-1)
+    la      t2, dec_buf
+    addi    t2, t2, (DEC_BUFFER_SIZE-1)
     sb      zero, 0(t2)
     # invert if negative
     bgtz    t6, print_decimal_skip_invert
@@ -159,5 +159,5 @@ print_decimal_done:
 
 .align 8
 
-.comm outbuf, OUTBUFFER_SIZE
+.comm dec_buf, DEC_BUFFER_SIZE
 
