@@ -10,22 +10,45 @@
 .global print_comma
 
 #define DEC_BUFFER_SIZE      32
+#define OUT_BUFFER_SIZE      128
 
 .text
 
 print_comma:
-    li      t1, ','
-    sb      t1, 0(s1)               # print to UART
-    li      t1, ' '
-    sb      t1, 0(s1)               # print to UART
+    addi    sp, sp, -(XLEN_BYTES*1)             
+    SAVE_X  ra, 0(sp)
+    la      t1, out_buf
+    li      t2, 0x0000202c              # string ", \0\0"
+    sw      t2, 0(t1)                   # write four bytes to buffer
+    jal     uart_output_buffer
+    LOAD_X  ra, 0(sp)             
+    addi    sp, sp, (XLEN_BYTES*1)
     ret
+
+
+print_hex_prefix:
+    addi    sp, sp, -(XLEN_BYTES*1)             
+    SAVE_X  ra, 0(sp)
+    la      t1, out_buf
+    li      t2, 0x00007830              # string "0x\0\0"
+    sw      t2, 0(t1)                   # write four bytes to buffer
+    jal     uart_output_buffer
+    LOAD_X  ra, 0(sp)             
+    addi    sp, sp, (XLEN_BYTES*1)
+    ret
+
 
 print_hex:
     # in: print value in a0 in hex with "0x" prefix
-    li      t1, '0'
-    sb      t1, 0(s1)               # print to UART
-    li      t1, 'x'
-    sb      t1, 0(s1)               # print to UART
+    addi    sp, sp, -(XLEN_BYTES*1)             
+    SAVE_X  ra, 0(sp)
+    jal     print_hex_prefix
+    jal     print_hex_raw
+    LOAD_X  ra, 0(sp)                       
+    addi    sp, sp, (XLEN_BYTES*1)
+    ret
+
+
 print_hex_raw:
     # in: print value in a0 in hex
     # no trailing zeroes, no prefix
@@ -160,4 +183,6 @@ print_decimal_done:
 .align 8
 
 .comm dec_buf, DEC_BUFFER_SIZE
+
+.comm out_buf, OUT_BUFFER_SIZE
 
