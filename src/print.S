@@ -5,6 +5,7 @@
 .global print_hex_raw
 .global print_hex_byte
 .global print_ascii
+.global print_char
 .global print_string
 .global print_decimal
 .global print_comma
@@ -106,34 +107,44 @@ print_hex_byte_two_digits:
 
 # print char in a0 to terminal (if printable, else '.')
 print_ascii:
-    mv      t1, a0
+    addi    sp, sp, -(XLEN_BYTES*1)             
+    SAVE_X  ra, 0(sp)
     # consider only chars from 0x20-0x7e as printable
     li      t0, 0x20
-    blt     t1, t0, print_ascii_substitute
+    blt     a0, t0, print_ascii_substitute
     li      t0, 0x7e
-    bgt     t1, t0, print_ascii_substitute
+    bgt     a0, t0, print_ascii_substitute
     j       print_ascii_out         # char is printable
 print_ascii_substitute:
-    li      t1, '.'                 # print dot if char is not printable
+    li      a0, '.'                 # print dot if char is not printable
 print_ascii_out:
-    sb      t1, 0(s1)               # print to UART
+    jal     print_char
+    LOAD_X  ra, 0(sp)             
+    addi    sp, sp, (XLEN_BYTES*1)
     ret
 
 
-# print string starting at addr in a0 to terminal
+# print ASCII char in a0
+print_char:
+    addi    sp, sp, -(XLEN_BYTES*1)             
+    SAVE_X  ra, 0(sp)
+    jal uart_output_char
+    LOAD_X  ra, 0(sp)             
+    addi    sp, sp, (XLEN_BYTES*1)
+    ret
+
+
+# print string starting at addr in a0
 print_string:
-    mv      t1, a0  
-print_string_next_byte:
-    lbu     t0, 0(t1)
-    beq     t0, zero, print_string_done
-    sb      t0, 0(s1)               # print to UART
-    addi    t1, t1, 1
-    j       print_string_next_byte
-print_string_done:
+    addi    sp, sp, -(XLEN_BYTES*1)             
+    SAVE_X  ra, 0(sp)
+    jal uart_output_string
+    LOAD_X  ra, 0(sp)             
+    addi    sp, sp, (XLEN_BYTES*1)
     ret
+
 
 #ifdef WITH_CMD_D
-
 
 # print 32-bit signed decimal in a0 to terminal
 print_decimal:
