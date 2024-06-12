@@ -92,8 +92,11 @@ print_hex_byte:
     li      t0, 15
     bgt     a0, t0, print_hex_byte_two_digits
     # print a leading zero if necessary
-    li      t0, '0'
-    sb      t0, 0(s1)               # print to UART 
+    la      t1, out_buf
+    li      t2, 0x0030                  # string "0\0"
+    sh      t2, 0(t1)                   # write 2 bytes to buffer
+    jal     uart_output_buffer
+
 print_hex_byte_two_digits:
     jal     print_hex_raw
     LOAD_X  ra, 0(sp)             

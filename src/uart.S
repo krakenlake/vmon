@@ -4,6 +4,7 @@
 
 .global uart_init
 .global uart_wait_get_char
+.global uart_output_char
 .global uart_output_buffer
 
 .text
@@ -14,8 +15,9 @@ uart_init:
     sb      t0, UART_REG_LSR(s1)      
     ret
 
+
 # wait and get one character from UART 
-# return: char in a0
+# out: char (ASCII) in a0
 uart_wait_get_char:
     li      s1, UART_BASE
 uart_get_char_wait:
@@ -26,6 +28,21 @@ uart_get_char_wait:
     beqz    a0, uart_get_char_wait      # wait for char input
     lbu     a0, 0(s1)               # get input from UART  
     ret
+
+
+# output one char 
+# in: char (ASCII) in a0
+uart_output_char:
+    addi    sp, sp, -(XLEN_BYTES*1)             
+    SAVE_X  ra, 0(sp)
+    la      t0, out_buf  
+    andi    a0, a0, 0xff                # make sure value is < 256      
+    sh      a0, 0(t0)                   # write char and zero termination to buffer
+    jal     uart_output_buffer
+    LOAD_X  ra, 0(sp)             
+    addi    sp, sp, (XLEN_BYTES*1)
+    ret
+
 
 # print zero-terminated string in output buffer out_buf to UART
 # buffer will be filled with zeros on return

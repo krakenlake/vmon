@@ -91,28 +91,25 @@ is_delete:
     beq     s3, s2, main_get_char        # ignore at beginning of line
     addi    s3, s3, -1
     # ASCII output
-    la      t0, out_buf             # TODO: load this only once
-    li      t1, 0x00082008          # string BS-Space-BS-0
-    sw      t1, 0(t0)               # write four bytes to buffer
-    jal     uart_output_buffer
+    li      a0, ASCII_BACKSPACE
+    jal     uart_output_char
+    li      a0, ' '
+    jal     uart_output_char
+    li      a0, ASCII_BACKSPACE
+    jal     uart_output_char
+
     j       main_get_char  
 continue_not_delete:
     # output char in a0
-    la      t0, out_buf                 
-    sw      a0, 0(t0)               # write four bytes to buffer to include 
-    jal     uart_output_buffer
+    jal     uart_output_char
 
     li      t0, ASCII_RETURN        
     beq     a0, t0, get_command
     j       main_get_char      
 
 get_command:
-    # output NEWLINE
-    la      t0, out_buf                 
-    li      t1, 0x00000000 + ASCII_NEWLINE
-    sw      t1, 0(t0)                   # write four bytes to buffer
-    jal     uart_output_buffer
-
+    li      a0, ASCII_NEWLINE
+    jal     uart_output_char
 
     # buffer start addr is in s2
     # last character is at s3-1
