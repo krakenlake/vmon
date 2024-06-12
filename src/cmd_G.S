@@ -23,7 +23,7 @@ cmd_G:
 cmd_G_error:
     la      a0, error_no_addr
     jal     print_string
-    j       prompt
+    j       main_prompt
 
 
 .data

@@ -72,7 +72,7 @@ cmd_D_advance:
 cmd_D_done:
     la      a0, last_address 
     SAVE_X  s5, 0(a0)
-    j       prompt
+    j       main_prompt
  
  
 .data

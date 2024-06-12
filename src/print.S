@@ -8,6 +8,8 @@
 .global print_string
 .global print_decimal
 .global print_comma
+.global out_buf
+
 
 #define DEC_BUFFER_SIZE      32
 #define OUT_BUFFER_SIZE      128

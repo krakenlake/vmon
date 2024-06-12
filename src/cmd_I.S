@@ -54,7 +54,7 @@ cmd_I:
     jal     print_hex
 #endif /* WITH_TESTCODE */
 
-    j       prompt
+    j       main_prompt
 
 
 .data
