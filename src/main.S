@@ -2,9 +2,9 @@
     VMON - a RISC-V machine code monitor written in RISC-V assembly code
 
     global register use:
-    s1 = UART base addr
-    s2 = text buffer start addr
-    s3 = text buffer ptr to last character
+    s1 = text output buffer
+    s2 = text input buffer start addr
+    s3 = text input buffer ptr to last character
     s5 = address of current instruction being disassembled   
 */
 
@@ -15,7 +15,7 @@
 
 
 .global start
-.global prompt
+.global main_prompt
 .global string_asm_sep1
 .global string_asm_sep2
 .global string_asm_comment
@@ -56,57 +56,64 @@ start:
     SAVE_X  s11, (XLEN_BYTES*13)(sp)
 
     # init UART 
-    li      s1, UART_BASE                  
-    li      t0, UART_MODE_8N1
-    sb      t0, UART_REG_LSR(s1)      
+    jal     uart_init
+
 
     # startup message
     la      a0, string_startup
     jal     print_string
 
+    # main init
+#    la      s1, out_buf
+
+
     # main loop
-prompt:
+main_prompt:
     la      a0, string_prompt
     jal     print_string
     # reset text buffer boundaries in s2, s3
     la      s2, buffer              # s2:= buffer start
     mv      s3, s2
-    jal     clear_buffer
+    jal     main_clear_buffer
 
-get_char:
-    # wait for key pressed
-    # TODO: use interrupt instead of polling
-    lb      t0, 5(s1)               # read Line Status Register
-    and     t0, t0, 0x01
-    beqz    t0, get_char            # wait for char input
-    lbu     a0, 0(s1)               # get input from UART  
+main_get_char:
+    jal     uart_wait_get_char
+
     li      t0, ASCII_DELETE        
     beq     a0, t0, is_delete
+    # char is not DELETE
     sb      a0, 0(s3)               # store byte in text buffer
     addi    s3, s3, 1               # inc buffer ptr
-    j       not_delete
+    j       continue_not_delete
 is_delete:
     # TODO: if the previous key transmitted more than 1 byte, this does 
     # not work properly 
-    beq     s3, s2, get_char        # ignore at beginning of line
+    beq     s3, s2, main_get_char        # ignore at beginning of line
     addi    s3, s3, -1
-    li      a0, ASCII_BACKSPACE     
-    sb      a0, 0(s1)               # print to UART
-    li      a0, ' '     
-    sb      a0, 0(s1)               # print to UART
-    li      a0, ASCII_BACKSPACE     
-    sb      a0, 0(s1)               # print to UART
-    j       get_char  
-not_delete:
-    sb      a0, 0(s1)               # print to UART
+    # ASCII output
+    la      t0, out_buf             # TODO: load this only once
+    li      t1, 0x00082008          # string BS-Space-BS-0
+    sw      t1, 0(t0)               # write four bytes to buffer
+    jal     uart_output_buffer
+    j       main_get_char  
+continue_not_delete:
+    # output char in a0
+    la      t0, out_buf                 
+    sw      a0, 0(t0)               # write four bytes to buffer to include 
+    jal     uart_output_buffer
+
     li      t0, ASCII_RETURN        
     beq     a0, t0, get_command
-    j       get_char      
+    j       main_get_char      
 
 get_command:
-    # print newline
-    li      t0, ASCII_NEWLINE
-    sb      t0, 0(s1)               # print to UART
+    # output NEWLINE
+    la      t0, out_buf                 
+    li      t1, 0x00000000 + ASCII_NEWLINE
+    sw      t1, 0(t0)                   # write four bytes to buffer
+    jal     uart_output_buffer
+
+
     # buffer start addr is in s2
     # last character is at s3-1
     mv      s4, s2
@@ -154,12 +161,12 @@ get_command:
 
     # no command given, user only hit return
     li      t0, ASCII_RETURN
-    beq     t1, t0, prompt
+    beq     t1, t0, main_prompt
 
 unknown_command:
     la      a0, error_unknown_command
     jal     print_string
-    j       prompt
+    j       main_prompt
     # end of main loop
 
 
@@ -171,13 +178,13 @@ end:
 #endif /* BARE_METAL */
 
 
-clear_buffer:
+main_clear_buffer:
     la      t0, buffer
     addi    t1, t0, BUFFER_SIZE
-clear_buffer_loop:
+main_clear_buffer_loop:
     sw      zero, 0(t0)
     addi    t0, t0, 4
-    ble     t0, t1, clear_buffer_loop
+    ble     t0, t1, main_clear_buffer_loop
     ret
 
 

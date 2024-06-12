@@ -11,7 +11,7 @@
 cmd_H:
     la      a0, string_help
     jal     print_string
-    j       prompt
+    j       main_prompt
 
 
 .data
