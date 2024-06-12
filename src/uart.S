@@ -5,6 +5,7 @@
 .global uart_init
 .global uart_wait_get_char
 .global uart_output_char
+.global uart_output_string
 .global uart_output_buffer
 
 .text
@@ -39,6 +40,24 @@ uart_output_char:
     andi    a0, a0, 0xff                # make sure value is < 256      
     sh      a0, 0(t0)                   # write char and zero termination to buffer
     jal     uart_output_buffer
+    LOAD_X  ra, 0(sp)             
+    addi    sp, sp, (XLEN_BYTES*1)
+    ret
+
+
+# output zero-terminated string  
+# in: string ptr in a0
+uart_output_string:
+    addi    sp, sp, -(XLEN_BYTES*1)             
+    SAVE_X  ra, 0(sp)
+    mv      a1, a0
+uart_output_string_loop:
+    lb      a0, 0(a1)
+    beqz    a0, uart_output_string_done
+    jal     uart_output_char
+    addi    a1, a1, 1
+    j       uart_output_string_loop
+uart_output_string_done:
     LOAD_X  ra, 0(sp)             
     addi    sp, sp, (XLEN_BYTES*1)
     ret
