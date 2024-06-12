@@ -58,31 +58,27 @@ start:
     # init UART 
     jal     uart_init
 
-
     # startup message
     la      a0, string_startup
-    jal     print_string
+    jal     uart_output_string
 
     # main init
 #    la      s1, out_buf
 
-
     # main loop
 main_prompt:
     la      a0, string_prompt
-    jal     print_string
+    jal     uart_output_string
     # reset text buffer boundaries in s2, s3
     la      s2, buffer              # s2:= buffer start
     mv      s3, s2
     jal     main_clear_buffer
-
 main_get_char:
     jal     uart_wait_get_char
-
     li      t0, ASCII_DELETE        
     beq     a0, t0, is_delete
     # char is not DELETE
-    sb      a0, 0(s3)               # store byte in text buffer
+    sb      a0, 0(s3)               # store byte in input buffer
     addi    s3, s3, 1               # inc buffer ptr
     j       continue_not_delete
 is_delete:
@@ -97,16 +93,13 @@ is_delete:
     jal     uart_output_char
     li      a0, ASCII_BACKSPACE
     jal     uart_output_char
-
     j       main_get_char  
 continue_not_delete:
     # output char in a0
     jal     uart_output_char
-
     li      t0, ASCII_RETURN        
     beq     a0, t0, get_command
     j       main_get_char      
-
 get_command:
     li      a0, ASCII_NEWLINE
     jal     uart_output_char
@@ -162,7 +155,7 @@ get_command:
 
 unknown_command:
     la      a0, error_unknown_command
-    jal     print_string
+    jal     uart_output_string
     j       main_prompt
     # end of main loop
 
