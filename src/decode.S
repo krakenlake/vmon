@@ -50,7 +50,6 @@ decode_B_type:
     addi    sp, sp, -(XLEN_BYTES*2)              
     SAVE_X  ra, 0(sp)
     SAVE_X  s2, (XLEN_BYTES*1)(sp)
-    
     mv      s2, a0   
     jal     print_rs1
     jal     print_comma
@@ -83,8 +82,7 @@ decode_B_type:
     # add relative immediate to instruction address
     add     a0, s5, a0
     # print absolute target address
-    jal     print_hex
-    
+    jal     print_hex  
     LOAD_X  ra, 0(sp)               
     LOAD_X  s2, (XLEN_BYTES*1)(sp)               
     addi    sp, sp, (XLEN_BYTES*2)
@@ -96,7 +94,6 @@ decode_I_type:
     addi    sp, sp, -(XLEN_BYTES*2)              
     SAVE_X  ra, 0(sp)
     SAVE_X  s2, (XLEN_BYTES*1)(sp)   
-    
     mv      s2, a0   
     jal     print_rd
     mv      a0, s2
@@ -111,7 +108,6 @@ decode_I_type:
     srai    a0, s2, 20
 #endif
     jal     print_decimal
-    
     LOAD_X  ra, 0(sp)               
     LOAD_X  s2, (XLEN_BYTES*1)(sp)               
     addi    sp, sp, (XLEN_BYTES*2)
@@ -122,8 +118,7 @@ decode_I_type_LOAD:
     # in: instruction word in a0
     addi    sp, sp, -(XLEN_BYTES*2)              
     SAVE_X  ra, 0(sp)
-    SAVE_X  s2, (XLEN_BYTES*1)(sp)   
-    
+    SAVE_X  s2, (XLEN_BYTES*1)(sp)      
     mv      s2, a0
     jal     print_rd
     # inst[24:20] -> imm[5:0]
@@ -134,14 +129,13 @@ decode_I_type_LOAD:
     srai    a0, s2, 20
 #endif
     jal     print_decimal
-    li      t0, '('
-    sb      t0, 0(s1)
+    li      a0, '('
+    jal     print_char
     # extract rs1 
     mv      a0, s2
     jal     print_rs1
-    li      t0, ')'
-    sb      t0, 0(s1)
-    
+    li      a0, ')'
+    jal     print_char
     LOAD_X  ra, 0(sp)               
     LOAD_X  s2, (XLEN_BYTES*1)(sp)               
     addi    sp, sp, (XLEN_BYTES*2)
@@ -153,7 +147,6 @@ decode_I_type_SHIFT:
     addi    sp, sp, -(XLEN_BYTES*2)              
     SAVE_X  ra, 0(sp)
     SAVE_X  s2, (XLEN_BYTES*1)(sp)   
-    
     mv      s2, a0
     jal     print_rd
     mv      a0, s2
@@ -167,7 +160,6 @@ decode_I_type_SHIFT:
     srli    a0, s2, 20+6
 #endif
     jal     print_hex
-    
     LOAD_X  ra, 0(sp)               
     LOAD_X  s2, (XLEN_BYTES*1)(sp)               
     addi    sp, sp, (XLEN_BYTES*2)
@@ -179,7 +171,6 @@ decode_R_type:
     addi    sp, sp, -(XLEN_BYTES*2)              
     SAVE_X  ra, 0(sp)
     SAVE_X  s2, (XLEN_BYTES*1)(sp) 
-
     mv      s2, a0   
     jal     print_rd
     mv      a0, s2
@@ -187,7 +178,6 @@ decode_R_type:
     jal     print_comma
     mv      a0, s2
     jal     print_rs2
-    
     LOAD_X  ra, 0(sp)               
     LOAD_X  s2, (XLEN_BYTES*1)(sp)               
     addi    sp, sp, (XLEN_BYTES*2)
@@ -199,7 +189,6 @@ decode_S_type:
     addi    sp, sp, -(XLEN_BYTES*2)             
     SAVE_X  ra, 0(sp)
     SAVE_X  s2, (XLEN_BYTES*1)(sp)    
- 
     mv      s2, a0
     jal     ra, print_rs2
     jal     print_comma
@@ -222,14 +211,13 @@ decode_S_type:
     and     t0, t0, t1
     or      a0, a0, t0 
     jal     print_decimal
-    li      t0, '('
-    sb      t0, 0(s1)
+    li      a0, '('
+    jal     print_char
     # extract rs1 
     mv      a0, s2
     jal     print_rs1
-    li      t0, ')'
-    sb      t0, 0(s1)
-    
+    li      a0, ')'
+    jal     print_char
     LOAD_X  ra, 0(sp)               
     LOAD_X  s2, (XLEN_BYTES*1)(sp)               
     addi    sp, sp, (XLEN_BYTES*2)
@@ -241,13 +229,11 @@ decode_U_type:
     addi    sp, sp, -(XLEN_BYTES*2)              
     SAVE_X  ra, 0(sp)
     SAVE_X  s2, (XLEN_BYTES*1)(sp)  
-    
     mv      s2, a0    
     jal     print_rd
     # extract imm
     srli    a0, s2, 12 
     jal     print_hex
-    
     LOAD_X  ra, 0(sp)               
     LOAD_X  s2, (XLEN_BYTES*1)(sp)               
     addi    sp, sp, (XLEN_BYTES*2)
@@ -260,7 +246,6 @@ decode_JAL:
     addi    sp, sp, -(XLEN_BYTES*2)             
     SAVE_X  ra, 0(sp)
     SAVE_X  s2, (XLEN_BYTES*1)(sp)
-    
     mv      s2, a0
     jal     print_rd  
     # inst[30:21] -> imm[10:1]
@@ -289,7 +274,6 @@ decode_JAL:
     # add relative immediate to instruction address
     add     a0, s5, a1
     jal     print_hex
-
     LOAD_X  ra, 0(sp)               
     LOAD_X  s2, (XLEN_BYTES*1)(sp)               
     addi    sp, sp, (XLEN_BYTES*2)
@@ -302,7 +286,6 @@ decode_JALR:
     addi    sp, sp, -(XLEN_BYTES*2)             
     SAVE_X  ra, 0(sp)
     SAVE_X  s2, (XLEN_BYTES*1)(sp)
-    
     mv      s2, a0
     jal     print_rd
     # print offset
@@ -314,13 +297,12 @@ decode_JALR:
 #endif
     jal     ra, print_decimal
     # print rs1
-    li      t0, '('
-    sb      t0, 0(s1)
+    li      a0, '('
+    jal     print_char
     mv      a0, s2
     jal     print_rs1
-    li      t0, ')'
-    sb      t0, 0(s1)
-
+    li      a0, ')'
+    jal     print_char
     LOAD_X  ra, 0(sp)               
     LOAD_X  s2, (XLEN_BYTES*1)(sp)               
     addi    sp, sp, (XLEN_BYTES*2)
@@ -341,19 +323,16 @@ decode_LRSC:
     addi    sp, sp, -(XLEN_BYTES*2)              
     SAVE_X  ra, 0(sp)
     SAVE_X  s2, (XLEN_BYTES*1)(sp)  
-
     mv      s2, a0
     jal     print_rd
     # 
-    li      t0, '('
-    sb      t0, 0(s1)
+    li      a0, '('
+    jal     print_char
     # print addr 
     mv      a0, s2
     jal     print_rs1
-    #
-    li      t0, ')'
-    sb      t0, 0(s1)
-    
+    li      a0, ')'
+    jal     print_char
     LOAD_X  ra, 0(sp)               
     LOAD_X  s2, (XLEN_BYTES*1)(sp)               
     addi    sp, sp, (XLEN_BYTES*2)
@@ -365,22 +344,18 @@ decode_AMO:
     addi    sp, sp, -(XLEN_BYTES*2)              
     SAVE_X  ra, 0(sp)
     SAVE_X  s2, (XLEN_BYTES*1)(sp)  
-    
     mv      s2, a0   
     jal     print_rd
     mv      a0, s2
     jal     print_rs2
     jal     print_comma  
-    #
-    li      t0, '('
-    sb      t0, 0(s1)
+    li      a0, '('
+    jal     print_char
     # print rs1 = addr
     mv      a0, s2
     jal     print_rs1
-    #
-    li      t0, ')'
-    sb      t0, 0(s1)
-
+    li      a0, ')'
+    jal     print_char
     LOAD_X  ra, 0(sp)               
     LOAD_X  s2, (XLEN_BYTES*1)(sp)               
     addi    sp, sp, (XLEN_BYTES*2)
@@ -391,15 +366,13 @@ decode_CSR:
     # in: instruction word in a0
     addi    sp, sp, -(XLEN_BYTES*2)              
     SAVE_X  ra, 0(sp)
-    SAVE_X  s2, (XLEN_BYTES*1)(sp) 
-    
+    SAVE_X  s2, (XLEN_BYTES*1)(sp)     
     mv      s2, a0
     jal     print_rd
     mv      a0, s2
     jal     print_csr
     mv      a0, s2
-    jal     print_rs1
-    
+    jal     print_rs1    
     LOAD_X  ra, 0(sp)               
     LOAD_X  s2, (XLEN_BYTES*1)(sp)               
     addi    sp, sp, (XLEN_BYTES*2)
@@ -411,7 +384,6 @@ decode_CSRI:
     addi    sp, sp, -(XLEN_BYTES*2)              
     SAVE_X  ra, 0(sp)
     SAVE_X  s2, (XLEN_BYTES*1)(sp)
-
     mv      s2, a0
     jal     print_rd
     mv      a0, s2
@@ -420,8 +392,7 @@ decode_CSRI:
     mv      a0, s2
     srli    a0, a0, 15
     and     a0, a0, 0b11111
-    jal     print_decimal
-    
+    jal     print_decimal    
     LOAD_X  ra, 0(sp)               
     LOAD_X  s2, (XLEN_BYTES*1)(sp)               
     addi    sp, sp, (XLEN_BYTES*2)
@@ -432,13 +403,11 @@ print_rd:
 	# in: instruction word in a0
     addi    sp, sp, -(XLEN_BYTES*1)              
     SAVE_X  ra, 0(sp) 
-    
     # isolate rd from a0
     srli    a0, a0, 7
     andi    a0, a0, 0b11111
     jal     print_register_name
     jal     print_comma
-
     LOAD_X  ra, 0(sp)               
     addi    sp, sp, (XLEN_BYTES*1)
     ret
@@ -448,11 +417,9 @@ print_rs1:
 	# in: instruction word in a0
     addi    sp, sp, -(XLEN_BYTES*1)              
     SAVE_X  ra, 0(sp) 
-
     srli    a0, a0, 15
     and     a0, a0, 0b11111
     jal     print_register_name
-
     LOAD_X  ra, 0(sp)               
     addi    sp, sp, (XLEN_BYTES*1)
     ret
@@ -462,11 +429,9 @@ print_rs2:
 	# in: instruction word in a0
     addi    sp, sp, -(XLEN_BYTES*1)              
     SAVE_X  ra, 0(sp) 
-
     srli    a0, a0, 20
     and     a0, a0, 0b11111
     jal     print_register_name
-
     LOAD_X  ra, 0(sp)               
     addi    sp, sp, (XLEN_BYTES*1)
     ret
@@ -476,11 +441,9 @@ print_csr:
 	# in: instruction word in a0
     addi    sp, sp, -(XLEN_BYTES*1)              
     SAVE_X  ra, 0(sp) 
-
     srai    a0, a0, 20
     jal     print_hex
     jal     print_comma
-
     LOAD_X  ra, 0(sp)               
     addi    sp, sp, (XLEN_BYTES*1)
     ret
@@ -492,7 +455,6 @@ print_register_name:
     addi    sp, sp, -(XLEN_BYTES*2)              
     SAVE_X  ra, 0(sp)
     SAVE_X  s0, (XLEN_BYTES*1)(sp)
-    
     la      s0, register_names
 print_register_search:
     beqz    a0, print_register_found
@@ -509,7 +471,6 @@ print_register_next_zero:
  print_register_found:
     mv      a0, s0
     jal     print_string
-    
     LOAD_X  ra, 0(sp)               
     LOAD_X  s0, (XLEN_BYTES*1)(sp)               
     addi    sp, sp, (XLEN_BYTES*2)
@@ -523,7 +484,6 @@ decode_opcode:
     # out: opcode string in a2
     addi    sp, sp, -(XLEN_BYTES*1)              
     SAVE_X  ra, 0(sp)
-    
     # search for a match in encoding table
     la      t0, encoding_table
     # clear return values
@@ -555,7 +515,6 @@ decode_opcode_search_next:
 decode_opcode_continue:
     addi    t0, t0, 16                      # point to next table entry
     j       decode_opcode_search_next       # repeat
-
 decode_opcode_done:
     LOAD_X  ra, 0(sp)               
     addi    sp, sp, (XLEN_BYTES*1)
@@ -569,8 +528,7 @@ print_instruction:
     addi    sp, sp, -(XLEN_BYTES*3)              
     SAVE_X  ra, 0(sp)
     SAVE_X  s2, (XLEN_BYTES*1)(sp)
-    SAVE_X  s3, (XLEN_BYTES*2)(sp)
-    
+    SAVE_X  s3, (XLEN_BYTES*2)(sp)    
     mv      s2, a1                  # save for later
     mv      s3, a0                  # save for later    
     mv      a0, a2
@@ -585,7 +543,6 @@ print_instruction:
     beqz    s2, print_instruction_done  
     mv      a0, s3
     jalr    s2                      # execute call
-
 print_instruction_done:
     LOAD_X  ra, 0(sp)               
     LOAD_X  s2, (XLEN_BYTES*1)(sp)   
@@ -599,13 +556,11 @@ print_AMO_postfix:
     # in: instruction word in a0
     addi    sp, sp, -(XLEN_BYTES*1)              
     SAVE_X  ra, 0(sp)
-    
     # check if bits 0-6 are an AMO opcode, return if not
     li      t0, 0x7f            # MASK
     and     t1, a0, t0
     li      t2, 0x2f            # MATCH
     bne     t1, t2, print_AMO_postfix_done
-
     # decode ac/rl bits and print fitting postfix
     jal     insn_get_aqrl
     beqz    a1, print_AMO_postfix_done
@@ -623,7 +578,6 @@ print_AMO_postfix_case2:
 print_AMO_postfix_case3:
     la      a0, string_OP_POSTFIX_AQRL
     jal     print_string
-
 print_AMO_postfix_done:    
     LOAD_X  ra, 0(sp)               
     addi    sp, sp, (XLEN_BYTES*1)
