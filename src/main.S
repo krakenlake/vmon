@@ -2,7 +2,6 @@
     VMON - a RISC-V machine code monitor written in RISC-V assembly code
 
     global register use:
-    s1 = text output buffer
     s2 = text input buffer start addr
     s3 = text input buffer ptr to last character
     s5 = address of current instruction being disassembled   
@@ -61,9 +60,6 @@ start:
     # startup message
     la      a0, string_startup
     jal     print_string
-
-    # main init
-#    la      s1, out_buf
 
     # main loop
 main_prompt:

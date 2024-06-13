@@ -66,8 +66,8 @@ cmd_D_advance:
     # TODO: advance only 2 bytes if RVC opcode
     addi    s5, s5, 4               # point to next instruction
     bgt     s5, s7, cmd_D_done
-    li      t0, ASCII_NEWLINE
-    sb      t0, 0(s1)               # print to UART 
+    li      a0, ASCII_NEWLINE
+    jal     print_char
     j       cmd_D_next_instruction
 cmd_D_done:
     la      a0, last_address 

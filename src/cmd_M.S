@@ -38,8 +38,8 @@ cmd_M_next_line:
     addi    s6, s5, 8               # set end addr for output line
  cmd_M_next_byte:
     beq     s5, s6, cmd_M_print_ascii  
-    li      t0, ' '
-    sb      t0, 0(s1)               # print to UART 
+    li      a0, ' '
+    jal     print_char
     lbu     a0, 0(s5)               # get byte from memory address
     jal     print_hex_byte
     addi    s5, s5, 1
@@ -47,18 +47,18 @@ cmd_M_next_line:
     # output the same hex bytes again, this time as ASCII chars
 cmd_M_print_ascii:
     addi    s5, s5, -8
-    li      t0, ' '
-    sb      t0, 0(s1)               # print to UART 
+    li      a0, ' '
+    jal     print_char
 cmd_M_next_char:
     beq     s5, s6, cmd_M_ascii_done
-    lbu      a0, 0(s5)              # get byte from memory address
+    lbu     a0, 0(s5)              # get byte from memory address
     jal     print_ascii
     addi    s5, s5, 1
     j       cmd_M_next_char
 cmd_M_ascii_done:
     bgt     s5, s7, cmd_M_done
-    li      t0, ASCII_NEWLINE
-    sb      t0, 0(s1)               # print to UART
+    li      a0, ASCII_NEWLINE
+    jal     print_char
     j       cmd_M_next_line
 cmd_M_done:
     la      a0, last_address 
