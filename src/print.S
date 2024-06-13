@@ -41,8 +41,8 @@ print_hex_prefix:
     ret
 
 
+# in: print value in a0 in hex with "0x" prefix
 print_hex:
-    # in: print value in a0 in hex with "0x" prefix
     addi    sp, sp, -(XLEN_BYTES*1)             
     SAVE_X  ra, 0(sp)
     jal     print_hex_prefix
@@ -52,12 +52,11 @@ print_hex:
     ret
 
 
+# in: print value in a0 in hex
+# no trailing zeroes, no prefix
 print_hex_raw:
-    # in: print value in a0 in hex
-    # no trailing zeroes, no prefix
     addi    sp, sp, -(XLEN_BYTES*1)             
     SAVE_X  ra, 0(sp)
-
     # terminate buffer at the end
     # TODO: do buffer termination only once
     la      t2, dec_buf
@@ -79,15 +78,14 @@ print_hex_new_decimal:
     # print buffer
     mv      a0, t2
     jal     print_string
-
     LOAD_X  ra, 0(sp)             
     addi    sp, sp, (XLEN_BYTES*1)
     ret
 
 
+# print a 2-digit hex value (with leading zero for 1-digit values)
+# in: byte value in a0
 print_hex_byte:
-    # print a 2-digit hex value (with leading zero for 1-digit values)
-    # in: byte value in a0
     addi    sp, sp, -(XLEN_BYTES*1)             
     SAVE_X  ra, 0(sp)
     li      t0, 15
@@ -97,7 +95,6 @@ print_hex_byte:
     li      t2, 0x0030                  # string "0\0"
     sh      t2, 0(t1)                   # write 2 bytes to buffer
     jal     uart_output_buffer
-
 print_hex_byte_two_digits:
     jal     print_hex_raw
     LOAD_X  ra, 0(sp)             

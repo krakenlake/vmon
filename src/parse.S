@@ -7,8 +7,8 @@
 
 .text
 
+# in: buffer ptr in a0
 skip_whitespace:
-    # buffer ptr passed in a0
     # load only once when called
     li      t0, ' '
     li      t1, '\t'
@@ -21,11 +21,11 @@ skip_whitespace_next_byte:
     ret
 
 
+# in: buffer ptr in a0
+# out: buffer ptr in a0
+# out: parsed address value in a1
+# out: error code in a2 (OK=0)
 get_hex_addr:
-    # in: buffer ptr in a0
-    # out: buffer ptr in a0
-    # out: parsed address value in a1
-    # out: error code in a2 (OK=0)
     li      a1, 0                   # reset address value
     li      a2, -1                  # set error code
 get_hex_addr_next_byte:

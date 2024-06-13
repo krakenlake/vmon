@@ -5,14 +5,13 @@
 
 .text
 
+# Division without using M extension
+# Thanks to Bruce Hoult!
+# in: a0 = dividend
+# in: a1 = divisor
+# out: a0 = quotient 
+# out: a1 = remainder
 divrem:
-	# Division without using M extension
-	# Thanks to Bruce Hoult!
-	# in: a0 = dividend
-	# in: a1 = divisor
-	# out: a0 = quotient 
-	# out: a1 = remainder
-
 	#define Q a0
 	#define R a1
 	#define N a2

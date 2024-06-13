@@ -30,23 +30,24 @@
 
 
 #ifdef ENABLE_RVA
+
+# for RVA
+# in: instruction word in a0
+# out: instruction word in a0
+# out: aq/rl bits in bits 0 and 1 of a1
 insn_get_aqrl:
-    # for RVA
-	# in: instruction word in a0
-	# out: instruction word in a0
-	# out: aq/rl bits in bits 0 and 1 of a1
     mv      a1, a0
     li      t0, 0b11 
     slli    t0, t0, 25
     and     a1, t0, a1
     srli    a1, a1, 25
     ret
+
 #endif
 
-
+# in: instruction word in a0
+# in: current instruction address in s5 (global)
 decode_B_type:
-    # in: instruction word in a0
-    # in: current instruction address in s5 (global)
     addi    sp, sp, -(XLEN_BYTES*2)              
     SAVE_X  ra, 0(sp)
     SAVE_X  s2, (XLEN_BYTES*1)(sp)
@@ -89,8 +90,8 @@ decode_B_type:
     ret
 
 
+# in: instruction word in a0
 decode_I_type:
-    # in: instruction word in a0
     addi    sp, sp, -(XLEN_BYTES*2)              
     SAVE_X  ra, 0(sp)
     SAVE_X  s2, (XLEN_BYTES*1)(sp)   
@@ -114,8 +115,8 @@ decode_I_type:
     ret
 
 
+# in: instruction word in a0
 decode_I_type_LOAD:
-    # in: instruction word in a0
     addi    sp, sp, -(XLEN_BYTES*2)              
     SAVE_X  ra, 0(sp)
     SAVE_X  s2, (XLEN_BYTES*1)(sp)      
@@ -142,8 +143,8 @@ decode_I_type_LOAD:
     ret
 
 
+# in: instruction word in a0
 decode_I_type_SHIFT:
-    # in: instruction word in a0
     addi    sp, sp, -(XLEN_BYTES*2)              
     SAVE_X  ra, 0(sp)
     SAVE_X  s2, (XLEN_BYTES*1)(sp)   
@@ -166,8 +167,8 @@ decode_I_type_SHIFT:
     ret
 
 
+# in: instruction word in a0
 decode_R_type:
-    # in: instruction word in a0
     addi    sp, sp, -(XLEN_BYTES*2)              
     SAVE_X  ra, 0(sp)
     SAVE_X  s2, (XLEN_BYTES*1)(sp) 
@@ -184,8 +185,8 @@ decode_R_type:
     ret
 
 
+# in: instruction word in a0
 decode_S_type:
-    # in: instruction word in a0
     addi    sp, sp, -(XLEN_BYTES*2)             
     SAVE_X  ra, 0(sp)
     SAVE_X  s2, (XLEN_BYTES*1)(sp)    
@@ -224,8 +225,8 @@ decode_S_type:
     ret
 
 
+# in: instruction word in a0
 decode_U_type:
-    # in: instruction word in a0
     addi    sp, sp, -(XLEN_BYTES*2)              
     SAVE_X  ra, 0(sp)
     SAVE_X  s2, (XLEN_BYTES*1)(sp)  
@@ -240,9 +241,9 @@ decode_U_type:
     ret
 
 
+# in: instruction word in a0
+# in: current instruction address in s5 (global)
 decode_JAL:
-    # in: instruction word in a0
-    # in: current instruction address in s5 (global)
     addi    sp, sp, -(XLEN_BYTES*2)             
     SAVE_X  ra, 0(sp)
     SAVE_X  s2, (XLEN_BYTES*1)(sp)
@@ -280,9 +281,9 @@ decode_JAL:
     ret
 
 
+# in: instruction word in a0
+# in: current instruction address in s5 (global)
 decode_JALR:
-    # in: instruction word in a0
-    # in: current instruction address in s5 (global)
     addi    sp, sp, -(XLEN_BYTES*2)             
     SAVE_X  ra, 0(sp)
     SAVE_X  s2, (XLEN_BYTES*1)(sp)
@@ -339,8 +340,8 @@ decode_LRSC:
     ret
 
 
+# in: instruction word in a0
 decode_AMO:
-    # in: instruction word in a0
     addi    sp, sp, -(XLEN_BYTES*2)              
     SAVE_X  ra, 0(sp)
     SAVE_X  s2, (XLEN_BYTES*1)(sp)  
@@ -362,8 +363,9 @@ decode_AMO:
     ret
 #endif
 
+
+# in: instruction word in a0
 decode_CSR:
-    # in: instruction word in a0
     addi    sp, sp, -(XLEN_BYTES*2)              
     SAVE_X  ra, 0(sp)
     SAVE_X  s2, (XLEN_BYTES*1)(sp)     
@@ -379,8 +381,8 @@ decode_CSR:
     ret
 
 
+# in: instruction word in a0
 decode_CSRI:
-    # in: instruction word in a0
     addi    sp, sp, -(XLEN_BYTES*2)              
     SAVE_X  ra, 0(sp)
     SAVE_X  s2, (XLEN_BYTES*1)(sp)
@@ -399,8 +401,8 @@ decode_CSRI:
     ret
 
 
+# in: instruction word in a0
 print_rd:
-	# in: instruction word in a0
     addi    sp, sp, -(XLEN_BYTES*1)              
     SAVE_X  ra, 0(sp) 
     # isolate rd from a0
@@ -413,8 +415,8 @@ print_rd:
     ret
 
 
+# in: instruction word in a0
 print_rs1:
-	# in: instruction word in a0
     addi    sp, sp, -(XLEN_BYTES*1)              
     SAVE_X  ra, 0(sp) 
     srli    a0, a0, 15
@@ -425,8 +427,8 @@ print_rs1:
     ret
 
 
+# in: instruction word in a0
 print_rs2:
-	# in: instruction word in a0
     addi    sp, sp, -(XLEN_BYTES*1)              
     SAVE_X  ra, 0(sp) 
     srli    a0, a0, 20
@@ -437,8 +439,8 @@ print_rs2:
     ret
 
 
+# in: instruction word in a0
 print_csr:
-	# in: instruction word in a0
     addi    sp, sp, -(XLEN_BYTES*1)              
     SAVE_X  ra, 0(sp) 
     srai    a0, a0, 20
@@ -449,9 +451,9 @@ print_csr:
     ret
 
 
+# output the n-th register name from the register name table
+# in: n in a0
 print_register_name:
-    # output the n-th register name from the register name table
-    # in: n in a0
     addi    sp, sp, -(XLEN_BYTES*2)              
     SAVE_X  ra, 0(sp)
     SAVE_X  s0, (XLEN_BYTES*1)(sp)
@@ -477,11 +479,11 @@ print_register_next_zero:
     ret
 
 
+# in: instruction word in a0
+# out: instruction word in a0
+# out: type-depending decode function ptr in a1
+# out: opcode string in a2
 decode_opcode:
-    # in: instruction word in a0
-    # out: instruction word in a0
-    # out: type-depending decode function ptr in a1
-    # out: opcode string in a2
     addi    sp, sp, -(XLEN_BYTES*1)              
     SAVE_X  ra, 0(sp)
     # search for a match in encoding table
@@ -521,10 +523,10 @@ decode_opcode_done:
     ret
 
 
+# in: instruction word in a0
+# in: type-depending decoder routine to call in a1
+# in: opcode string in a2
 print_instruction:
-    # in: instruction word in a0
-    # in: type-depending decoder routine to call in a1
-    # in: opcode string in a2
     addi    sp, sp, -(XLEN_BYTES*3)              
     SAVE_X  ra, 0(sp)
     SAVE_X  s2, (XLEN_BYTES*1)(sp)
@@ -552,8 +554,9 @@ print_instruction_done:
 
 
 #ifdef ENABLE_RVA
+
+# in: instruction word in a0
 print_AMO_postfix:
-    # in: instruction word in a0
     addi    sp, sp, -(XLEN_BYTES*1)              
     SAVE_X  ra, 0(sp)
     # check if bits 0-6 are an AMO opcode, return if not
@@ -582,6 +585,7 @@ print_AMO_postfix_done:
     LOAD_X  ra, 0(sp)               
     addi    sp, sp, (XLEN_BYTES*1)
     ret
+
 #endif
 
 

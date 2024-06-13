@@ -13,7 +13,6 @@ cmd_X:
     jal     print_string
     LOAD_X  a0, 0(sp)      
     jal     print_hex
-
     # restore registers
     LOAD_X  ra, 0(sp)      
     LOAD_X  s0, (XLEN_BYTES*2)(sp)      
