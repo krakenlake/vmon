@@ -24,7 +24,7 @@ divrem:
 	li 		Q, 0
 	li 		R, 0
 	li 		bit, 1
-	slli	bit, bit, 63
+	slli	bit, bit, XLEN-1
 divrem1:
 	slli	R, R, 1
 	and		tmp, N, bit

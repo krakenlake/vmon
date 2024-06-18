@@ -37,7 +37,7 @@ ifeq ($(TARGET), vf2)
 	XLEN		= 64
 	TOOLBIN 	= /opt/riscv/rv64g/bin
 	ADDFLAGS	= -DXLEN=$(XLEN) -march=rv64g
-	RUN			= 
+	RUN			= echo "for running please move executable to hardware"
 endif
 
 NAME	= vmon
