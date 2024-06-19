@@ -20,14 +20,14 @@ uart_init:
 # wait and get one character from UART 
 # out: char (ASCII) in a0
 uart_wait_get_char:
-    li      s1, UART_BASE
+    li      t0, UART_BASE
 uart_get_char_wait:
     # busy wait for key pressed
     # TODO: use interrupt instead of polling
-    lb      a0, UART_REG_LSR(s1)        # read Line Status Register
+    lb      a0, UART_REG_LSR(t0)        # read Line Status Register
     and     a0, a0, 0x01
     beqz    a0, uart_get_char_wait      # wait for char input
-    lbu     a0, 0(s1)                   # get input from UART  
+    lbu     a0, 0(t0)                   # get input from UART  
     ret
 
 
