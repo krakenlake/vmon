@@ -1,10 +1,5 @@
 /*
     VMON - a RISC-V machine code monitor written in RISC-V assembly code
-
-    global register use:
-    s2 = text input buffer start addr
-    s3 = text input buffer ptr to last character
-    s5 = address of current instruction being disassembled   
 */
 
 
@@ -25,23 +20,32 @@
 
 .text
 
+/*
+    application entry point
+
+    s2 = text input buffer start addr
+    s3 = text input buffer ptr to last character
+    s5 = address of current instruction being disassembled   
+*/
 start:
 
 #ifdef BARE_METAL
-    # run only on hart 0
 
-#ifdef HW_QEMU
-    csrr    t0, mhartid
-    bnez    t0, end
-#endif
+    #ifdef HW_QEMU
+        # run only on hart 0
+        # this works only in M-mode
+        csrr    t0, mhartid
+        bnez    t0, end
+    #endif
 
-#ifdef HW_VF2
-    # TODO: csrr is not allowed when called from U-Boot on VF2    
-#endif
+    #ifdef HW_VF2
+        # TODO: csrr is not allowed when called from U-Boot on VF2 (S-mode)    
+    #endif
 
     # set up a stack 
     mv      t0, sp                      # save caller sp for later
     la      sp, stack + STACK_SIZE      # point to end of our new stack
+
 #endif /* BARE_METAL */
 
     # save registers on new stack
