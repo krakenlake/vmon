@@ -62,6 +62,4 @@ memory dump from <start_addr> to <end_addr>
 continue memory dump from last address used
 
 ## Known Problems
-This has only been tested on QEMU so far. Running this on real hardware
-will not work properly in most cases, as proper UART flow control 
-is not implemented.
+see [issues page](https://github.com/krakenlake/vmon/issues)
