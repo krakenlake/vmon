@@ -11,12 +11,6 @@
 .text
 
 uart_init:
-    # TODO: s1 -> t1 when nothing depends on global s1 any more
-    /*
-    li      s1, UART_BASE                  
-    li      t0, UART_MODE_8N1
-    sb      t0, UART_REG_LSR(s1)      
-    */
     li      t1, UART_BASE                  
     li      t0, UART_MODE_8N1
     sb      t0, UART_REG_LSR(t1)      
@@ -30,10 +24,10 @@ uart_wait_get_char:
 uart_get_char_wait:
     # busy wait for key pressed
     # TODO: use interrupt instead of polling
-    lb      a0, 5(s1)                   # read Line Status Register
+    lb      a0, UART_REG_LSR(s1)        # read Line Status Register
     and     a0, a0, 0x01
     beqz    a0, uart_get_char_wait      # wait for char input
-    lbu     a0, 0(s1)               # get input from UART  
+    lbu     a0, 0(s1)                   # get input from UART  
     ret
 
 
@@ -96,4 +90,3 @@ uart_output_buffer_done:
     LOAD_X  ra, 0(sp)             
     addi    sp, sp, (XLEN_BYTES*1)
     ret
-

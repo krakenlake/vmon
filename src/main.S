@@ -29,9 +29,16 @@ start:
 
 #ifdef BARE_METAL
     # run only on hart 0
+
+#ifdef HW_QEMU
     csrr    t0, mhartid
     bnez    t0, end
-    
+#endif
+
+#ifdef HW_VF2
+    # TODO: csrr is not allowed when called from U-Boot on VF2    
+#endif
+
     # set up a stack 
     mv      t0, sp                      # save caller sp for later
     la      sp, stack + STACK_SIZE      # point to end of our new stack

@@ -4,15 +4,15 @@ default: all
 
 
 #TARGET	= qemu-rv32g
-TARGET	= qemu-rv64g
+#TARGET	= qemu-rv64g
 #TARGET	= qemu-rv64gc
-#TARGET	= vf2
+TARGET	= vf2
 
 ifeq ($(TARGET), qemu-rv32g)
 	ARCH    	= riscv32-unknown-elf
 	XLEN		= 32
 	TOOLBIN 	= /opt/riscv/rv32g/bin
-	ADDFLAGS	= -DXLEN=$(XLEN) -march=rv32g
+	ADDFLAGS	= -DHW_QEMU -DXLEN=$(XLEN) -march=rv32g
 	RUN			= qemu-system-riscv32 -machine virt -cpu rv32,pmp=false -smp 2 -gdb tcp::1234 -bios none -serial stdio -display none -kernel $(BUILD)/$(NAME).img
 endif
 
@@ -20,7 +20,7 @@ ifeq ($(TARGET), qemu-rv64g)
 	ARCH    	= riscv64-unknown-elf
 	XLEN		= 64
 	TOOLBIN 	= /opt/riscv/rv64g/bin
-	ADDFLAGS	= -DXLEN=$(XLEN) -march=rv64g
+	ADDFLAGS	= -DHW_QEMU -DXLEN=$(XLEN) -march=rv64g
 	RUN			= qemu-system-riscv64 -machine virt -cpu rv64,pmp=false -smp 2 -gdb tcp::1234 -bios none -serial stdio -display none -kernel $(BUILD)/$(NAME).img
 endif
 
@@ -28,7 +28,7 @@ ifeq ($(TARGET), qemu-rv64gc)
 	ARCH    	= riscv64-unknown-elf
 	XLEN		= 64
 	TOOLBIN 	= /opt/riscv/rv64g/bin
-	ADDFLAGS	= -DXLEN=$(XLEN) -march=rv64gc -mabi=lp64
+	ADDFLAGS	= -DHW_QEMU -DXLEN=$(XLEN) -march=rv64gc -mabi=lp64
 	RUN			= qemu-system-riscv64 -machine virt -cpu rv64,pmp=false -smp 2 -gdb tcp::1234 -bios none -serial stdio -display none -kernel $(BUILD)/$(NAME).img
 endif
 
@@ -36,8 +36,23 @@ ifeq ($(TARGET), vf2)
 	ARCH    	= riscv64-unknown-elf
 	XLEN		= 64
 	TOOLBIN 	= /opt/riscv/rv64g/bin
-	ADDFLAGS	= -DXLEN=$(XLEN) -march=rv64g
-	RUN			= echo "for running please move executable to hardware"
+	ADDFLAGS	= -DHW_VF2 -DXLEN=$(XLEN) -march=rv64g
+define VF2_RUN_MSG
+
+	running on VF2:
+	- create a FAT filesystem on SD card
+	- copy vmon.img to SD card
+	- insert SD card into VF2
+	- attach serial terminal to VF2 (e.g. minicom, 115200 baud)
+	- boot from SPI (both dip-switches to L)
+	- in U-Boot console, load and run vmon.img:
+	StarFive # fatload mmc 1:2  0x44000000 vmon.img
+	StarFive # go 44001000
+
+endef
+	export VF2_RUN_MSG 
+	RUN			= @echo "$$VF2_RUN_MSG"
+
 endif
 
 NAME	= vmon
