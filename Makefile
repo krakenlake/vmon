@@ -4,9 +4,9 @@ default: all
 
 
 #TARGET	= qemu-rv32g
-#TARGET	= qemu-rv64g
+TARGET	= qemu-rv64g
 #TARGET	= qemu-rv64gc
-TARGET	= vf2
+#TARGET	= vf2
 
 ifeq ($(TARGET), qemu-rv32g)
 	ARCH    	= riscv32-unknown-elf
@@ -40,14 +40,17 @@ ifeq ($(TARGET), vf2)
 define VF2_RUN_MSG
 
 	running on VF2:
+	- set TARGET = vf2 in this Makefile
+	- make clean; make
 	- create a FAT filesystem on SD card
-	- copy vmon.img to SD card
+	- copy build/vf2/vmon.img to SD card
 	- insert SD card into VF2
-	- attach serial terminal to VF2 (e.g. minicom, 115200 baud)
-	- boot from SPI (both dip-switches to L)
-	- in U-Boot console, load and run vmon.img:
-	StarFive # fatload mmc 1:2  0x44000000 vmon.img
-	StarFive # go 44001000
+	- attach GPIO-to-USB serial terminal to VF2 (e.g. minicom, 115200 baud)
+	- set minicom to "Add Carriage Ret" (Ctrl-A Z, then U)
+	- boot into U-Boot from SPI (both dip-switches to L)
+	- in U-Boot command line, load and run vmon.img:
+	StarFive # fatload mmc 1:2  0x43fff000 vmon.img
+	StarFive # go 44000000
 
 endef
 	export VF2_RUN_MSG 
