@@ -8,6 +8,8 @@ TARGET	= qemu-rv64g
 #TARGET	= qemu-rv64gc
 #TARGET	= vf2
 
+DEBUG = -DDEBUG
+
 ifeq ($(TARGET), qemu-rv32g)
 	ARCH    	= riscv32-unknown-elf
 	XLEN		= 32
@@ -60,7 +62,7 @@ endif
 
 NAME	= vmon
 CC      = $(TOOLBIN)/$(ARCH)-gcc
-CFLAGS	= $(ADDFLAGS) -nostartfiles -g -I"src/include"
+CFLAGS	= $(DEBUG) $(ADDFLAGS) -nostartfiles -g -I"src/include"
 LD		= $(TOOLBIN)/$(ARCH)-ld
 LDFLAGS = --no-warn-rwx-segments
 OBJCOPY = $(TOOLBIN)/$(ARCH)-objcopy
