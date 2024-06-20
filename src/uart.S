@@ -83,7 +83,7 @@ uart_output_buffer_wait_lsr:
     andi    t3, t3, 0b00100000 
     beqz    t3, uart_output_buffer_wait_lsr
     # UART is now ready to receive data for TX
-    sb      t0, 0(t4)                   # print byte to UART
+    sb      t0, UART_REG_THR(t4)                   # print byte to UART
     addi    t1, t1, 1
     j       uart_output_buffer_next_byte
 uart_output_buffer_done:
