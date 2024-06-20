@@ -29,6 +29,16 @@
 */
 start:
 
+    # I am alive
+    # try to output one char in the simplest way possible
+#ifdef DEBUG
+    li      t1, UART_BASE                  
+    li      t0, UART_MODE_8N1
+    sb      t0, UART_REG_LSR(t1)
+    li      t0, '*'
+    sb      t0, UART_REG_THR(t1)      
+#endif
+
 #ifdef BARE_METAL
 
     #ifdef HW_QEMU
