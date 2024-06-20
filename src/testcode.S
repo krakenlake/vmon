@@ -465,6 +465,10 @@ testcode_jal_forward:
 */
 #endif /* ENABLE_RVC */
 
+# RVV
+#ifdef ENABLE_RVV
+# TODO
+#endif /* ENABLE_RVV */
 
 
 #endif /* WITH_TESTCODE */

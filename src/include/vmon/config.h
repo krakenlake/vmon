@@ -44,6 +44,9 @@
 // enable C extension disassembly?
 #define ENABLE_RVC
 
+// enable V extension disassembly?
+#define ENABLE_RVV
+
 // enable printing of pseudo opcodes in disassembly?
 #define ENABLE_PSEUDO
 
