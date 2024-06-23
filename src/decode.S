@@ -42,6 +42,7 @@ insn_get_aqrl:
     and     a1, t0, a1
     srli    a1, a1, 25
     ret
+.size insn_get_aqrl, .-insn_get_aqrl
 
 #endif
 
@@ -88,6 +89,7 @@ decode_B_type:
     LOAD_X  s2, (XLEN_BYTES*1)(sp)               
     addi    sp, sp, (XLEN_BYTES*2)
     ret
+.size decode_B_type, .-decode_B_type
 
 
 # in: instruction word in a0
@@ -113,6 +115,7 @@ decode_I_type:
     LOAD_X  s2, (XLEN_BYTES*1)(sp)               
     addi    sp, sp, (XLEN_BYTES*2)
     ret
+.size decode_I_type, .-decode_I_type
 
 
 # in: instruction word in a0
@@ -141,6 +144,7 @@ decode_I_type_LOAD:
     LOAD_X  s2, (XLEN_BYTES*1)(sp)               
     addi    sp, sp, (XLEN_BYTES*2)
     ret
+.size decode_I_type_LOAD, .-decode_I_type_LOAD
 
 
 # in: instruction word in a0
@@ -165,6 +169,7 @@ decode_I_type_SHIFT:
     LOAD_X  s2, (XLEN_BYTES*1)(sp)               
     addi    sp, sp, (XLEN_BYTES*2)
     ret
+.size decode_I_type_SHIFT, .-decode_I_type_SHIFT
 
 
 # in: instruction word in a0
@@ -183,6 +188,7 @@ decode_R_type:
     LOAD_X  s2, (XLEN_BYTES*1)(sp)               
     addi    sp, sp, (XLEN_BYTES*2)
     ret
+.size decode_R_type, .-decode_R_type
 
 
 # in: instruction word in a0
@@ -223,6 +229,7 @@ decode_S_type:
     LOAD_X  s2, (XLEN_BYTES*1)(sp)               
     addi    sp, sp, (XLEN_BYTES*2)
     ret
+.size decode_S_type, .-decode_S_type
 
 
 # in: instruction word in a0
@@ -239,6 +246,7 @@ decode_U_type:
     LOAD_X  s2, (XLEN_BYTES*1)(sp)               
     addi    sp, sp, (XLEN_BYTES*2)
     ret
+.size decode_U_type, .-decode_U_type
 
 
 # in: instruction word in a0
@@ -279,6 +287,7 @@ decode_JAL:
     LOAD_X  s2, (XLEN_BYTES*1)(sp)               
     addi    sp, sp, (XLEN_BYTES*2)
     ret
+.size decode_JAL, .-decode_JAL
 
 
 # in: instruction word in a0
@@ -308,6 +317,7 @@ decode_JALR:
     LOAD_X  s2, (XLEN_BYTES*1)(sp)               
     addi    sp, sp, (XLEN_BYTES*2)
     ret
+.size decode_JALR, .-decode_JALR
 
 
 decode_FENCE:
@@ -317,6 +327,11 @@ decode_FENCE_I:
 decode_EMPTY:
     # do nothing
     ret
+.size decode_FENCE, .-decode_FENCE
+.size decode_ECALL, .-decode_ECALL
+.size decode_EBREAK, .-decode_EBREAK
+.size decode_FENCE_I, .-decode_FENCE_I
+.size decode_EMPTY, .-decode_EMPTY
 
 
 #ifdef ENABLE_RVA
@@ -338,6 +353,7 @@ decode_LRSC:
     LOAD_X  s2, (XLEN_BYTES*1)(sp)               
     addi    sp, sp, (XLEN_BYTES*2)
     ret
+.size decode_LRSC, .-decode_LRSC
 
 
 # in: instruction word in a0
@@ -362,6 +378,7 @@ decode_AMO:
     addi    sp, sp, (XLEN_BYTES*2)
     ret
 #endif
+.size decode_AMO, .-decode_AMO
 
 
 # in: instruction word in a0
@@ -379,6 +396,7 @@ decode_CSR:
     LOAD_X  s2, (XLEN_BYTES*1)(sp)               
     addi    sp, sp, (XLEN_BYTES*2)
     ret
+.size decode_CSR, .-decode_CSR
 
 
 # in: instruction word in a0
@@ -399,6 +417,7 @@ decode_CSRI:
     LOAD_X  s2, (XLEN_BYTES*1)(sp)               
     addi    sp, sp, (XLEN_BYTES*2)
     ret
+.size decode_CSRI, .-decode_CSRI
 
 
 # in: instruction word in a0
@@ -413,6 +432,7 @@ print_rd:
     LOAD_X  ra, 0(sp)               
     addi    sp, sp, (XLEN_BYTES*1)
     ret
+.size print_rd, .-print_rd
 
 
 # in: instruction word in a0
@@ -425,6 +445,7 @@ print_rs1:
     LOAD_X  ra, 0(sp)               
     addi    sp, sp, (XLEN_BYTES*1)
     ret
+.size print_rs1, .-print_rs1
 
 
 # in: instruction word in a0
@@ -437,6 +458,7 @@ print_rs2:
     LOAD_X  ra, 0(sp)               
     addi    sp, sp, (XLEN_BYTES*1)
     ret
+.size print_rs2, .-print_rs2
 
 
 # in: instruction word in a0
@@ -449,6 +471,7 @@ print_csr:
     LOAD_X  ra, 0(sp)               
     addi    sp, sp, (XLEN_BYTES*1)
     ret
+.size print_csr, .-print_csr
 
 
 # output the n-th register name from the register name table
@@ -477,6 +500,7 @@ print_register_next_zero:
     LOAD_X  s0, (XLEN_BYTES*1)(sp)               
     addi    sp, sp, (XLEN_BYTES*2)
     ret
+.size print_register_name, .-print_register_name
 
 
 # in: instruction word in a0
@@ -521,6 +545,7 @@ decode_opcode_done:
     LOAD_X  ra, 0(sp)               
     addi    sp, sp, (XLEN_BYTES*1)
     ret
+.size decode_opcode, .-decode_opcode
 
 
 # in: instruction word in a0
@@ -551,6 +576,7 @@ print_instruction_done:
     LOAD_X  s3, (XLEN_BYTES*2)(sp)     
     addi    sp, sp, (XLEN_BYTES*3)
     ret
+.size print_instruction, .-print_instruction
 
 
 #ifdef ENABLE_RVA
@@ -585,6 +611,7 @@ print_AMO_postfix_done:
     LOAD_X  ra, 0(sp)               
     addi    sp, sp, (XLEN_BYTES*1)
     ret
+.size print_AMO_postfix, .-print_AMO_postfix
 
 #endif
 
@@ -595,8 +622,11 @@ print_AMO_postfix_done:
 #ifdef ENABLE_RVA
 .align 4
 string_OP_POSTFIX_AQ:   .string ".aq";
+.size string_OP_POSTFIX_AQ, .-string_OP_POSTFIX_AQ
 string_OP_POSTFIX_RL:	.string ".rl";
+.size string_OP_POSTFIX_RL, .-string_OP_POSTFIX_RL
 string_OP_POSTFIX_AQRL:	.string ".aqrl";
+.size string_OP_POSTFIX_AQRL, .-string_OP_POSTFIX_AQRL
 #endif
 
 

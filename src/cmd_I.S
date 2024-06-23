@@ -55,24 +55,33 @@ cmd_I:
 #endif /* WITH_TESTCODE */
 
     j       main_prompt
+.size cmd_I, .-cmd_I
 
 
 .data
 string_info_text:
     .string ".text addr: ";
+.size string_info_text, .-string_info_text
 string_info_data:
     .string "\n.data addr: ";
+.size string_info_data, .-string_info_data
 string_info_bss:
     .string "\n.bss addr: ";
+.size string_info_bss, .-string_info_bss
 string_info_buffer:
     .string "\nbuffer addr: ";
+.size string_info_buffer, .-string_info_buffer
 string_info_stackstart:
     .string "\nstack start addr: ";
+.size string_info_stackstart, .-string_info_stackstart
 string_info_stackend:
     .string "\nstack end addr: ";
+.size string_info_stackend, .-string_info_stackend
 string_info_stacksize:
     .string "\nstack bytes free: ";
+.size string_info_stacksize, .-string_info_stacksize
 string_info_testcode:
     .string "\ntestcode addr: ";
+.size string_info_testcode, .-string_info_testcode
 
 #endif /* WITH_CMD_I */
