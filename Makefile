@@ -3,41 +3,41 @@
 default: all
 
 
-#TARGET	= qemu-rv32g
-TARGET	= qemu-rv64g
-#TARGET	= qemu-rv64gc
-#TARGET	= vf2
+#TARGET	?= qemu-rv32g
+TARGET	?= qemu-rv64g
+#TARGET	?= qemu-rv64gc
+#TARGET	?= vf2
 
-DEBUG = -DDEBUG
+DEBUG ?= -DDEBUG
 
 ifeq ($(TARGET), qemu-rv32g)
-	ARCH    	= riscv32-unknown-elf
+	ARCH    	?= riscv32-unknown-elf
 	XLEN		= 32
-	TOOLBIN 	= /opt/riscv/rv32g/bin
+	TOOLBIN 	?= /opt/riscv/rv32g/bin
 	ADDFLAGS	= -DHW_QEMU -DXLEN=$(XLEN) -march=rv32g
 	RUN			= qemu-system-riscv32 -machine virt -cpu rv32,pmp=false -smp 2 -gdb tcp::1234 -bios none -serial stdio -display none -kernel $(BUILD)/$(NAME).img
 endif
 
 ifeq ($(TARGET), qemu-rv64g)
-	ARCH    	= riscv64-unknown-elf
+	ARCH    	?= riscv64-unknown-elf
 	XLEN		= 64
-	TOOLBIN 	= /opt/riscv/rv64g/bin
+	TOOLBIN 	?= /opt/riscv/rv64g/bin
 	ADDFLAGS	= -DHW_QEMU -DXLEN=$(XLEN) -march=rv64g
 	RUN			= qemu-system-riscv64 -machine virt -cpu rv64,pmp=false -smp 2 -gdb tcp::1234 -bios none -serial stdio -display none -kernel $(BUILD)/$(NAME).img
 endif
 
 ifeq ($(TARGET), qemu-rv64gc)
-	ARCH    	= riscv64-unknown-elf
+	ARCH    	?= riscv64-unknown-elf
 	XLEN		= 64
-	TOOLBIN 	= /opt/riscv/rv64g/bin
+	TOOLBIN 	?= /opt/riscv/rv64g/bin
 	ADDFLAGS	= -DHW_QEMU -DXLEN=$(XLEN) -march=rv64gc -mabi=lp64
 	RUN			= qemu-system-riscv64 -machine virt -cpu rv64,pmp=false -smp 2 -gdb tcp::1234 -bios none -serial stdio -display none -kernel $(BUILD)/$(NAME).img
 endif
 
 ifeq ($(TARGET), vf2)
-	ARCH    	= riscv64-unknown-elf
+	ARCH    	?= riscv64-unknown-elf
 	XLEN		= 64
-	TOOLBIN 	= /opt/riscv/rv64g/bin
+	TOOLBIN 	?= /opt/riscv/rv64g/bin
 	ADDFLAGS	= -DHW_VF2 -DXLEN=$(XLEN) -march=rv64g
 define VF2_RUN_MSG
 
@@ -82,7 +82,7 @@ DEP = $(OBJ:%.o=%.d)
 
 all: $(BUILD) $(BUILD)/$(NAME).img $(BUILD)/$(NAME)-stripped.img
 	ls -al $(BUILD)/$(NAME).img $(BUILD)/$(NAME)-stripped.img
-	
+
 $(BUILD):
 	mkdir -p $(BUILD)
 
