@@ -464,6 +464,7 @@ testcode_jal_forward:
     c.sub       s0, s1
 */
 #endif /* ENABLE_RVC */
+.size testcode, .-testcode
 
 
 

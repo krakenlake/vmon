@@ -133,6 +133,7 @@ get_command:
     mv      s4, a0
     # take first non-whitespace char in line as command
     lb      t1, 0(s4)               # get byte from buffer
+.size start, .-start
 
 #ifdef WITH_CMD_D
     li      t0, 'd'
@@ -193,25 +194,34 @@ main_clear_buffer_loop:
     addi    t0, t0, 4
     ble     t0, t1, main_clear_buffer_loop
     ret
+.size main_clear_buffer, .-main_clear_buffer
 
 
 .data
 start_data:
 
 string_startup:     .string "\nVMON - RISC-V machine code monitor";
+.size string_startup, .-string_startup
 string_prompt:      .string "\n.";
+.size string_prompt, .-string_prompt
 
 string_asm_sep1:    .string ":";
+.size string_asm_sep1, .-string_asm_sep1
 string_asm_sep2:    .string "\t";
+.size string_asm_sep2, .-string_asm_sep2
 string_asm_comment: .string "\t# ";
+.size string_asm_comment, .-string_asm_comment
 
 .bss
 start_bss:
 .align 8
 .comm last_address, XLEN_BYTES  # last address used in m or d command
-
+.size last_address, XLEN_BYTES
+	
 .align 8
 .comm buffer, BUFFER_SIZE       # for command line input
-
+.size buffer, BUFFER_SIZE
+        
 .align 8
 .comm stack, STACK_SIZE         # our execution stack
+.size stack, STACK_SIZE

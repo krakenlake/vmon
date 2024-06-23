@@ -64,10 +64,12 @@ cmd_M_done:
     la      a0, last_address 
     SAVE_X  s5, 0(a0)
     j       main_prompt
+.size cmd_M, .-cmd_M
 
 
 .data
 string_line_prefix_M:   .string ":";
+.size string_line_prefix_M, .-string_line_prefix_M
 
 
 

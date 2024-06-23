@@ -19,6 +19,7 @@ skip_whitespace_next_byte:
     beq     t2, t0, skip_whitespace_next_byte 
     beq     t2, t1, skip_whitespace_next_byte 
     ret
+.size skip_whitespace, .-skip_whitespace
 
 
 # in: buffer ptr in a0
@@ -61,3 +62,4 @@ get_hex_addr_check_alpha:
     li      a2, -1
  get_hex_addr_return:   
     ret	
+.size get_hex_addr, .-get_hex_addr
