@@ -63,9 +63,18 @@ cmd_D_opcode_unknown:
     jal     print_string
     j       cmd_D_advance
 cmd_D_advance:
-    # TODO: advance only 2 bytes if RVC opcode
-    addi    s5, s5, 4               # point to next instruction
-    bgt     s5, s7, cmd_D_done
+    lw      t0, 0(s5)                   # load instruction word again
+    addi    s5, s5, 2                   # advance 2 bytes in any case
+    andi    t0,t0, 0b11                 # look at bit 0 and 1
+    # compressed instructions either end in 0b01 or 0b10
+    li      t1, 0b01                
+    beq     t0, t1, cmd_D_advance_done  # it is a compressed instruction
+    li      t1, 0b10
+    beq     t0, t1, cmd_D_advance_done  # it is a compressed instruction
+    # it was not a compressed instruction
+    addi    s5, s5, 2                   # add 2 more bytes if not compressed
+cmd_D_advance_done:
+    bgt     s5, s7, cmd_D_done          # check if end address reached
     li      a0, ASCII_NEWLINE
     jal     print_char
     j       cmd_D_next_instruction
