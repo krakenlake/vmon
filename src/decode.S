@@ -377,9 +377,42 @@ decode_AMO:
     LOAD_X  s2, (XLEN_BYTES*1)(sp)               
     addi    sp, sp, (XLEN_BYTES*2)
     ret
-#endif
 .size decode_AMO, .-decode_AMO
+#endif
 
+#ifdef ENABLE_RVC
+decode_CR_type:
+    ret
+.size decode_CR_type, .-decode_CR_type
+
+decode_CI_type:
+    ret
+.size decode_CI_type, .-decode_CI_type
+
+decode_CSS_type:
+    ret
+.size decode_CSS_type, .-decode_CSS_type
+
+decode_CIW_type:
+    ret
+.size decode_CIW_type, .-decode_CIW_type
+
+decode_CL_type:
+    ret
+.size decode_CL_type, .-decode_CL_type
+
+decode_CS_type:
+    ret
+.size decode_CS_type, .-decode_CS_type
+
+decode_CB_type:
+    ret
+.size decode_CB_type, .-decode_CB_type
+
+decode_CJ_type:
+    ret
+.size decode_CJ_type, .-decode_CJ_type
+#endif
 
 # in: instruction word in a0
 decode_CSR:
