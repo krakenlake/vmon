@@ -73,11 +73,15 @@ cmd_D_done:
     la      a0, last_address 
     SAVE_X  s5, 0(a0)
     j       main_prompt
+.size cmd_D, .-cmd_D
  
  
 .data
 string_OP_UNKNOWN:      .string "???";
+.size string_OP_UNKNOWN, .-string_OP_UNKNOWN
+	
 string_line_prefix_D:   .string ",";
+.size string_line_prefix_D, .-string_line_prefix_D
 
 
 #endif /* WITH_CMD_D */

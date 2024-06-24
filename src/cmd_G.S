@@ -24,9 +24,11 @@ cmd_G_error:
     la      a0, error_no_addr
     jal     print_string
     j       main_prompt
+.size cmd_G, .-cmd_G
 
 
 .data
 string_go:              .string "jumping to address ";
+.size string_go, .-string_go
 
 #endif /* WITH_CMD_G */

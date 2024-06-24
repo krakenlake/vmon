@@ -15,6 +15,7 @@ uart_init:
     li      t0, UART_MODE_8N1
     sb      t0, UART_REG_LSR(t1)      
     ret
+.size uart_init, .-uart_init
 
 
 # wait and get one character from UART 
@@ -29,6 +30,7 @@ uart_get_char_wait:
     beqz    a0, uart_get_char_wait      # wait for char input
     lbu     a0, 0(t0)                   # get input from UART  
     ret
+.size uart_wait_get_char, .-uart_wait_get_char
 
 
 # output one char 
@@ -43,6 +45,7 @@ uart_output_char:
     LOAD_X  ra, 0(sp)             
     addi    sp, sp, (XLEN_BYTES*1)
     ret
+.size uart_output_char, .-uart_output_char
 
 
 # output zero-terminated string  
@@ -61,6 +64,7 @@ uart_output_string_done:
     LOAD_X  ra, 0(sp)             
     addi    sp, sp, (XLEN_BYTES*1)
     ret
+.size uart_output_string, .-uart_output_string
 
 
 # print zero-terminated string in output buffer out_buf to UART
@@ -90,3 +94,4 @@ uart_output_buffer_done:
     LOAD_X  ra, 0(sp)             
     addi    sp, sp, (XLEN_BYTES*1)
     ret
+.size uart_output_buffer, .-uart_output_buffer

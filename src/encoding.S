@@ -22,12 +22,14 @@ register_names:
 	.string "a6",   "a7",  "s2",  "s3", "s4", "s5", "s6", "s7"
 	.string "s8",   "s9", "s10", "s11", "t3", "t4", "t5", "t6"
 #endif
+.size register_names, .-register_names
 
 
 # Opcode strings
 
 
 # RV32I
+string_opcodes:
 string_OP_LUI:      .string "lui";		#
 string_OP_AUIPC:    .string "auipc";	#	
 string_OP_JAL:      .string "jal";		#
@@ -161,6 +163,7 @@ string_OP_CSRRCI:	.string "csrrci";	#
 	string_OP_RET:		.string "ret";	
 	string_OP_NOP:		.string "nop";	
 #endif /* ENABLE_PSEUDO */
+.size string_opcodes, .-string_opcodes
 
 
 .align 4
@@ -299,5 +302,6 @@ encoding_table:
 
 # table end marker
 .word 0, 0, 0, 0
+.size encoding_table, .-encoding_table
 
 #endif /* WITH_CMD_D */

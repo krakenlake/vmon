@@ -27,6 +27,7 @@ print_comma:
     LOAD_X  ra, 0(sp)             
     addi    sp, sp, (XLEN_BYTES*1)
     ret
+.size print_comma, .-print_comma
 
 
 print_hex_prefix:
@@ -39,6 +40,7 @@ print_hex_prefix:
     LOAD_X  ra, 0(sp)             
     addi    sp, sp, (XLEN_BYTES*1)
     ret
+.size print_hex_prefix, .-print_hex_prefix
 
 
 # in: print value in a0 in hex with "0x" prefix
@@ -50,6 +52,7 @@ print_hex:
     LOAD_X  ra, 0(sp)                       
     addi    sp, sp, (XLEN_BYTES*1)
     ret
+.size print_hex, .-print_hex
 
 
 # in: print value in a0 in hex
@@ -81,6 +84,7 @@ print_hex_new_decimal:
     LOAD_X  ra, 0(sp)             
     addi    sp, sp, (XLEN_BYTES*1)
     ret
+.size print_hex_raw, .-print_hex_raw
 
 
 # print a 2-digit hex value (with leading zero for 1-digit values)
@@ -100,6 +104,7 @@ print_hex_byte_two_digits:
     LOAD_X  ra, 0(sp)             
     addi    sp, sp, (XLEN_BYTES*1)
     ret
+.size print_hex_byte, .-print_hex_byte
 
 
 # print char in a0 to terminal (if printable, else '.')
@@ -119,6 +124,7 @@ print_ascii_out:
     LOAD_X  ra, 0(sp)             
     addi    sp, sp, (XLEN_BYTES*1)
     ret
+.size print_ascii, .-print_ascii
 
 
 # print ASCII char in a0
@@ -129,6 +135,7 @@ print_char:
     LOAD_X  ra, 0(sp)             
     addi    sp, sp, (XLEN_BYTES*1)
     ret
+.size print_char, .-print_char
 
 
 # print string starting at addr in a0
@@ -139,6 +146,7 @@ print_string:
     LOAD_X  ra, 0(sp)             
     addi    sp, sp, (XLEN_BYTES*1)
     ret
+.size print_string, .-print_string
 
 
 #ifdef WITH_CMD_D
@@ -188,6 +196,7 @@ print_decimal_done:
     LOAD_X  s2, (XLEN_BYTES*1)(sp)               
     addi    sp, sp, (XLEN_BYTES*2)
     ret
+.size print_decimal, .-print_decimal
 
 
 #endif /* WITH_CMD_D */
@@ -197,6 +206,8 @@ print_decimal_done:
 .align 8
 
 .comm dec_buf, DEC_BUFFER_SIZE
+.size dec_buf, DEC_BUFFER_SIZE
 
 .comm out_buf, OUT_BUFFER_SIZE
+.size out_buf, OUT_BUFFER_SIZE
 
