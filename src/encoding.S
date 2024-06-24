@@ -157,6 +157,51 @@ string_OP_CSRRCI:	.string "csrrci";	#
 
 
 # RVC
+string_OP_C_FLD:		.string "c.fld";
+string_OP_C_LW:			.string "c.lw";
+string_OP_C_FLW:		.string "c.flw";
+string_OP_C_FSD:		.string "c.fsd";
+string_OP_C_SW:			.string "c.sw";
+string_OP_C_FSW:		.string "c.fsw";
+string_OP_C_ADDI:		.string "c.addi";
+string_OP_C_JAL:		.string "c.jal";
+string_OP_C_LI:			.string "c.li";
+string_OP_C_LUI:		.string "c.lui";
+string_OP_C_SRLI:		.string "c.srli";
+string_OP_C_SRLI64:		.string "c.srli64";
+string_OP_C_SRAI:		.string "c.srai";
+string_OP_C_SRAI64:		.string "c.srai64";
+string_OP_C_ANDI:		.string "c.andi";
+string_OP_C_SUB:		.string "c.sub";
+string_OP_C_XOR:		.string "c.xor";
+string_OP_C_OR:			.string "c.or";
+string_OP_C_AND:		.string "c.and";
+string_OP_C_SUBW:		.string "c.subw";
+string_OP_C_ADDW:		.string "c.addw";
+string_OP_C_J:			.string "c.j";
+string_OP_C_BEQZ:		.string "c.beqz";
+string_OP_C_BNEZ:		.string "c.bnez";
+string_OP_C_SLLI:		.string "c.slli";
+string_OP_C_SLLI64:		.string "c.slli64";
+string_OP_C_FLDSP:		.string "c.fldsp";
+string_OP_C_LWSP:		.string "c.lwsp";
+string_OP_C_FLWSP:		.string "c.flwsp";
+string_OP_C_MV:			.string "c.mv";
+string_OP_C_ADD:		.string "c.add";
+string_OP_C_FSDSP:		.string "c.fsdsp";
+string_OP_C_SWSP:		.string "c.swsp";
+string_OP_C_FSWSP:		.string "c.fswsp";
+string_OP_C_NOP:		.string "c.nop";
+string_OP_C_ADDI16SP:	.string "c.addo16sp";
+string_OP_C_JR:			.string "c.jr";
+string_OP_C_JALR:		.string "c.jalr";
+string_OP_C_EBREAK:		.string "c.ebreak";
+string_OP_C_LD:			.string "c.ld";
+string_OP_C_SD:			.string "c.sd";
+string_OP_C_ADDIW:		.string "c.addiw";
+string_OP_C_LDSP:		.string "c.ldsp";
+string_OP_C_SDSP:		.string "c.sdsp";
+
 
 # Pseudo
 #ifdef ENABLE_PSEUDO
@@ -176,6 +221,7 @@ encoding_table:
 #ifdef ENABLE_PSEUDO
 	.word 0xffffffff, 0x00008067, decode_EMPTY, string_OP_RET
 	.word 0xffffffff, 0x00000013, decode_EMPTY, string_OP_NOP
+	.word 0xffffffff, 0x00730001, decode_EMPTY, string_OP_C_NOP
 #endif /* ENABLE_PSEUDO */
 
 # RV32I
@@ -288,6 +334,55 @@ encoding_table:
 		.word MASK_AMOMINU_D, MATCH_AMOMINU_D, decode_AMO, string_OP_AMOMINUD
 	#endif
 #endif /* ENABLE_RVA */
+
+# RVC
+#ifdef ENABLE_RVC
+	.word MASK_C_FLD, MATCH_C_FLD, decode_EMPTY, string_OP_C_FLD
+	.word MASK_C_LW, MATCH_C_LW, decode_EMPTY, string_OP_C_LW
+	.word MASK_C_FLW, MATCH_C_FLW, decode_EMPTY, string_OP_C_FLW
+	.word MASK_C_FSD, MATCH_C_FSD, decode_EMPTY, string_OP_C_FSD
+	.word MASK_C_SW, MATCH_C_SW, decode_EMPTY, string_OP_C_SW
+	.word MASK_C_FSW, MATCH_C_FSW, decode_EMPTY, string_OP_C_FSW
+	.word MASK_C_ADDI, MATCH_C_ADDI, decode_EMPTY, string_OP_C_ADDI
+	.word MASK_C_JAL, MATCH_C_JAL, decode_EMPTY, string_OP_C_JAL
+	.word MASK_C_LI, MATCH_C_LI, decode_EMPTY, string_OP_C_LI
+	.word MASK_C_LUI, MATCH_C_LUI, decode_EMPTY, string_OP_C_LUI
+	.word MASK_C_SRLI, MATCH_C_SRLI, decode_EMPTY, string_OP_C_SRLI
+	.word MASK_C_SRLI64, MATCH_C_SRLI64, decode_EMPTY, string_OP_C_SRLI64
+	.word MASK_C_SRAI, MATCH_C_SRAI, decode_EMPTY, string_OP_C_SRAI
+	.word MASK_C_SRAI64, MATCH_C_SRAI64, decode_EMPTY, string_OP_C_SRAI64
+	.word MASK_C_ANDI, MATCH_C_ANDI, decode_EMPTY, string_OP_C_ANDI
+	.word MASK_C_SUB, MATCH_C_SUB, decode_EMPTY, string_OP_C_SUB
+	.word MASK_C_XOR, MATCH_C_XOR, decode_EMPTY, string_OP_C_XOR
+	.word MASK_C_OR, MATCH_C_OR, decode_EMPTY, string_OP_C_OR
+	.word MASK_C_AND, MATCH_C_AND, decode_EMPTY, string_OP_C_AND
+	.word MASK_C_SUBW, MATCH_C_SUBW, decode_EMPTY, string_OP_C_SUBW
+	.word MASK_C_ADDW, MATCH_C_ADDW, decode_EMPTY, string_OP_C_ADDW
+	.word MASK_C_J, MATCH_C_J, decode_EMPTY, string_OP_C_J
+	.word MASK_C_BEQZ, MATCH_C_BEQZ, decode_EMPTY, string_OP_C_BEQZ
+	.word MASK_C_BNEZ, MATCH_C_BNEZ, decode_EMPTY, string_OP_C_BNEZ
+	.word MASK_C_SLLI, MATCH_C_SLLI, decode_EMPTY, string_OP_C_SLLI
+	.word MASK_C_SLLI64, MATCH_C_SLLI64, decode_EMPTY, string_OP_C_SLLI64
+	.word MASK_C_FLDSP, MATCH_C_FLDSP, decode_EMPTY, string_OP_C_FLDSP
+	.word MASK_C_LWSP, MATCH_C_LWSP, decode_EMPTY, string_OP_C_LWSP
+	.word MASK_C_FLWSP, MATCH_C_FLWSP, decode_EMPTY, string_OP_C_FLWSP
+	.word MASK_C_MV, MATCH_C_MV, decode_EMPTY, string_OP_C_MV
+	.word MASK_C_ADD, MATCH_C_ADD, decode_EMPTY, string_OP_C_ADD
+	.word MASK_C_FSDSP, MATCH_C_FSDSP, decode_EMPTY, string_OP_C_FSDSP
+	.word MASK_C_SWSP, MATCH_C_SWSP, decode_EMPTY, string_OP_C_SWSP
+	.word MASK_C_FSWSP, MATCH_C_FSWSP, decode_EMPTY, string_OP_C_FSWSP
+	.word MASK_C_NOP, MATCH_C_NOP, decode_EMPTY, string_OP_C_NOP
+	.word MASK_C_ADDI16SP, MATCH_C_ADDI16SP, decode_EMPTY, string_OP_C_ADDI16SP
+	.word MASK_C_JR, MATCH_C_JR, decode_EMPTY, string_OP_C_JR
+	.word MASK_C_JALR, MATCH_C_JALR, decode_EMPTY, string_OP_C_JALR
+	.word MASK_C_EBREAK, MATCH_C_EBREAK, decode_EMPTY, string_OP_C_EBREAK
+	.word MASK_C_LD, MATCH_C_LD, decode_EMPTY, string_OP_C_LD
+	.word MASK_C_SD, MATCH_C_SD, decode_EMPTY, string_OP_C_SD
+	.word MASK_C_ADDIW, MATCH_C_ADDIW, decode_EMPTY, string_OP_C_ADDIW
+	.word MASK_C_LDSP, MATCH_C_LDSP, decode_EMPTY, string_OP_C_LDSP
+	.word MASK_C_SDSP, MATCH_C_SDSP, decode_EMPTY, string_OP_C_SDSP
+#endif /* ENABLE_RVC */
+
 
 # Zifencei
 .word MASK_FENCE_I, MATCH_FENCE_I, decode_FENCE_I, string_OP_FENCE_I

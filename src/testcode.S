@@ -8,8 +8,6 @@
 
 
 testcode:
-
-
 # pseudo opcodes
     jalr    x0, x1, 0           # ret
     addi    x0, x0, 0           # nop
@@ -463,13 +461,10 @@ testcode_RVF:
 #ifdef ENABLE_RVC
 testcode_RVC:
 #    c.lw        a0, a0, 1
-/*
     c.li        s0, 1
-
     c.lui       s0, 1
     c.mv        s0, s1
     c.sub       s0, s1
-*/
 #endif /* ENABLE_RVC */
 .size testcode, .-testcode
 

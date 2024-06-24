@@ -41,9 +41,6 @@
 // enable F extension disassembly?
 #define ENABLE_RVF
 
-// enable C extension disassembly?
-#define ENABLE_RVC
-
 // enable V extension disassembly?
 #define ENABLE_RVV
 
