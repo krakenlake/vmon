@@ -18,6 +18,8 @@ testcode:
     wfi
 
 # RV32I
+testcode_RV32I:
+
     fence 
     fence.i
     ecall
@@ -169,6 +171,7 @@ testcode_jal_forward:
 
 # RV64I
 #if XLEN >= 64
+testcode_RV64I:
     lwu     x0, 0(x0)
     lwu     x0, 2047(x0)
     lwu     x0, -2048(x0)
@@ -230,6 +233,7 @@ testcode_jal_forward:
 
 # RVM
 #ifdef ENABLE_RVM
+testcode_RVM:
     # RV32M
     mul     x0, x1, x2
     mul     x29, x30, x31
@@ -263,6 +267,7 @@ testcode_jal_forward:
 
 # RVA
 #ifdef ENABLE_RVA
+testcode_RVA:
     # RV32A
     lr.w            x0, (x1)
     lr.w            x30, (x31)
@@ -449,12 +454,14 @@ testcode_jal_forward:
 
 # RVF
 #ifdef ENABLE_RVF
+testcode_RVF:
 # TODO
 #endif /* ENABLE_RVF */
 
 
 # RVC
 #ifdef ENABLE_RVC
+testcode_RVC:
 #    c.lw        a0, a0, 1
 /*
     c.li        s0, 1
@@ -468,6 +475,7 @@ testcode_jal_forward:
 
 # RVV
 #ifdef ENABLE_RVV
+testcode_RVV:
 # TODO
 #endif /* ENABLE_RVV */
 
