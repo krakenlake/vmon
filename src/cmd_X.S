@@ -31,9 +31,11 @@ cmd_X:
     LOAD_X  sp, (XLEN_BYTES*1)(sp)     
     # return control to caller     
     ret     
+.size cmd_X, .-cmd_X
 
 
 .data
 string_exit:            .string "exiting: ret, ra=";
+.size string_exit, .-string_exit
 
 #endif /* WITH_CMD_X */

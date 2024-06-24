@@ -37,6 +37,7 @@ divrem2:
 	srli	bit, bit, 1
 	bnez	bit, divrem1
 	ret
+.size divrem, .-divrem
 
 	#undef Q
 	#undef R
