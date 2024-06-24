@@ -30,7 +30,7 @@ ifeq ($(TARGET), qemu-rv64gc)
 	ARCH    	?= riscv64-unknown-elf
 	XLEN		= 64
 	TOOLBIN 	?= /opt/riscv/rv64g/bin
-	ADDFLAGS	= -DRVC -DHW_QEMU -DXLEN=$(XLEN) -march=rv64gc -mabi=lp64
+	ADDFLAGS	= -DENABLE_RVC -DHW_QEMU -DXLEN=$(XLEN) -march=rv64gc -mabi=lp64
 	RUN			= qemu-system-riscv64 -machine virt -cpu rv64,pmp=false -smp 2 -gdb tcp::1234 -bios none -serial stdio -display none -kernel $(BUILD)/$(NAME).img
 endif
 
@@ -38,7 +38,7 @@ ifeq ($(TARGET), vf2)
 	ARCH    	?= riscv64-unknown-elf
 	XLEN		= 64
 	TOOLBIN 	?= /opt/riscv/rv64g/bin
-	ADDFLAGS	= -DHW_VF2 -DXLEN=$(XLEN) -march=rv64g
+	ADDFLAGS	= -DENABLE_RVC -DHW_VF2 -DXLEN=$(XLEN) -march=rv64g
 define VF2_RUN_MSG
 
 	running on VF2:

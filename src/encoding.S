@@ -221,7 +221,7 @@ encoding_table:
 #ifdef ENABLE_PSEUDO
 	.word 0xffffffff, 0x00008067, decode_EMPTY, string_OP_RET
 	.word 0xffffffff, 0x00000013, decode_EMPTY, string_OP_NOP
-	.word 0xffffffff, 0x00730001, decode_EMPTY, string_OP_C_NOP
+	.word 0x0000ffff, 0x0001, decode_EMPTY, string_OP_C_NOP
 #endif /* ENABLE_PSEUDO */
 
 # RV32I
