@@ -71,7 +71,6 @@ string_OP_FENCE:    .string "fence";	#
 string_OP_ECALL:    .string "ecall";	#
 string_OP_EBREAK:   .string "ebreak";	#
 
-
 # RV64I
 #if XLEN >=64
 	string_OP_LWU:      .string "lwu";		#
@@ -88,7 +87,6 @@ string_OP_EBREAK:   .string "ebreak";	#
 	string_OP_SRAW:     .string "sraw";		#
 #endif
 
-
 # RVM
 #ifdef ENABLE_RVM
 	# RV32M
@@ -100,7 +98,6 @@ string_OP_EBREAK:   .string "ebreak";	#
 	string_OP_DIVU:     .string "divu";		#
 	string_OP_REM:      .string "rem";		#	
 	string_OP_REMU:     .string "remu";		#
-	
 	# RV64M
 	#if XLEN >=64
 		string_OP_MULW:     .string "mulw";		#
@@ -110,7 +107,6 @@ string_OP_EBREAK:   .string "ebreak";	#
 		string_OP_REMUW:    .string "remuw";	#
 	#endif
 #endif /* ENABLE_RVM */
-
 
 # RVA
 #ifdef ENABLE_RVA
@@ -126,7 +122,6 @@ string_OP_EBREAK:   .string "ebreak";	#
 	string_OP_AMOMINW:	.string "amomin.w";	
 	string_OP_AMOMAXUW:	.string "amomaxu.w";	
 	string_OP_AMOMINUW:	.string "amominu.w";	
-	
 	# RV64A
 	#if XLEN >= 64
 		string_OP_LRD:		.string "lr.d";	
@@ -146,7 +141,6 @@ string_OP_EBREAK:   .string "ebreak";	#
 # Zifencei
 string_OP_FENCE_I:  .string "fence.i";	#
 
-
 # Zicsr
 string_OP_CSRRW:    .string "csrrw";	#	
 string_OP_CSRRS:    .string "csrrs";	#
@@ -154,7 +148,6 @@ string_OP_CSRRC:    .string "csrrc";	#
 string_OP_CSRRWI:   .string "csrrwi";	#
 string_OP_CSRRSI:   .string "csrrsi";	#
 string_OP_CSRRCI:	.string "csrrci";	#
-
 
 # RVC
 string_OP_C_FLD:		.string "c.fld";
@@ -201,7 +194,6 @@ string_OP_C_SD:			.string "c.sd";
 string_OP_C_ADDIW:		.string "c.addiw";
 string_OP_C_LDSP:		.string "c.ldsp";
 string_OP_C_SDSP:		.string "c.sdsp";
-
 
 # Pseudo
 #ifdef ENABLE_PSEUDO
@@ -264,7 +256,6 @@ encoding_table:
 .word MASK_AUIPC, MATCH_AUIPC, decode_U_type, string_OP_AUIPC
 .word MASK_ECALL, MATCH_ECALL, decode_ECALL, string_OP_ECALL
 .word MASK_EBREAK, MATCH_EBREAK, decode_EBREAK, string_OP_EBREAK
-
 # RV64I
 #if XLEN >= 64
 	.word MASK_ADDIW, MATCH_ADDIW, decode_I_type, string_OP_ADDIW
@@ -293,7 +284,6 @@ encoding_table:
 	.word MASK_DIVU, MATCH_DIVU, decode_R_type, string_OP_DIVU
 	.word MASK_REM, MATCH_REM, decode_R_type, string_OP_REM
 	.word MASK_REMU, MATCH_REMU, decode_R_type, string_OP_REMU
-
 	# RV64M
 	#if XLEN >= 64
 		.word MASK_MULW, MATCH_MULW, decode_R_type, string_OP_MULW
@@ -318,7 +308,6 @@ encoding_table:
 	.word MASK_AMOMIN_W, MATCH_AMOMIN_W, decode_AMO, string_OP_AMOMINW
 	.word MASK_AMOMAXU_W, MATCH_AMOMAXU_W, decode_AMO, string_OP_AMOMAXUW
 	.word MASK_AMOMINU_W, MATCH_AMOMINU_W, decode_AMO, string_OP_AMOMINUW
-
 	# RV64A
 	#if XLEN >= 64
 		.word MASK_LR_D, MATCH_LR_D, decode_LRSC, string_OP_LRD
@@ -337,12 +326,8 @@ encoding_table:
 
 # RVC
 #ifdef ENABLE_RVC
-	.word MASK_C_FLD, MATCH_C_FLD, decode_EMPTY, string_OP_C_FLD
 	.word MASK_C_LW, MATCH_C_LW, decode_EMPTY, string_OP_C_LW
-	.word MASK_C_FLW, MATCH_C_FLW, decode_EMPTY, string_OP_C_FLW
-	.word MASK_C_FSD, MATCH_C_FSD, decode_EMPTY, string_OP_C_FSD
 	.word MASK_C_SW, MATCH_C_SW, decode_EMPTY, string_OP_C_SW
-	.word MASK_C_FSW, MATCH_C_FSW, decode_EMPTY, string_OP_C_FSW
 	.word MASK_C_ADDI, MATCH_C_ADDI, decode_EMPTY, string_OP_C_ADDI
 	.word MASK_C_JAL, MATCH_C_JAL, decode_EMPTY, string_OP_C_JAL
 	.word MASK_C_LI, MATCH_C_LI, decode_EMPTY, string_OP_C_LI
@@ -363,24 +348,30 @@ encoding_table:
 	.word MASK_C_BNEZ, MATCH_C_BNEZ, decode_EMPTY, string_OP_C_BNEZ
 	.word MASK_C_SLLI, MATCH_C_SLLI, decode_EMPTY, string_OP_C_SLLI
 	.word MASK_C_SLLI64, MATCH_C_SLLI64, decode_EMPTY, string_OP_C_SLLI64
-	.word MASK_C_FLDSP, MATCH_C_FLDSP, decode_EMPTY, string_OP_C_FLDSP
-	.word MASK_C_LWSP, MATCH_C_LWSP, decode_EMPTY, string_OP_C_LWSP
-	.word MASK_C_FLWSP, MATCH_C_FLWSP, decode_EMPTY, string_OP_C_FLWSP
+	.word MASK_C_LWSP, MATCH_C_LWSP, decode_C_LWSP, string_OP_C_LWSP
 	.word MASK_C_MV, MATCH_C_MV, decode_EMPTY, string_OP_C_MV
 	.word MASK_C_ADD, MATCH_C_ADD, decode_EMPTY, string_OP_C_ADD
-	.word MASK_C_FSDSP, MATCH_C_FSDSP, decode_EMPTY, string_OP_C_FSDSP
 	.word MASK_C_SWSP, MATCH_C_SWSP, decode_EMPTY, string_OP_C_SWSP
-	.word MASK_C_FSWSP, MATCH_C_FSWSP, decode_EMPTY, string_OP_C_FSWSP
 	.word MASK_C_NOP, MATCH_C_NOP, decode_EMPTY, string_OP_C_NOP
 	.word MASK_C_ADDI16SP, MATCH_C_ADDI16SP, decode_EMPTY, string_OP_C_ADDI16SP
 	.word MASK_C_JR, MATCH_C_JR, decode_EMPTY, string_OP_C_JR
 	.word MASK_C_JALR, MATCH_C_JALR, decode_EMPTY, string_OP_C_JALR
-	.word MASK_C_EBREAK, MATCH_C_EBREAK, decode_EMPTY, string_OP_C_EBREAK
+	.word MASK_C_EBREAK, MATCH_C_EBREAK, decode_C_EBREAK, string_OP_C_EBREAK
 	.word MASK_C_LD, MATCH_C_LD, decode_EMPTY, string_OP_C_LD
 	.word MASK_C_SD, MATCH_C_SD, decode_EMPTY, string_OP_C_SD
 	.word MASK_C_ADDIW, MATCH_C_ADDIW, decode_EMPTY, string_OP_C_ADDIW
 	.word MASK_C_LDSP, MATCH_C_LDSP, decode_EMPTY, string_OP_C_LDSP
 	.word MASK_C_SDSP, MATCH_C_SDSP, decode_EMPTY, string_OP_C_SDSP
+	#ifdef ENABLE_RVF
+		.word MASK_C_FLD, MATCH_C_FLD, decode_EMPTY, string_OP_C_FLD
+		.word MASK_C_FSD, MATCH_C_FSD, decode_EMPTY, string_OP_C_FSD
+		.word MASK_C_FLW, MATCH_C_FLW, decode_EMPTY, string_OP_C_FLW
+		.word MASK_C_FSW, MATCH_C_FSW, decode_EMPTY, string_OP_C_FSW
+		.word MASK_C_FLWSP, MATCH_C_FLWSP, decode_EMPTY, string_OP_C_FLWSP
+		.word MASK_C_FSWSP, MATCH_C_FSWSP, decode_EMPTY, string_OP_C_FSWSP	
+		.word MASK_C_FLDSP, MATCH_C_FLDSP, decode_EMPTY, string_OP_C_FLDSP
+		.word MASK_C_FSDSP, MATCH_C_FSDSP, decode_EMPTY, string_OP_C_FSDSP
+	#endif /* ENABLE_RVF */
 #endif /* ENABLE_RVC */
 
 

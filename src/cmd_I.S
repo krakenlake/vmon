@@ -9,6 +9,45 @@
 
 
 cmd_I:
+    la      a0, string_info_instructionset
+    jal     print_string
+    li      a0, XLEN
+    jal     print_decimal
+    li      a0, 'i'
+    jal     print_char
+#ifdef ENABLE_RVM
+    li      a0, 'm'
+    jal     print_char
+#endif
+#ifdef ENABLE_RVA
+    li      a0, 'a'
+    jal     print_char
+#endif
+#ifdef ENABLE_RVF
+    li      a0, 'f'
+    jal     print_char
+#endif
+#ifdef ENABLE_RVD
+    li      a0, 'd'
+    jal     print_char
+#endif
+#ifdef ENABLE_RVC
+    li      a0, 'c'
+    jal     print_char
+#endif
+#ifdef ENABLE_RVV
+    li      a0, 'v'
+    jal     print_char
+#endif
+#ifdef ENABLE_RVZicsr
+    la      a0, string_info_Zicsr 
+    jal     print_string
+#endif
+#ifdef ENABLE_RVZifencei
+    la      a0, string_info_Zifencei
+    jal     print_string
+#endif
+
     la      a0, string_info_text
     jal     print_string
     la      a0, start    
@@ -59,29 +98,35 @@ cmd_I:
 
 
 .data
+string_info_instructionset:
+    .string "instructions: rv";
+string_info_Zicsr:
+    .string "_Zicsr";
+string_info_Zifencei:
+    .string "_Zifencei";
 string_info_text:
-    .string ".text addr: ";
+    .string "\n.text:  ";
 .size string_info_text, .-string_info_text
 string_info_data:
-    .string "\n.data addr: ";
+    .string "\n.data:  ";
 .size string_info_data, .-string_info_data
 string_info_bss:
-    .string "\n.bss addr: ";
+    .string "\n.bss:   ";
 .size string_info_bss, .-string_info_bss
 string_info_buffer:
-    .string "\nbuffer addr: ";
+    .string "\nbuffer: ";
 .size string_info_buffer, .-string_info_buffer
 string_info_stackstart:
-    .string "\nstack start addr: ";
+    .string "\nstack start: ";
 .size string_info_stackstart, .-string_info_stackstart
 string_info_stackend:
-    .string "\nstack end addr: ";
+    .string "\nstack end:   ";
 .size string_info_stackend, .-string_info_stackend
 string_info_stacksize:
     .string "\nstack bytes free: ";
 .size string_info_stacksize, .-string_info_stacksize
 string_info_testcode:
-    .string "\ntestcode addr: ";
+    .string "\ntestcode: ";
 .size string_info_testcode, .-string_info_testcode
 
 #endif /* WITH_CMD_I */

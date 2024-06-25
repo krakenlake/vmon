@@ -33,7 +33,7 @@ cmd_D_next_instruction:
     la      a0, string_line_prefix_D
     jal     print_string
     # print memory address
-    mv      a0, s5                  # print current address
+    mv      a0, s5                      # print current address
     jal     print_hex
     la      a0, string_asm_sep1
     jal     print_string
@@ -49,11 +49,7 @@ cmd_D_next_instruction:
     la      a0, string_asm_sep2     
     jal     print_string
     # disassemble this word
-#if XLEN >= 64
-    lwu     a0, 0(s5)               # load instruction word from addr
-#else
-    lw      a0, 0(s5)               # load instruction word from addr
-#endif
+    lw      a0, 0(s5)                   # load instruction word from addr
     jal     decode_opcode
     beqz    a1, cmd_D_opcode_unknown
     jal     print_instruction
