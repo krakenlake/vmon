@@ -11,18 +11,14 @@ testcode:
 # pseudo opcodes
     jalr    x0, x1, 0           # ret
     addi    x0, x0, 0           # nop
-
 # privileged
     wfi
-
 # RV32I
 testcode_RV32I:
-
     fence 
     fence.i
     ecall
     ebreak 
-
     csrrw   t1, 1, t2
     csrrs   t3, cycle, t4
     csrrc   t5, cycle, t6
@@ -136,7 +132,6 @@ testcode_RV32I:
     sw      x0, 0(x0)
     sw      x0, 2047(x0)
     sw      x0, -2048(x0)
-
 testcode_branch_backward:
     beq     zero, zero, testcode_branch_backward
     beq     zero, zero, testcode_branch_forward
@@ -151,7 +146,6 @@ testcode_branch_backward:
     bgeu    zero, zero, testcode_branch_backward
     bgeu    zero, zero, testcode_branch_forward
 testcode_branch_forward: 
-
 testcode_jal_backward:
     jal     x0, testcode_jal_backward
     jal     x0, testcode_jal_forward
@@ -162,7 +156,6 @@ testcode_jal_backward:
     jalr    x31, 2047
     jalr    x31, -2048
 testcode_jal_forward:
-
     lui     x0, 1048575
     auipc   x0, 1048575
 
@@ -249,7 +242,6 @@ testcode_RVM:
     rem     x29, x30, x31
     remu    x0, x1, x2
     remu    x29, x30, x31
-
     # RV64M
     #if XLEN >= 64 
         mulw     x0, x1, x2
@@ -262,6 +254,7 @@ testcode_RVM:
         remuw    x29, x30, x31
     #endif
 #endif /* ENABLE_RVM */
+
 
 # RVA
 #ifdef ENABLE_RVA
@@ -355,7 +348,6 @@ testcode_RVA:
     amomaxu.w.rl    x31, x31, (x31)
     amomaxu.w.aqrl  x0, x0, (x0)
     amomaxu.w.aqrl  x31, x31, (x31)
-
     # RV64A
     #if XLEN >= 64
         lr.d            x0, (x1)
@@ -466,13 +458,15 @@ testcode_RVC:
     c.mv        s0, s1
     c.sub       s0, s1
 #endif /* ENABLE_RVC */
-.size testcode, .-testcode
+
 
 # RVV
 #ifdef ENABLE_RVV
 testcode_RVV:
 # TODO
 #endif /* ENABLE_RVV */
+
+.size testcode, .-testcode
 
 
 #endif /* WITH_TESTCODE */

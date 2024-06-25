@@ -25,12 +25,15 @@
 .global decode_LRSC
 .global decode_EMPTY
 
+#ifdef ENABLE_RVC
+.global decode_C_LWSP
+.global decode_C_EBREAK
+#endif
 
 .text
 
 
 #ifdef ENABLE_RVA
-
 # for RVA
 # in: instruction word in a0
 # out: instruction word in a0
@@ -43,8 +46,8 @@ insn_get_aqrl:
     srli    a1, a1, 25
     ret
 .size insn_get_aqrl, .-insn_get_aqrl
-
 #endif
+
 
 # in: instruction word in a0
 # in: current instruction address in s5 (global)
@@ -380,39 +383,39 @@ decode_AMO:
 .size decode_AMO, .-decode_AMO
 #endif
 
+
 #ifdef ENABLE_RVC
+decode_C_EBREAK:
+    # do nothing
+    ret
+.size decode_C_EBREAK, .-decode_C_EBREAK
+
+
+# in: instruction word in a0
 decode_CR_type:
     ret
 .size decode_CR_type, .-decode_CR_type
 
-decode_CI_type:
-    ret
-.size decode_CI_type, .-decode_CI_type
 
-decode_CSS_type:
+# in: instruction word in a0
+decode_C_LWSP:
+    addi    sp, sp, -(XLEN_BYTES*2)              
+    SAVE_X  ra, 0(sp)
+    SAVE_X  s2, (XLEN_BYTES*1)(sp)  
+    mv      s2, a0   
+    jal     print_rd
+    mv      a0, s2
+    li      a0, '('
+    jal     print_char
+    # TODO
+    li      a0, ')'
+    jal     print_char
+    LOAD_X  ra, 0(sp)               
+    LOAD_X  s2, (XLEN_BYTES*1)(sp)               
+    addi    sp, sp, (XLEN_BYTES*2)
     ret
-.size decode_CSS_type, .-decode_CSS_type
-
-decode_CIW_type:
-    ret
-.size decode_CIW_type, .-decode_CIW_type
-
-decode_CL_type:
-    ret
-.size decode_CL_type, .-decode_CL_type
-
-decode_CS_type:
-    ret
-.size decode_CS_type, .-decode_CS_type
-
-decode_CB_type:
-    ret
-.size decode_CB_type, .-decode_CB_type
-
-decode_CJ_type:
-    ret
-.size decode_CJ_type, .-decode_CJ_type
-#endif
+.size decode_C_LWSP, .-decode_C_LWSP
+#endif /* ENABLE_RVC */
 
 # in: instruction word in a0
 decode_CSR:

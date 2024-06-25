@@ -39,10 +39,35 @@
 #define ENABLE_RVA
 
 // enable F extension disassembly?
-#define ENABLE_RVF
+//#define ENABLE_RVF
+
+// enable D extension disassembly?
+//#define ENABLE_RVD
+
+// enable Q extension disassembly?
+//#define ENABLE_RVQ
+
+// enable C extension disassembly?
+//#define ENABLE_RVC
+
+// enable B extension disassembly?
+//#define ENABLE_RVB
+
+// enable P extension disassembly?
+//#define ENABLE_RVP
 
 // enable V extension disassembly?
-#define ENABLE_RVV
+//#define ENABLE_RVV
+
+// enable H extension disassembly?
+//#define ENABLE_RVH
+
+
+// enable Zicsr extension disassembly?
+#define ENABLE_RVZicsr
+
+// enable Zifencei extension disassembly?
+#define ENABLE_RVZifencei
 
 // enable printing of pseudo opcodes in disassembly?
 #define ENABLE_PSEUDO
