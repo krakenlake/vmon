@@ -32,42 +32,40 @@
 // if yes, the "i" command shows the location at runtime
 #define WITH_TESTCODE
 
-// enable M extension disassembly?
+// configure which parts of the test code will be present
+// in the executable
+#define WITH_TESTCODE_RV32I
+#define WITH_TESTCODE_RV64I
+#define WITH_TESTCODE_RVM
+#define WITH_TESTCODE_RVA
+//#define WITH_TESTCODE_RVF
+//#define WITH_TESTCODE_RVD
+//#define WITH_TESTCODE_RVQ
+//#define WITH_TESTCODE_RVC
+//#define WITH_TESTCODE_RVB
+//#define WITH_TESTCODE_RVP
+//#define WITH_TESTCODE_RVV
+//#define WITH_TESTCODE_RVH
+#define WITH_TESTCODE_RVZicsr
+#define WITH_TESTCODE_RVZifencei
+#define WITH_TESTCODE_RVPRIV
+#define WITH_TESTCODE_PSEUDO
+
+// configure which instructions and extensions the
+// executable will recognize 
 #define ENABLE_RVM
-
-// enable A extension disassembly?
 #define ENABLE_RVA
-
-// enable F extension disassembly?
 //#define ENABLE_RVF
-
-// enable D extension disassembly?
 //#define ENABLE_RVD
-
-// enable Q extension disassembly?
 //#define ENABLE_RVQ
-
-// enable C extension disassembly?
-//#define ENABLE_RVC
-
-// enable B extension disassembly?
+#define ENABLE_RVC
 //#define ENABLE_RVB
-
-// enable P extension disassembly?
 //#define ENABLE_RVP
-
-// enable V extension disassembly?
 //#define ENABLE_RVV
-
-// enable H extension disassembly?
 //#define ENABLE_RVH
-
-
-// enable Zicsr extension disassembly?
 #define ENABLE_RVZicsr
-
-// enable Zifencei extension disassembly?
 #define ENABLE_RVZifencei
+#define ENABLE_RVPRIV
 
 // enable printing of pseudo opcodes in disassembly?
 #define ENABLE_PSEUDO

@@ -8,26 +8,11 @@
 
 
 testcode:
-# pseudo opcodes
-    jalr    x0, x1, 0           # ret
-    addi    x0, x0, 0           # nop
-# privileged
-    wfi
-# RV32I
+
+#ifdef WITH_TESTCODE_RV32I
 testcode_RV32I:
-    fence 
-    fence.i
     ecall
     ebreak 
-    csrrw   t1, 1, t2
-    csrrs   t3, cycle, t4
-    csrrc   t5, cycle, t6
-    csrrwi  t1, cycle, 0
-    csrrsi  t2, cycle, 0
-    csrrci  t3, cycle, 0
-    csrrwi  t4, cycle, 31
-    csrrsi  t5, cycle, 31
-    csrrci  t6, cycle, 31
     add     x0, x0, x0
     add     x31, x31, x31
     sub     x0, x0, x0
@@ -76,26 +61,14 @@ testcode_RV32I:
     slli    x31, x31, 0x0
     slli    x0, x0, 0x1f
     slli    x31, x31, 0x1f
-#if XLEN >= 64
-    slli    x0, x0, 0x3f
-    slli    x31, x31, 0x3f
-#endif
     srli    x0, x0, 0x0
     srli    x31, x31, 0x0
     srli    x0, x0, 0x1f
     srli    x31, x31, 0x1f
-#if XLEN >= 64
-    srli    x0, x0, 0x3f
-    srli    x31, x31, 0x3f
-#endif
     srai    x0, x0, 0x0
     srai    x31, x31, 0x0
     srai    x0, x0, 0x1f
     srai    x31, x31, 0x1f
-#if XLEN >= 64
-    srai    x0, x0, 0x3f
-    srai    x31, x31, 0x3f
-#endif
     slti    x0, x0, 0x0
     slti    x31, x31, 0x0
     slti    x0, x0, 0x1f
@@ -158,9 +131,11 @@ testcode_jal_backward:
 testcode_jal_forward:
     lui     x0, 1048575
     auipc   x0, 1048575
-
+.size testcode_RV32I, .-testcode_RV32I
+#endif /* WITH_TESTCODE_RV32I */
 
 # RV64I
+#ifdef WITH_TESTCODE_RV64I
 #if XLEN >= 64
 testcode_RV64I:
     lwu     x0, 0(x0)
@@ -191,14 +166,20 @@ testcode_RV64I:
     srliw   x31, x31, 0
     srliw   x0, x0, 31
     srliw   x31, x31, 31
+    srli    x0, x0, 0x3f
+    srli    x31, x31, 0x3f
     slliw   x0, x0, 0
     slliw   x31, x31, 0
     slliw   x0, x0, 31
     slliw   x31, x31, 31
+    slli    x0, x0, 0x3f
+    slli    x31, x31, 0x3f
     sraiw   x0, x0, 0
     sraiw   x31, x31, 0
     sraiw   x0, x0, 31
     sraiw   x31, x31, 31
+    srai    x0, x0, 0x3f
+    srai    x31, x31, 0x3f
     addw    x0, x0, 0
     addw    x31, x31, 0
     addw    x0, x0, 31
@@ -220,10 +201,11 @@ testcode_RV64I:
     sraw    x0, x0, 31
     sraw    x31, x31, 31
 #endif
+.size testcode_RV64I, .-testcode_RV64I
+#endif /* WITH_TESTCODE_RV32I */
 
 
-# RVM
-#ifdef ENABLE_RVM
+#ifdef WITH_TESTCODE_RVM
 testcode_RVM:
     # RV32M
     mul     x0, x1, x2
@@ -253,11 +235,11 @@ testcode_RVM:
         remuw    x0, x1, x2
         remuw    x29, x30, x31
     #endif
-#endif /* ENABLE_RVM */
+.size testcode_RVM, .-testcode_RVM
+#endif /* WITH_TESTCODE_RVM */
 
 
-# RVA
-#ifdef ENABLE_RVA
+#ifdef WITH_TESTCODE_RVA
 testcode_RVA:
     # RV32A
     lr.w            x0, (x1)
@@ -439,34 +421,65 @@ testcode_RVA:
         amomaxu.d.aqrl  x0, x0, (x0)
         amomaxu.d.aqrl  x31, x31, (x31)
     #endif
-#endif /* ENABLE_RVA */
+.size testcode_RVA, .-testcode_RVA
+#endif /* WITH_TESTCODE_RVA */
 
 
-# RVF
-#ifdef ENABLE_RVF
+#ifdef WITH_TESTCODE_RVF
 testcode_RVF:
 # TODO
-#endif /* ENABLE_RVF */
+.size testcode_RVF, .-testcode_RVF
+#endif /* WITH_TESTCODE_RVF */
 
 
-# RVC
-#ifdef ENABLE_RVC
+#if defined (WITH_TESTCODE_RVC) && defined (ENABLE_RVC)
 testcode_RVC:
 #    c.lw        a0, a0, 1
     c.li        s0, 1
     c.lui       s0, 1
     c.mv        s0, s1
     c.sub       s0, s1
-#endif /* ENABLE_RVC */
+.size testcode_RVC, .-testcode_RVC
+#endif /* WITH_TESTCODE_RVC */
 
 
-# RVV
-#ifdef ENABLE_RVV
+#ifdef WITH_TESTCODE_RVV
 testcode_RVV:
 # TODO
-#endif /* ENABLE_RVV */
+.size testcode_RVV, .-testcode_RVV
+#endif /* WITH_TESTCODE_RVV */
+
+
+#ifdef WITH_TESTCODE_RVZicsr
+testcode_RVZicsr:
+    csrrw   t1, 1, t2
+    csrrs   t3, cycle, t4
+    csrrc   t5, cycle, t6
+    csrrwi  t1, cycle, 0
+    csrrsi  t2, cycle, 0
+    csrrci  t3, cycle, 0
+    csrrwi  t4, cycle, 31
+    csrrsi  t5, cycle, 31
+    csrrci  t6, cycle, 31
+.size testcode_RVZicsr, .-testcode_RVZicsr
+#endif /* WITH_TESTCODE_RVZicsr */
+
+
+#ifdef WITH_TESTCODE_RVPRIV
+testcode_RVPRIV:
+    wfi
+.size testcode_RVPRIV, .-testcode_RVPRIV
+#endif /* WITH_TESTCODE_RVPRIV */
+
+#ifdef WITH_TESTCODE_PSEUDO
+testcode_Pseudo:
+    jalr    x0, x1, 0           # ret
+    ret
+    addi    x0, x0, 0           # nop
+    nop
+.size testcode_Pseudo, .-testcode_Pseudo
+#endif /* WITH_TESTCODE_PSEUDO */
+
 
 .size testcode, .-testcode
-
-
 #endif /* WITH_TESTCODE */
