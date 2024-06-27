@@ -59,15 +59,10 @@ cmd_D_opcode_unknown:
     jal     print_string
     j       cmd_D_advance
 cmd_D_advance:
-    lw      t0, 0(s5)                   # load instruction word again
+    lw      a0, 0(s5)                   # load instruction word again
     addi    s5, s5, 2                   # advance 2 bytes in any case
-    andi    t0,t0, 0b11                 # look at bit 0 and 1
-    # compressed instructions either end in 0b01 or 0b10
-    li      t1, 0b01                
-    beq     t0, t1, cmd_D_advance_done  # it is a compressed instruction
-    li      t1, 0b10
-    beq     t0, t1, cmd_D_advance_done  # it is a compressed instruction
-    # it was not a compressed instruction
+    jal     insn_is_compressed
+    bnez    a0, cmd_D_advance_done
     addi    s5, s5, 2                   # add 2 more bytes if not compressed
 cmd_D_advance_done:
     bgt     s5, s7, cmd_D_done          # check if end address reached
