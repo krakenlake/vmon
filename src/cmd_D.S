@@ -38,10 +38,15 @@ cmd_D_next_instruction:
     la      a0, string_asm_sep1
     jal     print_string
     # print word at this memory address
-    lbu     a0, 3(s5)
+    lw      a0, 0(s5)                   # load instruction word
+    mv      s6, a0                      # save for later
+    jal     insn_is_compressed
+    bnez    a0, cmd_D_hex_compressed
+    lbu     a0, 3(s5)                   # print 4 bytes if not compressed
     jal     print_hex_byte
     lbu     a0, 2(s5)
     jal     print_hex_byte
+cmd_D_hex_compressed:                   #
     lbu     a0, 1(s5)
     jal     print_hex_byte
     lbu     a0, 0(s5)
@@ -49,7 +54,7 @@ cmd_D_next_instruction:
     la      a0, string_asm_sep2     
     jal     print_string
     # disassemble this word
-    lw      a0, 0(s5)                   # load instruction word from addr
+    mv      a0, s6                      # get instruction word again
     jal     decode_opcode
     beqz    a1, cmd_D_opcode_unknown
     jal     print_instruction
@@ -59,7 +64,7 @@ cmd_D_opcode_unknown:
     jal     print_string
     j       cmd_D_advance
 cmd_D_advance:
-    lw      a0, 0(s5)                   # load instruction word again
+    mv      a0, s6                      # get instruction word again
     addi    s5, s5, 2                   # advance 2 bytes in any case
     jal     insn_is_compressed
     bnez    a0, cmd_D_advance_done
