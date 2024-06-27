@@ -2,6 +2,9 @@
 
 #ifdef WITH_CMD_D
 
+
+.global insn_is_compressed
+
 .global print_instruction
 .global decode_opcode
 
@@ -32,6 +35,22 @@
 
 .text
 
+# evaluate if an instruction is an RVC instruction
+# in: instruction word in a0
+# out: 0 if not, nonzero if yes
+insn_is_compressed:
+    andi    a0, a0, 0b11                 # look at bit 0 and 1
+    # compressed instructions either end in 0b01 or 0b10
+    li      t1, 0b01                
+    beq     a0, t1, insn_is_compressed_yes  # it is a compressed instruction
+    li      t1, 0b10
+    beq     a0, t1, insn_is_compressed_yes  # it is a compressed instruction
+insn_is_compressed_no:
+    li      a0, 0
+    ret
+insn_is_compressed_yes:
+    li      a0, 1
+    ret
 
 #ifdef ENABLE_RVA
 # for RVA
