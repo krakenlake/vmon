@@ -4,8 +4,8 @@ default: all
 
 
 #TARGET	?= qemu-rv32g
-#TARGET	?= qemu-rv64g
-TARGET	?= qemu-rv64gc
+TARGET	?= qemu-rv64g
+#TARGET	?= qemu-rv64gc
 #TARGET	?= vf2
 
 DEBUG ?= -DDEBUG
@@ -38,7 +38,7 @@ ifeq ($(TARGET), vf2)
 	ARCH    	?= riscv64-unknown-elf
 	XLEN		= 64
 	TOOLBIN 	?= /opt/riscv/rv64g/bin
-	ADDFLAGS	= -DENABLE_RVC -DHW_VF2 -DXLEN=$(XLEN) -march=rv64g
+	ADDFLAGS	= -DENABLE_RVC -DHW_VF2 -DXLEN=$(XLEN) -march=rv64gc
 define VF2_RUN_MSG
 
 	running on VF2:
