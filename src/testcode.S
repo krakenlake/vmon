@@ -8,8 +8,11 @@
 
 
 testcode:
+    addi a0,a0,1
 
 #ifdef WITH_TESTCODE_RV32I
+.option push
+.option norvc
 testcode_RV32I:
     ecall
     ebreak 
@@ -131,12 +134,14 @@ testcode_jal_backward:
 testcode_jal_forward:
     lui     x0, 1048575
     auipc   x0, 1048575
+.option pop /* norvc */
 .size testcode_RV32I, .-testcode_RV32I
 #endif /* WITH_TESTCODE_RV32I */
 
 # RV64I
-#ifdef WITH_TESTCODE_RV64I
-#if XLEN >= 64
+#if defined(WITH_TESTCODE_RV64I) && (XLEN >= 64)
+.option push
+.option norvc
 testcode_RV64I:
     lwu     x0, 0(x0)
     lwu     x0, 2047(x0)
@@ -200,12 +205,14 @@ testcode_RV64I:
     sraw    x31, x31, 0
     sraw    x0, x0, 31
     sraw    x31, x31, 31
-#endif
+.option pop /* norvc */
 .size testcode_RV64I, .-testcode_RV64I
 #endif /* WITH_TESTCODE_RV32I */
 
 
 #ifdef WITH_TESTCODE_RVM
+.option push
+.option norvc
 testcode_RVM:
     # RV32M
     mul     x0, x1, x2
@@ -235,11 +242,14 @@ testcode_RVM:
         remuw    x0, x1, x2
         remuw    x29, x30, x31
     #endif
+.option pop /* norvc */
 .size testcode_RVM, .-testcode_RVM
 #endif /* WITH_TESTCODE_RVM */
 
 
 #ifdef WITH_TESTCODE_RVA
+.option push
+.option norvc
 testcode_RVA:
     # RV32A
     lr.w            x0, (x1)
@@ -421,13 +431,17 @@ testcode_RVA:
         amomaxu.d.aqrl  x0, x0, (x0)
         amomaxu.d.aqrl  x31, x31, (x31)
     #endif
+.option pop /* norvc */
 .size testcode_RVA, .-testcode_RVA
 #endif /* WITH_TESTCODE_RVA */
 
 
 #ifdef WITH_TESTCODE_RVF
 testcode_RVF:
+.option push
+.option norvc
 # TODO
+.option pop /* norvc */
 .size testcode_RVF, .-testcode_RVF
 #endif /* WITH_TESTCODE_RVF */
 
@@ -444,13 +458,18 @@ testcode_RVC:
 
 
 #ifdef WITH_TESTCODE_RVV
+.option push
+.option norvc
 testcode_RVV:
 # TODO
+.option pop /* norvc */
 .size testcode_RVV, .-testcode_RVV
 #endif /* WITH_TESTCODE_RVV */
 
 
 #ifdef WITH_TESTCODE_RVZicsr
+.option push
+.option norvc
 testcode_RVZicsr:
     csrrw   t1, 1, t2
     csrrs   t3, cycle, t4
@@ -461,22 +480,29 @@ testcode_RVZicsr:
     csrrwi  t4, cycle, 31
     csrrsi  t5, cycle, 31
     csrrci  t6, cycle, 31
+.option pop /* norvc */
 .size testcode_RVZicsr, .-testcode_RVZicsr
 #endif /* WITH_TESTCODE_RVZicsr */
 
 
 #ifdef WITH_TESTCODE_RVPRIV
+.option push
+.option norvc
 testcode_RVPRIV:
     wfi
+.option pop /* norvc */
 .size testcode_RVPRIV, .-testcode_RVPRIV
 #endif /* WITH_TESTCODE_RVPRIV */
 
 #ifdef WITH_TESTCODE_PSEUDO
+.option push
+.option norvc
 testcode_Pseudo:
     jalr    x0, x1, 0           # ret
     ret
     addi    x0, x0, 0           # nop
     nop
+.option pop /* norvc */
 .size testcode_Pseudo, .-testcode_Pseudo
 #endif /* WITH_TESTCODE_PSEUDO */
 
