@@ -31,6 +31,7 @@ start:
 
     # I am alive
     # try to output one char in the simplest way possible
+    # this will happen on all harts
 #ifdef DEBUG
     li      t1, UART_BASE                  
     li      t0, UART_MODE_8N1
