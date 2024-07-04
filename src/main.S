@@ -202,7 +202,7 @@ start_data:
 
 string_startup:     .string "\nVMON - RISC-V machine code monitor";
 .size string_startup, .-string_startup
-string_prompt:      .string "\n.";
+string_prompt:      .string "\n> ";
 .size string_prompt, .-string_prompt
 
 string_asm_sep1:    .string ":";
