@@ -85,8 +85,12 @@ start:
 
     # main loop
 main_prompt:
+    li      a0, ASCII_NEWLINE
+    jal     print_char
+main_prompt_no_newline:
     la      a0, string_prompt
     jal     print_string
+
     # reset text buffer boundaries in s2, s3
     la      s2, buffer              # s2:= buffer start
     mv      s3, s2
@@ -149,8 +153,6 @@ get_command:
 #ifdef WITH_CMD_H
     li      t0, 'h'
     beq     t1, t0, cmd_H
-    li      t0, '?'
-    beq     t1, t0, cmd_H
 #endif
 
 #ifdef WITH_CMD_I
@@ -170,7 +172,7 @@ get_command:
 
     # no command given, user only hit return
     li      t0, ASCII_RETURN
-    beq     t1, t0, main_prompt
+    beq     t1, t0, main_prompt_no_newline
 
 unknown_command:
     la      a0, error_unknown_command
@@ -203,7 +205,7 @@ start_data:
 
 string_startup:     .string "\nVMON - RISC-V machine code monitor";
 .size string_startup, .-string_startup
-string_prompt:      .string "\n> ";
+string_prompt:      .string "> ";
 .size string_prompt, .-string_prompt
 
 string_asm_sep1:    .string ":";
