@@ -256,6 +256,7 @@ encoding_table:
 .word MASK_AUIPC, MATCH_AUIPC, decode_U_type, string_OP_AUIPC
 .word MASK_ECALL, MATCH_ECALL, decode_ECALL, string_OP_ECALL
 .word MASK_EBREAK, MATCH_EBREAK, decode_EBREAK, string_OP_EBREAK
+.word MASK_FENCE, MATCH_FENCE, decode_FENCE, string_OP_FENCE
 # RV64I
 #if XLEN >= 64
 	.word MASK_ADDIW, MATCH_ADDIW, decode_I_type, string_OP_ADDIW
@@ -270,7 +271,6 @@ encoding_table:
 	.word MASK_LD, MATCH_LD, decode_I_type_LOAD, string_OP_LD
 	.word MASK_LWU, MATCH_LWU, decode_I_type_LOAD, string_OP_LWU
 	.word MASK_SD, MATCH_SD, decode_S_type, string_OP_SD
-	.word MASK_FENCE, MATCH_FENCE, decode_FENCE, string_OP_FENCE
 #endif
 
 # RVM

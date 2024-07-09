@@ -15,7 +15,10 @@ testcode:
 .option norvc
 testcode_RV32I:
     ecall
-    ebreak 
+    ebreak  
+    fence 
+    fence.i 
+    fence.tso
     add     x0, x0, x0
     add     x31, x31, x31
     sub     x0, x0, x0
