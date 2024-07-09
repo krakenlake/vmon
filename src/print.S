@@ -20,34 +20,28 @@
 print_comma:
     addi    sp, sp, -(XLEN_BYTES*1)             
     SAVE_X  ra, 0(sp)
-    la      t1, out_buf
-    li      t2, 0x0000202c              # string ", \0\0"
-    sw      t2, 0(t1)                   # write four bytes to buffer
-    jal     uart_output_buffer
+    li      a0, ','
+    jal     print_char
+    li      a0, ' '
+    jal     print_char
     LOAD_X  ra, 0(sp)             
     addi    sp, sp, (XLEN_BYTES*1)
     ret
 .size print_comma, .-print_comma
 
 
-print_hex_prefix:
-    addi    sp, sp, -(XLEN_BYTES*1)             
-    SAVE_X  ra, 0(sp)
-    la      t1, out_buf
-    li      t2, 0x00007830              # string "0x\0\0"
-    sw      t2, 0(t1)                   # write four bytes to buffer
-    jal     uart_output_buffer
-    LOAD_X  ra, 0(sp)             
-    addi    sp, sp, (XLEN_BYTES*1)
-    ret
-.size print_hex_prefix, .-print_hex_prefix
-
-
 # in: print value in a0 in hex with "0x" prefix
 print_hex:
     addi    sp, sp, -(XLEN_BYTES*1)             
     SAVE_X  ra, 0(sp)
-    jal     print_hex_prefix
+    # print "0x"
+    mv      s1, a0                      # save a0 for later
+    li      a0, '0'
+    jal     print_char
+    li      a0, 'x'
+    jal     print_char
+    mv      a0, s1                      # restore a0
+    # print value
     jal     print_hex_raw
     LOAD_X  ra, 0(sp)                       
     addi    sp, sp, (XLEN_BYTES*1)
@@ -95,10 +89,10 @@ print_hex_byte:
     li      t0, 15
     bgt     a0, t0, print_hex_byte_two_digits
     # print a leading zero if necessary
-    la      t1, out_buf
-    li      t2, 0x0030                  # string "0\0"
-    sh      t2, 0(t1)                   # write 2 bytes to buffer
-    jal     uart_output_buffer
+    mv      s1, a0                  # save a0 for later
+    li      a0, '0'
+    jal     print_char
+    mv      a0, s1                  # restore a0
 print_hex_byte_two_digits:
     jal     print_hex_raw
     LOAD_X  ra, 0(sp)             
