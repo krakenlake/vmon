@@ -24,6 +24,7 @@
 .global decode_ECALL
 .global decode_FENCE
 .global decode_FENCE_I
+.global decode_FENCE_TSO
 .global decode_AMO
 .global decode_LRSC
 .global decode_EMPTY
@@ -343,13 +344,29 @@ decode_JALR:
 
 
 decode_FENCE:
+    srli    a0, a0, 31
+    bnez    a0, decode_FENCE_TSO
+    # FENCE here
+    ret
+.size decode_FENCE, .-decode_FENCE
+decode_FENCE_TSO:
+    addi    sp, sp, -(XLEN_BYTES*1)             
+    SAVE_X  ra, 0(sp)
+    # TODO: print .TSO and more details
+    li  a0, '?'
+    jal print_char
+    LOAD_X  ra, 0(sp)               
+    addi    sp, sp, (XLEN_BYTES*1)
+    ret
+.size decode_FENCE_TSO, .-decode_FENCE_TSO
+
+
+decode_FENCE_I:
 decode_ECALL:
 decode_EBREAK:
-decode_FENCE_I:
 decode_EMPTY:
     # do nothing
     ret
-.size decode_FENCE, .-decode_FENCE
 .size decode_ECALL, .-decode_ECALL
 .size decode_EBREAK, .-decode_EBREAK
 .size decode_FENCE_I, .-decode_FENCE_I
