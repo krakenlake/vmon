@@ -499,6 +499,7 @@ print_rd:
     # isolate rd from a0
     srli    a0, a0, 7
     andi    a0, a0, 0b11111
+    la      a1, int_register_names
     jal     print_register_name
     jal     print_comma
     LOAD_X  ra, 0(sp)               
@@ -513,6 +514,7 @@ print_rs1:
     SAVE_X  ra, 0(sp) 
     srli    a0, a0, 15
     and     a0, a0, 0b11111
+    la      a1, int_register_names
     jal     print_register_name
     LOAD_X  ra, 0(sp)               
     addi    sp, sp, (XLEN_BYTES*1)
@@ -522,14 +524,9 @@ print_rs1:
 
 # in: instruction word in a0
 print_rs2:
-    addi    sp, sp, -(XLEN_BYTES*1)              
-    SAVE_X  ra, 0(sp) 
-    srli    a0, a0, 20
-    and     a0, a0, 0b11111
-    jal     print_register_name
-    LOAD_X  ra, 0(sp)               
-    addi    sp, sp, (XLEN_BYTES*1)
-    ret
+    # rs2 just needs 5 shifts more than rs1, rest works the same
+    srli    a0, a0, 5           
+    j       print_rs1  
 .size print_rs2, .-print_rs2
 
 
@@ -552,7 +549,7 @@ print_register_name:
     addi    sp, sp, -(XLEN_BYTES*2)              
     SAVE_X  ra, 0(sp)
     SAVE_X  s0, (XLEN_BYTES*1)(sp)
-    la      s0, register_names
+    mv      s0, a1
 print_register_search:
     beqz    a0, print_register_found
     addi    s0, s0, 1
