@@ -4,8 +4,8 @@ default: all
 
 
 #TARGET	?= qemu-rv32g
-#TARGET	?= qemu-rv64g
-TARGET	?= qemu-rv64gc
+TARGET	?= qemu-rv64g
+#TARGET	?= qemu-rv64gc
 #TARGET	?= vf2
 
 DEBUG ?= -DDEBUG
