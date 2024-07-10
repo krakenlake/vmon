@@ -4,13 +4,14 @@
 #ifdef WITH_CMD_D
 
 .global encoding_table
-.global register_names
+.global int_register_names
+.global float_register_names
 .global string_OP_UNKNOWN
 
 .data
 
 .align 4
-register_names:
+int_register_names:
 #ifndef ABI_REGISTER_NAMES
 	.string  "x0",  "x1",  "x2",  "x3",  "x4",  "x5",  "x6",  "x7"
 	.string  "x8",  "x9", "x10", "x11", "x12", "x13", "x14", "x15"
@@ -22,7 +23,7 @@ register_names:
 	.string "a6",   "a7",  "s2",  "s3", "s4", "s5", "s6", "s7"
 	.string "s8",   "s9", "s10", "s11", "t3", "t4", "t5", "t6"
 #endif
-.size register_names, .-register_names
+.size int_register_names, .-int_register_names
 
 
 .align 4
