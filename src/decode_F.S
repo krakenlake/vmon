@@ -10,7 +10,7 @@
 .text
 
 # in: instruction word in a0
-print_float_rd:
+print_frd:
     addi    sp, sp, -(XLEN_BYTES*1)              
     SAVE_X  ra, 0(sp) 
     srli    a0, a0, 7
@@ -25,7 +25,7 @@ print_float_rd:
 
 
 # in: instruction word in a0
-print_float_rs1:
+print_frs1:
     addi    sp, sp, -(XLEN_BYTES*1)              
     SAVE_X  ra, 0(sp) 
     srli    a0, a0, 15
@@ -39,7 +39,7 @@ print_float_rs1:
 
 
 # in: instruction word in a0
-print_float_rs2:
+print_frs2:
     # rs2 just needs 5 shifts more than rs1, rest works the same
     srli    a0, a0, 5           
     j       print_frs1  

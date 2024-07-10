@@ -6,6 +6,8 @@
 .global insn_is_compressed
 
 .global print_instruction
+.global print_register_name
+
 .global decode_opcode
 
 .global decode_B_type

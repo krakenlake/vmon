@@ -443,7 +443,62 @@ testcode_RVA:
 testcode_RVF:
 .option push
 .option norvc
-# TODO
+    flw         f0, 0(x0)
+    flw         f31, 0(x31)
+    flw         f0, 2047(x0)
+    flw         f31, -2048(x31)
+    fsw         f0, 0(x0)
+    fsw         f31, 0(x31)
+    fsw         f0, 2047(x0)
+    fsw         f31, -2048(x31)
+    fmadd.s     f0, f1, f2, f3
+    fmadd.s     f28, f29, f30, f31
+    fmsub.s     f0, f1, f2, f3
+    fmsub.s     f28, f29, f30, f31
+    fnmadd.s    f0, f1, f2, f3
+    fnmadd.s    f28, f29, f30, f31
+    fnmsub.s    f0, f1, f2, f3
+    fnmsub.s    f28, f29, f30, f31
+    fadd.s      f0, f1, f2
+    fadd.s      f29, f30, f31
+    fsub.s      f0, f1, f2
+    fsub.s      f29, f30, f31
+    fmul.s      f0, f1, f2
+    fmul.s      f29, f30, f31
+    fdiv.s      f0, f1, f2
+    fdiv.s      f29, f30, f31
+    fsqrt.s     f0, f0    
+    fsqrt.s     f31, f31
+    fsgnj.s     f0, f1, f2 
+    fsgnj.s     f29, f20, f31 
+    fsgnjn.s    f0, f1, f2 
+    fsgnjn.s    f29, f20, f31 
+    fsgnjx.s    f0, f1, f2 
+    fsgnjx.s    f29, f20, f31
+    fmin.s      f0, f1, f2 
+    fmin.s      f29, f20, f31 
+    fmax.s      f0, f1, f2 
+    fmax.s      f29, f20, f31 
+    fcvt.s.w    f0, x0 
+    fcvt.s.w    f31, x31 
+    fcvt.s.wu   f0, x0 
+    fcvt.s.wu   f31, x31 
+    fcvt.w.s    x0, f0
+    fcvt.w.s    x31, f31 
+    fcvt.wu.s   x0, f0 
+    fcvt.wu.s   x31, f31 
+    fmv.x.w     x0, f0 
+    fmv.x.w     x31, f31 
+    fmv.w.x     f0, x0 
+    fmv.w.x     f31, x31 
+    feq.s       x0, f1, f2     
+    feq.s       x31, f30, f31     
+    flt.s       x0, f1, f2     
+    flt.s       x31, f30, f31     
+    fle.s       x0, f1, f2     
+    fle.s       x31, f30, f31     
+    fclass.s    x0, f0   
+    fclass.s    x31, f31   
 .option pop /* norvc */
 .size testcode_RVF, .-testcode_RVF
 #endif /* WITH_TESTCODE_RVF */
