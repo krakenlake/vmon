@@ -55,7 +55,7 @@
 // executable will recognize 
 #define ENABLE_RVM
 #define ENABLE_RVA
-//#define ENABLE_RVF
+#define ENABLE_RVF
 //#define ENABLE_RVD
 //#define ENABLE_RVQ
 //#define ENABLE_RVC
