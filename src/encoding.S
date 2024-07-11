@@ -26,24 +26,24 @@ int_register_names:
 .size int_register_names, .-int_register_names
 
 
-.align 4
-float_register_names:
-#ifndef ABI_REGISTER_NAMES
-	.string  "f0",  "f1",  "f2",  "f3",  "f4",  "f5",  "f6",  "f7"
-	.string  "f8",  "f9", "f10", "f11", "f12", "f13", "f14", "f15"
-	.string "f16", "f17", "f18", "f19", "f20", "f21", "f22", "f23"
-	.string "f24", "f25", "f26", "f27", "f28", "f29", "f30", "f31"
-#else
-	.string "ft0", "ft1",  "ft2",  "ft3", "ft4", "ft5",  "ft6",  "ft7"
-	.string "fs0", "fs1",  "fa0",  "fa1", "fa2", "fa3",  "fa4",  "fa5"
-	.string "fa6", "fa7",  "fs2",  "fs3", "fs4", "fs5",  "fs6",  "fs7"
-	.string "fs8", "fs9", "fs10", "fs11", "ft8", "ft9", "ft10", "ft11"
-#endif
-.size float_register_names, .-float_register_names
+#ifdef ENABLE_RVF
+	.align 4
+	float_register_names:
+	#ifndef ABI_REGISTER_NAMES
+		.string  "f0",  "f1",  "f2",  "f3",  "f4",  "f5",  "f6",  "f7"
+		.string  "f8",  "f9", "f10", "f11", "f12", "f13", "f14", "f15"
+		.string "f16", "f17", "f18", "f19", "f20", "f21", "f22", "f23"
+		.string "f24", "f25", "f26", "f27", "f28", "f29", "f30", "f31"
+	#else
+		.string "ft0", "ft1",  "ft2",  "ft3", "ft4", "ft5",  "ft6",  "ft7"
+		.string "fs0", "fs1",  "fa0",  "fa1", "fa2", "fa3",  "fa4",  "fa5"
+		.string "fa6", "fa7",  "fs2",  "fs3", "fs4", "fs5",  "fs6",  "fs7"
+		.string "fs8", "fs9", "fs10", "fs11", "ft8", "ft9", "ft10", "ft11"
+	#endif
+	.size float_register_names, .-float_register_names
+#endif /* ENABLE_RVF */
 
-
-# Opcode strings
-
+# ---------- opcode strings ----------
 
 # RV32I
 string_opcodes:
@@ -155,6 +155,12 @@ string_OP_EBREAK:   .string "ebreak";	#
 	#endif
 #endif /* ENABLE_RVA */
 
+# RVF
+#ifdef ENABLE_RVF
+	string_OP_FLW:  .string "flw";
+	string_OP_FSW:  .string "fsw";
+#endif /* ENABLE_RVF */
+
 # Zifencei
 string_OP_FENCE_I:  .string "fence.i";	#
 
@@ -167,50 +173,54 @@ string_OP_CSRRSI:   .string "csrrsi";	#
 string_OP_CSRRCI:	.string "csrrci";	#
 
 # RVC
-string_OP_C_FLD:		.string "c.fld";
-string_OP_C_LW:			.string "c.lw";
-string_OP_C_FLW:		.string "c.flw";
-string_OP_C_FSD:		.string "c.fsd";
-string_OP_C_SW:			.string "c.sw";
-string_OP_C_FSW:		.string "c.fsw";
-string_OP_C_ADDI:		.string "c.addi";
-string_OP_C_JAL:		.string "c.jal";
-string_OP_C_LI:			.string "c.li";
-string_OP_C_LUI:		.string "c.lui";
-string_OP_C_SRLI:		.string "c.srli";
-string_OP_C_SRLI64:		.string "c.srli64";
-string_OP_C_SRAI:		.string "c.srai";
-string_OP_C_SRAI64:		.string "c.srai64";
-string_OP_C_ANDI:		.string "c.andi";
-string_OP_C_SUB:		.string "c.sub";
-string_OP_C_XOR:		.string "c.xor";
-string_OP_C_OR:			.string "c.or";
-string_OP_C_AND:		.string "c.and";
-string_OP_C_SUBW:		.string "c.subw";
-string_OP_C_ADDW:		.string "c.addw";
-string_OP_C_J:			.string "c.j";
-string_OP_C_BEQZ:		.string "c.beqz";
-string_OP_C_BNEZ:		.string "c.bnez";
-string_OP_C_SLLI:		.string "c.slli";
-string_OP_C_SLLI64:		.string "c.slli64";
-string_OP_C_FLDSP:		.string "c.fldsp";
-string_OP_C_LWSP:		.string "c.lwsp";
-string_OP_C_FLWSP:		.string "c.flwsp";
-string_OP_C_MV:			.string "c.mv";
-string_OP_C_ADD:		.string "c.add";
-string_OP_C_FSDSP:		.string "c.fsdsp";
-string_OP_C_SWSP:		.string "c.swsp";
-string_OP_C_FSWSP:		.string "c.fswsp";
-string_OP_C_NOP:		.string "c.nop";
-string_OP_C_ADDI16SP:	.string "c.addo16sp";
-string_OP_C_JR:			.string "c.jr";
-string_OP_C_JALR:		.string "c.jalr";
-string_OP_C_EBREAK:		.string "c.ebreak";
-string_OP_C_LD:			.string "c.ld";
-string_OP_C_SD:			.string "c.sd";
-string_OP_C_ADDIW:		.string "c.addiw";
-string_OP_C_LDSP:		.string "c.ldsp";
-string_OP_C_SDSP:		.string "c.sdsp";
+#ifdef ENABLE_RVC
+	string_OP_C_LW:			.string "c.lw";
+	string_OP_C_SW:			.string "c.sw";
+	string_OP_C_ADDI:		.string "c.addi";
+	string_OP_C_JAL:		.string "c.jal";
+	string_OP_C_LI:			.string "c.li";
+	string_OP_C_LUI:		.string "c.lui";
+	string_OP_C_SRLI:		.string "c.srli";
+	string_OP_C_SRLI64:		.string "c.srli64";
+	string_OP_C_SRAI:		.string "c.srai";
+	string_OP_C_SRAI64:		.string "c.srai64";
+	string_OP_C_ANDI:		.string "c.andi";
+	string_OP_C_SUB:		.string "c.sub";
+	string_OP_C_XOR:		.string "c.xor";
+	string_OP_C_OR:			.string "c.or";
+	string_OP_C_AND:		.string "c.and";
+	string_OP_C_SUBW:		.string "c.subw";
+	string_OP_C_ADDW:		.string "c.addw";
+	string_OP_C_J:			.string "c.j";
+	string_OP_C_BEQZ:		.string "c.beqz";
+	string_OP_C_BNEZ:		.string "c.bnez";
+	string_OP_C_SLLI:		.string "c.slli";
+	string_OP_C_SLLI64:		.string "c.slli64";
+	string_OP_C_LWSP:		.string "c.lwsp";
+	string_OP_C_MV:			.string "c.mv";
+	string_OP_C_ADD:		.string "c.add";
+	string_OP_C_SWSP:		.string "c.swsp";
+	string_OP_C_NOP:		.string "c.nop";
+	string_OP_C_ADDI16SP:	.string "c.addo16sp";
+	string_OP_C_JR:			.string "c.jr";
+	string_OP_C_JALR:		.string "c.jalr";
+	string_OP_C_EBREAK:		.string "c.ebreak";
+	string_OP_C_LD:			.string "c.ld";
+	string_OP_C_SD:			.string "c.sd";
+	string_OP_C_ADDIW:		.string "c.addiw";
+	string_OP_C_LDSP:		.string "c.ldsp";
+	string_OP_C_SDSP:		.string "c.sdsp";
+	#ifdef ENABLE_RVF
+		string_OP_C_FLD:		.string "c.fld";
+		string_OP_C_FSD:		.string "c.fsd";
+		string_OP_C_FLW:		.string "c.flw";
+		string_OP_C_FSW:		.string "c.fsw";
+		string_OP_C_FLDSP:		.string "c.fldsp";
+		string_OP_C_FLWSP:		.string "c.flwsp";
+		string_OP_C_FSDSP:		.string "c.fsdsp";
+		string_OP_C_FSWSP:		.string "c.fswsp";
+	#endif /* ENABLE_RVF */
+#endif /* ENABLE_RVC */
 
 # Pseudo
 #ifdef ENABLE_PSEUDO
@@ -218,6 +228,9 @@ string_OP_C_SDSP:		.string "c.sdsp";
 	string_OP_NOP:		.string "nop";	
 #endif /* ENABLE_PSEUDO */
 .size string_opcodes, .-string_opcodes
+
+
+# ---------- set up an encoding table  ----------
 
 
 .align 4
@@ -230,7 +243,9 @@ encoding_table:
 #ifdef ENABLE_PSEUDO
 	.word 0xffffffff, 0x00008067, decode_EMPTY, string_OP_RET
 	.word 0xffffffff, 0x00000013, decode_EMPTY, string_OP_NOP
-	.word 0x0000ffff, 0x0001, decode_EMPTY, string_OP_C_NOP
+	#ifdef ENABLE_RVC
+		.word 0x0000ffff, 0x0001, decode_EMPTY, string_OP_C_NOP
+	#endif /* ENABLE_RVC */
 #endif /* ENABLE_PSEUDO */
 
 # RV32I
@@ -341,6 +356,12 @@ encoding_table:
 	#endif
 #endif /* ENABLE_RVA */
 
+# RVF
+#ifdef ENABLE_RVF
+	.word MASK_FLW, MATCH_FLW, decode_EMPTY, string_OP_FLW
+	.word MASK_FSW, MATCH_FSW, decode_EMPTY, string_OP_FSW
+#endif /* ENABLE_RVF */
+
 # RVC
 #ifdef ENABLE_RVC
 	.word MASK_C_LW, MATCH_C_LW, decode_EMPTY, string_OP_C_LW
@@ -393,15 +414,24 @@ encoding_table:
 
 
 # Zifencei
-.word MASK_FENCE_I, MATCH_FENCE_I, decode_FENCE_I, string_OP_FENCE_I
+#ifdef ENABLE_RVZifencei
+	.word MASK_FENCE_I, MATCH_FENCE_I, decode_FENCE_I, string_OP_FENCE_I
+#endif /* ENABLE_RVZifencei */
 
 # Zicsr
-.word MASK_CSRRW, MATCH_CSRRW, decode_CSR, string_OP_CSRRW
-.word MASK_CSRRS, MATCH_CSRRS, decode_CSR, string_OP_CSRRS
-.word MASK_CSRRC, MATCH_CSRRC, decode_CSR, string_OP_CSRRC
-.word MASK_CSRRWI, MATCH_CSRRWI, decode_CSRI, string_OP_CSRRWI
-.word MASK_CSRRSI, MATCH_CSRRSI, decode_CSRI, string_OP_CSRRSI
-.word MASK_CSRRCI, MATCH_CSRRCI, decode_CSRI, string_OP_CSRRCI
+#ifdef ENABLE_RVZicsr
+	.word MASK_CSRRW, MATCH_CSRRW, decode_CSR, string_OP_CSRRW
+	.word MASK_CSRRS, MATCH_CSRRS, decode_CSR, string_OP_CSRRS
+	.word MASK_CSRRC, MATCH_CSRRC, decode_CSR, string_OP_CSRRC
+	.word MASK_CSRRWI, MATCH_CSRRWI, decode_CSRI, string_OP_CSRRWI
+	.word MASK_CSRRSI, MATCH_CSRRSI, decode_CSRI, string_OP_CSRRSI
+	.word MASK_CSRRCI, MATCH_CSRRCI, decode_CSRI, string_OP_CSRRCI
+#endif /* ENABLE_RVZicsr */
+
+# Privileged
+#ifdef ENABLE_RVPRIV
+
+#endif /* ENABLE_RVPRIV */
 
 # table end marker
 .word 0, 0, 0, 0
