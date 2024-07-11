@@ -1,0 +1,10 @@
+ENTRY (start);
+
+SECTIONS
+{
+  . = 0x80000000;
+  .text : { build/qemu-rv64gqc/main.o(.text) }
+  .text : { *(.text) }
+  .data : { *(.data) }
+  .bss  : { *(.bss) }
+}

@@ -34,14 +34,14 @@
 
 // configure which parts of the test code will be present
 // in the executable
-#define WITH_TESTCODE_RV32I
-#define WITH_TESTCODE_RV64I
-#define WITH_TESTCODE_RVM
-#define WITH_TESTCODE_RVA
+//#define WITH_TESTCODE_RV32I
+//#define WITH_TESTCODE_RV64I
+//#define WITH_TESTCODE_RVM
+//#define WITH_TESTCODE_RVA
 #define WITH_TESTCODE_RVF
-//#define WITH_TESTCODE_RVD
-//#define WITH_TESTCODE_RVQ
-#define WITH_TESTCODE_RVC
+#define WITH_TESTCODE_RVD
+#define WITH_TESTCODE_RVQ
+//#define WITH_TESTCODE_RVC
 //#define WITH_TESTCODE_RVB
 //#define WITH_TESTCODE_RVP
 //#define WITH_TESTCODE_RVV
@@ -56,8 +56,8 @@
 #define ENABLE_RVM
 #define ENABLE_RVA
 #define ENABLE_RVF
-//#define ENABLE_RVD
-//#define ENABLE_RVQ
+#define ENABLE_RVD
+#define ENABLE_RVQ
 //#define ENABLE_RVC -- this is handled in the Makefile for now
 //#define ENABLE_RVB
 //#define ENABLE_RVP
