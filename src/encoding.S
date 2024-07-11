@@ -231,8 +231,10 @@ string_OP_EBREAK:   .string "ebreak";	#
 			string_OP_FCVT_Q_WU:	.string "fcvt.q.wu";
 			string_OP_FCVT_W_Q:		.string "fcvt.w.q";
 			string_OP_FCVT_WU_Q:	.string "fcvt.wu.q";
-			string_OP_FMV_X_Q:		.string "fmv.x.q";
-			string_OP_FMV_Q_X:		.string "fmv.q.x";
+			#if XLEN >=128
+				string_OP_FMV_X_Q:		.string "fmv.x.q";
+				string_OP_FMV_Q_X:		.string "fmv.q.x";
+			#endif
 			string_OP_FEQ_Q:		.string "feq.q";
 			string_OP_FLT_Q:		.string "flt.q";
 			string_OP_FLE_Q:		.string "fle.q";
@@ -517,8 +519,10 @@ encoding_table:
 			.word MASK_FCVT_Q_WU, MATCH_FCVT_Q_WU, decode_EMPTY, string_OP_FCVT_Q_WU
 			.word MASK_FCVT_W_Q, MATCH_FCVT_W_Q, decode_EMPTY, string_OP_FCVT_W_Q
 			.word MASK_FCVT_WU_Q, MATCH_FCVT_WU_Q, decode_EMPTY, string_OP_FCVT_WU_Q
-			.word MASK_FMV_X_Q, MATCH_FMV_X_Q, decode_EMPTY, string_OP_FMV_X_Q
-			.word MASK_FMV_Q_X, MATCH_FMV_Q_X, decode_EMPTY, string_OP_FMV_Q_X
+			#if XLEN >=128
+				.word MASK_FMV_X_Q, MATCH_FMV_X_Q, decode_EMPTY, string_OP_FMV_X_Q
+				.word MASK_FMV_Q_X, MATCH_FMV_Q_X, decode_EMPTY, string_OP_FMV_Q_X
+			#endif
 			.word MASK_FEQ_Q, MATCH_FEQ_Q, decode_EMPTY, string_OP_FEQ_Q
 			.word MASK_FLT_Q, MATCH_FLT_Q, decode_EMPTY, string_OP_FLT_Q
 			.word MASK_FLE_Q, MATCH_FLE_Q, decode_EMPTY, string_OP_FLE_Q
