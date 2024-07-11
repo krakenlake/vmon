@@ -504,6 +504,136 @@ testcode_RVF:
 #endif /* WITH_TESTCODE_RVF */
 
 
+#ifdef WITH_TESTCODE_RVD
+testcode_RVD:
+.option push
+.option norvc
+    fld         f0, 0(x0)
+    fld         f31, 0(x31)
+    fld         f0, 2047(x0)
+    fld         f31, -2048(x31)
+    fsd         f0, 0(x0)
+    fsd         f31, 0(x31)
+    fsd         f0, 2047(x0)
+    fsd         f31, -2048(x31)
+    fmadd.d     f0, f1, f2, f3
+    fmadd.d     f28, f29, f30, f31
+    fmsub.d     f0, f1, f2, f3
+    fmsub.d     f28, f29, f30, f31
+    fnmadd.d    f0, f1, f2, f3
+    fnmadd.d    f28, f29, f30, f31
+    fnmsub.d    f0, f1, f2, f3
+    fnmsub.d    f28, f29, f30, f31
+    fadd.d      f0, f1, f2
+    fadd.d      f29, f30, f31
+    fsub.d      f0, f1, f2
+    fsub.d      f29, f30, f31
+    fmul.d      f0, f1, f2
+    fmul.d      f29, f30, f31
+    fdiv.d      f0, f1, f2
+    fdiv.d      f29, f30, f31
+    fsqrt.d     f0, f0    
+    fsqrt.d     f31, f31
+    fsgnj.d     f0, f1, f2 
+    fsgnj.d     f29, f20, f31 
+    fsgnjn.d    f0, f1, f2 
+    fsgnjn.d    f29, f20, f31 
+    fsgnjx.d    f0, f1, f2 
+    fsgnjx.d    f29, f20, f31
+    fmin.d      f0, f1, f2 
+    fmin.d      f29, f20, f31 
+    fmax.d      f0, f1, f2 
+    fmax.d      f29, f20, f31 
+    fcvt.d.w    f0, x0 
+    fcvt.d.w    f31, x31 
+    fcvt.d.wu   f0, x0 
+    fcvt.d.wu   f31, x31 
+    fcvt.w.d    x0, f0
+    fcvt.w.d    x31, f31 
+    fcvt.wu.d   x0, f0 
+    fcvt.wu.d   x31, f31 
+    fmv.x.w     x0, f0 
+    fmv.x.w     x31, f31 
+    fmv.w.x     f0, x0 
+    fmv.w.x     f31, x31 
+    feq.d       x0, f1, f2     
+    feq.d       x31, f30, f31     
+    flt.d       x0, f1, f2     
+    flt.d       x31, f30, f31     
+    fle.d       x0, f1, f2     
+    fle.d       x31, f30, f31     
+    fclass.d    x0, f0   
+    fclass.d    x31, f31   
+.option pop /* norvc */
+.size testcode_RVD, .-testcode_RVD
+#endif /* WITH_TESTCODE_RVD */
+
+
+#ifdef WITH_TESTCODE_RVQ
+testcode_RVQ:
+.option push
+.option norvc
+    flw         f0, 0(x0)
+    flw         f31, 0(x31)
+    flw         f0, 2047(x0)
+    flw         f31, -2048(x31)
+    fsw         f0, 0(x0)
+    fsw         f31, 0(x31)
+    fsw         f0, 2047(x0)
+    fsw         f31, -2048(x31)
+    fmadd.q     f0, f1, f2, f3
+    fmadd.q     f28, f29, f30, f31
+    fmsub.q     f0, f1, f2, f3
+    fmsub.q     f28, f29, f30, f31
+    fnmadd.q    f0, f1, f2, f3
+    fnmadd.q    f28, f29, f30, f31
+    fnmsub.q    f0, f1, f2, f3
+    fnmsub.q    f28, f29, f30, f31
+    fadd.q      f0, f1, f2
+    fadd.q      f29, f30, f31
+    fsub.q      f0, f1, f2
+    fsub.q      f29, f30, f31
+    fmul.q      f0, f1, f2
+    fmul.q      f29, f30, f31
+    fdiv.q      f0, f1, f2
+    fdiv.q      f29, f30, f31
+    fsqrt.q     f0, f0    
+    fsqrt.q     f31, f31
+    fsgnj.q     f0, f1, f2 
+    fsgnj.q     f29, f20, f31 
+    fsgnjn.q    f0, f1, f2 
+    fsgnjn.q    f29, f20, f31 
+    fsgnjx.q    f0, f1, f2 
+    fsgnjx.q    f29, f20, f31
+    fmin.q      f0, f1, f2 
+    fmin.q      f29, f20, f31 
+    fmax.q      f0, f1, f2 
+    fmax.q      f29, f20, f31 
+    fcvt.q.w    f0, x0 
+    fcvt.q.w    f31, x31 
+    fcvt.q.wu   f0, x0 
+    fcvt.q.wu   f31, x31 
+    fcvt.w.q    x0, f0
+    fcvt.w.q    x31, f31 
+    fcvt.wu.q   x0, f0 
+    fcvt.wu.q   x31, f31 
+    fmv.x.w     x0, f0 
+    fmv.x.w     x31, f31 
+    fmv.w.x     f0, x0 
+    fmv.w.x     f31, x31 
+    feq.q       x0, f1, f2     
+    feq.q       x31, f30, f31     
+    flt.q       x0, f1, f2     
+    flt.q       x31, f30, f31     
+    fle.q       x0, f1, f2     
+    fle.q       x31, f30, f31     
+    fclass.q    x0, f0   
+    fclass.q    x31, f31   
+.option pop /* norvc */
+.size testcode_RVQ, .-testcode_RVQ
+#endif /* WITH_TESTCODE_RVQ */
+
+
 #if defined (WITH_TESTCODE_RVC) && defined (ENABLE_RVC)
 testcode_RVC:
 #    c.lw        a0, a0, 1

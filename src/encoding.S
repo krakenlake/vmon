@@ -155,22 +155,106 @@ string_OP_EBREAK:   .string "ebreak";	#
 	#endif
 #endif /* ENABLE_RVA */
 
-# RVF
+# RVF / RVD / RVQ
 #ifdef ENABLE_RVF
-	string_OP_FLW:  .string "flw";
-	string_OP_FSW:  .string "fsw";
+	string_OP_FLW:  		.string "flw";
+	string_OP_FSW:  		.string "fsw";
+	string_OP_FMADD_S:  	.string "fmadd.s";
+	string_OP_FMSUB_S:  	.string "fmsub.s";
+	string_OP_FNMADD_S:		.string "fnmadd.s";
+	string_OP_FNMSUB_S:		.string "fnmsub.s";
+	string_OP_FADD_S:		.string "fadd.s";
+	string_OP_FSUB_S:		.string "fsub.s";
+	string_OP_FMUL_S:		.string "fmul.s";
+	string_OP_FDIV_S:		.string "fdiv.s";
+	string_OP_FSQRT_S:		.string "fsqrt.s";
+	string_OP_FSGNJ_S:		.string "fsgnj.s";
+	string_OP_FSGNJN_S:		.string "fsgnjn.s";
+	string_OP_FSGNJX_S:		.string "fsgnjx.s";
+	string_OP_FMIN_S:		.string "fmin.s";
+	string_OP_FMAX_S:		.string "fmax.s";
+	string_OP_FCVT_S_W:		.string "fcvt.s.w";
+	string_OP_FCVT_S_WU:	.string "fcvt.s.wu";
+	string_OP_FCVT_W_S:		.string "fcvt.w.s";
+	string_OP_FCVT_WU_S:	.string "fcvt.wu.s";
+	string_OP_FMV_X_S:		.string "fmv.x.w";
+	string_OP_FMV_S_X:		.string "fmv.w.x";
+	string_OP_FEQ_S:		.string "feq.s";
+	string_OP_FLT_S:		.string "flt.s";
+	string_OP_FLE_S:		.string "fle.s";
+	string_OP_FCLASS_S:		.string "fclass.s";
+	#ifdef ENABLE_RVD
+		string_OP_FLD:  		.string "fld";
+		string_OP_FSD:  		.string "fsd";
+		string_OP_FMADD_D:  	.string "fmadd.d";
+		string_OP_FMSUB_D:  	.string "fmsub.d";
+		string_OP_FNMADD_D:		.string "fnmadd.d";
+		string_OP_FNMSUB_D:		.string "fnmsub.d";
+		string_OP_FADD_D:		.string "fadd.d";
+		string_OP_FSUB_D:		.string "fsub.d";
+		string_OP_FMUL_D:		.string "fmul.d";
+		string_OP_FDIV_D:		.string "fdiv.d";
+		string_OP_FSQRT_D:		.string "fsqrt.d";
+		string_OP_FSGNJ_D:		.string "fsgnj.d";
+		string_OP_FSGNJN_D:		.string "fsgnjn.d";
+		string_OP_FSGNJX_D:		.string "fsgnjx.d";
+		string_OP_FMIN_D:		.string "fmin.d";
+		string_OP_FMAX_D:		.string "fmax.d";
+		string_OP_FCVT_D_W:		.string "fcvt.d.w";
+		string_OP_FCVT_D_WU:	.string "fcvt.d.wu";
+		string_OP_FCVT_W_D:		.string "fcvt.w.d";
+		string_OP_FCVT_WU_D:	.string "fcvt.wu.d";
+		string_OP_FMV_X_D:		.string "fmv.x.d";
+		string_OP_FMV_D_X:		.string "fmv.d.x";
+		string_OP_FEQ_D:		.string "feq.d";
+		string_OP_FLT_D:		.string "flt.d";
+		string_OP_FLE_D:		.string "fle.d";
+		string_OP_FCLASS_D:		.string "fclass.d";
+		#ifdef ENABLE_RVQ
+			string_OP_FLQ:  		.string "flq";
+			string_OP_FSQ:  		.string "fsq";
+			string_OP_FMADD_Q:  	.string "fmadd.q";
+			string_OP_FMSUB_Q:  	.string "fmsub.q";
+			string_OP_FNMADD_Q:		.string "fnmadd.q";
+			string_OP_FNMSUB_Q:		.string "fnmsub.q";		
+			string_OP_FADD_Q:		.string "fadd.q";
+			string_OP_FSUB_Q:		.string "fsub.q";
+			string_OP_FMUL_Q:		.string "fmul.q";
+			string_OP_FDIV_Q:		.string "fdiv.q";
+			string_OP_FSQRT_Q:		.string "fsqrt.q";
+			string_OP_FSGNJ_Q:		.string "fsgnj.q";
+			string_OP_FSGNJN_Q:		.string "fsgnjn.q";
+			string_OP_FSGNJX_Q:		.string "fsgnjx.q";
+			string_OP_FMIN_Q:		.string "fmin.q";
+			string_OP_FMAX_Q:		.string "fmax.q";
+			string_OP_FCVT_Q_W:		.string "fcvt.q.w";
+			string_OP_FCVT_Q_WU:	.string "fcvt.q.wu";
+			string_OP_FCVT_W_Q:		.string "fcvt.w.q";
+			string_OP_FCVT_WU_Q:	.string "fcvt.wu.q";
+			string_OP_FMV_X_Q:		.string "fmv.x.q";
+			string_OP_FMV_Q_X:		.string "fmv.q.x";
+			string_OP_FEQ_Q:		.string "feq.q";
+			string_OP_FLT_Q:		.string "flt.q";
+			string_OP_FLE_Q:		.string "fle.q";
+			string_OP_FCLASS_Q:		.string "fclass.q";
+		#endif
+	#endif /* ENABLE_RVD */
 #endif /* ENABLE_RVF */
 
 # Zifencei
-string_OP_FENCE_I:  .string "fence.i";	#
+#ifdef ENABLE_RVZifencei
+	string_OP_FENCE_I:  .string "fence.i";	#
+#endif /* ENABLE_RVZifencei */
 
 # Zicsr
-string_OP_CSRRW:    .string "csrrw";	#	
-string_OP_CSRRS:    .string "csrrs";	#
-string_OP_CSRRC:    .string "csrrc";	#
-string_OP_CSRRWI:   .string "csrrwi";	#
-string_OP_CSRRSI:   .string "csrrsi";	#
-string_OP_CSRRCI:	.string "csrrci";	#
+#ifdef ENABLE_RVZicsr
+	string_OP_CSRRW:    .string "csrrw";	#	
+	string_OP_CSRRS:    .string "csrrs";	#
+	string_OP_CSRRC:    .string "csrrc";	#
+	string_OP_CSRRWI:   .string "csrrwi";	#
+	string_OP_CSRRSI:   .string "csrrsi";	#
+	string_OP_CSRRCI:	.string "csrrci";	#
+#endif /* ENABLE_RVZicsr */
 
 # RVC
 #ifdef ENABLE_RVC
@@ -354,13 +438,96 @@ encoding_table:
 		.word MASK_AMOMAXU_D, MATCH_AMOMAXU_D, decode_AMO, string_OP_AMOMAXUD
 		.word MASK_AMOMINU_D, MATCH_AMOMINU_D, decode_AMO, string_OP_AMOMINUD
 	#endif
+
 #endif /* ENABLE_RVA */
 
-# RVF
+# RVF / RVD / RVQ
 #ifdef ENABLE_RVF
 	.word MASK_FLW, MATCH_FLW, decode_EMPTY, string_OP_FLW
 	.word MASK_FSW, MATCH_FSW, decode_EMPTY, string_OP_FSW
+	.word MASK_FMADD_S, MATCH_FMADD_S, decode_EMPTY, string_OP_FMADD_S
+	.word MASK_FMSUB_S, MATCH_FMSUB_S, decode_EMPTY, string_OP_FMSUB_S
+	.word MASK_FNMADD_S, MATCH_FNMADD_S, decode_EMPTY, string_OP_FNMADD_S
+	.word MASK_FNMSUB_S, MATCH_FNMSUB_S, decode_EMPTY, string_OP_FNMSUB_S
+	.word MASK_FADD_S, MATCH_FADD_S, decode_EMPTY, string_OP_FADD_S
+	.word MASK_FSUB_S, MATCH_FSUB_S, decode_EMPTY, string_OP_FSUB_S
+	.word MASK_FMUL_S, MATCH_FMUL_S, decode_EMPTY, string_OP_FMUL_S
+	.word MASK_FDIV_S, MATCH_FDIV_S, decode_EMPTY, string_OP_FDIV_S
+	.word MASK_FSQRT_S, MATCH_FSQRT_S, decode_EMPTY, string_OP_FSQRT_S
+	.word MASK_FSGNJ_S, MATCH_FSGNJ_S, decode_EMPTY, string_OP_FSGNJ_S
+	.word MASK_FSGNJN_S, MATCH_FSGNJN_S, decode_EMPTY, string_OP_FSGNJN_S
+	.word MASK_FSGNJX_S, MATCH_FSGNJX_S, decode_EMPTY, string_OP_FSGNJX_S
+	.word MASK_FMIN_S, MATCH_FMIN_S, decode_EMPTY, string_OP_FMIN_S
+	.word MASK_FMAX_S, MATCH_FMAX_S, decode_EMPTY, string_OP_FMAX_S
+	.word MASK_FCVT_S_W, MATCH_FCVT_S_W, decode_EMPTY, string_OP_FCVT_S_W
+	.word MASK_FCVT_S_WU, MATCH_FCVT_S_WU, decode_EMPTY, string_OP_FCVT_S_WU
+	.word MASK_FCVT_W_S, MATCH_FCVT_W_S, decode_EMPTY, string_OP_FCVT_W_S
+	.word MASK_FCVT_WU_S, MATCH_FCVT_WU_S, decode_EMPTY, string_OP_FCVT_WU_S
+	.word MASK_FMV_X_S, MATCH_FMV_X_S, decode_EMPTY, string_OP_FMV_X_S
+	.word MASK_FMV_S_X, MATCH_FMV_S_X, decode_EMPTY, string_OP_FMV_S_X
+	.word MASK_FEQ_S, MATCH_FEQ_S, decode_EMPTY, string_OP_FEQ_S
+	.word MASK_FLT_S, MATCH_FLT_S, decode_EMPTY, string_OP_FLT_S
+	.word MASK_FLE_S, MATCH_FLE_S, decode_EMPTY, string_OP_FLE_S
+	.word MASK_FCLASS_S, MATCH_FCLASS_S, decode_EMPTY, string_OP_FCLASS_S
+	#ifdef ENABLE_RVD
+		.word MASK_FLD, MATCH_FLD, decode_EMPTY, string_OP_FLD
+		.word MASK_FSD, MATCH_FSD, decode_EMPTY, string_OP_FSD
+		.word MASK_FMADD_D, MATCH_FMADD_D, decode_EMPTY, string_OP_FMADD_D
+		.word MASK_FMSUB_D, MATCH_FMSUB_D, decode_EMPTY, string_OP_FMSUB_D
+		.word MASK_FNMADD_D, MATCH_FNMADD_D, decode_EMPTY, string_OP_FNMADD_D
+		.word MASK_FNMSUB_D, MATCH_FNMSUB_D, decode_EMPTY, string_OP_FNMSUB_D
+		.word MASK_FADD_D, MATCH_FADD_D, decode_EMPTY, string_OP_FADD_D
+		.word MASK_FSUB_D, MATCH_FSUB_D, decode_EMPTY, string_OP_FSUB_D
+		.word MASK_FMUL_D, MATCH_FMUL_D, decode_EMPTY, string_OP_FMUL_D
+		.word MASK_FDIV_D, MATCH_FDIV_D, decode_EMPTY, string_OP_FDIV_D
+		.word MASK_FSQRT_D, MATCH_FSQRT_D, decode_EMPTY, string_OP_FSQRT_D
+		.word MASK_FSGNJ_D, MATCH_FSGNJ_D, decode_EMPTY, string_OP_FSGNJ_D
+		.word MASK_FSGNJN_D, MATCH_FSGNJN_D, decode_EMPTY, string_OP_FSGNJN_D
+		.word MASK_FSGNJX_D, MATCH_FSGNJX_D, decode_EMPTY, string_OP_FSGNJX_D
+		.word MASK_FMIN_D, MATCH_FMIN_D, decode_EMPTY, string_OP_FMIN_D
+		.word MASK_FMAX_D, MATCH_FMAX_D, decode_EMPTY, string_OP_FMAX_D
+		.word MASK_FCVT_D_W, MATCH_FCVT_D_W, decode_EMPTY, string_OP_FCVT_D_W
+		.word MASK_FCVT_D_WU, MATCH_FCVT_D_WU, decode_EMPTY, string_OP_FCVT_D_WU
+		.word MASK_FCVT_W_D, MATCH_FCVT_W_D, decode_EMPTY, string_OP_FCVT_W_D
+		.word MASK_FCVT_WU_D, MATCH_FCVT_WU_D, decode_EMPTY, string_OP_FCVT_WU_D
+		.word MASK_FMV_X_D, MATCH_FMV_X_D, decode_EMPTY, string_OP_FMV_X_D
+		.word MASK_FMV_D_X, MATCH_FMV_D_X, decode_EMPTY, string_OP_FMV_D_X
+		.word MASK_FEQ_D, MATCH_FEQ_D, decode_EMPTY, string_OP_FEQ_D
+		.word MASK_FLT_D, MATCH_FLT_D, decode_EMPTY, string_OP_FLT_D
+		.word MASK_FLE_D, MATCH_FLE_D, decode_EMPTY, string_OP_FLE_D
+		.word MASK_FCLASS_D, MATCH_FCLASS_D, decode_EMPTY, string_OP_FCLASS_D
+		#ifdef ENABLE_RVQ
+			.word MASK_FLQ, MATCH_FLQ, decode_EMPTY, string_OP_FLQ
+			.word MASK_FSQ, MATCH_FSQ, decode_EMPTY, string_OP_FSQ
+			.word MASK_FMADD_Q, MATCH_FMADD_Q, decode_EMPTY, string_OP_FMADD_Q
+			.word MASK_FMSUB_Q, MATCH_FMSUB_Q, decode_EMPTY, string_OP_FMSUB_Q
+			.word MASK_FNMADD_Q, MATCH_FNMADD_Q, decode_EMPTY, string_OP_FNMADD_Q
+			.word MASK_FNMSUB_Q, MATCH_FNMSUB_Q, decode_EMPTY, string_OP_FNMSUB_Q		
+			.word MASK_FADD_Q, MATCH_FADD_Q, decode_EMPTY, string_OP_FADD_Q
+			.word MASK_FSUB_Q, MATCH_FSUB_Q, decode_EMPTY, string_OP_FSUB_Q
+			.word MASK_FMUL_Q, MATCH_FMUL_Q, decode_EMPTY, string_OP_FMUL_Q
+			.word MASK_FDIV_Q, MATCH_FDIV_Q, decode_EMPTY, string_OP_FDIV_Q
+			.word MASK_FSQRT_Q, MATCH_FSQRT_Q, decode_EMPTY, string_OP_FSQRT_Q
+			.word MASK_FSGNJ_Q, MATCH_FSGNJ_Q, decode_EMPTY, string_OP_FSGNJ_Q
+			.word MASK_FSGNJN_Q, MATCH_FSGNJN_Q, decode_EMPTY, string_OP_FSGNJN_Q
+			.word MASK_FSGNJX_Q, MATCH_FSGNJX_Q, decode_EMPTY, string_OP_FSGNJX_Q
+			.word MASK_FMIN_Q, MATCH_FMIN_Q, decode_EMPTY, string_OP_FMIN_Q
+			.word MASK_FMAX_Q, MATCH_FMAX_Q, decode_EMPTY, string_OP_FMAX_Q
+			.word MASK_FCVT_Q_W, MATCH_FCVT_Q_W, decode_EMPTY, string_OP_FCVT_Q_W
+			.word MASK_FCVT_Q_WU, MATCH_FCVT_Q_WU, decode_EMPTY, string_OP_FCVT_Q_WU
+			.word MASK_FCVT_W_Q, MATCH_FCVT_W_Q, decode_EMPTY, string_OP_FCVT_W_Q
+			.word MASK_FCVT_WU_Q, MATCH_FCVT_WU_Q, decode_EMPTY, string_OP_FCVT_WU_Q
+			.word MASK_FMV_X_Q, MATCH_FMV_X_Q, decode_EMPTY, string_OP_FMV_X_Q
+			.word MASK_FMV_Q_X, MATCH_FMV_Q_X, decode_EMPTY, string_OP_FMV_Q_X
+			.word MASK_FEQ_Q, MATCH_FEQ_Q, decode_EMPTY, string_OP_FEQ_Q
+			.word MASK_FLT_Q, MATCH_FLT_Q, decode_EMPTY, string_OP_FLT_Q
+			.word MASK_FLE_Q, MATCH_FLE_Q, decode_EMPTY, string_OP_FLE_Q
+			.word MASK_FCLASS_Q, MATCH_FCLASS_Q, decode_EMPTY, string_OP_FCLASS_Q
+		#endif /* ENABLE_RVQ */
+	#endif /* ENABLE_RVD */
 #endif /* ENABLE_RVF */
+
+
 
 # RVC
 #ifdef ENABLE_RVC

@@ -5,7 +5,8 @@ default: all
 
 #TARGET	?= qemu-rv32g
 #TARGET	?= qemu-rv64g
-TARGET	?= qemu-rv64gc
+#TARGET	?= qemu-rv64gc
+TARGET	?= qemu-rv64gqc
 #TARGET	?= vf2
 
 DEBUG ?= -DDEBUG
@@ -31,6 +32,14 @@ ifeq ($(TARGET), qemu-rv64gc)
 	XLEN		= 64
 	TOOLBIN 	?= /opt/riscv/rv64g/bin
 	ADDFLAGS	= -DENABLE_RVC -DHW_QEMU -DXLEN=$(XLEN) -march=rv64gc -mabi=lp64
+	RUN			= qemu-system-riscv64 -machine virt -cpu rv64,pmp=false -smp 2 -gdb tcp::1234 -bios none -serial stdio -display none -kernel $(BUILD)/$(NAME).img
+endif
+
+ifeq ($(TARGET), qemu-rv64gqc)
+	ARCH    	?= riscv64-unknown-elf
+	XLEN		= 64
+	TOOLBIN 	?= /opt/riscv/rv64g/bin
+	ADDFLAGS	= -DENABLE_RVC -DHW_QEMU -DXLEN=$(XLEN) -march=rv64gqc -mabi=lp64
 	RUN			= qemu-system-riscv64 -machine virt -cpu rv64,pmp=false -smp 2 -gdb tcp::1234 -bios none -serial stdio -display none -kernel $(BUILD)/$(NAME).img
 endif
 
