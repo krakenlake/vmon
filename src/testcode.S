@@ -552,10 +552,10 @@ testcode_RVD:
     fcvt.w.d    x31, f31 
     fcvt.wu.d   x0, f0 
     fcvt.wu.d   x31, f31 
-    fmv.x.w     x0, f0 
-    fmv.x.w     x31, f31 
-    fmv.w.x     f0, x0 
-    fmv.w.x     f31, x31 
+    fmv.x.d     x0, f0 
+    fmv.x.d     x31, f31 
+    fmv.d.x     f0, x0 
+    fmv.d.x     f31, x31 
     feq.d       x0, f1, f2     
     feq.d       x31, f30, f31     
     flt.d       x0, f1, f2     
@@ -617,10 +617,12 @@ testcode_RVQ:
     fcvt.w.q    x31, f31 
     fcvt.wu.q   x0, f0 
     fcvt.wu.q   x31, f31 
-    fmv.x.w     x0, f0 
-    fmv.x.w     x31, f31 
-    fmv.w.x     f0, x0 
-    fmv.w.x     f31, x31 
+#if XLEN >=128
+    fmv.x.q     x0, f0 
+    fmv.x.q     x31, f31 
+    fmv.q.x     f0, x0 
+    fmv.q.x     f31, x31 
+#endif
     feq.q       x0, f1, f2     
     feq.q       x31, f30, f31     
     flt.q       x0, f1, f2     
