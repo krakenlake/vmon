@@ -3,6 +3,22 @@
 #ifdef WITH_TESTCODE
 
 .global testcode
+.global testcode_RV32I
+.global testcode_RV64I
+.global testcode_RVM
+.global testcode_RVA
+.global testcode_RVF
+.global testcode_RVD
+.global testcode_RVQ
+.global testcode_RVC
+.global testcode_RVV
+.global testcode_RVZicsr
+.global testcode_RVZifencei
+.global testcode_RVPRIV
+.global testcode_RVPSEUDO
+
+
+
 
 .text
 

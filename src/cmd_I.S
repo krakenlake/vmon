@@ -91,6 +91,98 @@ cmd_I:
     jal     print_string
     la      a0, testcode 
     jal     print_hex
+
+    #ifdef WITH_TESTCODE_RV32I
+        la      a0, string_info_testcode_RV32I
+        jal     print_string
+        la      a0, testcode_RV32I
+        jal     print_hex
+    #endif /* WITH_TESTCODE_RV32I */
+
+    #ifdef WITH_TESTCODE_RV64I
+        la      a0, string_info_testcode_RV64I
+        jal     print_string
+        la      a0, testcode_RV64I
+        jal     print_hex
+    #endif /* WITH_TESTCODE_RV64I */
+
+    #ifdef WITH_TESTCODE_RVM
+        la      a0, string_info_testcode_RVM
+        jal     print_string
+        la      a0, testcode_RVM
+        jal     print_hex
+    #endif /* WITH_TESTCODE_RVM */
+
+    #ifdef WITH_TESTCODE_RVA
+        la      a0, string_info_testcode_RVA
+        jal     print_string
+        la      a0, testcode_RVA
+        jal     print_hex
+    #endif /* WITH_TESTCODE_RVA */
+
+    #ifdef WITH_TESTCODE_RVF
+        la      a0, string_info_testcode_RVF
+        jal     print_string
+        la      a0, testcode_RVF
+        jal     print_hex
+    #endif /* WITH_TESTCODE_RVF */
+
+    #ifdef WITH_TESTCODE_RVD
+        la      a0, string_info_testcode_RVD
+        jal     print_string
+        la      a0, testcode_RVD
+        jal     print_hex
+    #endif /* WITH_TESTCODE_RVD */
+
+    #ifdef WITH_TESTCODE_RVQ
+        la      a0, string_info_testcode_RVQ
+        jal     print_string
+        la      a0, testcode_RVQ
+        jal     print_hex
+    #endif /* WITH_TESTCODE_RVQ */
+
+    #ifdef WITH_TESTCODE_RVC
+        la      a0, string_info_testcode_RVC
+        jal     print_string
+        la      a0, testcode_RVC
+        jal     print_hex
+    #endif /* WITH_TESTCODE_RVC */
+
+    #ifdef WITH_TESTCODE_RVV
+        la      a0, string_info_testcode_RVV
+        jal     print_string
+        la      a0, testcode_RVV
+        jal     print_hex
+    #endif /* WITH_TESTCODE_RVV */
+
+    #ifdef WITH_TESTCODE_RVZicsr
+        la      a0, string_info_testcode_RVZicsr
+        jal     print_string
+        la      a0, testcode_RVZicsr
+        jal     print_hex
+    #endif /* WITH_TESTCODE_RVZicsr */
+
+    #ifdef WITH_TESTCODE_RVZifencei
+        la      a0, string_info_testcode_RVZifencei
+        jal     print_string
+        la      a0, testcode_RVZifencei
+        jal     print_hex
+    #endif /* WITH_TESTCODE_RVZifencei */
+
+    #ifdef WITH_TESTCODE_RVPRIV
+        la      a0, string_info_testcode_RVPRIV
+        jal     print_string
+        la      a0, testcode_RVPRIV
+        jal     print_hex
+    #endif /* WITH_TESTCODE_RVPRIV */
+
+    #ifdef WITH_TESTCODE_RVPSEUDO
+        la      a0, string_info_testcode_RVPSEUDO
+        jal     print_string
+        la      a0, testcode_RVPSEUDO
+        jal     print_hex
+    #endif /* WITH_TESTCODE_RVPSEUDO */
+
 #endif /* WITH_TESTCODE */
 
     j       main_prompt
@@ -128,5 +220,85 @@ string_info_stacksize:
 string_info_testcode:
     .string "\ntestcode: ";
 .size string_info_testcode, .-string_info_testcode
+
+#ifdef WITH_TESTCODE
+    #ifdef WITH_TESTCODE_RV32I
+    string_info_testcode_RV32I:
+        .string "\ntestcode RV32I: ";
+    .size string_info_testcode_RV32I, .-string_info_testcode_RV32I
+    #endif
+
+    #ifdef WITH_TESTCODE_RV64I
+    string_info_testcode_RV64I:
+        .string "\ntestcode RV64I: ";
+    .size string_info_testcode_RV64I, .-string_info_testcode_RV64I
+    #endif
+
+    #ifdef WITH_TESTCODE_RVM
+    string_info_testcode_RVM:
+        .string "\ntestcode RVM:   ";
+    .size string_info_testcode_RVM, .-string_info_testcode_RVM
+    #endif
+
+    #ifdef WITH_TESTCODE_RVA
+    string_info_testcode_RVA:
+        .string "\ntestcode RVA:   ";
+    .size string_info_testcode_RAM, .-string_info_testcode_RVA
+    #endif
+
+    #ifdef WITH_TESTCODE_RVF
+    string_info_testcode_RVF:
+        .string "\ntestcode RVF:   ";
+    .size string_info_testcode_RVF, .-string_info_testcode_RVF
+    #endif
+
+    #ifdef WITH_TESTCODE_RVD
+    string_info_testcode_RVD:
+        .string "\ntestcode RVD:   ";
+    .size string_info_testcode_RVD, .-string_info_testcode_RVD
+    #endif
+
+    #ifdef WITH_TESTCODE_RVQ
+    string_info_testcode_RVQ:
+        .string "\ntestcode RVQ:   ";
+    .size string_info_testcode_RVQ, .-string_info_testcode_RVQ
+    #endif
+
+    #ifdef WITH_TESTCODE_RVC
+    string_info_testcode_RVC:
+        .string "\ntestcode RVC:   ";
+    .size string_info_testcode_RVC, .-string_info_testcode_RVC
+    #endif
+
+    #ifdef WITH_TESTCODE_RVV
+    string_info_testcode_RVV:
+        .string "\ntestcode RVV:   ";
+    .size string_info_testcode_RVV, .-string_info_testcode_RVV
+    #endif
+
+    #ifdef WITH_TESTCODE_RVZicsr
+    string_info_testcode_RVZicsr:
+        .string "\ntestcode RVZicsr: ";
+    .size string_info_testcode_RVZicsr, .-string_info_testcode_RVZicsr
+    #endif
+
+    #ifdef WITH_TESTCODE_RVZifencei
+    string_info_testcode_RVZifencei:
+        .string "\ntestcode RVZifencei: ";
+    .size string_info_testcode_RVZifencei, .-string_info_testcode_RVZifencei
+    #endif
+
+    #ifdef WITH_TESTCODE_RVPRIV
+    string_info_testcode_RVPRIV:
+        .string "\ntestcode RVPRIV: ";
+    .size string_info_testcode_RVPRIV, .-string_info_testcode_RVPRIV
+    #endif
+
+    #ifdef WITH_TESTCODE_RVPSEUDO
+    string_info_testcode_RVPSEUDO:
+        .string "\ntestcode RVPSEUDO: ";
+    .size string_info_testcode_RVPSEUDO, .-string_info_testcode_RVPSEUDO
+    #endif
+#endif /* WITh_TESTCODE */
 
 #endif /* WITH_CMD_I */
