@@ -47,6 +47,7 @@ print_frs2:
 .size print_frs2, .-print_frs2
 
 
+# in: instruction word in a0
 decode_FL:
     addi    sp, sp, -(XLEN_BYTES*2)              
     SAVE_X  ra, 0(sp)
@@ -60,7 +61,8 @@ decode_FL:
     ret
 .size decode_FL, .-decode_FL
 
-
+# TODO: can be joined with decode_S_type
+# in: instruction word in a0
 decode_FS:
     addi    sp, sp, -(XLEN_BYTES*2)              
     SAVE_X  ra, 0(sp)
