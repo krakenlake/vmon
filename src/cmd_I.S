@@ -299,6 +299,6 @@ string_info_testcode:
         .string "\ntestcode RVPSEUDO: ";
     .size string_info_testcode_RVPSEUDO, .-string_info_testcode_RVPSEUDO
     #endif
-#endif /* WITh_TESTCODE */
+#endif /* WITH_TESTCODE */
 
 #endif /* WITH_CMD_I */
