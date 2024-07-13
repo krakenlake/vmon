@@ -445,8 +445,8 @@ encoding_table:
 
 # RVF / RVD / RVQ
 #ifdef ENABLE_RVF
-	.word MASK_FLW, MATCH_FLW, decode_EMPTY, string_OP_FLW
-	.word MASK_FSW, MATCH_FSW, decode_EMPTY, string_OP_FSW
+	.word MASK_FLW, MATCH_FLW, decode_FL, string_OP_FLW
+	.word MASK_FSW, MATCH_FSW, decode_FS, string_OP_FSW
 	.word MASK_FMADD_S, MATCH_FMADD_S, decode_EMPTY, string_OP_FMADD_S
 	.word MASK_FMSUB_S, MATCH_FMSUB_S, decode_EMPTY, string_OP_FMSUB_S
 	.word MASK_FNMADD_S, MATCH_FNMADD_S, decode_EMPTY, string_OP_FNMADD_S
@@ -472,8 +472,8 @@ encoding_table:
 	.word MASK_FLE_S, MATCH_FLE_S, decode_EMPTY, string_OP_FLE_S
 	.word MASK_FCLASS_S, MATCH_FCLASS_S, decode_EMPTY, string_OP_FCLASS_S
 	#ifdef ENABLE_RVD
-		.word MASK_FLD, MATCH_FLD, decode_EMPTY, string_OP_FLD
-		.word MASK_FSD, MATCH_FSD, decode_EMPTY, string_OP_FSD
+		.word MASK_FLD, MATCH_FLD, decode_FL, string_OP_FLD
+		.word MASK_FSD, MATCH_FSD, decode_FS, string_OP_FSD
 		.word MASK_FMADD_D, MATCH_FMADD_D, decode_EMPTY, string_OP_FMADD_D
 		.word MASK_FMSUB_D, MATCH_FMSUB_D, decode_EMPTY, string_OP_FMSUB_D
 		.word MASK_FNMADD_D, MATCH_FNMADD_D, decode_EMPTY, string_OP_FNMADD_D
@@ -499,8 +499,8 @@ encoding_table:
 		.word MASK_FLE_D, MATCH_FLE_D, decode_EMPTY, string_OP_FLE_D
 		.word MASK_FCLASS_D, MATCH_FCLASS_D, decode_EMPTY, string_OP_FCLASS_D
 		#ifdef ENABLE_RVQ
-			.word MASK_FLQ, MATCH_FLQ, decode_EMPTY, string_OP_FLQ
-			.word MASK_FSQ, MATCH_FSQ, decode_EMPTY, string_OP_FSQ
+			.word MASK_FLQ, MATCH_FLQ, decode_FL, string_OP_FLQ
+			.word MASK_FSQ, MATCH_FSQ, decode_FS, string_OP_FSQ
 			.word MASK_FMADD_Q, MATCH_FMADD_Q, decode_EMPTY, string_OP_FMADD_Q
 			.word MASK_FMSUB_Q, MATCH_FMSUB_Q, decode_EMPTY, string_OP_FMSUB_Q
 			.word MASK_FNMADD_Q, MATCH_FNMADD_Q, decode_EMPTY, string_OP_FNMADD_Q
