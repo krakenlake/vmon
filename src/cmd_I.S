@@ -217,80 +217,81 @@ string_info_stackend:
 string_info_stacksize:
     .string "\nstack bytes free: ";
 .size string_info_stacksize, .-string_info_stacksize
-string_info_testcode:
-    .string "\ntestcode: ";
-.size string_info_testcode, .-string_info_testcode
 
 #ifdef WITH_TESTCODE
+    string_info_testcode:
+        .string "\ntestcode: ";
+    .size string_info_testcode, .-string_info_testcode
+
     #ifdef WITH_TESTCODE_RV32I
     string_info_testcode_RV32I:
-        .string "\ntestcode RV32I: ";
+        .string "\n RV32I: ";
     .size string_info_testcode_RV32I, .-string_info_testcode_RV32I
     #endif
 
     #ifdef WITH_TESTCODE_RV64I
     string_info_testcode_RV64I:
-        .string "\ntestcode RV64I: ";
+        .string "\n RV64I: ";
     .size string_info_testcode_RV64I, .-string_info_testcode_RV64I
     #endif
 
     #ifdef WITH_TESTCODE_RVM
     string_info_testcode_RVM:
-        .string "\ntestcode RVM:   ";
+        .string "\n RVM: ";
     .size string_info_testcode_RVM, .-string_info_testcode_RVM
     #endif
 
     #ifdef WITH_TESTCODE_RVA
     string_info_testcode_RVA:
-        .string "\ntestcode RVA:   ";
+        .string "\n RVA: ";
     .size string_info_testcode_RAM, .-string_info_testcode_RVA
     #endif
 
     #ifdef WITH_TESTCODE_RVF
     string_info_testcode_RVF:
-        .string "\ntestcode RVF:   ";
+        .string "\n RVF: ";
     .size string_info_testcode_RVF, .-string_info_testcode_RVF
     #endif
 
     #ifdef WITH_TESTCODE_RVD
     string_info_testcode_RVD:
-        .string "\ntestcode RVD:   ";
+        .string "\n RVD: ";
     .size string_info_testcode_RVD, .-string_info_testcode_RVD
     #endif
 
     #ifdef WITH_TESTCODE_RVQ
     string_info_testcode_RVQ:
-        .string "\ntestcode RVQ:   ";
+        .string "\n RVQ: ";
     .size string_info_testcode_RVQ, .-string_info_testcode_RVQ
     #endif
 
     #ifdef WITH_TESTCODE_RVC
     string_info_testcode_RVC:
-        .string "\ntestcode RVC:   ";
+        .string "\n RVC: ";
     .size string_info_testcode_RVC, .-string_info_testcode_RVC
     #endif
 
     #ifdef WITH_TESTCODE_RVV
     string_info_testcode_RVV:
-        .string "\ntestcode RVV:   ";
+        .string "\n RVV: ";
     .size string_info_testcode_RVV, .-string_info_testcode_RVV
     #endif
 
     #ifdef WITH_TESTCODE_RVZicsr
     string_info_testcode_RVZicsr:
-        .string "\ntestcode RVZicsr: ";
+        .string "\n RVZicsr: ";
     .size string_info_testcode_RVZicsr, .-string_info_testcode_RVZicsr
     #endif
 
     #ifdef WITH_TESTCODE_RVZifencei
     string_info_testcode_RVZifencei:
-        .string "\ntestcode RVZifencei: ";
+        .string "\n RVZifencei: ";
     .size string_info_testcode_RVZifencei, .-string_info_testcode_RVZifencei
     #endif
 
     #ifdef WITH_TESTCODE_RVPRIV
     string_info_testcode_RVPRIV:
-        .string "\ntestcode RVPRIV: ";
+        .string "\n RVPRIV: ";
     .size string_info_testcode_RVPRIV, .-string_info_testcode_RVPRIV
     #endif
 
