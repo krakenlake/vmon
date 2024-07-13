@@ -17,7 +17,6 @@ testcode_RV32I:
     ecall
     ebreak  
     fence 
-    fence.i 
     fence.tso
     add     x0, x0, x0
     add     x31, x31, x31
@@ -573,14 +572,14 @@ testcode_RVD:
 testcode_RVQ:
 .option push
 .option norvc
-    flw         f0, 0(x0)
-    flw         f31, 0(x31)
-    flw         f0, 2047(x0)
-    flw         f31, -2048(x31)
-    fsw         f0, 0(x0)
-    fsw         f31, 0(x31)
-    fsw         f0, 2047(x0)
-    fsw         f31, -2048(x31)
+    flq         f0, 0(x0)
+    flq         f31, 0(x31)
+    flq         f0, 2047(x0)
+    flq         f31, -2048(x31)
+    fsq         f0, 0(x0)
+    fsq         f31, 0(x31)
+    fsq         f0, 2047(x0)
+    fsq         f31, -2048(x31)
     fmadd.q     f0, f1, f2, f3
     fmadd.q     f28, f29, f30, f31
     fmsub.q     f0, f1, f2, f3
@@ -673,6 +672,16 @@ testcode_RVZicsr:
 .option pop /* norvc */
 .size testcode_RVZicsr, .-testcode_RVZicsr
 #endif /* WITH_TESTCODE_RVZicsr */
+
+
+#ifdef WITH_TESTCODE_RVZifencei
+.option push
+.option norvc
+testcode_RVZifencei:
+    fence.i
+.option pop /* norvc */
+.size testcode_RVZifencei, .-testcode_RVZifencei
+#endif /* WITH_TESTCODE_RVZifencei */
 
 
 #ifdef WITH_TESTCODE_RVPRIV

@@ -2,9 +2,10 @@
 
 #ifdef WITH_CMD_D
 
+#ifdef ENABLE_RVF
 
-.global decode_FLW
-.global decode_FSW
+.global decode_FL
+.global decode_FS
 
 
 .text
@@ -46,7 +47,44 @@ print_frs2:
 .size print_frs2, .-print_frs2
 
 
+decode_FL:
+    addi    sp, sp, -(XLEN_BYTES*2)              
+    SAVE_X  ra, 0(sp)
+    SAVE_X  s2, (XLEN_BYTES*1)(sp) 
+    mv      s2, a0   
+    jal     print_frd
+
+    LOAD_X  ra, 0(sp)               
+    LOAD_X  s2, (XLEN_BYTES*1)(sp)               
+    addi    sp, sp, (XLEN_BYTES*2)
+    ret
+.size decode_FL, .-decode_FL
+
+
+decode_FS:
+    addi    sp, sp, -(XLEN_BYTES*2)              
+    SAVE_X  ra, 0(sp)
+    SAVE_X  s2, (XLEN_BYTES*1)(sp) 
+    mv      s2, a0   
+    jal     print_frs2
+    jal     print_comma
+    mv      a0, s2
+    jal     decode_S_type_imm
+    li      a0, '('
+    jal     print_char
+    mv      a0, s2
+    jal     print_rs1
+    li      a0, ')'
+    jal     print_char
+    LOAD_X  ra, 0(sp)               
+    LOAD_X  s2, (XLEN_BYTES*1)(sp)               
+    addi    sp, sp, (XLEN_BYTES*2)
+    ret
+.size decode_FL, .-decode_FL
+
+
 .data
 
+#endif /* ENABLE_RVF */
 
 #endif /* WITH_CMD_D */

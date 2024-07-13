@@ -7,6 +7,9 @@
 
 .global print_instruction
 .global print_register_name
+.global print_rs1
+.global print_rs2
+.global print_rd
 
 .global decode_opcode
 
@@ -16,6 +19,7 @@
 .global decode_I_type_SHIFT
 .global decode_R_type
 .global decode_S_type
+.global decode_S_type_imm
 .global decode_U_type
 
 .global decode_JAL
@@ -224,25 +228,8 @@ decode_S_type:
     mv      s2, a0
     jal     ra, print_rs2
     jal     print_comma
-    # inst[11:7] -> imm[4:0]
-    srli    a0, s2, 7
-    andi    a0, a0, 0b11111 
-    # inst[30:25] -> imm[10:5]
-    srli    t0, s2, 20
-    li      t1, 0b11111100000
-    and     t0, t0, t1
-    or      a0, a0, t0 
-    # inst[31] -> imm[63:12]
-#if XLEN >=64
-    slli    t0, s2, 32                      # sign-extend to 64 bits
-    srai    t0, t0, 32+20
-#else
-    srai    t0, s2, 20
-#endif
-    li      t1, 0xfffffffffffff800          
-    and     t0, t0, t1
-    or      a0, a0, t0 
-    jal     print_decimal
+    mv      a0, s2
+    jal     decode_S_type_imm
     li      a0, '('
     jal     print_char
     # extract rs1 
@@ -255,6 +242,33 @@ decode_S_type:
     addi    sp, sp, (XLEN_BYTES*2)
     ret
 .size decode_S_type, .-decode_S_type
+
+
+# in: instruction word in a0
+decode_S_type_imm:
+    addi    sp, sp, -(XLEN_BYTES*1)             
+    SAVE_X  ra, 0(sp)
+    mv      t2, a0
+    # inst[11:7] -> imm[4:0]
+    srli    a0, t2, 7
+    andi    a0, a0, 0b11111 
+    # inst[30:25] -> imm[10:5]
+    srli    t0, t2, 20
+    li      t1, 0b11111100000
+    and     t0, t0, t1
+    or      a0, a0, t0 
+    # inst[31] -> imm[63:12]
+#if XLEN >=64
+    sext.w  t0, t2                          # sign-extend to 64 bits
+#endif
+    srai    t0, t0, 20
+    li      t1, 0xfffffffffffff800          
+    and     t0, t0, t1
+    or      a0, a0, t0 
+    jal     print_decimal
+    LOAD_X  ra, 0(sp)               
+    addi    sp, sp, (XLEN_BYTES*1)
+    ret
 
 
 # in: instruction word in a0
