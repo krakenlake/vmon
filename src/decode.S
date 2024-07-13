@@ -47,11 +47,9 @@
 # out: 0 if not, nonzero if yes
 insn_is_compressed:
     andi    a0, a0, 0b11                 # look at bit 0 and 1
-    # compressed instructions either end in 0b01 or 0b10
-    li      t1, 0b01                
-    beq     a0, t1, insn_is_compressed_yes  # it is a compressed instruction
-    li      t1, 0b10
-    beq     a0, t1, insn_is_compressed_yes  # it is a compressed instruction
+    # uncompressed instructions have 0b11 in the end
+    li      t1, 0b11                
+    bne     a0, t1, insn_is_compressed_yes  # it is a compressed instruction
 insn_is_compressed_no:
     li      a0, 0
     ret
