@@ -20,6 +20,7 @@
 // which user commands shall be in the binary?
 #define WITH_CMD_C		// copy memory	
 #define WITH_CMD_D		// disassemble	
+#define WITH_CMD_F		// find
 #define WITH_CMD_G		// go
 #define WITH_CMD_H		// help
 #define WITH_CMD_I		// info	
