@@ -140,6 +140,11 @@ get_command:
     lb      t1, 0(s4)               # get byte from buffer
 .size start, .-start
 
+#ifdef WITH_CMD_C
+    li      t0, 'c'
+    beq     t1, t0, cmd_C
+#endif
+
 #ifdef WITH_CMD_D
     li      t0, 'd'
     beq     t1, t0, cmd_D

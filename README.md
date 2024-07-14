@@ -34,6 +34,9 @@ communication written in RISC-V assembly language.
 ## Commands
 VMON understands the following commands:  
 
+**c <src_start> <src_end> <dst_addr>**   
+copy memory contents
+
 **d <start_addr>**   
 disassemble 16 instructions starting at start_addr 
 
