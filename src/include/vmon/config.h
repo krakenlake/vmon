@@ -24,6 +24,7 @@
 #define WITH_CMD_H		// help
 #define WITH_CMD_I		// info	
 #define WITH_CMD_M		// memory dump
+#define WITH_CMD_P		// poke
 #define WITH_CMD_X		// exit
 
 // if undefined, simply "x0...x31" will be used instead
