@@ -18,6 +18,7 @@ cmd_H:
 .data
 string_help:
 .string "\nCommands:\n\
+    c <src_start> <src_end> <dst_start> - copy memory\n\
     d <start_addr> - disassemble 16 instructions starting at start_addr\n\
     d <start_addr> <end_addr> - disassemble from start_addr to end_addr\n\
     d - continue disassembly from last address\n\
