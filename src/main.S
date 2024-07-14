@@ -150,6 +150,11 @@ get_command:
     beq     t1, t0, cmd_D
 #endif
 
+#ifdef WITH_CMD_F
+    li      t0, 'f'
+    beq     t1, t0, cmd_F
+#endif
+
 #ifdef WITH_CMD_G
     li      t0, 'g'
     beq     t1, t0, cmd_G

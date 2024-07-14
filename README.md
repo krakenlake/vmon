@@ -46,6 +46,9 @@ disassemble from <start_addr> to <end_addr>
 **d**   
 continue disassembly from last address used
 
+**f <start_addr> <end_addr> <byte_value>**   
+find <byte_value> in memory from <start_addr> to <end_addr>
+
 **g <start_addr>**   
 start program execution at <start_addr>
 
