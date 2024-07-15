@@ -54,12 +54,16 @@ decode_FL:
     SAVE_X  s2, (XLEN_BYTES*1)(sp) 
     mv      s2, a0   
     jal     print_frd
-
+    mv      a0, s2
+    jal     decode_I_type_imm
+    mv      a0, s2
+    jal     print_rs1_as_base
     LOAD_X  ra, 0(sp)               
     LOAD_X  s2, (XLEN_BYTES*1)(sp)               
     addi    sp, sp, (XLEN_BYTES*2)
     ret
 .size decode_FL, .-decode_FL
+
 
 # TODO: can be joined with decode_S_type
 # in: instruction word in a0
@@ -72,12 +76,8 @@ decode_FS:
     jal     print_comma
     mv      a0, s2
     jal     decode_S_type_imm
-    li      a0, '('
-    jal     print_char
     mv      a0, s2
-    jal     print_rs1
-    li      a0, ')'
-    jal     print_char
+    jal     print_rs1_as_base
     LOAD_X  ra, 0(sp)               
     LOAD_X  s2, (XLEN_BYTES*1)(sp)               
     addi    sp, sp, (XLEN_BYTES*2)
