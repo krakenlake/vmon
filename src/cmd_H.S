@@ -22,6 +22,7 @@ string_help:
     d <start_addr> - disassemble 16 instructions starting at start_addr\n\
     d <start_addr> <end_addr> - disassemble from start_addr to end_addr\n\
     d - continue disassembly from last address\n\
+    f <start_addr> <end_addr> <byte_value> - find byte value\n\  
     g <start_addr> - go to start_addr\n\
     h - help\n\
     i - print segment and debugging information\n\
@@ -29,6 +30,6 @@ string_help:
     m <start_addr> <end_addr> - memory dump from start_addr to end_addr\n\
     m - continue memory dump from last address\n\
     x - exit to caller\n\
-    Address entry is in hex (without 0x prefix).\n"
+    All address and value entries are in hex (without 0x prefix).\n"
 .size string_help, .-string_help
 #endif /* WITH_CMD_H */
