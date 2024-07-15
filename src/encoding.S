@@ -531,8 +531,6 @@ encoding_table:
 	#endif /* ENABLE_RVD */
 #endif /* ENABLE_RVF */
 
-
-
 # RVC
 #ifdef ENABLE_RVC
 	.word MASK_C_LW, MATCH_C_LW, decode_EMPTY, string_OP_C_LW
@@ -582,7 +580,6 @@ encoding_table:
 		.word MASK_C_FSDSP, MATCH_C_FSDSP, decode_EMPTY, string_OP_C_FSDSP
 	#endif /* ENABLE_RVF */
 #endif /* ENABLE_RVC */
-
 
 # Zifencei
 #ifdef ENABLE_RVZifencei
