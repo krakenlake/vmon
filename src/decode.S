@@ -309,10 +309,6 @@ decode_JAL:
     li      t1, 0xfffffffffff80000
     and     t0, t0, t1
     or      a0, a0, t0
-    mv      s2, a0
-    jal     print_hex
-    jal     print_comma
-    mv      a0, s2
 decode_JAL_add_offset:
     add     a0, s5, a0
     jal     print_hex
