@@ -356,14 +356,9 @@ decode_LRSC:
     SAVE_X  s2, (XLEN_BYTES*1)(sp)  
     mv      s2, a0
     jal     print_rd
-    # 
-    li      a0, '('
-    jal     print_char
-    # print addr 
+    # TODO: SC incomplete
     mv      a0, s2
-    jal     print_rs1
-    li      a0, ')'
-    jal     print_char
+    jal     print_rs1_as_base
     LOAD_X  ra, 0(sp)               
     LOAD_X  s2, (XLEN_BYTES*1)(sp)               
     addi    sp, sp, (XLEN_BYTES*2)
@@ -381,13 +376,9 @@ decode_AMO:
     mv      a0, s2
     jal     print_rs2
     jal     print_comma  
-    li      a0, '('
-    jal     print_char
     # print rs1 = addr
     mv      a0, s2
-    jal     print_rs1
-    li      a0, ')'
-    jal     print_char
+    jal     print_rs1_as_base
     LOAD_X  ra, 0(sp)               
     LOAD_X  s2, (XLEN_BYTES*1)(sp)               
     addi    sp, sp, (XLEN_BYTES*2)
