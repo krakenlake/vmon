@@ -27,7 +27,7 @@ cmd_P:
 	j 		cmd_P_done
 
 cmd_P_error:
-    la      a0, error_no_addr
+    la      a0, error_param
     jal     print_string
 
 cmd_P_done:

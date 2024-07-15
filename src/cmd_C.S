@@ -53,7 +53,7 @@ cmd_C_loop_backwards:
     j       cmd_C_loop_backwards
 
 cmd_C_error:
-    la      a0, error_no_addr
+    la      a0, error_param
     jal     print_string
 
 cmd_C_done:
