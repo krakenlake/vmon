@@ -18,8 +18,6 @@
 .global testcode_RVPSEUDO
 
 
-
-
 .text
 
 
@@ -155,6 +153,7 @@ testcode_jal_forward:
 .option pop /* norvc */
 .size testcode_RV32I, .-testcode_RV32I
 #endif /* WITH_TESTCODE_RV32I */
+
 
 # RV64I
 #if defined(WITH_TESTCODE_RV64I) && (XLEN >= 64)
@@ -708,6 +707,7 @@ testcode_RVPRIV:
 .option pop /* norvc */
 .size testcode_RVPRIV, .-testcode_RVPRIV
 #endif /* WITH_TESTCODE_RVPRIV */
+
 
 #ifdef WITH_TESTCODE_PSEUDO
 .option push
