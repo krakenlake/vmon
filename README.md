@@ -70,5 +70,8 @@ continue memory dump from last address used
 **p <dst_addr> <byte_value>**   
 write <byte_value> to <dst_addr>
 
+**x**   
+exit
+
 ## Known Problems
 see [issues page](https://github.com/krakenlake/vmon/issues)
