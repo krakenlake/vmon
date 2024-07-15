@@ -41,7 +41,7 @@ cmd_F_found:
 	jal		print_hex
 	j 		cmd_F_done
 cmd_F_error:
-    la      a0, error_no_addr
+    la      a0, error_param
     jal     print_string
 cmd_F_done:
     j       main_prompt
