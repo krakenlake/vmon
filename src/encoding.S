@@ -447,30 +447,30 @@ encoding_table:
 #ifdef ENABLE_RVF
 	.word MASK_FLW, MATCH_FLW, decode_FL, string_OP_FLW
 	.word MASK_FSW, MATCH_FSW, decode_FS, string_OP_FSW
-	.word MASK_FMADD_S, MATCH_FMADD_S, decode_EMPTY, string_OP_FMADD_S
-	.word MASK_FMSUB_S, MATCH_FMSUB_S, decode_EMPTY, string_OP_FMSUB_S
-	.word MASK_FNMADD_S, MATCH_FNMADD_S, decode_EMPTY, string_OP_FNMADD_S
-	.word MASK_FNMSUB_S, MATCH_FNMSUB_S, decode_EMPTY, string_OP_FNMSUB_S
-	.word MASK_FADD_S, MATCH_FADD_S, decode_EMPTY, string_OP_FADD_S
-	.word MASK_FSUB_S, MATCH_FSUB_S, decode_EMPTY, string_OP_FSUB_S
-	.word MASK_FMUL_S, MATCH_FMUL_S, decode_EMPTY, string_OP_FMUL_S
-	.word MASK_FDIV_S, MATCH_FDIV_S, decode_EMPTY, string_OP_FDIV_S
-	.word MASK_FSQRT_S, MATCH_FSQRT_S, decode_EMPTY, string_OP_FSQRT_S
-	.word MASK_FSGNJ_S, MATCH_FSGNJ_S, decode_EMPTY, string_OP_FSGNJ_S
-	.word MASK_FSGNJN_S, MATCH_FSGNJN_S, decode_EMPTY, string_OP_FSGNJN_S
-	.word MASK_FSGNJX_S, MATCH_FSGNJX_S, decode_EMPTY, string_OP_FSGNJX_S
-	.word MASK_FMIN_S, MATCH_FMIN_S, decode_EMPTY, string_OP_FMIN_S
-	.word MASK_FMAX_S, MATCH_FMAX_S, decode_EMPTY, string_OP_FMAX_S
-	.word MASK_FCVT_S_W, MATCH_FCVT_S_W, decode_EMPTY, string_OP_FCVT_S_W
-	.word MASK_FCVT_S_WU, MATCH_FCVT_S_WU, decode_EMPTY, string_OP_FCVT_S_WU
-	.word MASK_FCVT_W_S, MATCH_FCVT_W_S, decode_EMPTY, string_OP_FCVT_W_S
-	.word MASK_FCVT_WU_S, MATCH_FCVT_WU_S, decode_EMPTY, string_OP_FCVT_WU_S
-	.word MASK_FMV_X_S, MATCH_FMV_X_S, decode_EMPTY, string_OP_FMV_X_S
-	.word MASK_FMV_S_X, MATCH_FMV_S_X, decode_EMPTY, string_OP_FMV_S_X
-	.word MASK_FEQ_S, MATCH_FEQ_S, decode_EMPTY, string_OP_FEQ_S
-	.word MASK_FLT_S, MATCH_FLT_S, decode_EMPTY, string_OP_FLT_S
-	.word MASK_FLE_S, MATCH_FLE_S, decode_EMPTY, string_OP_FLE_S
-	.word MASK_FCLASS_S, MATCH_FCLASS_S, decode_EMPTY, string_OP_FCLASS_S
+	.word MASK_FMADD_S, MATCH_FMADD_S, decode_FMA, string_OP_FMADD_S
+	.word MASK_FMSUB_S, MATCH_FMSUB_S, decode_FMA, string_OP_FMSUB_S
+	.word MASK_FNMADD_S, MATCH_FNMADD_S, decode_FMA, string_OP_FNMADD_S
+	.word MASK_FNMSUB_S, MATCH_FNMSUB_S, decode_FMA, string_OP_FNMSUB_S
+	.word MASK_FADD_S, MATCH_FADD_S, decode_FADD, string_OP_FADD_S
+	.word MASK_FSUB_S, MATCH_FSUB_S, decode_FADD, string_OP_FSUB_S
+	.word MASK_FMUL_S, MATCH_FMUL_S, decode_FADD, string_OP_FMUL_S
+	.word MASK_FDIV_S, MATCH_FDIV_S, decode_FADD, string_OP_FDIV_S
+	.word MASK_FSQRT_S, MATCH_FSQRT_S, decode_FSQRT, string_OP_FSQRT_S
+	.word MASK_FSGNJ_S, MATCH_FSGNJ_S, decode_FADD, string_OP_FSGNJ_S
+	.word MASK_FSGNJN_S, MATCH_FSGNJN_S, decode_FADD, string_OP_FSGNJN_S
+	.word MASK_FSGNJX_S, MATCH_FSGNJX_S, decode_FADD, string_OP_FSGNJX_S
+	.word MASK_FMIN_S, MATCH_FMIN_S, decode_FADD, string_OP_FMIN_S
+	.word MASK_FMAX_S, MATCH_FMAX_S, decode_FADD, string_OP_FMAX_S
+	.word MASK_FCVT_S_W, MATCH_FCVT_S_W, decode_FCVT_SW, string_OP_FCVT_S_W
+	.word MASK_FCVT_S_WU, MATCH_FCVT_S_WU, decode_FCVT_SW, string_OP_FCVT_S_WU
+	.word MASK_FCVT_W_S, MATCH_FCVT_W_S, decode_FCVT_WS, string_OP_FCVT_W_S
+	.word MASK_FCVT_WU_S, MATCH_FCVT_WU_S, decode_FCVT_WS, string_OP_FCVT_WU_S
+	.word MASK_FMV_X_S, MATCH_FMV_X_S, decode_FCVT_WS, string_OP_FMV_X_S
+	.word MASK_FMV_S_X, MATCH_FMV_S_X, decode_FCVT_SW, string_OP_FMV_S_X
+	.word MASK_FEQ_S, MATCH_FEQ_S, decode_FCMP, string_OP_FEQ_S
+	.word MASK_FLT_S, MATCH_FLT_S, decode_FCMP, string_OP_FLT_S
+	.word MASK_FLE_S, MATCH_FLE_S, decode_FCMP, string_OP_FLE_S
+	.word MASK_FCLASS_S, MATCH_FCLASS_S, decode_FCLASS, string_OP_FCLASS_S
 	#ifdef ENABLE_RVD
 		.word MASK_FLD, MATCH_FLD, decode_FL, string_OP_FLD
 		.word MASK_FSD, MATCH_FSD, decode_FS, string_OP_FSD

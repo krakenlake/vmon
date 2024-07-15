@@ -484,15 +484,15 @@ testcode_RVF:
     fsqrt.s     f0, f0    
     fsqrt.s     f31, f31
     fsgnj.s     f0, f1, f2 
-    fsgnj.s     f29, f20, f31 
+    fsgnj.s     f29, f30, f31 
     fsgnjn.s    f0, f1, f2 
-    fsgnjn.s    f29, f20, f31 
+    fsgnjn.s    f29, f30, f31 
     fsgnjx.s    f0, f1, f2 
-    fsgnjx.s    f29, f20, f31
+    fsgnjx.s    f29, f30, f31
     fmin.s      f0, f1, f2 
-    fmin.s      f29, f20, f31 
+    fmin.s      f29, f30, f31 
     fmax.s      f0, f1, f2 
-    fmax.s      f29, f20, f31 
+    fmax.s      f29, f30, f31 
     fcvt.s.w    f0, x0 
     fcvt.s.w    f31, x31 
     fcvt.s.wu   f0, x0 
