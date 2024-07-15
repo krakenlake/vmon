@@ -8,6 +8,7 @@
 .global print_instruction
 .global print_register_name
 .global print_rs1
+.global print_rs1_as_base
 .global print_rs2
 .global print_rd
 
@@ -15,6 +16,7 @@
 
 .global decode_B_type
 .global decode_I_type
+.global decode_I_type_imm
 .global decode_I_type_LOAD
 .global decode_I_type_SHIFT
 .global decode_R_type
@@ -129,20 +131,30 @@ decode_I_type:
     mv      a0, s2
     jal     print_rs1
     jal     print_comma
-    # inst[30:20] -> imm[10:0]
-    # inst[31] -> imm[63:11]
-#if XLEN >=64
-    sext.w  a0, s2              # sign-extend to 64 bits
-    srai    a0, a0, 20
-#else
-    srai    a0, s2, 20
-#endif
-    jal     print_decimal
+    mv      a0, s2
+    jal     decode_I_type_imm
     LOAD_X  ra, 0(sp)               
     LOAD_X  s2, (XLEN_BYTES*1)(sp)               
     addi    sp, sp, (XLEN_BYTES*2)
     ret
 .size decode_I_type, .-decode_I_type
+
+
+# in: instruction word in a0
+decode_I_type_imm:
+    addi    sp, sp, -(XLEN_BYTES*2)              
+    SAVE_X  ra, 0(sp)
+    SAVE_X  s2, (XLEN_BYTES*1)(sp)      
+    # inst[31:20] -> imm[11:0]
+#if XLEN >=64
+    sext.w  a0, a0              # sign-extend to 64 bits
+#endif
+    srai    a0, a0, 20
+    jal     print_decimal
+    LOAD_X  ra, 0(sp)               
+    LOAD_X  s2, (XLEN_BYTES*1)(sp)               
+    addi    sp, sp, (XLEN_BYTES*2)
+    ret
 
 
 # in: instruction word in a0
@@ -532,6 +544,25 @@ print_rs1:
     jal     print_register_name
     LOAD_X  ra, 0(sp)               
     addi    sp, sp, (XLEN_BYTES*1)
+    ret
+.size print_rs1, .-print_rs1
+
+
+# in: instruction word in a0
+print_rs1_as_base:
+    addi    sp, sp, -(XLEN_BYTES*2)              
+    SAVE_X  ra, 0(sp)
+    SAVE_X  s2, (XLEN_BYTES*1)(sp)   
+    mv      s2, a0
+    li      a0, '('
+    jal     print_char
+    mv      a0, s2
+    jal     print_rs1
+    li      a0, ')'
+    jal     print_char
+    LOAD_X  ra, 0(sp)               
+    LOAD_X  s2, (XLEN_BYTES*1)(sp)               
+    addi    sp, sp, (XLEN_BYTES*2)
     ret
 .size print_rs1, .-print_rs1
 
