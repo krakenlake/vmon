@@ -6,6 +6,13 @@
 
 .global decode_FL
 .global decode_FS
+.global decode_FADD
+.global decode_FSQRT
+.global decode_FMA
+.global decode_FCVT_SW
+.global decode_FCVT_WS
+.global decode_FCMP
+.global decode_FCLASS
 
 
 .text
@@ -48,6 +55,14 @@ print_frs2:
 
 
 # in: instruction word in a0
+print_frs3:
+    # rs2 just needs 5 shifts more than rs1, rest works the same
+    srli    a0, a0, 12           
+    j       print_frs1  
+.size print_frs3, .-print_frs3
+
+
+# in: instruction word in a0
 decode_FL:
     addi    sp, sp, -(XLEN_BYTES*2)              
     SAVE_X  ra, 0(sp)
@@ -82,7 +97,121 @@ decode_FS:
     LOAD_X  s2, (XLEN_BYTES*1)(sp)               
     addi    sp, sp, (XLEN_BYTES*2)
     ret
-.size decode_FL, .-decode_FL
+.size decode_FS, .-decode_FS
+
+
+# in: instruction word in a0
+decode_FADD:
+    addi    sp, sp, -(XLEN_BYTES*2)              
+    SAVE_X  ra, 0(sp)
+    SAVE_X  s2, (XLEN_BYTES*1)(sp) 
+    mv      s2, a0   
+    jal     print_frd
+    mv      a0, s2
+    jal     print_frs1
+    jal     print_comma
+    mv      a0, s2
+    jal     print_frs2
+    LOAD_X  ra, 0(sp)               
+    LOAD_X  s2, (XLEN_BYTES*1)(sp)               
+    addi    sp, sp, (XLEN_BYTES*2)
+    ret
+.size decode_FADD, .-decode_FADD
+
+
+# in: instruction word in a0
+decode_FMA:
+    addi    sp, sp, -(XLEN_BYTES*2)              
+    SAVE_X  ra, 0(sp)
+    SAVE_X  s2, (XLEN_BYTES*1)(sp) 
+    mv      s2, a0   
+    jal     decode_FADD
+    jal     print_comma
+    mv      a0, s2
+    jal     print_frs3
+    LOAD_X  ra, 0(sp)               
+    LOAD_X  s2, (XLEN_BYTES*1)(sp)               
+    addi    sp, sp, (XLEN_BYTES*2)
+    ret
+.size decode_FMA, .-decode_FMA
+
+
+# in: instruction word in a0
+decode_FSQRT:
+    addi    sp, sp, -(XLEN_BYTES*2)              
+    SAVE_X  ra, 0(sp)
+    SAVE_X  s2, (XLEN_BYTES*1)(sp) 
+    mv      s2, a0   
+    jal     print_frd
+    mv      a0, s2
+    jal     print_frs1
+    LOAD_X  ra, 0(sp)               
+    LOAD_X  s2, (XLEN_BYTES*1)(sp)               
+    addi    sp, sp, (XLEN_BYTES*2)
+    ret
+.size decode_FSQRT, .-decode_FSQRT
+
+
+# in: instruction word in a0
+decode_FCVT_SW:
+    addi    sp, sp, -(XLEN_BYTES*2)              
+    SAVE_X  ra, 0(sp)
+    SAVE_X  s2, (XLEN_BYTES*1)(sp) 
+    mv      s2, a0   
+    jal     print_frd
+    mv      a0, s2
+    jal     print_rs1
+    LOAD_X  ra, 0(sp)               
+    LOAD_X  s2, (XLEN_BYTES*1)(sp)               
+    addi    sp, sp, (XLEN_BYTES*2)
+    ret
+.size decode_FCVT_SW, .-decode_FCVT_SW
+
+
+decode_FCVT_WS:
+    addi    sp, sp, -(XLEN_BYTES*2)              
+    SAVE_X  ra, 0(sp)
+    SAVE_X  s2, (XLEN_BYTES*1)(sp) 
+    mv      s2, a0   
+    jal     print_rd
+    mv      a0, s2
+    jal     print_frs1
+    LOAD_X  ra, 0(sp)               
+    LOAD_X  s2, (XLEN_BYTES*1)(sp)               
+    addi    sp, sp, (XLEN_BYTES*2)
+    ret
+.size decode_FCVT_WS, .-decode_FCVT_WS
+
+
+decode_FCLASS:
+    addi    sp, sp, -(XLEN_BYTES*2)              
+    SAVE_X  ra, 0(sp)
+    SAVE_X  s2, (XLEN_BYTES*1)(sp) 
+    mv      s2, a0   
+    jal     print_rd
+    mv      a0, s2
+    jal     print_frs1
+    LOAD_X  ra, 0(sp)               
+    LOAD_X  s2, (XLEN_BYTES*1)(sp)               
+    addi    sp, sp, (XLEN_BYTES*2)
+    ret
+.size decode_FCLASS, .-decode_FCLASS
+
+
+decode_FCMP:
+    addi    sp, sp, -(XLEN_BYTES*2)              
+    SAVE_X  ra, 0(sp)
+    SAVE_X  s2, (XLEN_BYTES*1)(sp) 
+    mv      s2, a0   
+    jal     decode_FCLASS
+    jal     print_comma
+    mv      a0, s2
+    jal     print_frs2
+    LOAD_X  ra, 0(sp)               
+    LOAD_X  s2, (XLEN_BYTES*1)(sp)               
+    addi    sp, sp, (XLEN_BYTES*2)
+    ret
+.size decode_FCMP, .-decode_FCMP
 
 
 .data
