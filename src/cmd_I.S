@@ -99,7 +99,7 @@ cmd_I:
         jal     print_hex
     #endif /* WITH_TESTCODE_RV32I */
 
-    #ifdef WITH_TESTCODE_RV64I
+    #if defined(WITH_TESTCODE_RV64I) && (XLEN >= 64)
         la      a0, string_info_testcode_RV64I
         jal     print_string
         la      a0, testcode_RV64I
