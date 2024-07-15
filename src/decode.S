@@ -102,11 +102,9 @@ decode_B_type:
     or      a0, a0, t0 
     # inst[31] -> imm[63:12]
 #if XLEN >=64
-    slli    t0, s2, 32                      # sign-extend to 64 bits
-    srai    t0, t0, 32+19
-#else
-    srai    t0, s2, 19
+    sext.w  s2, s2              # sign-extend to 64 bits
 #endif
+    srai    t0, s2, 19
     li      t1, 0xfffffffffffff000          
     and     t0, t0, t1
     or      a0, a0, t0 
@@ -166,19 +164,12 @@ decode_I_type_LOAD:
     jal     print_rd
     # inst[24:20] -> imm[5:0]
 #if XLEN >=64
-    slli    a0, s2, 32                      # sign-extend to 64 bits
-    srai    a0, a0, 32+20
-#else
-    srai    a0, s2, 20
+    sext.w  s2, s2              # sign-extend to 64 bits
 #endif
+    srai    a0, s2, 20
     jal     print_decimal
-    li      a0, '('
-    jal     print_char
-    # extract rs1 
     mv      a0, s2
-    jal     print_rs1
-    li      a0, ')'
-    jal     print_char
+    jal     print_rs1_as_base
     LOAD_X  ra, 0(sp)               
     LOAD_X  s2, (XLEN_BYTES*1)(sp)               
     addi    sp, sp, (XLEN_BYTES*2)
@@ -198,11 +189,9 @@ decode_I_type_SHIFT:
     jal     print_comma
     # inst[24:20] -> imm[5:0]
 #if XLEN >=64
-    slli    a0, s2, 32+6                      # sign-extend to 64 bits
-    srli    a0, a0, 32+20+6
-#else
-    srli    a0, s2, 20+6
+    sext.w  s2, s2              # sign-extend to 64 bits
 #endif
+    srli    a0, s2, 20+6
     jal     print_hex
     LOAD_X  ra, 0(sp)               
     LOAD_X  s2, (XLEN_BYTES*1)(sp)               
@@ -240,13 +229,8 @@ decode_S_type:
     jal     print_comma
     mv      a0, s2
     jal     decode_S_type_imm
-    li      a0, '('
-    jal     print_char
-    # extract rs1 
     mv      a0, s2
-    jal     print_rs1
-    li      a0, ')'
-    jal     print_char
+    jal     print_rs1_as_base
     LOAD_X  ra, 0(sp)               
     LOAD_X  s2, (XLEN_BYTES*1)(sp)               
     addi    sp, sp, (XLEN_BYTES*2)
@@ -310,7 +294,7 @@ decode_JAL:
     srli    a0, s2, 20
     andi    a0, a0, 0b11111111110    
     # inst[20] -> imm[11]
-    srli    t0, s2, 20
+    srli    t0, s2, 9
     li      t1, 0b100000000000 
     and     t0, t0, t1
     or      a0, a0, t0
@@ -318,55 +302,25 @@ decode_JAL:
     li      t1, 0b11111111000000000000
     and     t0, s2, t1
     or      a0, a0, t0
-    # inst[31] -> imm[63:20]
 #if XLEN >=64
-    slli    a1, a0, 32                      # sign-extend to 64 bits
-    srai    a1, a1, 32+11
-#else
-    srai    a1, a0, 11
+    sext.w  s2, s2                          # sign-extend to 64 bits
 #endif
-    # print target address as hex
-    li      t1, 0xfffffffffff00000          
-    and     a1, a1, t1
-    or      a1, a0, a1 
-    # add relative immediate to instruction address
-    add     a0, s5, a1
+    srai    t0, s2, 11
+    li      t1, 0xfffffffffff80000
+    and     t0, t0, t1
+    or      a0, a0, t0
+    mv      s2, a0
+    jal     print_hex
+    jal     print_comma
+    mv      a0, s2
+decode_JAL_add_offset:
+    add     a0, s5, a0
     jal     print_hex
     LOAD_X  ra, 0(sp)               
     LOAD_X  s2, (XLEN_BYTES*1)(sp)               
     addi    sp, sp, (XLEN_BYTES*2)
     ret
 .size decode_JAL, .-decode_JAL
-
-
-# in: instruction word in a0
-# in: current instruction address in s5 (global)
-decode_JALR:
-    addi    sp, sp, -(XLEN_BYTES*2)             
-    SAVE_X  ra, 0(sp)
-    SAVE_X  s2, (XLEN_BYTES*1)(sp)
-    mv      s2, a0
-    jal     print_rd
-    # print offset
-#if XLEN >=64
-    slli    a0, s2, 32                      # sign-extend to 64 bits
-    srai    a0, a0, 32+20
-#else
-    srai    a0, s2, 20
-#endif
-    jal     ra, print_decimal
-    # print rs1
-    li      a0, '('
-    jal     print_char
-    mv      a0, s2
-    jal     print_rs1
-    li      a0, ')'
-    jal     print_char
-    LOAD_X  ra, 0(sp)               
-    LOAD_X  s2, (XLEN_BYTES*1)(sp)               
-    addi    sp, sp, (XLEN_BYTES*2)
-    ret
-.size decode_JALR, .-decode_JALR
 
 
 decode_FENCE:
