@@ -225,7 +225,8 @@ string_prompt:      .string "> ";
 
 string_asm_sep1:    .string ":";
 .size string_asm_sep1, .-string_asm_sep1
-string_asm_sep2:    .string "\t";
+#string_asm_sep2:    .string "\t";
+string_asm_sep2:    .string " ";
 .size string_asm_sep2, .-string_asm_sep2
 string_asm_comment: .string "\t# ";
 .size string_asm_comment, .-string_asm_comment
