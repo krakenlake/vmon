@@ -47,81 +47,82 @@ int_register_names:
 
 # RV32I
 string_opcodes:
-string_OP_LUI:      .string "lui";		#
-string_OP_AUIPC:    .string "auipc";	#	
-string_OP_JAL:      .string "jal";		#
-string_OP_JALR:     .string "jalr";		#
-string_OP_BEQ:      .string "beq";		#
-string_OP_BNE:      .string "bne";		#
-string_OP_BLT:      .string "blt";		#
-string_OP_BGE:      .string "bge";		#
-string_OP_BLTU:     .string "bltu";		#
-string_OP_BGEU:     .string "bgeu";		#
-string_OP_LB:       .string "lb";		#
-string_OP_LH:       .string "lh";		#
-string_OP_LW:       .string "lw";		#
-string_OP_LBU:      .string "lbu";		#
-string_OP_LHU:      .string "lhu";		#
-string_OP_SB:       .string "sb";		#
-string_OP_SH:       .string "sh";		#
-string_OP_SW:       .string "sw";		#
-string_OP_ADDI:     .string "addi";		#
-string_OP_SLTI:     .string "slti";		#
-string_OP_SLTIU:    .string "sltiu";	#
-string_OP_XORI:     .string "xori";		#
-string_OP_ORI:      .string "ori";		#
-string_OP_ANDI:     .string "andi";		#
-string_OP_SLLI:     .string "slli";		#
-string_OP_SRLI:     .string "srli";		#
-string_OP_SRAI:     .string "srai";		#
-string_OP_ADD:      .string "add";		#
-string_OP_SUB:      .string "sub";		#
-string_OP_SLL:      .string "sll";		#
-string_OP_SLT:      .string "slt";		#
-string_OP_SLTU:     .string "sltu";		#
-string_OP_XOR:      .string "xor";		#
-string_OP_SRL:      .string "srl";		#
-string_OP_SRA:      .string "sra";		#
-string_OP_OR:       .string "or";		#
-string_OP_AND:      .string "and";		#
-string_OP_FENCE:    .string "fence";	#
-string_OP_ECALL:    .string "ecall";	#
-string_OP_EBREAK:   .string "ebreak";	#
+string_OP_LUI:      .string "lui";		
+string_OP_AUIPC:    .string "auipc";		
+string_OP_JAL:      .string "jal";		
+string_OP_JALR:     .string "jalr";		
+string_OP_BEQ:      .string "beq";		
+string_OP_BNE:      .string "bne";		
+string_OP_BLT:      .string "blt";		
+string_OP_BGE:      .string "bge";		
+string_OP_BLTU:     .string "bltu";		
+string_OP_BGEU:     .string "bgeu";		
+string_OP_LB:       .string "lb";		
+string_OP_LH:       .string "lh";		
+string_OP_LW:       .string "lw";		
+string_OP_LBU:      .string "lbu";		
+string_OP_LHU:      .string "lhu";		
+string_OP_SB:       .string "sb";		
+string_OP_SH:       .string "sh";		
+string_OP_SW:       .string "sw";		
+string_OP_ADDI:     .string "addi";		
+string_OP_SLTI:     .string "slti";		
+string_OP_SLTIU:    .string "sltiu";	
+string_OP_XORI:     .string "xori";		
+string_OP_ORI:      .string "ori";		
+string_OP_ANDI:     .string "andi";		
+string_OP_SLLI:     .string "slli";		
+string_OP_SRLI:     .string "srli";		
+string_OP_SRAI:     .string "srai";		
+string_OP_ADD:      .string "add";		
+string_OP_SUB:      .string "sub";		
+string_OP_SLL:      .string "sll";		
+string_OP_SLT:      .string "slt";		
+string_OP_SLTU:     .string "sltu";		
+string_OP_XOR:      .string "xor";		
+string_OP_SRL:      .string "srl";		
+string_OP_SRA:      .string "sra";		
+string_OP_OR:       .string "or";		
+string_OP_AND:      .string "and";		
+string_OP_FENCE:    .string "fence";	
+string_OP_FENCETSO: .string "fence.tso";	
+string_OP_ECALL:    .string "ecall";	
+string_OP_EBREAK:   .string "ebreak";	
 
 # RV64I
 #if XLEN >=64
-	string_OP_LWU:      .string "lwu";		#
-	string_OP_LD:       .string "ld";		#
-	string_OP_SD:       .string "sd";		#
-	string_OP_ADDIW:    .string "addiw";	#
-	string_OP_SLLIW:    .string "slliw";	#
-	string_OP_SRLIW:    .string "srliw";	#
-	string_OP_SRAIW:    .string "sraiw";	#
-	string_OP_ADDW:     .string "addw";		#
-	string_OP_SUBW:     .string "subw";		#
-	string_OP_SLLW:     .string "sllw";		#
-	string_OP_SRLW:     .string "srlw";		#
-	string_OP_SRAW:     .string "sraw";		#
+	string_OP_LWU:      .string "lwu";		
+	string_OP_LD:       .string "ld";		
+	string_OP_SD:       .string "sd";		
+	string_OP_ADDIW:    .string "addiw";	
+	string_OP_SLLIW:    .string "slliw";	
+	string_OP_SRLIW:    .string "srliw";	
+	string_OP_SRAIW:    .string "sraiw";	
+	string_OP_ADDW:     .string "addw";		
+	string_OP_SUBW:     .string "subw";		
+	string_OP_SLLW:     .string "sllw";		
+	string_OP_SRLW:     .string "srlw";		
+	string_OP_SRAW:     .string "sraw";		
 #endif
 
 # RVM
 #ifdef ENABLE_RVM
 	# RV32M
-	string_OP_MUL:      .string "mul";		#	
-	string_OP_MULH:     .string "mulh";		#	
-	string_OP_MULHU:    .string "mulhu";	#	
-	string_OP_MULHSU:   .string "mulhsu";	#
-	string_OP_DIV:      .string "div";		#	
-	string_OP_DIVU:     .string "divu";		#
-	string_OP_REM:      .string "rem";		#	
-	string_OP_REMU:     .string "remu";		#
+	string_OP_MUL:      .string "mul";			
+	string_OP_MULH:     .string "mulh";			
+	string_OP_MULHU:    .string "mulhu";		
+	string_OP_MULHSU:   .string "mulhsu";	
+	string_OP_DIV:      .string "div";			
+	string_OP_DIVU:     .string "divu";		
+	string_OP_REM:      .string "rem";			
+	string_OP_REMU:     .string "remu";		
 	# RV64M
 	#if XLEN >=64
-		string_OP_MULW:     .string "mulw";		#
-		string_OP_DIVW:     .string "divw";		#
-		string_OP_DIVUW:    .string "divuw";	#
-		string_OP_REMW:     .string "remw";		#	
-		string_OP_REMUW:    .string "remuw";	#
+		string_OP_MULW:     .string "mulw";		
+		string_OP_DIVW:     .string "divw";		
+		string_OP_DIVUW:    .string "divuw";	
+		string_OP_REMW:     .string "remw";			
+		string_OP_REMUW:    .string "remuw";	
 	#endif
 #endif /* ENABLE_RVM */
 
@@ -250,12 +251,12 @@ string_OP_EBREAK:   .string "ebreak";	#
 
 # Zicsr
 #ifdef ENABLE_RVZicsr
-	string_OP_CSRRW:    .string "csrrw";	#	
-	string_OP_CSRRS:    .string "csrrs";	#
-	string_OP_CSRRC:    .string "csrrc";	#
-	string_OP_CSRRWI:   .string "csrrwi";	#
-	string_OP_CSRRSI:   .string "csrrsi";	#
-	string_OP_CSRRCI:	.string "csrrci";	#
+	string_OP_CSRRW:    .string "csrrw";		
+	string_OP_CSRRS:    .string "csrrs";	
+	string_OP_CSRRC:    .string "csrrc";	
+	string_OP_CSRRWI:   .string "csrrwi";	
+	string_OP_CSRRSI:   .string "csrrsi";	
+	string_OP_CSRRCI:	.string "csrrci";	
 #endif /* ENABLE_RVZicsr */
 
 # RVC
@@ -374,6 +375,7 @@ encoding_table:
 .word MASK_AUIPC, MATCH_AUIPC, decode_U_type, string_OP_AUIPC
 .word MASK_ECALL, MATCH_ECALL, decode_ECALL, string_OP_ECALL
 .word MASK_EBREAK, MATCH_EBREAK, decode_EBREAK, string_OP_EBREAK
+.word MASK_FENCETSO, MATCH_FENCETSO, decode_FENCE_TSO, string_OP_FENCETSO
 .word MASK_FENCE, MATCH_FENCE, decode_FENCE, string_OP_FENCE
 # RV64I
 #if XLEN >= 64
