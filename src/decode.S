@@ -277,7 +277,9 @@ decode_U_type:
     mv      s2, a0    
     jal     print_rd
     # extract imm
-    srli    a0, s2, 12 
+    li      t0, 0xffffffff
+    and     a0, s2, t0
+    srli    a0, a0, 12 
     jal     print_hex
     LOAD_X  ra, 0(sp)               
     LOAD_X  s2, (XLEN_BYTES*1)(sp)               

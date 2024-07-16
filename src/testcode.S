@@ -154,7 +154,11 @@ testcode_jal_backward:
     jalr    x31, 2047
     jalr    x31, -2048
 testcode_jal_forward:
+    lui     x0, 0
+    lui     x0, 31
     lui     x0, 1048575
+    auipc   x0, 0
+    auipc   x0, 31
     auipc   x0, 1048575
 .option pop /* norvc */
 .size testcode_RV32I, .-testcode_RV32I
