@@ -52,13 +52,13 @@ cmd_D_word_not_RVC:
     lbu     a0, 0(s5)
     jal     print_hex_byte
     j       cmd_D_disass    
-cmd_D_word_is_RVC:                   #
-    lbu     a0, 1(s5)
+cmd_D_word_is_RVC:                   
+    lbu     a0, 1(s5)                   # print 2 bytes only
     jal     print_hex_byte
     lbu     a0, 0(s5)
     jal     print_hex_byte
     li      a0, ' '
-    jal     print_char
+    jal     print_char                  # print 4 spaces for alignment
     jal     print_char
     jal     print_char
     jal     print_char

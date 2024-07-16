@@ -22,8 +22,10 @@ print_comma:
     SAVE_X  ra, 0(sp)
     li      a0, ','
     jal     print_char
+#ifdef SPACE_AFTER_COMMA
     li      a0, ' '
     jal     print_char
+#endif
     LOAD_X  ra, 0(sp)             
     addi    sp, sp, (XLEN_BYTES*1)
     ret
