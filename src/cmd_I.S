@@ -31,6 +31,10 @@ cmd_I:
     li      a0, 'd'
     jal     print_char
 #endif
+#ifdef ENABLE_RVQ
+    li      a0, 'q'
+    jal     print_char
+#endif
 #ifdef ENABLE_RVC
     li      a0, 'c'
     jal     print_char
