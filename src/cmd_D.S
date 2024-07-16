@@ -41,16 +41,28 @@ cmd_D_next_instruction:
     lw      a0, 0(s5)                   # load instruction word
     mv      s6, a0                      # save for later
     jal     insn_is_compressed
-    bnez    a0, cmd_D_hex_compressed
+    bnez    a0, cmd_D_word_is_RVC
+cmd_D_word_not_RVC:
     lbu     a0, 3(s5)                   # print 4 bytes if not compressed
     jal     print_hex_byte
     lbu     a0, 2(s5)
     jal     print_hex_byte
-cmd_D_hex_compressed:                   #
     lbu     a0, 1(s5)
     jal     print_hex_byte
     lbu     a0, 0(s5)
     jal     print_hex_byte
+    j       cmd_D_disass    
+cmd_D_word_is_RVC:                   #
+    lbu     a0, 1(s5)
+    jal     print_hex_byte
+    lbu     a0, 0(s5)
+    jal     print_hex_byte
+    li      a0, ' '
+    jal     print_char
+    jal     print_char
+    jal     print_char
+    jal     print_char
+cmd_D_disass:
     la      a0, string_asm_sep2     
     jal     print_string
     # disassemble this word
