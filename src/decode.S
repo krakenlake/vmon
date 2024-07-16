@@ -44,6 +44,7 @@
 
 .text
 
+
 # evaluate if an instruction is an RVC instruction
 # in: instruction word in a0
 # out: 0 if not, nonzero if yes
@@ -58,6 +59,7 @@ insn_is_compressed_no:
 insn_is_compressed_yes:
     li      a0, 1
     ret
+
 
 #ifdef ENABLE_RVA
 # for RVA
@@ -153,6 +155,7 @@ decode_I_type_imm:
     LOAD_X  s2, (XLEN_BYTES*1)(sp)               
     addi    sp, sp, (XLEN_BYTES*2)
     ret
+.size decode_I_type_imm, .-decode_I_type_imm
 
 
 # in: instruction word in a0
@@ -263,6 +266,7 @@ decode_S_type_imm:
     LOAD_X  ra, 0(sp)               
     addi    sp, sp, (XLEN_BYTES*1)
     ret
+.size decode_S_type_imm, .-decode_S_type_imm
 
 
 # in: instruction word in a0
@@ -318,23 +322,64 @@ decode_JAL_add_offset:
     ret
 .size decode_JAL, .-decode_JAL
 
+# in: a0: instruction word
+# in: a1: number of start bit (27 for pre, 23 for sucessor)
+decode_FENCE_bits:
+    addi    sp, sp, -(XLEN_BYTES*5)             
+    SAVE_X  ra, 0(sp)
+    SAVE_X  s2, (XLEN_BYTES*1)(sp)
+    SAVE_X  s3, (XLEN_BYTES*2)(sp)
+    SAVE_X  s4, (XLEN_BYTES*3)(sp)
+    SAVE_X  s5, (XLEN_BYTES*4)(sp)
+    mv      s2, a0
+    li      s3, 1
+    sll     s3, s3, a1                      # set up initial bit mask
+    la      s4, string_FENCE_bits
+    li      s5, 4                           # 4 bits
+decode_FENCE_bits_loop:
+    and     t0, s2, s3
+    beqz    t0, decode_FENCE_bits_skip
+    lb      a0, 0(s4)
+    jal     print_char
+decode_FENCE_bits_skip:
+    srli    s3, s3, 1
+    addi    s4, s4, 1
+    addi    s5, s5, -1
+    bnez    s5, decode_FENCE_bits_loop
+    LOAD_X  ra, 0(sp)               
+    LOAD_X  s2, (XLEN_BYTES*1)(sp)               
+    LOAD_X  s3, (XLEN_BYTES*2)(sp)               
+    LOAD_X  s4, (XLEN_BYTES*3)(sp)               
+    LOAD_X  s5, (XLEN_BYTES*4)(sp)               
+    addi    sp, sp, (XLEN_BYTES*5)
+    ret
+.size decode_FENCE_bits, .-decode_FENCE_bits
+
 
 decode_FENCE:
-    srli    a0, a0, 31
-    bnez    a0, decode_FENCE_TSO
-    # FENCE here
+    addi    sp, sp, -(XLEN_BYTES*2)             
+    SAVE_X  ra, 0(sp)
+    SAVE_X  s2, (XLEN_BYTES*1)(sp)
+    mv      s2, a0
+    # fence.tso?
+    srli    t0, a0, 31
+    bnez    t0, decode_FENCE_TSO
+    # fence
+    li      a1, 27
+    jal     decode_FENCE_bits
+    jal     print_comma
+    mv      a0, s2
+    li      a1, 23
+    jal     decode_FENCE_bits
+    j       decode_FENCE_done
+decode_FENCE_TSO:
+    # TODO: print .tso    
+decode_FENCE_done:
+    LOAD_X  ra, 0(sp)               
+    LOAD_X  s2, (XLEN_BYTES*1)(sp)               
+    addi    sp, sp, (XLEN_BYTES*2)
     ret
 .size decode_FENCE, .-decode_FENCE
-decode_FENCE_TSO:
-    addi    sp, sp, -(XLEN_BYTES*1)             
-    SAVE_X  ra, 0(sp)
-    # TODO: print .TSO and more details
-    li  a0, '?'
-    jal print_char
-    LOAD_X  ra, 0(sp)               
-    addi    sp, sp, (XLEN_BYTES*1)
-    ret
-.size decode_FENCE_TSO, .-decode_FENCE_TSO
 
 
 decode_FENCE_I:
@@ -343,9 +388,10 @@ decode_EBREAK:
 decode_EMPTY:
     # do nothing
     ret
+.size decode_FENCE_I, .-decode_FENCE_I
+.size decode_FENCE_TSO, .-decode_FENCE_TSO
 .size decode_ECALL, .-decode_ECALL
 .size decode_EBREAK, .-decode_EBREAK
-.size decode_FENCE_I, .-decode_FENCE_I
 .size decode_EMPTY, .-decode_EMPTY
 
 
@@ -673,6 +719,7 @@ print_AMO_postfix_done:
 
 .data
 
+string_FENCE_bits:      .string "iorw";
 
 #ifdef ENABLE_RVA
 .align 4

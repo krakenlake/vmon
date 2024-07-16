@@ -30,7 +30,13 @@ testcode:
 testcode_RV32I:
     ecall
     ebreak  
-    fence 
+    fence   i, i   
+    fence   o, o   
+    fence   r, r   
+    fence   w, w   
+    fence   io, io
+    fence   rw, rw   
+    fence   iorw, iorw
     fence.tso
     add     x0, x0, x0
     add     x31, x31, x31
