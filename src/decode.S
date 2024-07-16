@@ -361,20 +361,12 @@ decode_FENCE:
     SAVE_X  ra, 0(sp)
     SAVE_X  s2, (XLEN_BYTES*1)(sp)
     mv      s2, a0
-    # fence.tso?
-    srli    t0, a0, 31
-    bnez    t0, decode_FENCE_TSO
-    # fence
     li      a1, 27
     jal     decode_FENCE_bits
     jal     print_comma
     mv      a0, s2
     li      a1, 23
     jal     decode_FENCE_bits
-    j       decode_FENCE_done
-decode_FENCE_TSO:
-    # TODO: print .tso    
-decode_FENCE_done:
     LOAD_X  ra, 0(sp)               
     LOAD_X  s2, (XLEN_BYTES*1)(sp)               
     addi    sp, sp, (XLEN_BYTES*2)
@@ -383,6 +375,7 @@ decode_FENCE_done:
 
 
 decode_FENCE_I:
+decode_FENCE_TSO:
 decode_ECALL:
 decode_EBREAK:
 decode_EMPTY:
