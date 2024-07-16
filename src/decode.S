@@ -402,7 +402,9 @@ decode_LRSC:
     SAVE_X  s2, (XLEN_BYTES*1)(sp)  
     mv      s2, a0
     jal     print_rd
-    # TODO: SC incomplete
+    mv      a0, s2
+    jal     print_rs2
+    jal     print_comma  
     mv      a0, s2
     jal     print_rs1_as_base
     LOAD_X  ra, 0(sp)               
