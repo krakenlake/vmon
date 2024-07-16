@@ -79,6 +79,9 @@
 // default number of lines for the "m" command if no end address is given
 #define DEFAULT_M_LINES		16
 
+// print a space after commas in disassembler output
+#define SPACE_AFTER_COMMA
+
 // size of character input buffer in bytes
 #define BUFFER_SIZE			128
 
