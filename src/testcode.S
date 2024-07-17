@@ -713,7 +713,11 @@ testcode_RVZifencei:
 .option push
 .option norvc
 testcode_RVPRIV:
+    sret
+    mret
     wfi
+    sfence.vm
+    sfence.vma
 .option pop /* norvc */
 .size testcode_RVPRIV, .-testcode_RVPRIV
 #endif /* WITH_TESTCODE_RVPRIV */

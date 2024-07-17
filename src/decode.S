@@ -30,6 +30,11 @@
 .global decode_CSRI
 .global decode_EBREAK
 .global decode_ECALL
+.global decode_WFI
+.global decode_MRET
+.global decode_SRET
+.global decode_SFENCE_VM
+.global decode_SFENCE_VMA
 .global decode_FENCE
 .global decode_FENCE_I
 .global decode_FENCE_TSO
@@ -380,6 +385,11 @@ decode_FENCE_I:
 decode_FENCE_TSO:
 decode_ECALL:
 decode_EBREAK:
+decode_WFI:
+decode_MRET:
+decode_SRET:
+decode_SFENCE_VM:
+decode_SFENCE_VMA:
 decode_EMPTY:
     # do nothing
     ret
