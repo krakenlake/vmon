@@ -314,6 +314,16 @@ string_OP_EBREAK:   .string "ebreak";
 	string_OP_RET:		.string "ret";	
 	string_OP_NOP:		.string "nop";	
 #endif /* ENABLE_PSEUDO */
+
+# Pseudo
+#ifdef ENABLE_RVPRIV
+	string_OP_WFI:			.string "wfi";	
+	string_OP_MRET:			.string "mret";	
+	string_OP_SRET:			.string "sret";	
+	string_OP_SFENCE_VM:	.string "sfence.vm";	
+	string_OP_SFENCE_VMA:	.string "sfence.vma";	
+#endif /* ENABLE_PSEUDO */
+
 .size string_opcodes, .-string_opcodes
 
 
@@ -600,7 +610,11 @@ encoding_table:
 
 # Privileged
 #ifdef ENABLE_RVPRIV
-
+	.word MASK_WFI, MATCH_WFI, decode_WFI, string_OP_WFI
+	.word MASK_MRET, MATCH_MRET, decode_MRET, string_OP_MRET
+	.word MASK_SRET, MATCH_SRET, decode_SRET, string_OP_SRET
+	.word MASK_SFENCE_VM, MATCH_SFENCE_VM, decode_SFENCE_VM, string_OP_SFENCE_VM
+	.word MASK_SFENCE_VMA, MATCH_SFENCE_VMA, decode_SFENCE_VMA, string_OP_SFENCE_VMA
 #endif /* ENABLE_RVPRIV */
 
 # table end marker
