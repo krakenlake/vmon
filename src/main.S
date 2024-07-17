@@ -41,7 +41,6 @@ start:
 #endif
 
 #ifdef BARE_METAL
-
     #ifdef HW_QEMU
         # run only on hart 0
         # this works only in M-mode
@@ -56,25 +55,44 @@ start:
     # set up a stack 
     mv      t0, sp                      # save caller sp for later
     la      sp, stack + STACK_SIZE      # point to end of our new stack
-
 #endif /* BARE_METAL */
 
     # save registers on new stack
-    addi    sp, sp, -(XLEN_BYTES*14)         
+    addi    sp, sp, -(XLEN_BYTES*31)         
     SAVE_X  ra, 0(sp)  
     SAVE_X  t0, (XLEN_BYTES*1)(sp)      # the original sp from above
-    SAVE_X  s0, (XLEN_BYTES*2)(sp)
-    SAVE_X  s1, (XLEN_BYTES*3)(sp)
-    SAVE_X  s2, (XLEN_BYTES*4)(sp)
-    SAVE_X  s3, (XLEN_BYTES*5)(sp)
-    SAVE_X  s4, (XLEN_BYTES*6)(sp)
-    SAVE_X  s5, (XLEN_BYTES*7)(sp)
-    SAVE_X  s6, (XLEN_BYTES*8)(sp)
-    SAVE_X  s7, (XLEN_BYTES*9)(sp)
-    SAVE_X  s8, (XLEN_BYTES*10)(sp)
-    SAVE_X  s9, (XLEN_BYTES*11)(sp)
-    SAVE_X  s10, (XLEN_BYTES*12)(sp)
-    SAVE_X  s11, (XLEN_BYTES*13)(sp)
+    SAVE_X  x3, (XLEN_BYTES*2)(sp)
+    SAVE_X  x4, (XLEN_BYTES*3)(sp)
+    SAVE_X  x5, (XLEN_BYTES*4)(sp)
+    SAVE_X  x6, (XLEN_BYTES*5)(sp)
+    SAVE_X  x7, (XLEN_BYTES*6)(sp)
+    SAVE_X  x8, (XLEN_BYTES*7)(sp)
+    SAVE_X  x9, (XLEN_BYTES*8)(sp)
+    SAVE_X  x10, (XLEN_BYTES*9)(sp)
+    SAVE_X  x11, (XLEN_BYTES*10)(sp)
+    SAVE_X  x12, (XLEN_BYTES*11)(sp)
+    SAVE_X  x13, (XLEN_BYTES*12)(sp)
+    SAVE_X  x14, (XLEN_BYTES*13)(sp)
+    SAVE_X  x15, (XLEN_BYTES*14)(sp)
+    SAVE_X  x16, (XLEN_BYTES*15)(sp)
+    SAVE_X  x17, (XLEN_BYTES*16)(sp)
+    SAVE_X  x18, (XLEN_BYTES*17)(sp)
+    SAVE_X  x19, (XLEN_BYTES*18)(sp)
+    SAVE_X  x20, (XLEN_BYTES*19)(sp)
+    SAVE_X  x21, (XLEN_BYTES*20)(sp)
+    SAVE_X  x22, (XLEN_BYTES*21)(sp)
+    SAVE_X  x23, (XLEN_BYTES*22)(sp)
+    SAVE_X  x24, (XLEN_BYTES*23)(sp)
+    SAVE_X  x25, (XLEN_BYTES*24)(sp)
+    SAVE_X  x26, (XLEN_BYTES*25)(sp)
+    SAVE_X  x27, (XLEN_BYTES*26)(sp)
+    SAVE_X  x28, (XLEN_BYTES*27)(sp)
+    SAVE_X  x29, (XLEN_BYTES*28)(sp)
+    SAVE_X  x30, (XLEN_BYTES*29)(sp)
+    SAVE_X  x31, (XLEN_BYTES*30)(sp)
+
+    # enable interrupt
+    #jal     irq_setup
 
     # init UART 
     jal     uart_init
