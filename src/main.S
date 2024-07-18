@@ -91,8 +91,9 @@ start:
     SAVE_X  x30, (XLEN_BYTES*29)(sp)
     SAVE_X  x31, (XLEN_BYTES*30)(sp)
 
-    # enable interrupt
-    #jal     irq_setup
+#ifdef BARE_METAL
+    jal     setup_trap_handler
+#endif /* BARE_METAL */
 
     # init UART 
     jal     uart_init
