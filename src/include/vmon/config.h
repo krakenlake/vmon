@@ -15,6 +15,7 @@
 // this will include code that
 // - sets up a stack
 // - makes sure we are running on hart #0 only
+// - sets up an m-mode trap handler
 #define BARE_METAL
 
 // which user commands shall be in the binary?

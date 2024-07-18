@@ -1,6 +1,8 @@
 #include "vmon/config.h"
 
-.global irq_setup
+#ifdef BARE_METAL
+
+.global setup_trap_handler
 
 #define TIMER_INTERVAL 10000000
 
@@ -8,10 +10,12 @@
 
 .text
 
-irq_setup:
-	# enable all m-mode irqs
-	la		t0, irq_handler
+setup_trap_handler:
+	# set up trap vector
+	la		t0, trap_handler
 	csrw	mtvec, t0
+/*
+	# enable all m-mode irqs
 	csrsi	mstatus, 0b1000
 	# set timer for the first time
 	rdtime	t0
@@ -22,11 +26,16 @@ irq_setup:
 	# enable m-mode timer irq
 	li 		t1, 0b10000000
     csrs 	mie, t1
+*/
 	ret
 
+# trap handler needs to be aligned manually 
+# as that is not automatically guaranteed with RVC enabled
 
-irq_handler:
-	# push
+.align 4
+
+trap_handler:
+	# push stack
     addi    sp, sp, -(XLEN_BYTES*4)              
     SAVE_X  ra, 0(sp)
     SAVE_X  a0, (XLEN_BYTES*1)(sp)
@@ -35,7 +44,26 @@ irq_handler:
 	# clear irq
 	li 		t0, 0b10000000
 	csrc	mip, t0
-	# do something
+	# irq or exception? check leftmost bit of mcause
+	csrr	a0, mcause
+	li		t0, 0b1
+	slli	t0, t0, XLEN-1
+	and		a0, a0, t0
+	bnez	a0, trap_handler_irq
+	# was exception
+	la		a0, string_exception_msg
+	jal		print_string
+	csrr	a0, mcause
+	jal		print_hex
+	li		a0, '\n'
+	jal		print_char
+	# TODO: maybe better fix stack and go back to main loop
+	la		a0, start
+	csrw	mepc, a0
+	mret
+	j 		trap_handler_pop
+
+trap_handler_irq:
 	li		a0, '#'
 	jal		print_char
 	# reset timer
@@ -44,7 +72,8 @@ irq_handler:
 	add		t1, t0, t1
 	la		t0, MTIMECMP
 	sd		t1, 0(t0)
-	# pop
+trap_handler_pop:
+	# pop stack
 	LOAD_X  ra, 0(sp)               
     LOAD_X  a0, (XLEN_BYTES*1)(sp)               
     LOAD_X  t0, (XLEN_BYTES*2)(sp)               
@@ -53,3 +82,12 @@ irq_handler:
 	mret
 
 
+
+
+.data
+
+.align 4
+
+string_exception_msg:		.string "\nexception: mcause=";
+
+#endif /* BARE_METAL */
