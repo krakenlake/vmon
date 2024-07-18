@@ -11,6 +11,9 @@
 .text
 
 setup_trap_handler:
+	# save the value which the stack ptr has when entering main_prompt
+	la		t0, stackptr_reset
+	sd		sp, 0(t0)
 	# set up trap vector
 	la		t0, trap_handler
 	csrw	mtvec, t0
@@ -51,18 +54,22 @@ trap_handler:
 	and		a0, a0, t0
 	bnez	a0, trap_handler_irq
 	# was exception
+trap_handler_exception:
+	# in case of an exception:
+	# 1. print the exception
+	# 2. reset the program to a defined state
+	# 3. abort the current command and wait for the next command
 	la		a0, string_exception_msg
 	jal		print_string
 	csrr	a0, mcause
 	jal		print_hex
-	li		a0, '\n'
-	jal		print_char
-	# TODO: maybe better fix stack and go back to main loop
-	la		a0, start
+	# set return address for leaving trap handler
+	la		a0, main_prompt
 	csrw	mepc, a0
+	# reset stack to the value that should have at main_prompt
+	la		a0, stackptr_reset
+	ld		sp, 0(a0)
 	mret
-	j 		trap_handler_pop
-
 trap_handler_irq:
 	li		a0, '#'
 	jal		print_char
@@ -89,5 +96,10 @@ trap_handler_pop:
 .align 4
 
 string_exception_msg:		.string "\nexception: mcause=";
+
+.bss
+.align 8
+.comm stackptr_reset, XLEN_BYTES
+
 
 #endif /* BARE_METAL */
