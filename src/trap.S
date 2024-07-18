@@ -31,6 +31,7 @@ setup_trap_handler:
     csrs 	mie, t1
 */
 	ret
+.size setup_trap_handler, .-setup_trap_handler
 
 # trap handler needs to be aligned manually 
 # as that is not automatically guaranteed with RVC enabled
@@ -87,8 +88,7 @@ trap_handler_pop:
     LOAD_X  t1, (XLEN_BYTES*3)(sp)               
     addi    sp, sp, (XLEN_BYTES*4)
 	mret
-
-
+.size trap_handler, .-trap_handler
 
 
 .data
