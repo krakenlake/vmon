@@ -574,6 +574,8 @@ print_csr:
     addi    sp, sp, -(XLEN_BYTES*1)              
     SAVE_X  ra, 0(sp) 
     srai    a0, a0, 20
+    li      t0, 0b111111111111
+    and     a0, a0, t0
     jal     print_hex
     jal     print_comma
     LOAD_X  ra, 0(sp)               
