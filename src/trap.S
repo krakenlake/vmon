@@ -10,6 +10,7 @@
 
 .text
 
+
 setup_trap_handler:
 	# save the value which the stack ptr has when entering main_prompt
 	la		t0, stackptr_reset
@@ -33,9 +34,9 @@ setup_trap_handler:
 	ret
 .size setup_trap_handler, .-setup_trap_handler
 
+
 # trap handler needs to be aligned manually 
 # as that is not automatically guaranteed with RVC enabled
-
 .align 4
 
 trap_handler:

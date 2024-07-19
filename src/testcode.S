@@ -694,6 +694,15 @@ testcode_RVZicsr:
     csrrwi  t4, cycle, 31
     csrrsi  t5, cycle, 31
     csrrci  t6, cycle, 31
+    csrrw   t1, 1, t2
+    csrrs   t3, cycle, t4
+    csrrc   t5, cycle, t6
+    csrrwi  t1, cycle, 0
+    csrrsi  t2, cycle, 0
+    csrrci  t3, cycle, 0
+    csrrwi  t4, cycle, 31
+    csrrsi  t5, cycle, 31
+    csrrci  t6, cycle, 31
 .option pop /* norvc */
 .size testcode_RVZicsr, .-testcode_RVZicsr
 #endif /* WITH_TESTCODE_RVZicsr */
