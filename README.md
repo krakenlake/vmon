@@ -8,7 +8,7 @@ communication written in RISC-V assembly language.
 ## Features
 - hex and ASCII monitor 
 - disassembler with hex and decimal output
-- currently disassembles RV32/64IMA instructions 
+- currently disassembles RV32/64G instructions 
 - (some) pseudo instructions supported
 - can be built for RV32 or RV64 targets
 - runs in QEMU or on RISC-V hardware
