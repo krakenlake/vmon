@@ -14,7 +14,7 @@
 setup_trap_handler:
 	# save the value which the stack ptr has when entering main_prompt
 	la		t0, stackptr_reset
-	sd		sp, 0(t0)
+	SAVE_X	sp, 0(t0)
 	# set up trap vector
 	la		t0, trap_handler
 	csrw	mtvec, t0
@@ -70,7 +70,7 @@ trap_handler_exception:
 	csrw	mepc, a0
 	# reset stack to the value that should have at main_prompt
 	la		a0, stackptr_reset
-	ld		sp, 0(a0)
+	LOAD_X	sp, 0(a0)
 	mret
 trap_handler_irq:
 	li		a0, '#'
@@ -80,7 +80,7 @@ trap_handler_irq:
 	li		t1, TIMER_INTERVAL
 	add		t1, t0, t1
 	la		t0, MTIMECMP
-	sd		t1, 0(t0)
+	SAVE_X	t1, 0(t0)
 trap_handler_pop:
 	# pop stack
 	LOAD_X  ra, 0(sp)               
