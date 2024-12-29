@@ -29,6 +29,7 @@ string_help:
     m <start_addr> - memory dump 128 bytes starting at start_addr\n\
     m <start_addr> <end_addr> - memory dump from start_addr to end_addr\n\
     m - continue memory dump from last address\n\
+    p <dst_addr> <byte_value> - write byte_value to dst_addr\n\
     x - exit to caller\n\
     All address and value entries are in hex (without 0x prefix).\n"
 .size string_help, .-string_help
