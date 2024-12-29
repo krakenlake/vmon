@@ -22,7 +22,7 @@ string_help:
     d <start_addr> - disassemble 16 instructions starting at start_addr\n\
     d <start_addr> <end_addr> - disassemble from start_addr to end_addr\n\
     d - continue disassembly from last address\n\
-    f <start_addr> <end_addr> <byte_value> - find byte value\n\  
+    f <start_addr> <end_addr> <byte_value> - find byte value\n\
     g <start_addr> - go to start_addr\n\
     h - help\n\
     i - print segment and debugging information\n\
