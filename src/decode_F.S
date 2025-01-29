@@ -104,16 +104,14 @@ decode_FS:
 decode_FADD:
     addi    sp, sp, -(XLEN_BYTES*2)              
     SAVE_X  ra, 0(sp)
-    SAVE_X  s2, (XLEN_BYTES*1)(sp) 
-    mv      s2, a0   
+    SAVE_X  a0, (XLEN_BYTES*1)(sp) 
     jal     print_frd
-    mv      a0, s2
+    LOAD_X  a0, (XLEN_BYTES*1)(sp)               
     jal     print_frs1
     jal     print_comma
-    mv      a0, s2
+    LOAD_X  a0, (XLEN_BYTES*1)(sp)               
     jal     print_frs2
     LOAD_X  ra, 0(sp)               
-    LOAD_X  s2, (XLEN_BYTES*1)(sp)               
     addi    sp, sp, (XLEN_BYTES*2)
     ret
 .size decode_FADD, .-decode_FADD
