@@ -66,15 +66,13 @@ print_frs3:
 decode_FL:
     addi    sp, sp, -(XLEN_BYTES*2)              
     SAVE_X  ra, 0(sp)
-    SAVE_X  s2, (XLEN_BYTES*1)(sp) 
-    mv      s2, a0   
+    SAVE_X  a0, (XLEN_BYTES*1)(sp) 
     jal     print_frd
-    mv      a0, s2
+    LOAD_X  a0, (XLEN_BYTES*1)(sp)               
     jal     decode_I_type_imm
-    mv      a0, s2
+    LOAD_X  a0, (XLEN_BYTES*1)(sp)               
     jal     print_rs1_as_base
     LOAD_X  ra, 0(sp)               
-    LOAD_X  s2, (XLEN_BYTES*1)(sp)               
     addi    sp, sp, (XLEN_BYTES*2)
     ret
 .size decode_FL, .-decode_FL
@@ -85,16 +83,14 @@ decode_FL:
 decode_FS:
     addi    sp, sp, -(XLEN_BYTES*2)              
     SAVE_X  ra, 0(sp)
-    SAVE_X  s2, (XLEN_BYTES*1)(sp) 
-    mv      s2, a0   
+    SAVE_X  a0, (XLEN_BYTES*1)(sp) 
     jal     print_frs2
     jal     print_comma
-    mv      a0, s2
+    LOAD_X  a0, (XLEN_BYTES*1)(sp)               
     jal     decode_S_type_imm
-    mv      a0, s2
+    LOAD_X  a0, (XLEN_BYTES*1)(sp)               
     jal     print_rs1_as_base
     LOAD_X  ra, 0(sp)               
-    LOAD_X  s2, (XLEN_BYTES*1)(sp)               
     addi    sp, sp, (XLEN_BYTES*2)
     ret
 .size decode_FS, .-decode_FS
@@ -121,14 +117,12 @@ decode_FADD:
 decode_FMA:
     addi    sp, sp, -(XLEN_BYTES*2)              
     SAVE_X  ra, 0(sp)
-    SAVE_X  s2, (XLEN_BYTES*1)(sp) 
-    mv      s2, a0   
+    SAVE_X  a0, (XLEN_BYTES*1)(sp) 
     jal     decode_FADD
     jal     print_comma
-    mv      a0, s2
+    LOAD_X  a0, (XLEN_BYTES*1)(sp)               
     jal     print_frs3
     LOAD_X  ra, 0(sp)               
-    LOAD_X  s2, (XLEN_BYTES*1)(sp)               
     addi    sp, sp, (XLEN_BYTES*2)
     ret
 .size decode_FMA, .-decode_FMA
@@ -138,13 +132,11 @@ decode_FMA:
 decode_FSQRT:
     addi    sp, sp, -(XLEN_BYTES*2)              
     SAVE_X  ra, 0(sp)
-    SAVE_X  s2, (XLEN_BYTES*1)(sp) 
-    mv      s2, a0   
+    SAVE_X  a0, (XLEN_BYTES*1)(sp) 
     jal     print_frd
-    mv      a0, s2
+    LOAD_X  a0, (XLEN_BYTES*1)(sp)               
     jal     print_frs1
     LOAD_X  ra, 0(sp)               
-    LOAD_X  s2, (XLEN_BYTES*1)(sp)               
     addi    sp, sp, (XLEN_BYTES*2)
     ret
 .size decode_FSQRT, .-decode_FSQRT
@@ -154,13 +146,11 @@ decode_FSQRT:
 decode_FCVT_SW:
     addi    sp, sp, -(XLEN_BYTES*2)              
     SAVE_X  ra, 0(sp)
-    SAVE_X  s2, (XLEN_BYTES*1)(sp) 
-    mv      s2, a0   
+    SAVE_X  a0, (XLEN_BYTES*1)(sp) 
     jal     print_frd
-    mv      a0, s2
+    LOAD_X  a0, (XLEN_BYTES*1)(sp)               
     jal     print_rs1
     LOAD_X  ra, 0(sp)               
-    LOAD_X  s2, (XLEN_BYTES*1)(sp)               
     addi    sp, sp, (XLEN_BYTES*2)
     ret
 .size decode_FCVT_SW, .-decode_FCVT_SW
@@ -169,13 +159,11 @@ decode_FCVT_SW:
 decode_FCVT_WS:
     addi    sp, sp, -(XLEN_BYTES*2)              
     SAVE_X  ra, 0(sp)
-    SAVE_X  s2, (XLEN_BYTES*1)(sp) 
-    mv      s2, a0   
+    SAVE_X  a0, (XLEN_BYTES*1)(sp) 
     jal     print_rd
-    mv      a0, s2
+    LOAD_X  a0, (XLEN_BYTES*1)(sp)               
     jal     print_frs1
     LOAD_X  ra, 0(sp)               
-    LOAD_X  s2, (XLEN_BYTES*1)(sp)               
     addi    sp, sp, (XLEN_BYTES*2)
     ret
 .size decode_FCVT_WS, .-decode_FCVT_WS
@@ -184,13 +172,11 @@ decode_FCVT_WS:
 decode_FCLASS:
     addi    sp, sp, -(XLEN_BYTES*2)              
     SAVE_X  ra, 0(sp)
-    SAVE_X  s2, (XLEN_BYTES*1)(sp) 
-    mv      s2, a0   
+    SAVE_X  a0, (XLEN_BYTES*1)(sp) 
     jal     print_rd
-    mv      a0, s2
+    LOAD_X  a0, (XLEN_BYTES*1)(sp)               
     jal     print_frs1
     LOAD_X  ra, 0(sp)               
-    LOAD_X  s2, (XLEN_BYTES*1)(sp)               
     addi    sp, sp, (XLEN_BYTES*2)
     ret
 .size decode_FCLASS, .-decode_FCLASS
@@ -199,14 +185,12 @@ decode_FCLASS:
 decode_FCMP:
     addi    sp, sp, -(XLEN_BYTES*2)              
     SAVE_X  ra, 0(sp)
-    SAVE_X  s2, (XLEN_BYTES*1)(sp) 
-    mv      s2, a0   
+    SAVE_X  a0, (XLEN_BYTES*1)(sp) 
     jal     decode_FCLASS
     jal     print_comma
-    mv      a0, s2
+    LOAD_X  a0, (XLEN_BYTES*1)(sp)               
     jal     print_frs2
     LOAD_X  ra, 0(sp)               
-    LOAD_X  s2, (XLEN_BYTES*1)(sp)               
     addi    sp, sp, (XLEN_BYTES*2)
     ret
 .size decode_FCMP, .-decode_FCMP
