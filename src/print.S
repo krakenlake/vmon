@@ -125,12 +125,7 @@ print_ascii_out:
 
 # print ASCII char in a0
 print_char:
-    addi    sp, sp, -(XLEN_BYTES*1)             
-    SAVE_X  ra, 0(sp)
-    jal uart_output_char
-    LOAD_X  ra, 0(sp)             
-    addi    sp, sp, (XLEN_BYTES*1)
-    ret
+    j       uart_output_char
 .size print_char, .-print_char
 
 
