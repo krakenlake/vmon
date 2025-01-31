@@ -130,16 +130,14 @@ decode_B_type:
 decode_I_type:
     addi    sp, sp, -(XLEN_BYTES*2)              
     SAVE_X  ra, 0(sp)
-    SAVE_X  s2, (XLEN_BYTES*1)(sp)   
-    mv      s2, a0   
+    SAVE_X  a0, (XLEN_BYTES*1)(sp)   
     jal     print_rd
-    mv      a0, s2
+    LOAD_X  a0, (XLEN_BYTES*1)(sp)               
     jal     print_rs1
     jal     print_comma
-    mv      a0, s2
+    LOAD_X  a0, (XLEN_BYTES*1)(sp)               
     jal     decode_I_type_imm
     LOAD_X  ra, 0(sp)               
-    LOAD_X  s2, (XLEN_BYTES*1)(sp)               
     addi    sp, sp, (XLEN_BYTES*2)
     ret
 .size decode_I_type, .-decode_I_type
@@ -147,9 +145,8 @@ decode_I_type:
 
 # in: instruction word in a0
 decode_I_type_imm:
-    addi    sp, sp, -(XLEN_BYTES*2)              
+    addi    sp, sp, -(XLEN_BYTES*1)              
     SAVE_X  ra, 0(sp)
-    SAVE_X  s2, (XLEN_BYTES*1)(sp)      
     # inst[31:20] -> imm[11:0]
 #if XLEN >=64
     sext.w  a0, a0              # sign-extend to 64 bits
@@ -157,8 +154,7 @@ decode_I_type_imm:
     srai    a0, a0, 20
     jal     print_decimal
     LOAD_X  ra, 0(sp)               
-    LOAD_X  s2, (XLEN_BYTES*1)(sp)               
-    addi    sp, sp, (XLEN_BYTES*2)
+    addi    sp, sp, (XLEN_BYTES*1)
     ret
 .size decode_I_type_imm, .-decode_I_type_imm
 
@@ -212,16 +208,14 @@ decode_I_type_SHIFT:
 decode_R_type:
     addi    sp, sp, -(XLEN_BYTES*2)              
     SAVE_X  ra, 0(sp)
-    SAVE_X  s2, (XLEN_BYTES*1)(sp) 
-    mv      s2, a0   
+    SAVE_X  a0, (XLEN_BYTES*1)(sp) 
     jal     print_rd
-    mv      a0, s2
+    LOAD_X  a0, (XLEN_BYTES*1)(sp)               
     jal     print_rs1
     jal     print_comma
-    mv      a0, s2
+    LOAD_X  a0, (XLEN_BYTES*1)(sp)               
     jal     print_rs2
     LOAD_X  ra, 0(sp)               
-    LOAD_X  s2, (XLEN_BYTES*1)(sp)               
     addi    sp, sp, (XLEN_BYTES*2)
     ret
 .size decode_R_type, .-decode_R_type
@@ -231,16 +225,14 @@ decode_R_type:
 decode_S_type:
     addi    sp, sp, -(XLEN_BYTES*2)             
     SAVE_X  ra, 0(sp)
-    SAVE_X  s2, (XLEN_BYTES*1)(sp)    
-    mv      s2, a0
+    SAVE_X  a0, (XLEN_BYTES*1)(sp)    
     jal     ra, print_rs2
     jal     print_comma
-    mv      a0, s2
+    LOAD_X  a0, (XLEN_BYTES*1)(sp)               
     jal     decode_S_type_imm
-    mv      a0, s2
+    LOAD_X  a0, (XLEN_BYTES*1)(sp)               
     jal     print_rs1_as_base
     LOAD_X  ra, 0(sp)               
-    LOAD_X  s2, (XLEN_BYTES*1)(sp)               
     addi    sp, sp, (XLEN_BYTES*2)
     ret
 .size decode_S_type, .-decode_S_type
@@ -366,16 +358,14 @@ decode_FENCE_bits_skip:
 decode_FENCE:
     addi    sp, sp, -(XLEN_BYTES*2)             
     SAVE_X  ra, 0(sp)
-    SAVE_X  s2, (XLEN_BYTES*1)(sp)
-    mv      s2, a0
+    SAVE_X  a0, (XLEN_BYTES*1)(sp)
     li      a1, 27
     jal     decode_FENCE_bits
     jal     print_comma
-    mv      a0, s2
+    LOAD_X  a0, (XLEN_BYTES*1)(sp)               
     li      a1, 23
     jal     decode_FENCE_bits
     LOAD_X  ra, 0(sp)               
-    LOAD_X  s2, (XLEN_BYTES*1)(sp)               
     addi    sp, sp, (XLEN_BYTES*2)
     ret
 .size decode_FENCE, .-decode_FENCE
@@ -404,16 +394,14 @@ decode_EMPTY:
 decode_LRSC:
     addi    sp, sp, -(XLEN_BYTES*2)              
     SAVE_X  ra, 0(sp)
-    SAVE_X  s2, (XLEN_BYTES*1)(sp)  
-    mv      s2, a0
+    SAVE_X  a0, (XLEN_BYTES*1)(sp)  
     jal     print_rd
-    mv      a0, s2
+    LOAD_X  a0, (XLEN_BYTES*1)(sp)               
     jal     print_rs2
     jal     print_comma  
-    mv      a0, s2
+    LOAD_X  a0, (XLEN_BYTES*1)(sp)               
     jal     print_rs1_as_base
     LOAD_X  ra, 0(sp)               
-    LOAD_X  s2, (XLEN_BYTES*1)(sp)               
     addi    sp, sp, (XLEN_BYTES*2)
     ret
 .size decode_LRSC, .-decode_LRSC
@@ -423,17 +411,15 @@ decode_LRSC:
 decode_AMO:
     addi    sp, sp, -(XLEN_BYTES*2)              
     SAVE_X  ra, 0(sp)
-    SAVE_X  s2, (XLEN_BYTES*1)(sp)  
-    mv      s2, a0   
+    SAVE_X  a0, (XLEN_BYTES*1)(sp)  
     jal     print_rd
-    mv      a0, s2
+    LOAD_X  a0, (XLEN_BYTES*1)(sp)               
     jal     print_rs2
     jal     print_comma  
     # print rs1 = addr
-    mv      a0, s2
+    LOAD_X  a0, (XLEN_BYTES*1)(sp)               
     jal     print_rs1_as_base
     LOAD_X  ra, 0(sp)               
-    LOAD_X  s2, (XLEN_BYTES*1)(sp)               
     addi    sp, sp, (XLEN_BYTES*2)
     ret
 .size decode_AMO, .-decode_AMO
@@ -455,20 +441,16 @@ decode_CR_type:
 
 # in: instruction word in a0
 decode_C_LWSP:
-    addi    sp, sp, -(XLEN_BYTES*2)              
+    addi    sp, sp, -(XLEN_BYTES*1)              
     SAVE_X  ra, 0(sp)
-    SAVE_X  s2, (XLEN_BYTES*1)(sp)  
-    mv      s2, a0   
     jal     print_rd
-    mv      a0, s2
     li      a0, '('
     jal     print_char
     # TODO
     li      a0, ')'
     jal     print_char
     LOAD_X  ra, 0(sp)               
-    LOAD_X  s2, (XLEN_BYTES*1)(sp)               
-    addi    sp, sp, (XLEN_BYTES*2)
+    addi    sp, sp, (XLEN_BYTES*1)
     ret
 .size decode_C_LWSP, .-decode_C_LWSP
 #endif /* ENABLE_RVC */
@@ -477,15 +459,13 @@ decode_C_LWSP:
 decode_CSR:
     addi    sp, sp, -(XLEN_BYTES*2)              
     SAVE_X  ra, 0(sp)
-    SAVE_X  s2, (XLEN_BYTES*1)(sp)     
-    mv      s2, a0
+    SAVE_X  a0, (XLEN_BYTES*1)(sp)     
     jal     print_rd
-    mv      a0, s2
+    LOAD_X  a0, (XLEN_BYTES*1)(sp)               
     jal     print_csr
-    mv      a0, s2
+    LOAD_X  a0, (XLEN_BYTES*1)(sp)               
     jal     print_rs1    
     LOAD_X  ra, 0(sp)               
-    LOAD_X  s2, (XLEN_BYTES*1)(sp)               
     addi    sp, sp, (XLEN_BYTES*2)
     ret
 .size decode_CSR, .-decode_CSR
@@ -495,18 +475,16 @@ decode_CSR:
 decode_CSRI:
     addi    sp, sp, -(XLEN_BYTES*2)              
     SAVE_X  ra, 0(sp)
-    SAVE_X  s2, (XLEN_BYTES*1)(sp)
-    mv      s2, a0
+    SAVE_X  a0, (XLEN_BYTES*1)(sp)
     jal     print_rd
-    mv      a0, s2
+    LOAD_X  a0, (XLEN_BYTES*1)(sp)               
     jal     print_csr
     # extract uimm[4:0] 
-    mv      a0, s2
+    LOAD_X  a0, (XLEN_BYTES*1)(sp)               
     srli    a0, a0, 15
     and     a0, a0, 0b11111
     jal     print_decimal    
     LOAD_X  ra, 0(sp)               
-    LOAD_X  s2, (XLEN_BYTES*1)(sp)               
     addi    sp, sp, (XLEN_BYTES*2)
     ret
 .size decode_CSRI, .-decode_CSRI
@@ -546,16 +524,14 @@ print_rs1:
 print_rs1_as_base:
     addi    sp, sp, -(XLEN_BYTES*2)              
     SAVE_X  ra, 0(sp)
-    SAVE_X  s2, (XLEN_BYTES*1)(sp)   
-    mv      s2, a0
+    SAVE_X  a0, (XLEN_BYTES*1)(sp)   
     li      a0, '('
     jal     print_char
-    mv      a0, s2
+    LOAD_X  a0, (XLEN_BYTES*1)(sp)               
     jal     print_rs1
     li      a0, ')'
     jal     print_char
     LOAD_X  ra, 0(sp)               
-    LOAD_X  s2, (XLEN_BYTES*1)(sp)               
     addi    sp, sp, (XLEN_BYTES*2)
     ret
 .size print_rs1, .-print_rs1
