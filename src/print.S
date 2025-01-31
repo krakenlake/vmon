@@ -136,12 +136,7 @@ print_char:
 
 # print string starting at addr in a0
 print_string:
-    addi    sp, sp, -(XLEN_BYTES*1)             
-    SAVE_X  ra, 0(sp)
-    jal uart_output_string
-    LOAD_X  ra, 0(sp)             
-    addi    sp, sp, (XLEN_BYTES*1)
-    ret
+    j       uart_output_string
 .size print_string, .-print_string
 
 
