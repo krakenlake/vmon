@@ -118,7 +118,15 @@ main_get_char:
     jal     uart_wait_get_char
     li      t0, ASCII_DELETE        
     beq     a0, t0, is_delete
+    
     # char is not DELETE
+    # check if end of input buffer is reached
+    la      t0, buffer
+    addi    t0, t0, BUFFER_SIZE
+    # do not process input further when buffer is full
+    # (only possible user action when buffer is full will be to hit DELETE)
+    bge     s3, t0, main_get_char
+
     sb      a0, 0(s3)               # store byte in input buffer
     addi    s3, s3, 1               # inc buffer ptr
     j       continue_not_delete
