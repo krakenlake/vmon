@@ -288,7 +288,7 @@ string_OP_EBREAK:   .string "ebreak";
 	string_OP_C_ADD:		.string "c.add";
 	string_OP_C_SWSP:		.string "c.swsp";
 	string_OP_C_NOP:		.string "c.nop";
-	string_OP_C_ADDI16SP:	.string "c.addo16sp";
+	string_OP_C_ADDI16SP:	.string "c.addi16sp";
 	string_OP_C_JR:			.string "c.jr";
 	string_OP_C_JALR:		.string "c.jalr";
 	string_OP_C_EBREAK:		.string "c.ebreak";

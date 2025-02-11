@@ -131,21 +131,21 @@ cmd_I:
         jal     print_hex
     #endif /* WITH_TESTCODE_RVF */
 
-    #ifdef WITH_TESTCODE_RVD
+    #if defined (WITH_TESTCODE_RVD) && XLEN >= 64
         la      a0, string_info_testcode_RVD
         jal     print_string
         la      a0, testcode_RVD
         jal     print_hex
     #endif /* WITH_TESTCODE_RVD */
 
-    #ifdef WITH_TESTCODE_RVQ
+    #if defined (WITH_TESTCODE_RVQ) && XLEN >= 128
         la      a0, string_info_testcode_RVQ
         jal     print_string
         la      a0, testcode_RVQ
         jal     print_hex
     #endif /* WITH_TESTCODE_RVQ */
 
-    #ifdef WITH_TESTCODE_RVC
+    #if defined (WITH_TESTCODE_RVC) && defined (ENABLE_RVC)
         la      a0, string_info_testcode_RVC
         jal     print_string
         la      a0, testcode_RVC
