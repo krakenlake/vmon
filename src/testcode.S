@@ -528,7 +528,7 @@ testcode_RVF:
 #endif /* WITH_TESTCODE_RVF */
 
 
-#ifdef WITH_TESTCODE_RVD
+#if defined (WITH_TESTCODE_RVD) && XLEN >= 64
 testcode_RVD:
 .option push
 .option norvc
@@ -593,7 +593,7 @@ testcode_RVD:
 #endif /* WITH_TESTCODE_RVD */
 
 
-#ifdef WITH_TESTCODE_RVQ
+#if defined (WITH_TESTCODE_RVQ) && XLEN >= 128
 testcode_RVQ:
 .option push
 .option norvc
@@ -641,12 +641,10 @@ testcode_RVQ:
     fcvt.w.q    x31, f31 
     fcvt.wu.q   x0, f0 
     fcvt.wu.q   x31, f31 
-#if XLEN >=128
     fmv.x.q     x0, f0 
     fmv.x.q     x31, f31 
     fmv.q.x     f0, x0 
     fmv.q.x     f31, x31 
-#endif
     feq.q       x0, f1, f2     
     feq.q       x31, f30, f31     
     flt.q       x0, f1, f2     
@@ -662,11 +660,113 @@ testcode_RVQ:
 
 #if defined (WITH_TESTCODE_RVC) && defined (ENABLE_RVC)
 testcode_RVC:
-#    c.lw        a0, a0, 1
-    c.li        s0, 1
-    c.lui       s0, 1
-    c.mv        s0, s1
-    c.sub       s0, s1
+    # CL_type
+    c.lw        x8, 0(x8)
+    c.lw        x8, 124(x8)
+    c.lw        x15, 124(x15)
+    # CS_type
+    c.sw        x8, 0(x8)
+    c.sw        x8, 124(x8)
+    c.sw        x15, 124(x15)
+    c.and       x8, x9
+    c.or        x8, x9
+    c.xor       x14, x15
+    c.sub       x14, x15
+    # CI_type
+    c.lwsp      x8, 0(sp)
+    c.lwsp      x15, 252(sp)
+    c.li        x1, 0
+    c.li        x1, 1
+    c.li        x31, 31
+    c.li        x31, -32
+    c.lui       x1, 1
+    c.lui       x1, 31
+    c.lui       x31, 1
+    c.lui       x31, 31
+    c.addi      x1, 0
+    c.addi      x1, 1
+    c.addi      x31, 31
+    c.addi      x31, -32
+    c.addi16sp  sp, 16
+    c.addi16sp  sp, -16
+    c.addi16sp  sp, 496
+    c.addi16sp  sp, -512
+    c.slli      x0, 1
+    c.slli      x31, 1
+    c.slli      x0, 31
+    c.slli      x31, 31
+    c.nop
+    # CSS_type
+    c.swsp      x8, 0(sp)
+    c.swsp      x15, 252(sp)
+    # CJ_type
+    c.j         testcode_RVC
+    # CR_type
+    c.jr        x1
+    c.jr        x31
+    c.jalr      x1
+    c.jalr      x31
+    c.mv        x1, x1
+    c.mv        x31, x31
+    c.add       x1, x1
+    c.add       x31, x31
+    c.ebreak
+    # CB_type
+testcode_RVC_CB_type_start:
+    c.beqz      x8, testcode_RVC_CB_type_start
+    c.beqz      x15, testcode_RVC_CB_type_start
+    c.bnez      x8, testcode_RVC_CB_type_end
+    c.bnez      x15, testcode_RVC_CB_type_end
+    c.srli      x8, 1
+    c.srli      x15, 31
+    c.srai      x8, 1
+    c.srai      x15, 31
+    c.andi      x8, 0
+    c.andi      x15, 31
+testcode_RVC_CB_type_end:   
+    #ifdef ENABLE_RVF
+        #c.flw       f8, 0(f8)
+        #c.fsw
+        #c.flwsp
+        #c.fswsp
+        #if XLEN >= 64
+            c.fld       f8, 0(x8)
+            c.fld       f15, 248(x15)
+            c.fsd       f8, 0(x8)
+            c.fsd       f15, 248(x15)
+            c.fldsp     f8, 0(sp)
+            c.fldsp     f15, 504(sp)
+            c.fsdsp     f8, 0(sp)
+            c.fsdsp     f15, 504(sp)
+        #endif
+    #endif /* ENABLE_RVF */
+    # RV32C only
+    #if XLEN == 32
+        c.jal       testcode_RVC
+    #endif
+    # RV64C
+    #if XLEN >= 64
+        c.ldsp      x8, 0(sp)
+        c.ldsp      x15, 496(sp)
+        c.sdsp      x8, 0(sp)
+        c.sdsp      x15, 496(sp)
+        c.ld        x8, 0(x8)
+        c.ld        x8, 248(x8)
+        c.ld        x15, 248(x15)
+        c.sd        x8, 0(x8)
+        c.sd        x8, 248(x8)
+        c.sd        x15, 248(x15)
+        c.addw      x8, x9
+        c.subw      x14, x15
+        c.addiw     x1, 0
+        c.addiw     x1, 1
+        c.addiw     x31, 31
+        c.addiw     x31, -32
+        c.slli      x0, 63
+        c.slli      x31, 63
+        c.srli      x15, 63
+        c.srai      x15, 63
+    #endif
 .size testcode_RVC, .-testcode_RVC
 #endif /* WITH_TESTCODE_RVC */
 
