@@ -22,7 +22,6 @@ ifeq ($(TARGET), qemu)
 	TOOLBIN 	?= /opt/riscv/rv$(XLEN)g/bin
 	ADDFLAGS	= -DHW_QEMU -DXLEN=$(XLEN) -march=rv$(XLEN)$(ISA_STRING) 
 	QEMU_FLAGS	= -machine virt -cpu rv$(XLEN),pmp=false -smp 2 -gdb tcp::1234 -bios none -serial stdio -display none -kernel $(BUILD)/$(NAME).img
-#	QEMU_FLAGS	= -machine virt -cpu rv$(XLEN),pmp=false -smp 2 -gdb tcp::1234 -bios none -serial stdio -device VGA -kernel $(BUILD)/$(NAME).img
 	RUN			= qemu-system-riscv$(XLEN) $(QEMU_FLAGS) 
 endif
 
@@ -115,3 +114,4 @@ debug:
 device-tree:
 	qemu-system-riscv$(XLEN) $(QEMU_FLAGS) -machine dumpdtb=$(BUILD)/qemu.dtb
 	dtc -I dtb -O dts $(BUILD)/qemu.dtb -o $(BUILD)/qemu-device-tree.dts
+	less $(BUILD)/qemu-device-tree.dts
