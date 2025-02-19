@@ -34,8 +34,9 @@ print_comma:
 
 # in: print value in a0 in hex with "0x" prefix
 print_hex:
-    addi    sp, sp, -(XLEN_BYTES*1)             
+    addi    sp, sp, -(XLEN_BYTES*2)             
     SAVE_X  ra, 0(sp)
+    SAVE_X  s1, (XLEN_BYTES*1)(sp)
     # print "0x"
     mv      s1, a0                      # save a0 for later
     li      a0, '0'
@@ -45,8 +46,9 @@ print_hex:
     mv      a0, s1                      # restore a0
     # print value
     jal     print_hex_raw
-    LOAD_X  ra, 0(sp)                       
-    addi    sp, sp, (XLEN_BYTES*1)
+    LOAD_X  ra, 0(sp)            
+    LOAD_X  s1, (XLEN_BYTES*1)(sp)        
+    addi    sp, sp, (XLEN_BYTES*2)
     ret
 .size print_hex, .-print_hex
 
@@ -86,8 +88,9 @@ print_hex_new_decimal:
 # print a 2-digit hex value (with leading zero for 1-digit values)
 # in: byte value in a0
 print_hex_byte:
-    addi    sp, sp, -(XLEN_BYTES*1)             
+    addi    sp, sp, -(XLEN_BYTES*2)             
     SAVE_X  ra, 0(sp)
+    SAVE_X  s1, (XLEN_BYTES*1)(sp)
     li      t0, 15
     bgt     a0, t0, print_hex_byte_two_digits
     # print a leading zero if necessary
@@ -98,7 +101,8 @@ print_hex_byte:
 print_hex_byte_two_digits:
     jal     print_hex_raw
     LOAD_X  ra, 0(sp)             
-    addi    sp, sp, (XLEN_BYTES*1)
+    LOAD_X  s1, (XLEN_BYTES*1)(sp)
+    addi    sp, sp, (XLEN_BYTES*2)
     ret
 .size print_hex_byte, .-print_hex_byte
 
