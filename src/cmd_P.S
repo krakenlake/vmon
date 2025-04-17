@@ -15,16 +15,20 @@ cmd_P:
     jal     get_hex_addr            # read src_start from text buffer
     bnez    a2, cmd_P_error         # abort command if not found
 	mv		a3, a1
-	# read byte_value from text buffer
+	
+    # read byte_value from text buffer
+cmd_P_next_byte_value:
 	jal     skip_whitespace
     jal     get_hex_addr            
-    bnez    a2, cmd_P_error         # abort command if not found
+    bnez    a2, cmd_P_done         # end if no more valid input
     mv		a4, a1
 	
 	# a3: dst_addr
 	# a4: byte_value
 	sb		a4, 0(a3)				# writes only lower 8 bits
-	j 		cmd_P_done
+	
+    addi    a3, a3, 1               # increase target addr by 1 byte
+    j       cmd_P_next_byte_value   # repeat until end of input buffer
 
 cmd_P_error:
     la      a0, error_param
