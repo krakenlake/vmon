@@ -10,7 +10,6 @@
 
 
 cmd_M:
-    mv      a0, s4
     jal     skip_whitespace
     jal     get_hex_addr            # read start addr from text buffer
     bnez    a2, cmd_M_from_last     # none given? continue from last saved addr

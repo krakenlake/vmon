@@ -1,5 +1,7 @@
 #include "vmon/config.h"
 #include "vmon/drivers/uart/ns16550.h"
+#include "vmon/ASCII.h"
+
 
 
 .global uart_init
@@ -7,6 +9,7 @@
 .global uart_output_char
 .global uart_output_string
 .global uart_output_buffer
+.global uart_getline
 
 .text
 
@@ -16,6 +19,17 @@ uart_init:
     sb      t0, UART_REG_LSR(t1)      
     ret
 .size uart_init, .-uart_init
+
+
+uart_clear_buffer:
+    la      t0, uart_input_buffer
+    addi    t1, t0, BUFFER_SIZE
+uart_clear_buffer_loop:
+    sw      zero, 0(t0)
+    addi    t0, t0, 4
+    ble     t0, t1, uart_clear_buffer_loop
+    ret
+.size uart_clear_buffer, .-uart_clear_buffer
 
 
 # wait and get one character from UART 
@@ -95,3 +109,73 @@ uart_output_buffer_done:
     addi    sp, sp, (XLEN_BYTES*1)
     ret
 .size uart_output_buffer, .-uart_output_buffer
+
+
+# get a line of input from UART until RETURN is hit
+# out: buffer start in a0
+uart_getline:
+    addi    sp, sp, -(XLEN_BYTES*3)             
+    SAVE_X  ra, 0(sp)
+    SAVE_X  s0, (XLEN_BYTES*1)(sp)
+    SAVE_X  s1, (XLEN_BYTES*2)(sp)
+
+    jal     uart_clear_buffer
+
+    la      s0, uart_input_buffer
+    mv      s1, s0                  # save a copy in s1 for later
+uart_get_char:
+    jal     uart_wait_get_char
+    # is DELETE?
+    li      t0, ASCII_DELETE        
+    beq     a0, t0, uart_input_is_delete
+    # char is not DELETE
+    # check if end of input buffer is reached
+    la      t0, uart_input_buffer
+    addi    t0, t0, BUFFER_SIZE
+    # do not process input further when buffer is full
+    # (only possible user action when buffer is full will be to hit DELETE)
+    bge     s0, t0, uart_get_char
+
+    sb      a0, 0(s0)               # store byte in input buffer
+    addi    s0, s0, 1               # inc buffer ptr
+    j       uart_continue_not_delete
+
+uart_input_is_delete:
+    # TODO: if the previous key transmitted more than 1 byte, this does 
+    # not work properly 
+    beq     s0, s1, uart_get_char        # ignore at beginning of line
+    addi    s0, s0, -1
+    # ASCII output
+    li      a0, ASCII_BACKSPACE
+    jal     print_char
+    li      a0, ' '
+    jal     print_char
+    li      a0, ASCII_BACKSPACE
+    jal     print_char
+    j       uart_get_char  
+
+uart_continue_not_delete:
+    # output char in a0
+    jal     print_char
+    li      t0, ASCII_RETURN        
+    beq     a0, t0, uart_getline_done
+    j       uart_get_char      
+
+uart_getline_done:
+    # return buffer address
+    mv      a0, s1
+
+    LOAD_X  ra, 0(sp)             
+    LOAD_X  s0, (XLEN_BYTES*1)(sp)               
+    LOAD_X  s1, (XLEN_BYTES*2)(sp)               
+    addi    sp, sp, (XLEN_BYTES*3)
+    ret
+.size uart_getline, .-uart_getline
+
+
+.bss
+	
+.align 8
+.comm uart_input_buffer, BUFFER_SIZE
+.size uart_input_buffer, BUFFER_SIZE
+
