@@ -106,66 +106,27 @@ start:
 main_prompt:
     li      a0, ASCII_NEWLINE
     jal     print_char
+
 main_prompt_no_newline:
     la      a0, string_prompt
     jal     print_string
 
-    # reset text buffer boundaries in s2, s3
-    la      s2, buffer              # s2:= buffer start
-    mv      s3, s2
-    jal     main_clear_buffer
-main_get_char:
-    jal     uart_wait_get_char
-    li      t0, ASCII_DELETE        
-    beq     a0, t0, is_delete
-    
-    # char is not DELETE
-    # check if end of input buffer is reached
-    la      t0, buffer
-    addi    t0, t0, BUFFER_SIZE
-    # do not process input further when buffer is full
-    # (only possible user action when buffer is full will be to hit DELETE)
-    bge     s3, t0, main_get_char
+    jal     uart_getline
+    mv      s2, a0
 
-    sb      a0, 0(s3)               # store byte in input buffer
-    addi    s3, s3, 1               # inc buffer ptr
-    j       continue_not_delete
-is_delete:
-    # TODO: if the previous key transmitted more than 1 byte, this does 
-    # not work properly 
-    beq     s3, s2, main_get_char        # ignore at beginning of line
-    addi    s3, s3, -1
-    # ASCII output
-    li      a0, ASCII_BACKSPACE
-    jal     print_char
-    li      a0, ' '
-    jal     print_char
-    li      a0, ASCII_BACKSPACE
-    jal     print_char
-    j       main_get_char  
-continue_not_delete:
-    # output char in a0
-    jal     print_char
-    li      t0, ASCII_RETURN        
-    beq     a0, t0, get_command
-    j       main_get_char      
-get_command:
     li      a0, ASCII_NEWLINE
     jal     print_char
-
-    # buffer start addr is in s2
-    # last character is at s3-1
-    mv      s4, s2
-    # will be incremented in the following loop again
-    addi    s4, s4, -1
-    # advance to next non-whitespace char in buffer
-    # TODO: should be an error if there is not at least 1 space
-    mv      a0, s4
+    
+    mv      a0, s2
     jal     skip_whitespace
-    mv      s4, a0
-    # take first non-whitespace char in line as command
-    lb      t1, 0(s4)               # get byte from buffer
-.size start, .-start
+    
+    lb      t1, 0(a0)
+    addi    a0, a0, 1
+
+#ifdef WITH_CMD_A
+    li      t0, 'a'
+    beq     t1, t0, cmd_A
+#endif
 
 #ifdef WITH_CMD_C
     li      t0, 'c'
@@ -229,17 +190,7 @@ end:
     wfi
     j       end
 #endif /* BARE_METAL */
-
-
-main_clear_buffer:
-    la      t0, buffer
-    addi    t1, t0, BUFFER_SIZE
-main_clear_buffer_loop:
-    sw      zero, 0(t0)
-    addi    t0, t0, 4
-    ble     t0, t1, main_clear_buffer_loop
-    ret
-.size main_clear_buffer, .-main_clear_buffer
+.size start, .-start
 
 
 .data
@@ -263,10 +214,6 @@ start_bss:
 .align 8
 .comm last_address, XLEN_BYTES  # last address used in m or d command
 .size last_address, XLEN_BYTES
-	
-.align 8
-.comm buffer, BUFFER_SIZE       # for command line input
-.size buffer, BUFFER_SIZE
         
 .align 8
 .comm stack, STACK_SIZE         # our execution stack

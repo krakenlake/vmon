@@ -10,7 +10,6 @@
 
 cmd_P:
 	# read dst_addr from text buffer	
-    mv      a0, s4
     jal     skip_whitespace
     jal     get_hex_addr            # read src_start from text buffer
     bnez    a2, cmd_P_error         # abort command if not found

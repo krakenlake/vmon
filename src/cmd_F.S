@@ -10,7 +10,6 @@
 
 cmd_F:
 	# read src_start from text buffer	
-    mv      a0, s4
     jal     skip_whitespace
     jal     get_hex_addr            # read start_addr from text buffer
     bnez    a2, cmd_F_error         # abort command if not found

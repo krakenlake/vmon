@@ -67,11 +67,6 @@ cmd_I:
     la      a0, start_bss    
     jal     print_hex
 
-    la      a0, string_info_buffer
-    jal     print_string
-    la      a0, buffer   
-    jal     print_hex
-
 #ifdef BARE_METAL
     la      a0, string_info_stackstart
     jal     print_string

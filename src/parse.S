@@ -9,15 +9,17 @@
 
 # in: buffer ptr in a0
 skip_whitespace:
-    # load only once when called
     li      t0, ' '
     li      t1, '\t'
-skip_whitespace_next_byte:
-    addi    a0, a0, 1               # advance buffer pointer
+skip_whitespace_next:
     lb      t2, 0(a0)               # get byte from buffer
-    # skip whitespace at beginning of line
-    beq     t2, t0, skip_whitespace_next_byte 
-    beq     t2, t1, skip_whitespace_next_byte 
+    beq     t2, t0, skip_whitespace_advance 
+    beq     t2, t1, skip_whitespace_advance
+    j       skip_whitespace_done
+skip_whitespace_advance:
+    addi    a0, a0, 1               # advance buffer pointer
+    j       skip_whitespace_next    
+skip_whitespace_done:
     ret
 .size skip_whitespace, .-skip_whitespace
 
