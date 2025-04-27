@@ -23,8 +23,6 @@
 /*
     application entry point
 
-    s2 = text input buffer start addr
-    s3 = text input buffer ptr to last character
     s5 = address of current instruction being disassembled   
 */
 start:
