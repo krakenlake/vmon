@@ -45,6 +45,12 @@ cmd_A_input_loop:
 	# read input line and assemble one instruction
 	mv		a0, s2
 	jal		assemble_instruction
+	bnez	a0, cmd_A_continue
+	# user entered garbage in assembly line
+    la      a0, string_ass_error
+    jal     print_string
+	j 		cmd_A_input_loop
+cmd_A_continue:
 	# instruction now in a1
 	# store assembled instruction in memory at dst_address
 	sw		a1, 0(s0)
@@ -66,5 +72,8 @@ string_line_prefix_A:   .string "A ";
 
 string_ass_prompt:	.string " -> ";
 .size string_ass_prompt, .-string_ass_prompt
+
+string_ass_error:	.string "\t\t???\n\r";
+.size string_ass_error, .-string_ass_error
 
 #endif /* WITH_CMD_A */

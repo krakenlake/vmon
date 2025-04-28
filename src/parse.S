@@ -38,7 +38,7 @@ find_insn_name_end:
     li      t1, 'a'
     blt     t0, t1, find_insn_name_end_done
     li      t1, 'z'
-    blt     t0, t1, find_insn_name_end_done
+    bgt     t0, t1, find_insn_name_end_done
 find_insn_name_end_valid_char:
     addi    a0, a0, 1
     j       find_insn_name_end    

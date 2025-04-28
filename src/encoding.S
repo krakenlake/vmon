@@ -338,7 +338,7 @@ encoding_table:
 # pseudo opcodes
 # order is important, these have to be at the beginning of the table
 #ifdef ENABLE_PSEUDO
-	.word 0xffffffff, 0x00008067, decode_EMPTY, string_OP_RET, assemble_DUMMY
+	.word 0xffffffff, 0x00008067, decode_EMPTY, string_OP_RET, assemble_RET
 	.word 0xffffffff, 0x00000013, decode_EMPTY, string_OP_NOP, assemble_NOP
 	#ifdef ENABLE_RVC
 		.word 0x0000ffff, 0x0001, decode_EMPTY, string_OP_C_NOP, assemble_DUMMY
@@ -373,12 +373,12 @@ encoding_table:
 .word MASK_SB, MATCH_SB, decode_S_type, string_OP_SB, assemble_DUMMY
 .word MASK_SH, MATCH_SH, decode_S_type, string_OP_SH, assemble_DUMMY
 .word MASK_SW, MATCH_SW, decode_S_type, string_OP_SW, assemble_DUMMY
-.word MASK_BEQ, MATCH_BEQ, decode_B_type, string_OP_BEQ, assemble_DUMMY
-.word MASK_BNE, MATCH_BNE, decode_B_type, string_OP_BNE, assemble_DUMMY
-.word MASK_BLT, MATCH_BLT, decode_B_type, string_OP_BLT, assemble_DUMMY
-.word MASK_BGE, MATCH_BGE, decode_B_type, string_OP_BGE, assemble_DUMMY
-.word MASK_BLTU, MATCH_BLTU, decode_B_type, string_OP_BLTU, assemble_DUMMY
-.word MASK_BGEU, MATCH_BGEU, decode_B_type, string_OP_BGEU, assemble_DUMMY
+.word MASK_BEQ, MATCH_BEQ, decode_B_type, string_OP_BEQ, assemble_BRANCH
+.word MASK_BNE, MATCH_BNE, decode_B_type, string_OP_BNE, assemble_BRANCH
+.word MASK_BLT, MATCH_BLT, decode_B_type, string_OP_BLT, assemble_BRANCH
+.word MASK_BGE, MATCH_BGE, decode_B_type, string_OP_BGE, assemble_BRANCH
+.word MASK_BLTU, MATCH_BLTU, decode_B_type, string_OP_BLTU, assemble_BRANCH
+.word MASK_BGEU, MATCH_BGEU, decode_B_type, string_OP_BGEU, assemble_BRANCH
 .word MASK_JAL, MATCH_JAL, decode_JAL, string_OP_JAL, assemble_DUMMY
 .word MASK_JALR, MATCH_JALR, decode_I_type_LOAD, string_OP_JALR, assemble_DUMMY
 .word MASK_LUI, MATCH_LUI, decode_U_type, string_OP_LUI, assemble_DUMMY
