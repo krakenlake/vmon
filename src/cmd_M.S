@@ -28,11 +28,10 @@ cmd_M_add_default:
     addi    s7, s5, DEFAULT_M_LINES*8-1  
     # start addr now in s5, end addr now in s7
 cmd_M_next_line:
-    # output line prefix
-    la      a0, string_line_prefix_M
-    jal     print_string
     mv      a0, s5
     jal     print_hex
+    li      a0, ':'
+    jal     print_char
     # output hex bytes 
     addi    s6, s5, 8               # set end addr for output line
  cmd_M_next_byte:
@@ -64,12 +63,5 @@ cmd_M_done:
     SAVE_X  s5, 0(a0)
     j       main_prompt
 .size cmd_M, .-cmd_M
-
-
-.data
-string_line_prefix_M:   .string ":";
-.size string_line_prefix_M, .-string_line_prefix_M
-
-
 
 #endif /* WITH_CMD_M */

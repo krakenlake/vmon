@@ -28,9 +28,6 @@ cmd_D_add_default:
     addi    s7, s5, DEFAULT_D_LINES*4-1          
     # start addr now in s5, end addr now in s7
 cmd_D_next_instruction:
-    # print line prefix
-    la      a0, string_line_prefix_D
-    jal     print_string
     # print memory address
     mv      a0, s5                      # print current address
     jal     print_hex
@@ -96,8 +93,4 @@ cmd_D_done:
 string_OP_UNKNOWN:      .string "???";
 .size string_OP_UNKNOWN, .-string_OP_UNKNOWN
 	
-string_line_prefix_D:   .string ",";
-.size string_line_prefix_D, .-string_line_prefix_D
-
-
 #endif /* WITH_CMD_D */
