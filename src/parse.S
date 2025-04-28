@@ -4,6 +4,8 @@
 
 .global skip_whitespace
 .global get_hex_addr
+.global find_word_end
+.global is_ascii
 
 .text
 
@@ -22,6 +24,29 @@ skip_whitespace_advance:
 skip_whitespace_done:
     ret
 .size skip_whitespace, .-skip_whitespace
+
+
+# in: buffer ptr in a0
+# out: ptr to end of word in a0
+find_word_end:
+    #lb      a0, 0(a0)
+
+    ret
+.size find_word_end, .-find_word_end
+
+
+# in: char in a0
+# out: 0 if FALSE, 1 if TRUE
+is_ascii:
+    mv      t2, a0
+    mv      a0, zero
+    li      t0, 'a'
+    blt     t2, t0, is_ascii_done   # not ASCII
+    li      t1, 'z'
+    bgt     t2, t1, is_ascii_done   # not ASCII
+    li      a0, 1                   # is ASCII
+is_ascii_done:
+    ret
 
 
 # in: buffer ptr in a0
