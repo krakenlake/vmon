@@ -195,8 +195,11 @@ print_decimal_done:
 
 .align 8
 
+#ifdef WITH_CMD_D
 .comm dec_buf, DEC_BUFFER_SIZE
 .size dec_buf, DEC_BUFFER_SIZE
+#endif /* WITH_CMD_D */
+
 
 .comm out_buf, OUT_BUFFER_SIZE
 .size out_buf, OUT_BUFFER_SIZE
