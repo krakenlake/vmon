@@ -338,10 +338,10 @@ encoding_table:
 # pseudo opcodes
 # order is important, these have to be at the beginning of the table
 #ifdef ENABLE_PSEUDO
-	.word 0xffffffff, 0x00008067, decode_EMPTY, string_OP_RET, assemble_RET
-	.word 0xffffffff, 0x00000013, decode_EMPTY, string_OP_NOP, assemble_NOP
+	.word 0xffffffff, 0x00008067, decode_EMPTY, string_OP_RET, assemble_VOID
+	.word 0xffffffff, 0x00000013, decode_EMPTY, string_OP_NOP, assemble_VOID
 	#ifdef ENABLE_RVC
-		.word 0x0000ffff, 0x0001, decode_EMPTY, string_OP_C_NOP, assemble_DUMMY
+		.word 0x0000ffff, 0x0001, decode_EMPTY, string_OP_C_NOP, assemble_VOID
 	#endif /* ENABLE_RVC */
 #endif /* ENABLE_PSEUDO */
 
@@ -383,9 +383,9 @@ encoding_table:
 .word MASK_JALR, MATCH_JALR, decode_I_type_LOAD, string_OP_JALR, assemble_DUMMY
 .word MASK_LUI, MATCH_LUI, decode_U_type, string_OP_LUI, assemble_DUMMY
 .word MASK_AUIPC, MATCH_AUIPC, decode_U_type, string_OP_AUIPC, assemble_DUMMY
-.word MASK_ECALL, MATCH_ECALL, decode_ECALL, string_OP_ECALL, assemble_DUMMY
-.word MASK_EBREAK, MATCH_EBREAK, decode_EBREAK, string_OP_EBREAK, assemble_DUMMY
-.word MASK_FENCETSO, MATCH_FENCETSO, decode_FENCE_TSO, string_OP_FENCETSO, assemble_DUMMY
+.word MASK_ECALL, MATCH_ECALL, decode_ECALL, string_OP_ECALL, assemble_VOID
+.word MASK_EBREAK, MATCH_EBREAK, decode_EBREAK, string_OP_EBREAK, assemble_VOID
+.word MASK_FENCETSO, MATCH_FENCETSO, decode_FENCE_TSO, string_OP_FENCETSO, assemble_VOID
 .word MASK_FENCE, MATCH_FENCE, decode_FENCE, string_OP_FENCE, assemble_DUMMY
 # RV64I
 #if XLEN >= 64
