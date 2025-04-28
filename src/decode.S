@@ -607,7 +607,7 @@ decode_opcode_search_next:
 #else
     lw      t2, 0(t0)                       # get mask word from table
 #endif
-    beqz    t0, decode_opcode_done          # table end, no match found
+    beqz    t2, decode_opcode_done          # table end, no match found
     and     t2, a0, t2                      # apply mask
 #if XLEN >= 64
     lwu     t3, 4(t0)                       # get match word from table
