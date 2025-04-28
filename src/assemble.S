@@ -14,6 +14,7 @@
 
 # in: a0 = ptr to input text
 # out: a0 = number of bytes written to memory (normal 4, 2 for RVC, 0 if error)
+# out: a1 = assembled instruction to be written into memory
 assemble_instruction:  
     addi    sp, sp, -(XLEN_BYTES*3)              
     SAVE_X  ra, 0(sp)
@@ -26,10 +27,17 @@ assemble_instruction:
     # find string between s0 and s1 in encoding table
     jal     find_insn_in_table
     # function ptr now in a0
-    beqz    a0, assemble_instruction_done
-    jalr    a0
-    # 4 bytes default instruction size    
+    beqz    a0, assemble_instruction_done       # not found
+    jalr    a0                                  # call assemble function   
+    beqz    a0, assemble_instruction_done       # error while assembling insn parameters
+    # now use a0 to return insn size
+    mv      a0, a1    
+    jal     insn_is_compressed
+    bnez    a0, assemble_instruction_is_RVC
     li      a0, 4
+    j       assemble_instruction_done
+assemble_instruction_is_RVC:
+    li      a0, 2
 assemble_instruction_done:
 	LOAD_X  ra, 0(sp)               
     LOAD_X  s0, (XLEN_BYTES*1)(sp)               

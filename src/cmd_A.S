@@ -46,10 +46,12 @@ cmd_A_input_loop:
 	mv		a0, s2
 	jal		assemble_instruction
 	bnez	a0, cmd_A_continue
+
 	# user entered garbage in assembly line
     la      a0, string_ass_error
     jal     print_string
 	j 		cmd_A_input_loop
+
 cmd_A_continue:
 	# instruction now in a1
 	# store assembled instruction in memory at dst_address
@@ -57,6 +59,7 @@ cmd_A_continue:
 	# advance dst addr			
 	add		s0, s0, a0
 	j		cmd_A_input_loop
+
 cmd_A_error:
     la      a0, error_param
     jal     print_string
@@ -70,7 +73,7 @@ cmd_A_done:
 string_line_prefix_A:   .string "A ";
 .size string_line_prefix_A, .-string_line_prefix_A
 
-string_ass_prompt:	.string " -> ";
+string_ass_prompt:	.string " := ";
 .size string_ass_prompt, .-string_ass_prompt
 
 string_ass_error:	.string "\t\t???\n\r";
