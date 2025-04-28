@@ -339,7 +339,7 @@ encoding_table:
 # order is important, these have to be at the beginning of the table
 #ifdef ENABLE_PSEUDO
 	.word 0xffffffff, 0x00008067, decode_EMPTY, string_OP_RET, assemble_DUMMY
-	.word 0xffffffff, 0x00000013, decode_EMPTY, string_OP_NOP, assemble_DUMMY
+	.word 0xffffffff, 0x00000013, decode_EMPTY, string_OP_NOP, assemble_NOP
 	#ifdef ENABLE_RVC
 		.word 0x0000ffff, 0x0001, decode_EMPTY, string_OP_C_NOP, assemble_DUMMY
 	#endif /* ENABLE_RVC */
