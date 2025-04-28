@@ -6,8 +6,7 @@
 .global assemble_instruction
 
 .global assemble_DUMMY
-.global assemble_NOP
-.global assemble_RET
+.global assemble_VOID
 .global assemble_BRANCH
 
 
@@ -37,11 +36,13 @@ assemble_instruction_done:
     LOAD_X  s1, (XLEN_BYTES*2)(sp)               
     addi    sp, sp, (XLEN_BYTES*3)
     ret
+.size assemble_instruction, .-assemble_instruction
 
 
 # in: input string ptr start in s0
 # in: input string ptr end+1 in s1
-# out: ptr to assemble function in a0 (0 if not found)
+# out: ptr to assemble function in a0 (0 if string was not found)
+# out: MATCH value for insn in a1 (undefined if string was not found)
 find_insn_in_table:
     la      t0, encoding_table
 find_insn_in_table_next:
@@ -70,10 +71,18 @@ find_insn_in_table_next_entry:
 find_insn_in_table_not_found:
     mv      a0, zero
 find_insn_in_table_done:
+    lw      a1, 4(t0)                       # store MATCH value from table entry in a1
     ret
-.size assemble_DUMMY, .-assemble_DUMMY
+.size find_insn_in_table, .-find_insn_in_table
 
 
+# in: input string ptr in a0
+# out: register number in a1 (-1 if error)
+assemble_rs1:
+    ret
+.size assemble_rs1, .-assemble_rs1
+
+    
 # in: input string ptr in a0
 assemble_DUMMY:
     li      a1, 0xffffffff
@@ -82,24 +91,24 @@ assemble_DUMMY:
 
 
 # in: input string ptr in a0
-# out: instruction in a1
-assemble_NOP:
-    li      a1, 0x00000013
+# in: MATCH value in a1
+assemble_VOID:
+    # nothing to be done, a1 already contains final insn
     ret
+.size assemble_VOID, .-assemble_VOID
 
-assemble_RET:
-    li      a1, 0x00008067
-    ret
 
+# in: input string ptr in a0
+# in: MATCH value in a1
 assemble_BRANCH:
+    # read rs1
+    # read comma
+    # read rs2
+    # read comma
+    # read address
+
     ret
-
-
-
-.data
-
-.align 4
-
+.size assemble_BRANCH, .-assemble_BRANCH
 
 
 #endif /* WITH_CMD_A */
