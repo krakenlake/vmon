@@ -147,16 +147,16 @@ uart_input_is_delete:
     addi    s0, s0, -1
     # ASCII output
     li      a0, ASCII_BACKSPACE
-    jal     print_char
+    jal     uart_output_char
     li      a0, ' '
-    jal     print_char
+    jal     uart_output_char
     li      a0, ASCII_BACKSPACE
-    jal     print_char
+    jal     uart_output_char
     j       uart_get_char  
 
 uart_continue_not_delete:
     # output char in a0
-    jal     print_char
+    jal     uart_output_char
     li      t0, ASCII_RETURN        
     beq     a0, t0, uart_getline_done
     j       uart_get_char      
