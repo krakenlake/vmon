@@ -55,8 +55,7 @@ cmd_M_next_char:
     j       cmd_M_next_char
 cmd_M_ascii_done:
     bgt     s5, s7, cmd_M_done
-    li      a0, ASCII_NEWLINE
-    jal     print_char
+    jal     print_newline
     j       cmd_M_next_line
 cmd_M_done:
     la      a0, last_address 

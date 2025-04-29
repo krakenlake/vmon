@@ -1,4 +1,5 @@
 #include "vmon/config.h"
+#include "vmon/ASCII.h"
 
 
 .global print_hex
@@ -9,6 +10,7 @@
 .global print_string
 .global print_decimal
 .global print_comma
+.global print_newline
 .global out_buf
 
 
@@ -30,6 +32,20 @@ print_comma:
     addi    sp, sp, (XLEN_BYTES*1)
     ret
 .size print_comma, .-print_comma
+
+print_newline:
+    addi    sp, sp, -(XLEN_BYTES*1)
+    SAVE_X  ra, 0(sp)
+#ifdef USE_CRLF
+    li      a0, ASCII_RETURN
+    jal     print_char
+#endif
+    li      a0, ASCII_NEWLINE
+    jal     print_char
+    LOAD_X  ra, 0(sp)
+    addi    sp, sp, (XLEN_BYTES*1)
+    ret
+.size print_newline, .-print_newline
 
 
 # in: print value in a0 in hex with "0x" prefix
