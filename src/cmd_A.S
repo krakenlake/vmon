@@ -29,11 +29,7 @@ cmd_A_input_loop:
 	# get one line of asembly input (until ASCII_RETURN)
 	jal		uart_getline
 	#  buffer start in a0
-	mv		s2, a0					# save for later
-	li      a0, ASCII_NEWLINE
-    jal     print_char
 	# exit loop if line was empty
-	mv		a0, s2
 	jal		skip_whitespace
 	lb		t0, 0(a0)
 	li		t1, ASCII_RETURN

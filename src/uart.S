@@ -162,6 +162,9 @@ uart_continue_not_delete:
     j       uart_get_char      
 
 uart_getline_done:
+    # print LF to follow read CR
+    li a0, ASCII_NEWLINE
+    jal uart_output_char
     # return buffer address
     mv      a0, s1
 
