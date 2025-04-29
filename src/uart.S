@@ -1,3 +1,4 @@
+#include "vmon/ASCII.h"
 #include "vmon/config.h"
 #include "vmon/drivers/uart/ns16550.h"
 #include "vmon/ASCII.h"
@@ -71,6 +72,14 @@ uart_output_string:
 uart_output_string_loop:
     lb      a0, 0(a1)
     beqz    a0, uart_output_string_done
+#ifdef USE_CRLF
+    li      t0, ASCII_NEWLINE
+    bne     a0, t0, uart_output_string_char
+    li      a0, ASCII_RETURN  # First output CR
+    jal     uart_output_char
+    li      a0, ASCII_NEWLINE # Put LF back in a0
+uart_output_string_char:
+#endif
     jal     uart_output_char
     addi    a1, a1, 1
     j       uart_output_string_loop

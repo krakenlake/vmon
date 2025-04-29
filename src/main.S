@@ -102,8 +102,7 @@ start:
 
     # main loop
 main_prompt:
-    li      a0, ASCII_NEWLINE
-    jal     print_char
+    jal     print_newline
 
 main_prompt_no_newline:
     la      a0, string_prompt
