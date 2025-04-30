@@ -5,43 +5,47 @@
 
 .text
 
-# Division without using M extension
+# Unsigned integer division without using M extension
 # Thanks to Bruce Hoult!
 # in: a0 = dividend
 # in: a1 = divisor
 # out: a0 = quotient 
 # out: a1 = remainder
+# clobbered: a2, a3, a4, a5
 divrem:
-	#define Q a0
-	#define R a1
-	#define N a2
-	#define D a3
-	#define tmp a4
-	#define bit a5
-	
-	mv 		N, a0
-	mv 		D, a1
-	li 		Q, 0
-	li 		R, 0
-	li 		bit, 1
-	slli	bit, bit, XLEN-1
-divrem1:
-	slli	R, R, 1
-	and		tmp, N, bit
-	snez	tmp, tmp
-	add		R, R, tmp
-	bltu	R, D, divrem2
-	sub		R, R, D
-	add		Q, Q, bit
-divrem2:
-	srli	bit, bit, 1
-	bnez	bit, divrem1
-	ret
-.size divrem, .-divrem
+    # check for division by zero, if so immediately return
+    beqz    a1, divrem_zero
+    
+    mv      a2, a0          # N = dividend
+    mv      a3, a1          # D = divisor
+    li      a0, 0           # Q = 0 (quotient)
+    li      a1, 0           # R = 0 (remainder)
+    li      a5, 1           # bit mask: bit = 1
+    slli    a5, a5, XLEN-1  # Set bit to the highest bit position
 
-	#undef Q
-	#undef R
-	#undef N
-	#undef D
-	#undef tmp
-	#undef bit
+divrem_loop:
+    # Shift remainder left by 1
+    slli    a1, a1, 1
+
+    # Isolate the highest bit of the dividend (N)
+    and     a4, a2, a5
+    snez    a4, a4         # Set tmp to 1 if bit is set, 0 otherwise
+    add     a1, a1, a4     # Add the bit to the remainder
+
+    # Check if remainder (R) is greater than or equal to divisor (D)
+    bltu    a1, a3, divrem_continue
+    sub     a1, a1, a3     # Subtract divisor from remainder
+    add     a0, a0, a5     # Add bit to quotient
+
+divrem_continue:
+    # Shift the bit mask to the right
+    srli    a5, a5, 1
+    bnez    a5, divrem_loop
+
+    ret
+
+divrem_zero:
+    li      a0, 0           # Return quotient = 0 (or some error code if needed)
+    ret
+
+.size divrem, .-divrem
