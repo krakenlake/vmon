@@ -36,7 +36,7 @@ VMON understands the following commands:
 
 
 **a <start_start>**
-assembly input (ENTER to stop)
+assembly input (ENTER to stop) [WIP - not fully working yet]
 
 **c <src_start> <src_end> <dst_addr>**
 copy memory contents
