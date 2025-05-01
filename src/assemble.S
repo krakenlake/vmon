@@ -32,12 +32,16 @@ assemble_instruction:
     beqz    a0, assemble_instruction_done       # error while assembling insn parameters
     # now use a0 to return insn size
     mv      a0, a1    
+#ifdef ENABLE_RVC
     jal     insn_is_compressed
     bnez    a0, assemble_instruction_is_RVC
     li      a0, 4
     j       assemble_instruction_done
 assemble_instruction_is_RVC:
     li      a0, 2
+#else
+    li      a0, 4
+#endif
 assemble_instruction_done:
 	LOAD_X  ra, 0(sp)               
     LOAD_X  s0, (XLEN_BYTES*1)(sp)               
@@ -110,10 +114,19 @@ assemble_VOID:
 # in: MATCH value in a1
 assemble_BRANCH:
     # read rs1
+    jal     skip_whitespace
+
     # read comma
+    jal     skip_whitespace
+
     # read rs2
+    jal     skip_whitespace
+
     # read comma
+    jal     skip_whitespace
+
     # read address
+    jal     skip_whitespace
 
     ret
 .size assemble_BRANCH, .-assemble_BRANCH
