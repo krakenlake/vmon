@@ -41,11 +41,12 @@ setup_trap_handler:
 
 trap_handler:
 	# push stack
-    addi    sp, sp, -(XLEN_BYTES*4)              
+    addi    sp, sp, -(XLEN_BYTES*5)              
     SAVE_X  ra, 0(sp)
     SAVE_X  a0, (XLEN_BYTES*1)(sp)
     SAVE_X  t0, (XLEN_BYTES*2)(sp)
     SAVE_X  t1, (XLEN_BYTES*3)(sp)
+    SAVE_X  s0, (XLEN_BYTES*4)(sp)
 	# clear irq
 	li 		t0, 0b10000000
 	csrc	mip, t0
@@ -64,11 +65,33 @@ trap_handler_exception:
 	la		a0, string_exception_msg
 	jal		print_string
 	csrr	a0, mcause
+	mv		s0, a0								# save for later
 	jal		print_hex
+
+	# print MCAUSE verbose
+#ifdef MCAUSE_VERBOSE
+	li		a0, ' '
+	jal		print_char
+	li		a0, '('
+	jal		print_char
+	# each entry in MCAUSE string table is 4 bytes
+	slli	a0, s0, 2							# set a0 = mcause * 4
+	la		s0, mcause_verbose_table			# start of MCAUSE string table
+	add		a0, a0, s0
+#if XLEN >= 64
+	lwu		a0, 0(a0)
+#else
+	lw		a0, 0(a0)
+#endif
+	jal 	print_string
+	li		a0, ')'
+	jal		print_char
+#endif
+
 	# set return address for leaving trap handler
 	la		a0, main_prompt
 	csrw	mepc, a0
-	# reset stack to the value that should have at main_prompt
+	# reset stack to the value that it should have at main_prompt
 	la		a0, stackptr_reset
 	LOAD_X	sp, 0(a0)
 	mret
@@ -83,11 +106,12 @@ trap_handler_irq:
 	SAVE_X	t1, 0(t0)
 trap_handler_pop:
 	# pop stack
-	LOAD_X  ra, 0(sp)               
-    LOAD_X  a0, (XLEN_BYTES*1)(sp)               
-    LOAD_X  t0, (XLEN_BYTES*2)(sp)               
-    LOAD_X  t1, (XLEN_BYTES*3)(sp)               
-    addi    sp, sp, (XLEN_BYTES*4)
+	LOAD_X  ra, 0(sp)
+	LOAD_X  a0, (XLEN_BYTES*1)(sp)
+	LOAD_X  t0, (XLEN_BYTES*2)(sp)
+	LOAD_X  t1, (XLEN_BYTES*3)(sp)
+	LOAD_X  s0, (XLEN_BYTES*4)(sp)
+	addi    sp, sp, (XLEN_BYTES*5)
 	mret
 .size trap_handler, .-trap_handler
 
@@ -95,8 +119,39 @@ trap_handler_pop:
 .data
 
 .align 4
-
 string_exception_msg:		.string "\nexception: mcause=";
+
+#ifdef MCAUSE_VERBOSE
+.align 4
+string_CAUSE_MISALIGNED_FETCH:		.string "CAUSE_MISALIGNED_FETCH";
+string_CAUSE_FAULT_FETCH:			.string "CAUSE_FAULT_FETCH";
+string_CAUSE_ILLEGAL_INSTRUCTION:	.string "CAUSE_ILLEGAL_INSTRUCTION";
+string_CAUSE_BREAKPOINT:			.string "CAUSE_BREAKPOINT";
+string_CAUSE_MISALIGNED_LOAD:		.string "CAUSE_MISALIGNED_LOAD";
+string_CAUSE_FAULT_LOAD:			.string "CAUSE_FAULT_LOAD";
+string_CAUSE_MISALIGNED_STORE:		.string "CAUSE_MISALIGNED_STORE";
+string_CAUSE_FAULT_STORE:			.string "CAUSE_FAULT_STORE";
+string_CAUSE_USER_ECALL:			.string "CAUSE_USER_ECALL";
+string_CAUSE_SUPERVISOR_ECALL:		.string "CAUSE_SUPERVISOR_ECALL";
+string_CAUSE_HYPERVISOR_ECALL:		.string "CAUSE_HYPERVISOR_ECALL";
+string_CAUSE_MACHINE_ECALL:			.string "CAUSE_MACHINE_ECALL";
+
+.align 4
+mcause_verbose_table:
+.word string_CAUSE_MISALIGNED_FETCH
+.word string_CAUSE_FAULT_FETCH
+.word string_CAUSE_ILLEGAL_INSTRUCTION
+.word string_CAUSE_BREAKPOINT
+.word string_CAUSE_MISALIGNED_LOAD
+.word string_CAUSE_FAULT_LOAD
+.word string_CAUSE_MISALIGNED_STORE
+.word string_CAUSE_FAULT_STORE
+.word string_CAUSE_USER_ECALL
+.word string_CAUSE_SUPERVISOR_ECALL
+.word string_CAUSE_HYPERVISOR_ECALL
+.word string_CAUSE_MACHINE_ECALL
+#endif 
+
 
 .bss
 .align 8

@@ -75,6 +75,9 @@
 // enable printing of pseudo opcodes in disassembly?
 #define ENABLE_PSEUDO
 
+// include strings for MCAUSE verbose output?
+#define MCAUSE_VERBOSE
+
 // default number of lines for the "d" command if no end address is given
 #define	DEFAULT_D_LINES		16
 
