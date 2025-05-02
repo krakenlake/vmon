@@ -133,7 +133,7 @@ trap_handler_pop:
 
 .data
 
-string_exception_msg:		.string "exception:"
+string_exception_msg:		.string "\nexception:"
 string_mepc_msg:			.string "\n\tmepc\t= ";
 string_mtval_msg:			.string "\n\tmtval\t= ";
 string_mcause_msg:			.string "\n\tmcause\t= ";

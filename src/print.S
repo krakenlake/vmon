@@ -33,6 +33,7 @@ print_comma:
     ret
 .size print_comma, .-print_comma
 
+
 print_newline:
     addi    sp, sp, -(XLEN_BYTES*1)
     SAVE_X  ra, 0(sp)
