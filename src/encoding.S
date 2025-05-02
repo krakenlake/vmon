@@ -1,12 +1,90 @@
 #include "vmon/config.h"
 #include "riscv/riscv-opc.h"
 
-#ifdef WITH_CMD_D
+//#ifdef WITH_CMD_D
+#if defined (WITH_CMD_D) || defined (WITH_CMD_A)
+
+
+.global get_register_index_by_name
+
+
 
 .global encoding_table
 .global int_register_names
 .global float_register_names
 .global string_OP_UNKNOWN
+
+# necessary for c.add/c.jalr/c.ebreak adjustment
+.global string_OP_C_ADD
+.global string_OP_C_JALR
+.global string_OP_C_EBREAK
+
+# in: a0 = start of string ptr to name
+# in: a1 = end of string ptr to name (after last char)
+# out: a2 = index number of register (-1 if error)
+get_register_index_by_name:
+/*
+find_insn_in_table:
+    la      t0, encoding_table
+find_insn_in_table_next:
+#if XLEN >= 64
+    lwu     t1, 12(t0)                       # get string ptr from table
+    lwu     a0, 16(t0)                       # get function ptr from table
+#else
+    lw      t1, 12(t0)                       # get string ptr from table
+    lw      a0, 16(t0)                       # get function ptr from table
+#endif
+    beqz    t1, find_insn_in_table_not_found          # table end, no match found
+    # compare strings
+    mv      t2, s0                          # iterate with t2 over input string                         
+find_insn_in_table_cmp_next_byte:
+    beq     t2, s1, find_insn_in_table_done
+    lb      t3, 0(t2)
+    lb      t4, 0(t1)
+    bne     t3, t4, find_insn_in_table_next_entry       # strings not equal
+    beqz    t4, find_insn_in_table_next_entry           # string in table ended
+    addi    t1, t1, 1
+    addi    t2, t2, 1
+    j       find_insn_in_table_cmp_next_byte
+find_insn_in_table_next_entry:
+    addi    t0, t0, 20
+    j       find_insn_in_table_next
+find_insn_in_table_not_found:
+    mv      a0, zero
+find_insn_in_table_done:
+    lw      a1, 4(t0)                       # store MATCH value from table entry in a1
+    ret
+
+*/
+	
+
+
+
+
+/*	
+	li		a1, -1
+
+    mv      t0, a0                          # iterate with t2 over input string                         
+get_register_index_by_name_cmp_next_byte:
+    beq     t2, s1, find_insn_in_table_done
+    lb      t3, 0(t2)
+    lb      t4, 0(t1)
+    bne     t3, t4, find_insn_in_table_next_entry       # strings not equal
+    beqz    t4, find_insn_in_table_next_entry           # string in table ended
+    addi    t1, t1, 1
+    addi    t2, t2, 1
+    j       find_insn_in_table_cmp_next_byte
+get_register_index_by_name_next_entry:
+    addi    t0, t0, 20
+    j       find_insn_in_table_next
+get_register_index_by_name_not_found:
+    mv      a0, zero
+get_register_index_by_name_done:
+    lw      a1, 4(t0)                       # store MATCH value from table entry in a1
+	ret
+*/
+.size get_register_index_by_name, .-get_register_index_by_name
+
 
 .data
 
@@ -569,13 +647,13 @@ encoding_table:
 	.word MASK_C_SLLI64, MATCH_C_SLLI64, decode_EMPTY, string_OP_C_SLLI64, assemble_DUMMY
 	.word MASK_C_LWSP, MATCH_C_LWSP, decode_C_LWSP, string_OP_C_LWSP, assemble_DUMMY
 	.word MASK_C_MV, MATCH_C_MV, decode_EMPTY, string_OP_C_MV, assemble_DUMMY
-	.word MASK_C_ADD, MATCH_C_ADD, decode_EMPTY, string_OP_C_ADD, assemble_DUMMY
+	.word MASK_C_ADD, MATCH_C_ADD, decode_C_ADD_JAL_EBREAK, string_OP_C_ADD, assemble_DUMMY
 	.word MASK_C_SWSP, MATCH_C_SWSP, decode_EMPTY, string_OP_C_SWSP, assemble_DUMMY
-	.word MASK_C_NOP, MATCH_C_NOP, decode_EMPTY, string_OP_C_NOP, assemble_DUMMY
+	.word MASK_C_NOP, MATCH_C_NOP, decode_EMPTY, string_OP_C_NOP, assemble_VOID
 	.word MASK_C_ADDI16SP, MATCH_C_ADDI16SP, decode_EMPTY, string_OP_C_ADDI16SP, assemble_DUMMY
 	.word MASK_C_JR, MATCH_C_JR, decode_EMPTY, string_OP_C_JR, assemble_DUMMY
-	.word MASK_C_JALR, MATCH_C_JALR, decode_EMPTY, string_OP_C_JALR, assemble_DUMMY
-	.word MASK_C_EBREAK, MATCH_C_EBREAK, decode_C_EBREAK, string_OP_C_EBREAK, assemble_DUMMY
+	.word MASK_C_JALR, MATCH_C_JALR, decode_C_ADD_JAL_EBREAK, string_OP_C_JALR, assemble_DUMMY
+	.word MASK_C_EBREAK, MATCH_C_EBREAK, decode_C_ADD_JAL_EBREAK, string_OP_C_EBREAK, assemble_VOID
 	.word MASK_C_LD, MATCH_C_LD, decode_EMPTY, string_OP_C_LD, assemble_DUMMY
 	.word MASK_C_SD, MATCH_C_SD, decode_EMPTY, string_OP_C_SD, assemble_DUMMY
 	.word MASK_C_ADDIW, MATCH_C_ADDIW, decode_EMPTY, string_OP_C_ADDIW, assemble_DUMMY
@@ -595,7 +673,7 @@ encoding_table:
 
 # Zifencei
 #ifdef ENABLE_RVZifencei
-	.word MASK_FENCE_I, MATCH_FENCE_I, decode_FENCE_I, string_OP_FENCE_I, assemble_DUMMY
+	.word MASK_FENCE_I, MATCH_FENCE_I, decode_FENCE_I, string_OP_FENCE_I, assemble_VOID
 #endif /* ENABLE_RVZifencei */
 
 # Zicsr
@@ -610,15 +688,15 @@ encoding_table:
 
 # Privileged
 #ifdef ENABLE_RVPRIV
-	.word MASK_WFI, MATCH_WFI, decode_WFI, string_OP_WFI, assemble_DUMMY
-	.word MASK_MRET, MATCH_MRET, decode_MRET, string_OP_MRET, assemble_DUMMY
-	.word MASK_SRET, MATCH_SRET, decode_SRET, string_OP_SRET, assemble_DUMMY
-	.word MASK_SFENCE_VM, MATCH_SFENCE_VM, decode_SFENCE_VM, string_OP_SFENCE_VM, assemble_DUMMY
-	.word MASK_SFENCE_VMA, MATCH_SFENCE_VMA, decode_SFENCE_VMA, string_OP_SFENCE_VMA,assemble_DUMMY
+	.word MASK_WFI, MATCH_WFI, decode_WFI, string_OP_WFI, assemble_VOID
+	.word MASK_MRET, MATCH_MRET, decode_MRET, string_OP_MRET, assemble_VOID
+	.word MASK_SRET, MATCH_SRET, decode_SRET, string_OP_SRET, assemble_VOID
+	.word MASK_SFENCE_VM, MATCH_SFENCE_VM, decode_SFENCE_VM, string_OP_SFENCE_VM, assemble_VOID
+	.word MASK_SFENCE_VMA, MATCH_SFENCE_VMA, decode_SFENCE_VMA, string_OP_SFENCE_VMA,assemble_VOID
 #endif /* ENABLE_RVPRIV */
 
 # table end marker
 .word 0, 0, 0, 0, 0
 .size encoding_table, .-encoding_table
 
-#endif /* WITH_CMD_D */
+#endif /* #if defined (WITH_CMD_D) || defined (WITH_CMD_A) */
