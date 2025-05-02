@@ -64,10 +64,19 @@ trap_handler_exception:
 	# 3. abort the current command and wait for the next command
 	la		a0, string_exception_msg
 	jal		print_string
+
+	# print mepc
+	la		a0, string_mepc_msg
+	jal		print_string
+	csrr	a0, mepc
+	jal		print_hex
+
+	# print mcause
+	la		a0, string_mcause_msg
+	jal		print_string
 	csrr	a0, mcause
 	mv		s0, a0								# save for later
 	jal		print_hex
-
 	# print MCAUSE verbose
 #ifdef MCAUSE_VERBOSE
 	li		a0, ' '
@@ -119,7 +128,9 @@ trap_handler_pop:
 .data
 
 .align 4
-string_exception_msg:		.string "\nexception: mcause=";
+string_exception_msg:		.string "exception:"
+string_mcause_msg:			.string "\n\tmcause=";
+string_mepc_msg:			.string "\n\tmepc=";
 
 #ifdef MCAUSE_VERBOSE
 .align 4
