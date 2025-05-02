@@ -84,16 +84,16 @@ DEP = $(OBJ:%.o=%.d)
 
 
 #targets
-all: $(BUILD) $(BUILD)/$(NAME).img $(BUILD)/$(NAME)-stripped.img
-	ls -al $(BUILD)/$(NAME).img $(BUILD)/$(NAME)-stripped.img
+all: $(BUILD) $(BUILD)/$(NAME).img $(BUILD)/$(NAME)-stripped.elf
+	ls -al $(BUILD)/$(NAME).img $(BUILD)/$(NAME)-stripped.elf
 
 $(BUILD):
 	mkdir -p $(BUILD)
 
 $(BUILD)/$(NAME).img: $(BUILD)/$(NAME).elf
-	$(OBJCOPY) $(BUILD)/$(NAME).elf -I binary $@
+	$(OBJCOPY) $(BUILD)/$(NAME).elf -O binary $@
 
-$(BUILD)/$(NAME)-stripped.img: $(BUILD)/$(NAME).img
+$(BUILD)/$(NAME)-stripped.elf: $(BUILD)/$(NAME).elf
 	$(STRIP) $< -o $@
 
 $(BUILD)/$(NAME).elf: linker/link.ld.$(PLATFORM) Makefile $(OBJ)
