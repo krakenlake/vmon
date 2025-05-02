@@ -35,7 +35,6 @@ cmd_A_input_loop:
 	li		t1, ASCII_RETURN
 	beq		t0, t1, cmd_A_done
 	# read input line and assemble one instruction
-	mv		a0, s2
 	jal		assemble_instruction
 	bnez	a0, cmd_A_continue
 
