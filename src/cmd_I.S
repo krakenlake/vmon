@@ -175,12 +175,12 @@ cmd_I:
         jal     print_hex
     #endif /* WITH_TESTCODE_RVPRIV */
 
-    #ifdef WITH_TESTCODE_RVPSEUDO
-        la      a0, string_info_testcode_RVPSEUDO
+    #ifdef WITH_TESTCODE_PSEUDO
+        la      a0, string_info_testcode_PSEUDO
         jal     print_string
-        la      a0, testcode_RVPSEUDO
+        la      a0, testcode_PSEUDO
         jal     print_hex
-    #endif /* WITH_TESTCODE_RVPSEUDO */
+    #endif /* WITH_TESTCODE_PSEUDO */
 
 #endif /* WITH_TESTCODE */
 
@@ -294,10 +294,10 @@ string_info_stacksize:
     .size string_info_testcode_RVPRIV, .-string_info_testcode_RVPRIV
     #endif
 
-    #ifdef WITH_TESTCODE_RVPSEUDO
-    string_info_testcode_RVPSEUDO:
-        .string "\ntestcode RVPSEUDO: ";
-    .size string_info_testcode_RVPSEUDO, .-string_info_testcode_RVPSEUDO
+    #ifdef WITH_TESTCODE_PSEUDO
+    string_info_testcode_PSEUDO:
+        .string "\n PSEUDO: ";
+    .size string_info_testcode_PSEUDO, .-string_info_testcode_PSEUDO
     #endif
 #endif /* WITH_TESTCODE */
 

@@ -15,19 +15,20 @@
 .global testcode_RVZicsr
 .global testcode_RVZifencei
 .global testcode_RVPRIV
-.global testcode_RVPSEUDO
+.global testcode_PSEUDO
 
 
 .text
 
 
 testcode:
-    addi a0,a0,1
 
 #ifdef WITH_TESTCODE_RV32I
 .option push
 .option norvc
 testcode_RV32I:
+    ret
+    nop
     ecall
     ebreak  
     fence   i, i   
@@ -835,13 +836,13 @@ testcode_RVPRIV:
 #ifdef WITH_TESTCODE_PSEUDO
 .option push
 .option norvc
-testcode_Pseudo:
+testcode_PSEUDO:
     jalr    x0, x1, 0           # ret
     ret
     addi    x0, x0, 0           # nop
     nop
 .option pop /* norvc */
-.size testcode_Pseudo, .-testcode_Pseudo
+.size testcode_PSEUDO, .-testcode_PSEUDO
 #endif /* WITH_TESTCODE_PSEUDO */
 
 
