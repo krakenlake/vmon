@@ -41,7 +41,6 @@ define VF2_RUN_MSG
 	- copy build/vf2/vmon.img to SD card
 	- insert SD card into VF2
 	- attach GPIO-to-USB serial terminal to VF2 (e.g. minicom, 115200 baud)
-	- set minicom to "Add Carriage Ret" (Ctrl-A Z, then U)
 	- boot into U-Boot from SPI (both dip-switches to L)
 	- in U-Boot command line, load and run vmon.img:
 	StarFive # fatload mmc 1:2  0x43fff000 vmon.img
