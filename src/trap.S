@@ -71,6 +71,12 @@ trap_handler_exception:
 	csrr	a0, mepc
 	jal		print_hex
 
+	# print mtval
+	la		a0, string_mtval_msg
+	jal		print_string
+	csrr	a0, mtval
+	jal		print_hex
+
 	# print mcause
 	la		a0, string_mcause_msg
 	jal		print_string
@@ -127,13 +133,12 @@ trap_handler_pop:
 
 .data
 
-.align 4
 string_exception_msg:		.string "exception:"
-string_mcause_msg:			.string "\n\tmcause=";
-string_mepc_msg:			.string "\n\tmepc=";
+string_mepc_msg:			.string "\n\tmepc\t= ";
+string_mtval_msg:			.string "\n\tmtval\t= ";
+string_mcause_msg:			.string "\n\tmcause\t= ";
 
 #ifdef MCAUSE_VERBOSE
-.align 4
 string_CAUSE_MISALIGNED_FETCH:		.string "CAUSE_MISALIGNED_FETCH";
 string_CAUSE_FAULT_FETCH:			.string "CAUSE_FAULT_FETCH";
 string_CAUSE_ILLEGAL_INSTRUCTION:	.string "CAUSE_ILLEGAL_INSTRUCTION";
