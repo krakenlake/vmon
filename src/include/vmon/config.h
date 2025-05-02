@@ -75,6 +75,9 @@
 // enable printing of pseudo opcodes in disassembly?
 #define ENABLE_PSEUDO
 
+// include strings for MCAUSE verbose output?
+#define MCAUSE_VERBOSE
+
 // default number of lines for the "d" command if no end address is given
 #define	DEFAULT_D_LINES		16
 
@@ -83,6 +86,11 @@
 
 // print a space after commas in disassembler output
 #define SPACE_AFTER_COMMA
+
+// print a CR before each LF
+// Note: at higher levels this varies by system but at this level most
+// things expect both.
+#define USE_CRLF
 
 // size of character input buffer in bytes
 #define BUFFER_SIZE			128

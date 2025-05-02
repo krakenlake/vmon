@@ -82,8 +82,7 @@ cmd_D_advance:
     addi    s5, s5, 2                   # add 2 more bytes if not compressed
 cmd_D_advance_done:
     bgt     s5, s7, cmd_D_done          # check if end address reached
-    li      a0, ASCII_NEWLINE
-    jal     print_char
+    jal     print_newline
     j       cmd_D_next_instruction
 cmd_D_done:
     la      a0, last_address 

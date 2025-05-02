@@ -102,20 +102,13 @@ start:
 
     # main loop
 main_prompt:
-    li      a0, ASCII_NEWLINE
-    jal     print_char
+    jal     print_newline
 
 main_prompt_no_newline:
     la      a0, string_prompt
     jal     print_string
 
     jal     uart_getline
-    mv      s2, a0
-
-    li      a0, ASCII_NEWLINE
-    jal     print_char
-    
-    mv      a0, s2
     jal     skip_whitespace
     
     lb      t1, 0(a0)
