@@ -13,6 +13,7 @@
 .global print_rd
 
 .global decode_opcode
+.global adjust_RVC_add_jal_ebreak
 
 .global decode_B_type
 .global decode_I_type
@@ -44,7 +45,7 @@
 
 #ifdef ENABLE_RVC
 .global decode_C_LWSP
-.global decode_C_EBREAK
+.global decode_C_ADD_JAL_EBREAK
 #endif
 
 .text
@@ -371,7 +372,7 @@ decode_FENCE:
     ret
 .size decode_FENCE, .-decode_FENCE
 
-
+decode_C_ADD_JAL_EBREAK:
 decode_FENCE_I:
 decode_FENCE_TSO:
 decode_ECALL:
@@ -428,14 +429,9 @@ decode_AMO:
 
 
 #ifdef ENABLE_RVC
-decode_C_EBREAK:
-    # do nothing
-    ret
-.size decode_C_EBREAK, .-decode_C_EBREAK
-
-
 # in: instruction word in a0
 decode_CR_type:
+    # TODO
     ret
 .size decode_CR_type, .-decode_CR_type
 
@@ -455,6 +451,7 @@ decode_C_LWSP:
     ret
 .size decode_C_LWSP, .-decode_C_LWSP
 #endif /* ENABLE_RVC */
+
 
 # in: instruction word in a0
 decode_CSR:
@@ -608,7 +605,7 @@ decode_opcode_search_next:
 #else
     lw      t2, 0(t0)                       # get mask word from table
 #endif
-    beqz    t2, decode_opcode_done          # table end, no match found
+    beqz    t2, decode_opcode_done          # table end, no match found   
     and     t2, a0, t2                      # apply mask
 #if XLEN >= 64
     lwu     t3, 4(t0)                       # get match word from table
@@ -629,10 +626,38 @@ decode_opcode_continue:
     addi    t0, t0, 20                      # point to next table entry
     j       decode_opcode_search_next       # repeat
 decode_opcode_done:
-    LOAD_X  ra, 0(sp)               
+    LOAD_X  ra, 0(sp)          
     addi    sp, sp, (XLEN_BYTES*1)
     ret
 .size decode_opcode, .-decode_opcode
+
+#ifdef ENABLE_RVC
+# c.add, c.ebreak and c.jalr cannot be correctly identified by MATCH/MASK alone
+# so this routine fixes that after calling decode_opcode
+#
+# in: instruction word in a0
+# in: type-depending decoder routine to call in a1
+# in: opcode string in a2
+# out: instruction word in a0
+# out: type-depending decoder routine to call in a1
+# out: opcode string in a2
+adjust_RVC_add_jal_ebreak:
+    li      t0, 0x9002
+    bne     a0, t0, adjust_RVC_add_jal_ebreak_not_ebreak
+    # c.ebreak
+    la      a1, decode_EMPTY
+    la      a2, string_OP_C_EBREAK
+    ret
+adjust_RVC_add_jal_ebreak_not_ebreak:
+    # TODO c.add
+    ret
+adjust_RVC_add_jal_ebreak_not_add:
+    # TODO c.jalr
+    ret
+adjust_RVC_add_jal_ebreak_done:
+    ret
+.size adjust_RVC_add_jal_ebreak, .-adjust_RVC_add_jal_ebreak
+#endif
 
 
 # in: instruction word in a0
@@ -667,7 +692,6 @@ print_instruction_done:
 
 
 #ifdef ENABLE_RVA
-
 # in: instruction word in a0
 print_AMO_postfix:
     addi    sp, sp, -(XLEN_BYTES*1)              
@@ -699,7 +723,6 @@ print_AMO_postfix_done:
     addi    sp, sp, (XLEN_BYTES*1)
     ret
 .size print_AMO_postfix, .-print_AMO_postfix
-
 #endif
 
 
