@@ -10,6 +10,8 @@
 
 
 	.global encoding_table
+	.global find_insn_in_table
+
 	.global int_register_names
 	.global float_register_names
 	.global string_OP_UNKNOWN
@@ -19,11 +21,11 @@
 	.global string_OP_C_JALR
 	.global string_OP_C_EBREAK
 
-	# in: a0 = start of string ptr to name
-	# in: a1 = end of string ptr to name (after last char)
-	# out: a2 = index number of register (-1 if error)
-get_register_index_by_name:
-	/*
+
+	# in: input string ptr start in s0
+	# in: input string ptr end+1 in s1
+	# out: ptr to assemble function in a0 (0 if string was not found)
+	# out: MATCH value for insn in a1 (undefined if string was not found)
 find_insn_in_table:
 	la		t0, encoding_table
 find_insn_in_table_next:
@@ -54,13 +56,13 @@ find_insn_in_table_not_found:
 find_insn_in_table_done:
 	lw		a1, 4(t0)						# store MATCH value from table entry in a1
 	ret
-
-	*/
-	
+	.size find_insn_in_table, .-find_insn_in_table
 
 
-
-
+	# in: a0 = start of string ptr to name
+	# in: a1 = end of string ptr to name (after last char)
+	# out: a2 = index number of register (-1 if error)
+get_register_index_by_name:
 	/*	
 	li		a1, -1
 

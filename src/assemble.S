@@ -51,43 +51,6 @@ assemble_instruction_done:
 	.size assemble_instruction, .-assemble_instruction
 
 
-	# in: input string ptr start in s0
-	# in: input string ptr end+1 in s1
-	# out: ptr to assemble function in a0 (0 if string was not found)
-	# out: MATCH value for insn in a1 (undefined if string was not found)
-find_insn_in_table:
-	la		t0, encoding_table
-find_insn_in_table_next:
-	#if XLEN >= 64
-	lwu		t1, 12(t0)						 # get string ptr from table
-	lwu		a0, 16(t0)						 # get function ptr from table
-	#else
-	lw		t1, 12(t0)						 # get string ptr from table
-	lw		a0, 16(t0)						 # get function ptr from table
-	#endif
-	beqz	t1, find_insn_in_table_not_found		  # table end, no match found
-	# compare strings
-	mv		t2, s0							# iterate with t2 over input string							
-find_insn_in_table_cmp_next_byte:
-	beq		t2, s1, find_insn_in_table_done
-	lb		t3, 0(t2)
-	lb		t4, 0(t1)
-	bne		t3, t4, find_insn_in_table_next_entry		# strings not equal
-	beqz	t4, find_insn_in_table_next_entry			# string in table ended
-	addi	t1, t1, 1
-	addi	t2, t2, 1
-	j		find_insn_in_table_cmp_next_byte
-find_insn_in_table_next_entry:
-	addi	t0, t0, 20
-	j		find_insn_in_table_next
-find_insn_in_table_not_found:
-	mv		a0, zero
-find_insn_in_table_done:
-	lw		a1, 4(t0)						# store MATCH value from table entry in a1
-	ret
-	.size find_insn_in_table, .-find_insn_in_table
-
-
 	# in: input string ptr in a0
 	# out: register number in a1 (-1 if error)
 assemble_rs1:
