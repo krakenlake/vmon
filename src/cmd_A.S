@@ -1,31 +1,31 @@
-#include "vmon/config.h"
-#include "vmon/ASCII.h"
+	#include "vmon/config.h"
+	#include "vmon/ASCII.h"
 
 
-#ifdef WITH_CMD_A
+	#ifdef WITH_CMD_A
 
-.global cmd_A
+	.global cmd_A
 
-.text
+	.text
 
 
 cmd_A:
 	# read dst_start from text buffer	
-    jal     skip_whitespace
-    jal     get_hex_addr            # read dst_start from text buffer
-    bnez    a2, cmd_A_error         # abort command if not found
+	jal		skip_whitespace
+	jal		get_hex_addr			# read dst_start from text buffer
+	bnez	a2, cmd_A_error			# abort command if not found
 	mv		s0, a1
 
 cmd_A_input_loop:
 	# print line prefix
-    la      a0, string_line_prefix_A
-    jal     print_string
+	la		a0, string_line_prefix_A
+	jal		print_string
 	# print current dst_address
-	mv      a0, s0
-    jal     print_hex
+	mv		a0, s0
+	jal		print_hex
 	# print assembly input prompt
-    la      a0, string_ass_prompt
-    jal     print_string
+	la		a0, string_ass_prompt
+	jal		print_string
 	# get one line of asembly input (until ASCII_RETURN)
 	jal		uart_getline
 	#  buffer start in a0
@@ -39,9 +39,9 @@ cmd_A_input_loop:
 	bnez	a0, cmd_A_continue
 
 	# user entered garbage in assembly line
-    la      a0, string_ass_error
-    jal     print_string
-	j 		cmd_A_input_loop
+	la		a0, string_ass_error
+	jal		print_string
+	j		cmd_A_input_loop
 
 cmd_A_continue:
 	# instruction now in a1
@@ -52,22 +52,22 @@ cmd_A_continue:
 	j		cmd_A_input_loop
 
 cmd_A_error:
-    la      a0, error_param
-    jal     print_string
+	la		a0, error_param
+	jal		print_string
 cmd_A_done:
-    j       main_prompt
-.size cmd_A, .-cmd_A
+	j		main_prompt
+	.size cmd_A, .-cmd_A
 
 
-.data
+	.data
 
-string_line_prefix_A:   .string "A ";
-.size string_line_prefix_A, .-string_line_prefix_A
+string_line_prefix_A:	.string "A ";
+	.size string_line_prefix_A, .-string_line_prefix_A
 
 string_ass_prompt:	.string " := ";
-.size string_ass_prompt, .-string_ass_prompt
+	.size string_ass_prompt, .-string_ass_prompt
 
 string_ass_error:	.string "\t\t???\n\r";
-.size string_ass_error, .-string_ass_error
+	.size string_ass_error, .-string_ass_error
 
-#endif /* WITH_CMD_A */
+	#endif /* WITH_CMD_A */
