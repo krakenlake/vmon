@@ -16,10 +16,11 @@
 	# out: a0 = number of bytes written to memory (normal 4, 2 for RVC, 0 if error)
 	# out: a1 = assembled instruction to be written into memory
 assemble_instruction:  
-	addi	sp, sp, -(XLEN_BYTES*3)				 
+	addi	sp, sp, -(XLEN_BYTES*4)				 
 	SAVE_X	ra, 0(sp)
 	SAVE_X	s0, (XLEN_BYTES*1)(sp)
 	SAVE_X	s1, (XLEN_BYTES*2)(sp)
+	SAVE_X	s2, (XLEN_BYTES*3)(sp)
 	jal		skip_whitespace
 	mv		s0, a0
 	jal		find_insn_name_end
@@ -27,11 +28,12 @@ assemble_instruction:
 	# find string between s0 and s1 in encoding table
 	jal		get_data_by_insn_name
 	# function ptr now in a0
-	beqz	a0, assemble_instruction_done		# not found
-	jalr	a0									# call assemble function   
+	mv		s2, a0								# save function ptr in s2
+	beqz	s2, assemble_instruction_done		# not found
+	mv		a0, s1
+	jalr	s2									# call assemble function   
 	beqz	a0, assemble_instruction_done		# error while assembling insn parameters
 	# now use a0 to return insn size
-	mv		a0, a1	  
 	#ifdef ENABLE_RVC
 	jal		insn_is_compressed
 	bnez	a0, assemble_instruction_is_RVC
@@ -46,12 +48,13 @@ assemble_instruction_done:
 	LOAD_X	ra, 0(sp)				
 	LOAD_X	s0, (XLEN_BYTES*1)(sp)				 
 	LOAD_X	s1, (XLEN_BYTES*2)(sp)				 
-	addi	sp, sp, (XLEN_BYTES*3)
+	LOAD_X	s2, (XLEN_BYTES*3)(sp)				 
+	addi	sp, sp, (XLEN_BYTES*4)
 	ret
 	.size assemble_instruction, .-assemble_instruction
 
 
-	# in: input string ptr in a0
+	# in: register number in a0
 	# out: register number in a1 (-1 if error)
 assemble_rs1:
 	ret
@@ -75,24 +78,50 @@ assemble_VOID:
 
 	# in: input string ptr in a0
 	# in: MATCH value in a1
+	# out: assembled instruction in a0
 assemble_BRANCH:
-	# read rs1
-	jal		skip_whitespace
+	addi	sp, sp, -(XLEN_BYTES*4)				 
+	SAVE_X	ra, 0(sp)
+	SAVE_X	s0, (XLEN_BYTES*1)(sp)
+	SAVE_X	s1, (XLEN_BYTES*2)(sp)
+	SAVE_X	s2, (XLEN_BYTES*3)(sp)
 
-	# read comma
-	jal		skip_whitespace
+	mv		s2, a1								# assemble insn in s2
 
-	# read rs2
+	# advance to first input parameter
 	jal		skip_whitespace
+	mv		s0, a0
+	jal		find_register_name_end
+	mv		s1, a0
 
-	# read comma
-	jal		skip_whitespace
+	# parse register 1
+	mv		a0, s0
+	mv		a1, s1
+	jal		get_int_register_index_by_name
+	bltz	a0, assemble_BRANCH_error
 
-	# read address
-	jal		skip_whitespace
+	#jal		print_decimal
 
+	# assemble register 1
+	# expect ,
+	# parse register 2
+	# assemble register 2
+	# expect ,
+	# parse address (or label)
+	# assemble address
+
+	j 		assemble_BRANCH_done	
+assemble_BRANCH_error:
+	mv		a0, zero
+assemble_BRANCH_done:
+	mv		a0, s2
+	LOAD_X	ra, 0(sp)				
+	LOAD_X	s0, (XLEN_BYTES*1)(sp)				 
+	LOAD_X	s1, (XLEN_BYTES*2)(sp)				 
+	LOAD_X	s2, (XLEN_BYTES*3)(sp)				 
+	addi	sp, sp, (XLEN_BYTES*4)
 	ret
-	.size assemble_BRANCH, .-assemble_BRANCH
+.size assemble_BRANCH, .-assemble_BRANCH
 
 
 	#endif /* WITH_CMD_A */
