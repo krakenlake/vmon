@@ -8,14 +8,14 @@
 	.global get_register_index_by_name
 
 
-
+	# table with MASK, MATCH, decode_func_ptr, opcode_string, assemble_func_ptr
 	.global encoding_table
-	.global find_insn_in_table
+	.global get_data_by_insn_name
 
 	.global int_register_names
 	.global float_register_names
-	.global string_OP_UNKNOWN
 
+	.global string_OP_UNKNOWN
 	# necessary for c.add/c.jalr/c.ebreak adjustment
 	.global string_OP_C_ADD
 	.global string_OP_C_JALR
@@ -26,37 +26,37 @@
 	# in: input string ptr end+1 in s1
 	# out: ptr to assemble function in a0 (0 if string was not found)
 	# out: MATCH value for insn in a1 (undefined if string was not found)
-find_insn_in_table:
+get_data_by_insn_name:
 	la		t0, encoding_table
-find_insn_in_table_next:
+get_data_by_insn_name_next:
 	#if XLEN >= 64
-	lwu		t1, 12(t0)						 # get string ptr from table
-	lwu		a0, 16(t0)						 # get function ptr from table
+	lwu		t1, 12(t0)									# get string ptr from table
+	lwu		a0, 16(t0)									# get function ptr from table
 	#else
-	lw		t1, 12(t0)						 # get string ptr from table
-	lw		a0, 16(t0)						 # get function ptr from table
+	lw		t1, 12(t0)									# get string ptr from table
+	lw		a0, 16(t0)									# get function ptr from table
 	#endif
-	beqz	t1, find_insn_in_table_not_found		  # table end, no match found
+	beqz	t1, get_data_by_insn_name_not_found		# table end, no match found
 	# compare strings
-	mv		t2, s0							# iterate with t2 over input string							
-find_insn_in_table_cmp_next_byte:
-	beq		t2, s1, find_insn_in_table_done
+	mv		t2, s0										# iterate with t2 over input string
+get_data_by_insn_name_cmp_next_byte:
+	beq		t2, s1, get_data_by_insn_name_done
 	lb		t3, 0(t2)
 	lb		t4, 0(t1)
-	bne		t3, t4, find_insn_in_table_next_entry		# strings not equal
-	beqz	t4, find_insn_in_table_next_entry			# string in table ended
+	bne		t3, t4, get_data_by_insn_name_next_entry	# strings not equal
+	beqz	t4, get_data_by_insn_name_next_entry		# string in table ended
 	addi	t1, t1, 1
 	addi	t2, t2, 1
-	j		find_insn_in_table_cmp_next_byte
-find_insn_in_table_next_entry:
+	j		get_data_by_insn_name_cmp_next_byte
+get_data_by_insn_name_next_entry:
 	addi	t0, t0, 20
-	j		find_insn_in_table_next
-find_insn_in_table_not_found:
+	j		get_data_by_insn_name_next
+get_data_by_insn_name_not_found:
 	mv		a0, zero
-find_insn_in_table_done:
-	lw		a1, 4(t0)						# store MATCH value from table entry in a1
+get_data_by_insn_name_done:
+	lw		a1, 4(t0)									# store MATCH value from table entry in a1
 	ret
-	.size find_insn_in_table, .-find_insn_in_table
+	.size get_data_by_insn_name, .-get_data_by_insn_name
 
 
 	# in: a0 = start of string ptr to name
