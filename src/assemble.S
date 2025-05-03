@@ -60,13 +60,36 @@ assemble_instruction_done:
 	.size assemble_instruction, .-assemble_instruction
 
 
-	# in: register number in a0
-	# out: register number in a1 (-1 if error)
-assemble_rs1:
+# in: register number in a0
+# in: instruction word in a1
+# out: modified instruction word in a1
+assemble_rd:
+	slli	a0, a0, 7
+	or		a1, a1, a0
 	ret
-	.size assemble_rs1, .-assemble_rs1
+.size assemble_rd, .-assemble_rd
 
-	
+
+# in: register number in a0
+# in: instruction word in a1
+# out: modified instruction word in a1
+assemble_rs1:
+	slli	a0, a0, 15
+	or		a1, a1, a0
+	ret
+.size assemble_rs1, .-assemble_rs1
+
+
+# in: register number in a0
+# in: instruction word in a1
+# out: modified instruction word in a1
+assemble_rs2:
+	slli	a0, a0, 20
+	or		a1, a1, a0
+	ret
+.size assemble_rs2, .-assemble_rs2
+
+
 	# in: input string ptr in a0
 assemble_DUMMY:
 	li		a1, 0xffffffff
@@ -92,28 +115,25 @@ assemble_BRANCH:
 	SAVE_X	s1, (XLEN_BYTES*2)(sp)
 	SAVE_X	s2, (XLEN_BYTES*3)(sp)
 
-	mv		s2, a1								# assemble insn in s2
+	# assemble instruction word in s2, starting with MATCH value
+	mv		s2, a1
 
-	# advance to first input parameter
+	# advance to first user input parameter
 	jal		skip_whitespace
 	mv		s0, a0
 	jal		find_register_name_end
 	mv		s1, a0
 
-	# parse register 1
+	# parse register 1 from user input
 	mv		a0, s0
 	mv		a1, s1
 	jal		get_int_register_index_by_name
 	bltz	a0, assemble_BRANCH_error
 
-	# assemble rs1
-	slli	a0, a0, 15
-	or		s2, s2, a0
-
-	
-
-
-	#jal		print_decimal
+	# add rs1 to instruction word
+	mv		a1, s2
+	jal 	assemble_rs1
+	mv		s2, a1
 
 	# assemble register 1
 	# expect ,
