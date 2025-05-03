@@ -23,8 +23,8 @@ print_frd:
 	SAVE_X	ra, 0(sp) 
 	srli	a0, a0, 7
 	andi	a0, a0, 0b11111
-	la		a1, float_register_names
-	jal		print_register_name
+	jal		get_float_register_name_by_index
+	jal		print_string
 	jal		print_comma
 	LOAD_X	ra, 0(sp)				
 	addi	sp, sp, (XLEN_BYTES*1)
@@ -38,8 +38,8 @@ print_frs1:
 	SAVE_X	ra, 0(sp) 
 	srli	a0, a0, 15
 	and		a0, a0, 0b11111
-	la		a1, float_register_names
-	jal		print_register_name
+	jal		get_float_register_name_by_index
+	jal		print_string
 	LOAD_X	ra, 0(sp)				
 	addi	sp, sp, (XLEN_BYTES*1)
 	ret

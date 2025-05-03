@@ -495,8 +495,8 @@ print_rd:
 	# isolate rd from a0
 	srli	a0, a0, 7
 	andi	a0, a0, 0b11111
-	la		a1, int_register_names
-	jal		print_register_name
+	jal		get_int_register_name_by_index
+	jal		print_string
 	jal		print_comma
 	LOAD_X	ra, 0(sp)				
 	addi	sp, sp, (XLEN_BYTES*1)
@@ -510,8 +510,8 @@ print_rs1:
 	SAVE_X	ra, 0(sp) 
 	srli	a0, a0, 15
 	and		a0, a0, 0b11111
-	la		a1, int_register_names
-	jal		print_register_name
+	jal		get_int_register_name_by_index
+	jal		print_string
 	LOAD_X	ra, 0(sp)				
 	addi	sp, sp, (XLEN_BYTES*1)
 	ret
@@ -556,35 +556,6 @@ print_csr:
 	addi	sp, sp, (XLEN_BYTES*1)
 	ret
 	.size print_csr, .-print_csr
-
-
-	# output the n-th register name from the register name table
-	# in: n in a0
-print_register_name:
-	addi	sp, sp, -(XLEN_BYTES*2)				 
-	SAVE_X	ra, 0(sp)
-	SAVE_X	s0, (XLEN_BYTES*1)(sp)
-	mv		s0, a1
-print_register_search:
-	beqz	a0, print_register_found
-	addi	s0, s0, 1
-print_register_skip_next_zero:	  
-	lb		t1, 0(s0)
-	beqz	t1, print_register_next_zero
-	addi	s0, s0, 1
-	j		print_register_skip_next_zero
-print_register_next_zero:
-	addi	a0, a0, -1
-	addi	s0, s0, 1
-	j		print_register_search
-print_register_found:
-	mv		a0, s0
-	jal		print_string
-	LOAD_X	ra, 0(sp)				
-	LOAD_X	s0, (XLEN_BYTES*1)(sp)				 
-	addi	sp, sp, (XLEN_BYTES*2)
-	ret
-	.size print_register_name, .-print_register_name
 
 
 	# in: instruction word in a0

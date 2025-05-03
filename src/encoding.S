@@ -10,10 +10,15 @@
 
 	# table with MASK, MATCH, decode_func_ptr, opcode_string, assemble_func_ptr
 	.global encoding_table
+	# table access functions
 	.global get_data_by_insn_name
 
+	# tables with register names
 	.global int_register_names
 	.global float_register_names
+	# table access functions
+	.global get_int_register_name_by_index
+	.global get_float_register_name_by_index
 
 	.global string_OP_UNKNOWN
 	# necessary for c.add/c.jalr/c.ebreak adjustment
@@ -57,6 +62,44 @@ get_data_by_insn_name_done:
 	lw		a1, 4(t0)									# store MATCH value from table entry in a1
 	ret
 	.size get_data_by_insn_name, .-get_data_by_insn_name
+
+
+get_int_register_name_by_index:
+	la		a1, int_register_names
+	j 		get_register_name_by_index
+
+
+get_float_register_name_by_index:
+	la		a1, float_register_names
+	j 		get_register_name_by_index
+
+
+	# return a string ptr to the name of the n-th register
+	# in:	a0 = n
+	# in:	a1 = ptr to table (int_register_names or float_register_names)
+	# out:	a0 = string ptr
+get_register_name_by_index:
+	addi	sp, sp, -(XLEN_BYTES*1)
+	SAVE_X	ra, 0(sp)
+get_register_name_by_index_search:
+	beqz	a0, get_register_name_by_index_found
+	addi	a1, a1, 1
+get_register_name_by_index_skip_next_zero:
+	lb		t1, 0(a1)
+	beqz	t1, get_register_name_by_index_next_zero
+	# arrived at zero
+	addi	a1, a1, 1
+	j		get_register_name_by_index_skip_next_zero
+get_register_name_by_index_next_zero:
+	addi	a0, a0, -1
+	addi	a1, a1, 1
+	j		get_register_name_by_index_search
+get_register_name_by_index_found:
+	mv		a0, a1
+	LOAD_X	ra, 0(sp)
+	addi	sp, sp, (XLEN_BYTES*1)
+	ret
+	.size get_register_name_by_index, .-get_register_name_by_index
 
 
 	# in: a0 = start of string ptr to name
