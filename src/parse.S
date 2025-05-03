@@ -5,6 +5,7 @@
 	.global skip_whitespace
 	.global get_hex_addr
 	.global find_insn_name_end
+	.global find_register_name_end
 	.global is_ascii
 
 	.text
@@ -43,6 +44,27 @@ find_insn_name_end_valid_char:
 	addi	a0, a0, 1
 	j		find_insn_name_end	  
 find_insn_name_end_done:
+	ret
+	.size find_insn_name_end, .-find_insn_name_end
+
+
+	# in: buffer ptr in a0
+	# out: ptr to end of word in a0
+find_register_name_end:
+	lb		t0, 0(a0)
+	# accept a-z and 0-9
+	li		t1, '0'
+	blt		t0, t1, find_register_name_end_done
+	li		t1, 'z'
+	bgt		t0, t1, find_register_name_end_done
+	li		t1, '9'
+	ble		t0, t1, find_register_name_end_valid_char
+	li		t1, 'a'
+	bge		t0, t1, find_register_name_end_valid_char
+find_register_name_end_valid_char:
+	addi	a0, a0, 1
+	j		find_register_name_end	  
+find_register_name_end_done:
 	ret
 	.size find_insn_name_end, .-find_insn_name_end
 

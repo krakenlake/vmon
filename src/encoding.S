@@ -19,6 +19,8 @@
 	# table access functions
 	.global get_int_register_name_by_index
 	.global get_float_register_name_by_index
+	.global get_int_register_index_by_name
+	.global get_float_register_index_by_name
 
 	.global string_OP_UNKNOWN
 	# necessary for c.add/c.jalr/c.ebreak adjustment
@@ -27,10 +29,10 @@
 	.global string_OP_C_EBREAK
 
 
-	# in: input string ptr start in s0
-	# in: input string ptr end+1 in s1
-	# out: ptr to assemble function in a0 (0 if string was not found)
-	# out: MATCH value for insn in a1 (undefined if string was not found)
+# in: input string ptr start in s0
+# in: input string ptr end+1 in s1
+# out: ptr to assemble function in a0 (0 if string was not found)
+# out: MATCH value for insn in a1 (undefined if string was not found)
 get_data_by_insn_name:
 	la		t0, encoding_table
 get_data_by_insn_name_next:
@@ -61,23 +63,26 @@ get_data_by_insn_name_not_found:
 get_data_by_insn_name_done:
 	lw		a1, 4(t0)									# store MATCH value from table entry in a1
 	ret
-	.size get_data_by_insn_name, .-get_data_by_insn_name
+.size get_data_by_insn_name, .-get_data_by_insn_name
 
 
 get_int_register_name_by_index:
 	la		a1, int_register_names
 	j 		get_register_name_by_index
+.size get_int_register_name_by_index, .-get_int_register_name_by_index
 
 
 get_float_register_name_by_index:
 	la		a1, float_register_names
 	j 		get_register_name_by_index
+.size get_float_register_name_by_index, .-get_float_register_name_by_index
 
 
-	# return a string ptr to the name of the n-th register
-	# in:	a0 = n
-	# in:	a1 = ptr to table (int_register_names or float_register_names)
-	# out:	a0 = string ptr
+
+# return a string ptr to the name of the n-th register
+# in:	a0 = n
+# in:	a1 = ptr to table (int_register_names or float_register_names)
+# out:	a0 = string ptr
 get_register_name_by_index:
 	addi	sp, sp, -(XLEN_BYTES*1)
 	SAVE_X	ra, 0(sp)
@@ -99,36 +104,68 @@ get_register_name_by_index_found:
 	LOAD_X	ra, 0(sp)
 	addi	sp, sp, (XLEN_BYTES*1)
 	ret
-	.size get_register_name_by_index, .-get_register_name_by_index
+.size get_register_name_by_index, .-get_register_name_by_index
 
 
-	# in: a0 = start of string ptr to name
-	# in: a1 = end of string ptr to name (after last char)
-	# out: a2 = index number of register (-1 if error)
+get_int_register_index_by_name:
+	la		a2, int_register_names
+	j 		get_register_index_by_name
+.size get_int_register_index_by_name, .-get_int_register_index_by_name
+
+
+get_float_register_index_by_name:
+	la		a2, float_register_names
+	j 		get_register_index_by_name
+.size get_float_register_index_by_name, .-get_float_register_index_by_name
+
+
+# return index of register given by name
+# in: a0 = start of string ptr to name
+# in: a1 = end of string ptr to name (after last char; no 0-termination expected)
+# in: a2 = ptr to table (int_register_names or float_register_names)
+# out: a0 = index number of register (-1 if error)
 get_register_index_by_name:
-	/*	
-	li		a1, -1
-
-	mv		t0, a0							# iterate with t2 over input string							
-get_register_index_by_name_cmp_next_byte:
-	beq		t2, s1, find_insn_in_table_done
-	lb		t3, 0(t2)
-	lb		t4, 0(t1)
-	bne		t3, t4, find_insn_in_table_next_entry		# strings not equal
-	beqz	t4, find_insn_in_table_next_entry			# string in table ended
-	addi	t1, t1, 1
-	addi	t2, t2, 1
-	j		find_insn_in_table_cmp_next_byte
-get_register_index_by_name_next_entry:
-	addi	t0, t0, 20
-	j		find_insn_in_table_next
+	addi	sp, sp, -(XLEN_BYTES*1)
+	SAVE_X	ra, 0(sp)
+	addi 	a1, a1, -1										# point a1 to actual last char
+	li		a3, 0											# init index counter
+	mv		a4, a0											# save a0 for reuse
+	li		t0, 32											# max entries in table
+get_register_index_by_name_compare_next:
+	lb		t1, 0(a0)
+	lb		t2, 0(a2)
+	# the compared characters do not match, so string does not match
+	bne		t1, t2, get_register_index_by_name_skip_string
+	# search string not fully matched yet, so continue comparing
+	bne		a0, a1, get_register_index_by_name_next_char	
+	# when table string is also at its end, we have a match
+	lb		t2,	1(a2)
+	beqz	t2,	get_register_index_by_name_found			
+	j 		get_register_index_by_name_skip_string
+get_register_index_by_name_next_char:
+	beqz	t2, get_register_index_by_name_skip_string		# table string ended before search string
+	addi	a0, a0, 1
+	addi	a2, a2, 1
+	j 		get_register_index_by_name_compare_next
+get_register_index_by_name_found:
+	mv		a0, a3											# return index counter
+	j 		get_register_index_by_name_done
+get_register_index_by_name_skip_string:
+	addi	a2, a2, 1
+	lb		t1, 0(a2)
+	bnez	t1, get_register_index_by_name_skip_string		# until string termination
+	addi	a2, a2, 1										# start of following string
+	addi	a3, a3, 1										# advance index counter
+	beq		a3, t0, get_register_index_by_name_not_found	# cancel if end of table
+	mv		a0, a4											# reset search string ptr
+	j 		get_register_index_by_name_compare_next			
 get_register_index_by_name_not_found:
-	mv		a0, zero
+	li		a0, -1											# return error
 get_register_index_by_name_done:
-	lw		a1, 4(t0)						# store MATCH value from table entry in a1
+	LOAD_X	ra, 0(sp)
+	addi	sp, sp, (XLEN_BYTES*1)
 	ret
-	*/
-	.size get_register_index_by_name, .-get_register_index_by_name
+.size get_register_index_by_name, .-get_register_index_by_name
 
 
 	.data
@@ -432,11 +469,15 @@ string_OP_C_FSWSP:		.string "c.fswsp";
 	#endif /* ENABLE_RVF */
 	#endif /* ENABLE_RVC */
 
-	# Pseudo
-	#ifdef ENABLE_PSEUDO
-string_OP_RET:		.string "ret";	
-string_OP_NOP:		.string "nop";	
-	#endif /* ENABLE_PSEUDO */
+# Pseudo
+#ifdef ENABLE_PSEUDO
+	string_OP_RET:		.string "ret";	
+	string_OP_NOP:		.string "nop";	
+	string_OP_UNIMP:	.string "unimp";	
+	#ifdef ENABLE_RVC
+		string_OP_C_UNIMP:	.string "c.unimp";	
+	#endif
+#endif /* ENABLE_PSEUDO */
 
 	# Pseudo
 	#ifdef ENABLE_RVPRIV
@@ -461,11 +502,13 @@ encoding_table:
 	# pseudo opcodes
 	# order is important, these have to be at the beginning of the table
 	#ifdef ENABLE_PSEUDO
-	.word 0xffffffff, 0x00008067, decode_EMPTY, string_OP_RET, assemble_VOID
-	.word 0xffffffff, 0x00000013, decode_EMPTY, string_OP_NOP, assemble_VOID
 	#ifdef ENABLE_RVC
+	.word 0x0000ffff, 0x0000, decode_EMPTY, string_OP_C_UNIMP, assemble_VOID
 	.word 0x0000ffff, 0x0001, decode_EMPTY, string_OP_C_NOP, assemble_VOID
 	#endif /* ENABLE_RVC */
+	.word 0xffffffff, 0x00000000, decode_EMPTY, string_OP_UNIMP, assemble_VOID
+	.word 0xffffffff, 0x00008067, decode_EMPTY, string_OP_RET, assemble_VOID
+	.word 0xffffffff, 0x00000013, decode_EMPTY, string_OP_NOP, assemble_VOID
 	#endif /* ENABLE_PSEUDO */
 
 	# RV32I
