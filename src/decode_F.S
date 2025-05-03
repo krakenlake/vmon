@@ -32,34 +32,38 @@ print_frd:
 	.size print_frd, .-print_frd
 
 
-	# in: instruction word in a0
-print_frs1:
+# in: instruction word in a0
+print_float_register_name:
 	addi	sp, sp, -(XLEN_BYTES*1)				 
 	SAVE_X	ra, 0(sp) 
-	srli	a0, a0, 15
 	and		a0, a0, 0b11111
 	jal		get_float_register_name_by_index
 	jal		print_string
 	LOAD_X	ra, 0(sp)				
 	addi	sp, sp, (XLEN_BYTES*1)
 	ret
-	.size print_frs1, .-print_frs1
+.size print_float_register_name, .-print_float_register_name
+
+
+	# in: instruction word in a0
+print_frs1:
+	srli	a0, a0, 15			
+	j		print_float_register_name	
+.size print_frs1, .-print_frs1
 
 
 	# in: instruction word in a0
 print_frs2:
-	# rs2 just needs 5 shifts more than rs1, rest works the same
-	srli	a0, a0, 5			
-	j		print_frs1	
-	.size print_frs2, .-print_frs2
+	srli	a0, a0, 20			
+	j		print_float_register_name	
+.size print_frs2, .-print_frs2
 
 
 	# in: instruction word in a0
 print_frs3:
-	# rs2 just needs 5 shifts more than rs1, rest works the same
-	srli	a0, a0, 12			 
-	j		print_frs1	
-	.size print_frs3, .-print_frs3
+	srli	a0, a0, 27			 
+	j		print_float_register_name	
+.size print_frs3, .-print_frs3
 
 
 	# in: instruction word in a0

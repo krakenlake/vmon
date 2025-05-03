@@ -504,18 +504,31 @@ print_rd:
 	.size print_rd, .-print_rd
 
 
-	# in: instruction word in a0
+# in: instruction word in a0
 print_rs1:
+	srli	a0, a0, 15
+	j		print_int_register_name
+.size print_rs1, .-print_rs1
+
+
+# in: instruction word in a0
+print_rs2:
+	srli	a0, a0, 20
+	j		print_int_register_name
+.size print_rs2, .-print_rs2
+
+
+# in: a0 = register index number n
+print_int_register_name:
 	addi	sp, sp, -(XLEN_BYTES*1)				 
 	SAVE_X	ra, 0(sp) 
-	srli	a0, a0, 15
 	and		a0, a0, 0b11111
 	jal		get_int_register_name_by_index
 	jal		print_string
 	LOAD_X	ra, 0(sp)				
 	addi	sp, sp, (XLEN_BYTES*1)
 	ret
-	.size print_rs1, .-print_rs1
+.size print_int_register_name, .-print_int_register_name
 
 
 	# in: instruction word in a0
@@ -532,15 +545,7 @@ print_rs1_as_base:
 	LOAD_X	ra, 0(sp)				
 	addi	sp, sp, (XLEN_BYTES*2)
 	ret
-	.size print_rs1, .-print_rs1
-
-
-	# in: instruction word in a0
-print_rs2:
-	# rs2 just needs 5 shifts more than rs1, rest works the same
-	srli	a0, a0, 5			
-	j		print_rs1  
-	.size print_rs2, .-print_rs2
+.size print_rs1_as_base, .-print_rs1_as_base
 
 
 	# in: instruction word in a0
