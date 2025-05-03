@@ -25,7 +25,7 @@ assemble_instruction:
 	jal		find_insn_name_end
 	mv		s1, a0
 	# find string between s0 and s1 in encoding table
-	jal		find_insn_in_table
+	jal		get_data_by_insn_name
 	# function ptr now in a0
 	beqz	a0, assemble_instruction_done		# not found
 	jalr	a0									# call assemble function   
