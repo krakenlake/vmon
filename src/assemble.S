@@ -13,6 +13,7 @@
 	.text
 
 	# in: a0 = ptr to input text
+	# in: a2 = current memory address to write (needed for branch calculation)
 	# out: a0 = insn size (normal 4, 2 for RVC, 0 if error)
 	# out: a1 = assembled instruction to be written into memory
 assemble_instruction:
@@ -31,6 +32,7 @@ assemble_instruction:
 	mv		s2, a0								# save function ptr in s2
 	beqz	s2, assemble_instruction_done		# not found
 	mv		a0, s1
+	# current memory addr already in a2
 	jalr	s2									# call insn-specific assemble function
 	# now a1 = insn code
 	# in case insn == 0, 
@@ -90,6 +92,40 @@ assemble_rs2:
 .size assemble_rs2, .-assemble_rs2
 
 
+# in: a0 = absolute target address 
+# in: a1 = instruction word
+# in: a2 = absolute origin address of the branch instruction
+# out: modified instruction word in a1
+assemble_branch_target:
+	sub		a0, a0, a2					# compute relative address
+	# bit 11 of addr -> bit 7 insn
+	mv		t0, a0
+	srli	t0, t0, 4
+	li		t1, 0b10000000
+	and 	t0, t0, t1
+	or		a1, a1, t0
+	# bit 4..1 of addr -> bit 11..8 insn
+	mv		t0, a0
+	slli	t0, t0, 7
+	li		t1, 0b111100000000
+	and		t0, t0, t1
+	or		a1, a1, t0
+	# bit 5..10 of addr -> bit 25..30 insn
+	mv		t0, a0
+	slli	t0, t0, 20
+	li		t1, 0b01111110000000000000000000000000
+	and		t0, t0, t1
+	or		a1, a1, t0
+	# bit 12 of addr -> bit 31 insn
+	mv		t0, a0
+	slli	t0, t0, 19
+	li		t1, 0b10000000000000000000000000000000
+	and		t0, t0, t1
+	or		a1, a1, t0
+	ret
+
+
+.size assemble_rs2, .-assemble_rs2
 	# in: input string ptr in a0
 assemble_DUMMY:
 	li		a1, 0xffffffff
@@ -105,54 +141,81 @@ assemble_VOID:
 	.size assemble_VOID, .-assemble_VOID
 
 
-	# in: input string ptr in a0
-	# in: MATCH value in a1
+	# in: a0 = input string ptr
+	# in: a1 = MATCH value
+	# in: a2 = origin address
 	# out: assembled instruction in a1
 assemble_BRANCH:
-	addi	sp, sp, -(XLEN_BYTES*4)				 
+	addi	sp, sp, -(XLEN_BYTES*5)				 
 	SAVE_X	ra, 0(sp)
 	SAVE_X	s0, (XLEN_BYTES*1)(sp)
 	SAVE_X	s1, (XLEN_BYTES*2)(sp)
 	SAVE_X	s2, (XLEN_BYTES*3)(sp)
-
+	SAVE_X	s3, (XLEN_BYTES*4)(sp)
+	mv		s3, a2						# save for later
 	# assemble instruction word in s2, starting with MATCH value
 	mv		s2, a1
-
 	# advance to first user input parameter
 	jal		skip_whitespace
 	mv		s0, a0
 	jal		find_register_name_end
 	mv		s1, a0
-
 	# parse register 1 from user input
 	mv		a0, s0
 	mv		a1, s1
 	jal		get_int_register_index_by_name
 	bltz	a0, assemble_BRANCH_error
-
 	# add rs1 to instruction word
 	mv		a1, s2
 	jal 	assemble_rs1
-	mv		s2, a1
-
-	# assemble register 1
-	# expect ,
+	mv		s2, a1						# save insn word
+	# expect commma
+	addi	a0, s1, 1
+	jal		skip_whitespace
+	jal		consume_comma
+	beqz 	a0, assemble_BRANCH_error
 	# parse register 2
-	# assemble register 2
-	# expect ,
-	# parse address (or label)
-	# assemble address
-
-	j 		assemble_BRANCH_done	
+	jal		skip_whitespace
+	mv		s0, a0
+	jal		find_register_name_end
+	mv		s1, a0
+	# parse register 2 from user input
+	mv		a0, s0
+	mv		a1, s1
+	jal		get_int_register_index_by_name
+	bltz	a0, assemble_BRANCH_error
+	# add rs2 to instruction word
+	mv		a1, s2
+	jal 	assemble_rs2
+	mv		s2, a1						# save insn word
+	# expect commma
+	addi	a0, s1, 1
+	jal		skip_whitespace
+	jal		consume_comma
+	beqz 	a0, assemble_BRANCH_error
+	# parse target address from user input
+	jal		skip_whitespace	
+	jal		get_hex_addr
+	bnez	a2, assemble_BRANCH_error
+	# add branch target address to instruction word
+	mv		a0, a1						# absolute target address
+	mv		a1, s2						# instruction word
+	mv		a2, s3						# get saved origin addr back
+	jal		assemble_branch_target
+	mv		s2, a1						# save insn word
+	j 		assemble_BRANCH_OK	
 assemble_BRANCH_error:
 	mv		a1, zero
-assemble_BRANCH_done:
+	j 		assemble_BRANCH_done
+assemble_BRANCH_OK:
 	mv		a1, s2
+assemble_BRANCH_done:
 	LOAD_X	ra, 0(sp)				
 	LOAD_X	s0, (XLEN_BYTES*1)(sp)				 
 	LOAD_X	s1, (XLEN_BYTES*2)(sp)				 
 	LOAD_X	s2, (XLEN_BYTES*3)(sp)				 
-	addi	sp, sp, (XLEN_BYTES*4)
+	LOAD_X	s3, (XLEN_BYTES*4)(sp)				 
+	addi	sp, sp, (XLEN_BYTES*5)
 	ret
 .size assemble_BRANCH, .-assemble_BRANCH
 

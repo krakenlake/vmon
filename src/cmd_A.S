@@ -35,6 +35,7 @@ cmd_A_input_loop:
 	li		t1, ASCII_RETURN
 	beq		t0, t1, cmd_A_done
 	# read input line and assemble one instruction
+	mv		a2, s0						# current memory address
 	jal		assemble_instruction
 	# insn size now in a0
 	# insn now in a1
