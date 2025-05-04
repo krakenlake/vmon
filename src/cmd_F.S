@@ -1,11 +1,11 @@
-	#include "vmon/config.h"
+#include "vmon/config.h"
 
 
-	#ifdef WITH_CMD_F
+#ifdef WITH_CMD_F
 
-	.global cmd_F
+.global cmd_F
 
-	.text
+.text
 
 
 cmd_F:
@@ -44,7 +44,7 @@ cmd_F_error:
 	jal		print_string
 cmd_F_done:
 	j		main_prompt
-	.size cmd_F, .-cmd_F
+.size cmd_F, .-cmd_F
 
 
-	#endif /* WITH_CMD_F */
+#endif /* WITH_CMD_F */

@@ -1,14 +1,14 @@
-	#include "vmon/config.h"
+#include "vmon/config.h"
 
-	#ifdef BARE_METAL
+#ifdef BARE_METAL
 
-	.global setup_trap_handler
+.global setup_trap_handler
 
-	#define TIMER_INTERVAL 10000000
+#define TIMER_INTERVAL 10000000
 
-	#define MTIMECMP 0x2004000			# QEMU CLINT 0x2000000 + 0x4000 + 8*(hart_id)
+#define MTIMECMP 0x2004000			# QEMU CLINT 0x2000000 + 0x4000 + 8*(hart_id)
 
-	.text
+.text
 
 
 setup_trap_handler:
@@ -32,12 +32,12 @@ setup_trap_handler:
 	csrs	mie, t1
 	*/
 	ret
-	.size setup_trap_handler, .-setup_trap_handler
+.size setup_trap_handler, .-setup_trap_handler
 
 
 	# trap handler needs to be aligned manually 
 	# as that is not automatically guaranteed with RVC enabled
-	.align 4
+.align 4
 
 trap_handler:
 	# push stack
@@ -84,7 +84,7 @@ trap_handler_exception:
 	mv		s0, a0								# save for later
 	jal		print_hex
 	# print MCAUSE verbose
-	#ifdef MCAUSE_VERBOSE
+#ifdef MCAUSE_VERBOSE
 	li		a0, ' '
 	jal		print_char
 	li		a0, '('
@@ -93,15 +93,15 @@ trap_handler_exception:
 	slli	a0, s0, 2							# set a0 = mcause * 4
 	la		s0, mcause_verbose_table			# start of MCAUSE string table
 	add		a0, a0, s0
-	#if XLEN >= 64
+#if XLEN >= 64
 	lwu		a0, 0(a0)
-	#else
+#else
 	lw		a0, 0(a0)
-	#endif
+#endif
 	jal		print_string
 	li		a0, ')'
 	jal		print_char
-	#endif
+#endif
 
 	# set return address for leaving trap handler
 	la		a0, main_prompt
@@ -128,17 +128,17 @@ trap_handler_pop:
 	LOAD_X	s0, (XLEN_BYTES*4)(sp)
 	addi	sp, sp, (XLEN_BYTES*5)
 	mret
-	.size trap_handler, .-trap_handler
+.size trap_handler, .-trap_handler
 
 
-	.data
+.data
 
 string_exception_msg:		.string "\nexception:"
 string_mepc_msg:			.string "\n\tmepc\t= ";
 string_mtval_msg:			.string "\n\tmtval\t= ";
 string_mcause_msg:			.string "\n\tmcause\t= ";
 
-	#ifdef MCAUSE_VERBOSE
+#ifdef MCAUSE_VERBOSE
 string_CAUSE_MISALIGNED_FETCH:		.string "CAUSE_MISALIGNED_FETCH";
 string_CAUSE_FAULT_FETCH:			.string "CAUSE_FAULT_FETCH";
 string_CAUSE_ILLEGAL_INSTRUCTION:	.string "CAUSE_ILLEGAL_INSTRUCTION";
@@ -152,26 +152,26 @@ string_CAUSE_SUPERVISOR_ECALL:		.string "CAUSE_SUPERVISOR_ECALL";
 string_CAUSE_HYPERVISOR_ECALL:		.string "CAUSE_HYPERVISOR_ECALL";
 string_CAUSE_MACHINE_ECALL:			.string "CAUSE_MACHINE_ECALL";
 
-	.align 4
+.align 4
 mcause_verbose_table:
-	.word string_CAUSE_MISALIGNED_FETCH
-	.word string_CAUSE_FAULT_FETCH
-	.word string_CAUSE_ILLEGAL_INSTRUCTION
-	.word string_CAUSE_BREAKPOINT
-	.word string_CAUSE_MISALIGNED_LOAD
-	.word string_CAUSE_FAULT_LOAD
-	.word string_CAUSE_MISALIGNED_STORE
-	.word string_CAUSE_FAULT_STORE
-	.word string_CAUSE_USER_ECALL
-	.word string_CAUSE_SUPERVISOR_ECALL
-	.word string_CAUSE_HYPERVISOR_ECALL
-	.word string_CAUSE_MACHINE_ECALL
-	#endif 
+.word string_CAUSE_MISALIGNED_FETCH
+.word string_CAUSE_FAULT_FETCH
+.word string_CAUSE_ILLEGAL_INSTRUCTION
+.word string_CAUSE_BREAKPOINT
+.word string_CAUSE_MISALIGNED_LOAD
+.word string_CAUSE_FAULT_LOAD
+.word string_CAUSE_MISALIGNED_STORE
+.word string_CAUSE_FAULT_STORE
+.word string_CAUSE_USER_ECALL
+.word string_CAUSE_SUPERVISOR_ECALL
+.word string_CAUSE_HYPERVISOR_ECALL
+.word string_CAUSE_MACHINE_ECALL
+#endif 
 
 
-	.bss
-	.align 8
-	.comm stackptr_reset, XLEN_BYTES
+.bss
+.align 8
+.comm stackptr_reset, XLEN_BYTES
 
 
-	#endif /* BARE_METAL */
+#endif /* BARE_METAL */

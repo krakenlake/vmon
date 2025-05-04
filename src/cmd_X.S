@@ -1,11 +1,11 @@
-	#include "vmon/config.h"
+#include "vmon/config.h"
 
 
-	#ifdef WITH_CMD_X
+#ifdef WITH_CMD_X
 
-	.global cmd_X
+.global cmd_X
 
-	.text
+.text
 
 
 cmd_X:
@@ -48,11 +48,11 @@ cmd_X:
 	LOAD_X	sp, (XLEN_BYTES*1)(sp)	   
 	# return control to caller	   
 	jalr	zero, ra, 0		
-	.size cmd_X, .-cmd_X
+.size cmd_X, .-cmd_X
 
 
-	.data
+.data
 string_exit:			.string "exiting: ret, ra=";
-	.size string_exit, .-string_exit
+.size string_exit, .-string_exit
 
-	#endif /* WITH_CMD_X */
+#endif /* WITH_CMD_X */

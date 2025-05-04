@@ -1,9 +1,9 @@
-	#include "vmon/config.h"
+#include "vmon/config.h"
 
 
-	.global divrem
+.global divrem
 
-	.text
+.text
 
 	# Unsigned integer division without using M extension
 	# Thanks to Bruce Hoult!
@@ -48,4 +48,4 @@ divrem_zero:
 	li		a0, 0			# Return quotient = 0 (or some error code if needed)
 	ret
 
-	.size divrem, .-divrem
+.size divrem, .-divrem

@@ -1,12 +1,12 @@
-	#include "vmon/config.h"
-	#include "vmon/ASCII.h"
+#include "vmon/config.h"
+#include "vmon/ASCII.h"
 
 
-	#ifdef WITH_CMD_M
+#ifdef WITH_CMD_M
 
-	.global cmd_M
+.global cmd_M
 
-	.text
+.text
 
 
 cmd_M:
@@ -61,6 +61,6 @@ cmd_M_done:
 	la		a0, last_address 
 	SAVE_X	s5, 0(a0)
 	j		main_prompt
-	.size cmd_M, .-cmd_M
+.size cmd_M, .-cmd_M
 
-	#endif /* WITH_CMD_M */
+#endif /* WITH_CMD_M */

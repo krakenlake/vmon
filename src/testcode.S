@@ -1,31 +1,31 @@
-	#include "vmon/config.h"
+#include "vmon/config.h"
 
-	#ifdef WITH_TESTCODE
+#ifdef WITH_TESTCODE
 
-	.global testcode
-	.global testcode_RV32I
-	.global testcode_RV64I
-	.global testcode_RVM
-	.global testcode_RVA
-	.global testcode_RVF
-	.global testcode_RVD
-	.global testcode_RVQ
-	.global testcode_RVC
-	.global testcode_RVV
-	.global testcode_RVZicsr
-	.global testcode_RVZifencei
-	.global testcode_RVPRIV
-	.global testcode_PSEUDO
+.global testcode
+.global testcode_RV32I
+.global testcode_RV64I
+.global testcode_RVM
+.global testcode_RVA
+.global testcode_RVF
+.global testcode_RVD
+.global testcode_RVQ
+.global testcode_RVC
+.global testcode_RVV
+.global testcode_RVZicsr
+.global testcode_RVZifencei
+.global testcode_RVPRIV
+.global testcode_PSEUDO
 
 
-	.text
+.text
 
 
 testcode:
 
-	#ifdef WITH_TESTCODE_RV32I
-	.option push
-	.option norvc
+#ifdef WITH_TESTCODE_RV32I
+.option push
+.option norvc
 testcode_RV32I:
 	ret
 	nop
@@ -161,15 +161,15 @@ testcode_jal_forward:
 	auipc	x0, 0
 	auipc	x0, 31
 	auipc	x0, 1048575
-	.option pop /* norvc */
-	.size testcode_RV32I, .-testcode_RV32I
-	#endif /* WITH_TESTCODE_RV32I */
+.option pop /* norvc */
+.size testcode_RV32I, .-testcode_RV32I
+#endif /* WITH_TESTCODE_RV32I */
 
 
 	# RV64I
-	#if defined(WITH_TESTCODE_RV64I) && (XLEN >= 64)
-	.option push
-	.option norvc
+#if defined(WITH_TESTCODE_RV64I) && (XLEN >= 64)
+.option push
+.option norvc
 testcode_RV64I:
 	lwu		x0, 0(x0)
 	lwu		x0, 2047(x0)
@@ -233,14 +233,14 @@ testcode_RV64I:
 	sraw	x31, x31, 0
 	sraw	x0, x0, 31
 	sraw	x31, x31, 31
-	.option pop /* norvc */
-	.size testcode_RV64I, .-testcode_RV64I
-	#endif /* WITH_TESTCODE_RV32I */
+.option pop /* norvc */
+.size testcode_RV64I, .-testcode_RV64I
+#endif /* WITH_TESTCODE_RV32I */
 
 
-	#ifdef WITH_TESTCODE_RVM
-	.option push
-	.option norvc
+#ifdef WITH_TESTCODE_RVM
+.option push
+.option norvc
 testcode_RVM:
 	# RV32M
 	mul		x0, x1, x2
@@ -260,7 +260,7 @@ testcode_RVM:
 	remu	x0, x1, x2
 	remu	x29, x30, x31
 	# RV64M
-	#if XLEN >= 64 
+#if XLEN >= 64 
 	mulw	 x0, x1, x2
 	mulw	 x29, x30, x31
 	divw	 x0, x1, x2
@@ -269,15 +269,15 @@ testcode_RVM:
 	remw	 x29, x30, x31
 	remuw	 x0, x1, x2
 	remuw	 x29, x30, x31
-	#endif
-	.option pop /* norvc */
-	.size testcode_RVM, .-testcode_RVM
-	#endif /* WITH_TESTCODE_RVM */
+#endif
+.option pop /* norvc */
+.size testcode_RVM, .-testcode_RVM
+#endif /* WITH_TESTCODE_RVM */
 
 
-	#ifdef WITH_TESTCODE_RVA
-	.option push
-	.option norvc
+#ifdef WITH_TESTCODE_RVA
+.option push
+.option norvc
 testcode_RVA:
 	# RV32A
 	lr.w			x0, (x1)
@@ -369,7 +369,7 @@ testcode_RVA:
 	amomaxu.w.aqrl	x0, x0, (x0)
 	amomaxu.w.aqrl	x31, x31, (x31)
 	# RV64A
-	#if XLEN >= 64
+#if XLEN >= 64
 	lr.d			x0, (x1)
 	lr.d			x30, (x31)
 	lr.d.aq			x0, (x1)
@@ -458,16 +458,16 @@ testcode_RVA:
 	amomaxu.d.rl	x31, x31, (x31)
 	amomaxu.d.aqrl	x0, x0, (x0)
 	amomaxu.d.aqrl	x31, x31, (x31)
-	#endif
-	.option pop /* norvc */
-	.size testcode_RVA, .-testcode_RVA
-	#endif /* WITH_TESTCODE_RVA */
+#endif
+.option pop /* norvc */
+.size testcode_RVA, .-testcode_RVA
+#endif /* WITH_TESTCODE_RVA */
 
 
-	#ifdef WITH_TESTCODE_RVF
+#ifdef WITH_TESTCODE_RVF
 testcode_RVF:
-	.option push
-	.option norvc
+.option push
+.option norvc
 	flw			f0, 0(x0)
 	flw			f31, 0(x31)
 	flw			f0, 2047(x0)
@@ -524,15 +524,15 @@ testcode_RVF:
 	fle.s		x31, f30, f31	  
 	fclass.s	x0, f0	 
 	fclass.s	x31, f31   
-	.option pop /* norvc */
-	.size testcode_RVF, .-testcode_RVF
-	#endif /* WITH_TESTCODE_RVF */
+.option pop /* norvc */
+.size testcode_RVF, .-testcode_RVF
+#endif /* WITH_TESTCODE_RVF */
 
 
-	#if defined (WITH_TESTCODE_RVD) && XLEN >= 64
+#if defined (WITH_TESTCODE_RVD) && XLEN >= 64
 testcode_RVD:
-	.option push
-	.option norvc
+.option push
+.option norvc
 	fld			f0, 0(x0)
 	fld			f31, 0(x31)
 	fld			f0, 2047(x0)
@@ -589,15 +589,15 @@ testcode_RVD:
 	fle.d		x31, f30, f31	  
 	fclass.d	x0, f0	 
 	fclass.d	x31, f31   
-	.option pop /* norvc */
-	.size testcode_RVD, .-testcode_RVD
-	#endif /* WITH_TESTCODE_RVD */
+.option pop /* norvc */
+.size testcode_RVD, .-testcode_RVD
+#endif /* WITH_TESTCODE_RVD */
 
 
-	#if defined (WITH_TESTCODE_RVQ) && XLEN >= 128
+#if defined (WITH_TESTCODE_RVQ) && XLEN >= 128
 testcode_RVQ:
-	.option push
-	.option norvc
+.option push
+.option norvc
 	flq			f0, 0(x0)
 	flq			f31, 0(x31)
 	flq			f0, 2047(x0)
@@ -654,12 +654,12 @@ testcode_RVQ:
 	fle.q		x31, f30, f31	  
 	fclass.q	x0, f0	 
 	fclass.q	x31, f31   
-	.option pop /* norvc */
-	.size testcode_RVQ, .-testcode_RVQ
-	#endif /* WITH_TESTCODE_RVQ */
+.option pop /* norvc */
+.size testcode_RVQ, .-testcode_RVQ
+#endif /* WITH_TESTCODE_RVQ */
 
 
-	#if defined (WITH_TESTCODE_RVC) && defined (ENABLE_RVC)
+#if defined (WITH_TESTCODE_RVC) && defined (ENABLE_RVC)
 testcode_RVC:
 	# CL_type
 	c.lw		x8, 0(x8)
@@ -725,12 +725,12 @@ testcode_RVC_CB_type_start:
 	c.andi		x8, 0
 	c.andi		x15, 31
 testcode_RVC_CB_type_end:	
-	#ifdef ENABLE_RVF
-	#c.flw		 f8, 0(f8)
-	#c.fsw
-	#c.flwsp
-	#c.fswsp
-	#if XLEN >= 64
+#ifdef ENABLE_RVF
+#c.flw		 f8, 0(f8)
+#c.fsw
+#c.flwsp
+#c.fswsp
+#if XLEN >= 64
 	c.fld		f8, 0(x8)
 	c.fld		f15, 248(x15)
 	c.fsd		f8, 0(x8)
@@ -739,14 +739,14 @@ testcode_RVC_CB_type_end:
 	c.fldsp		f15, 504(sp)
 	c.fsdsp		f8, 0(sp)
 	c.fsdsp		f15, 504(sp)
-	#endif
-	#endif /* ENABLE_RVF */
+#endif
+#endif /* ENABLE_RVF */
 	# RV32C only
-	#if XLEN == 32
+#if XLEN == 32
 	c.jal		testcode_RVC
-	#endif
+#endif
 	# RV64C
-	#if XLEN >= 64
+#if XLEN >= 64
 	c.ldsp		x8, 0(sp)
 	c.ldsp		x15, 496(sp)
 	c.sdsp		x8, 0(sp)
@@ -767,24 +767,24 @@ testcode_RVC_CB_type_end:
 	c.slli		x31, 63
 	c.srli		x15, 63
 	c.srai		x15, 63
-	#endif
-	.size testcode_RVC, .-testcode_RVC
-	#endif /* WITH_TESTCODE_RVC */
+#endif
+.size testcode_RVC, .-testcode_RVC
+#endif /* WITH_TESTCODE_RVC */
 
 
-	#ifdef WITH_TESTCODE_RVV
-	.option push
-	.option norvc
+#ifdef WITH_TESTCODE_RVV
+.option push
+.option norvc
 testcode_RVV:
 	# TODO
-	.option pop /* norvc */
-	.size testcode_RVV, .-testcode_RVV
-	#endif /* WITH_TESTCODE_RVV */
+.option pop /* norvc */
+.size testcode_RVV, .-testcode_RVV
+#endif /* WITH_TESTCODE_RVV */
 
 
-	#ifdef WITH_TESTCODE_RVZicsr
-	.option push
-	.option norvc
+#ifdef WITH_TESTCODE_RVZicsr
+.option push
+.option norvc
 testcode_RVZicsr:
 	csrrw	t1, 1, t2
 	csrrs	t3, cycle, t4
@@ -804,47 +804,47 @@ testcode_RVZicsr:
 	csrrwi	t4, cycle, 31
 	csrrsi	t5, cycle, 31
 	csrrci	t6, cycle, 31
-	.option pop /* norvc */
-	.size testcode_RVZicsr, .-testcode_RVZicsr
-	#endif /* WITH_TESTCODE_RVZicsr */
+.option pop /* norvc */
+.size testcode_RVZicsr, .-testcode_RVZicsr
+#endif /* WITH_TESTCODE_RVZicsr */
 
 
-	#ifdef WITH_TESTCODE_RVZifencei
-	.option push
-	.option norvc
+#ifdef WITH_TESTCODE_RVZifencei
+.option push
+.option norvc
 testcode_RVZifencei:
 	fence.i
-	.option pop /* norvc */
-	.size testcode_RVZifencei, .-testcode_RVZifencei
-	#endif /* WITH_TESTCODE_RVZifencei */
+.option pop /* norvc */
+.size testcode_RVZifencei, .-testcode_RVZifencei
+#endif /* WITH_TESTCODE_RVZifencei */
 
 
-	#ifdef WITH_TESTCODE_RVPRIV
-	.option push
-	.option norvc
+#ifdef WITH_TESTCODE_RVPRIV
+.option push
+.option norvc
 testcode_RVPRIV:
 	sret
 	mret
 	wfi
 	sfence.vm
 	sfence.vma
-	.option pop /* norvc */
-	.size testcode_RVPRIV, .-testcode_RVPRIV
-	#endif /* WITH_TESTCODE_RVPRIV */
+.option pop /* norvc */
+.size testcode_RVPRIV, .-testcode_RVPRIV
+#endif /* WITH_TESTCODE_RVPRIV */
 
 
-	#ifdef WITH_TESTCODE_PSEUDO
-	.option push
-	.option norvc
+#ifdef WITH_TESTCODE_PSEUDO
+.option push
+.option norvc
 testcode_PSEUDO:
 	jalr	x0, x1, 0			# ret
 	ret
 	addi	x0, x0, 0			# nop
 	nop
-	.option pop /* norvc */
-	.size testcode_PSEUDO, .-testcode_PSEUDO
-	#endif /* WITH_TESTCODE_PSEUDO */
+.option pop /* norvc */
+.size testcode_PSEUDO, .-testcode_PSEUDO
+#endif /* WITH_TESTCODE_PSEUDO */
 
 
-	.size testcode, .-testcode
-	#endif /* WITH_TESTCODE */
+.size testcode, .-testcode
+#endif /* WITH_TESTCODE */

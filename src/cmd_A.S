@@ -1,19 +1,19 @@
-	#include "vmon/config.h"
-	#include "vmon/ASCII.h"
+#include "vmon/config.h"
+#include "vmon/ASCII.h"
 
 
-	#ifdef WITH_CMD_A
+#ifdef WITH_CMD_A
 
-	.global cmd_A
+.global cmd_A
 
-	.text
+.text
 
 
 cmd_A:
 	# read dst_start from text buffer	
 	jal		skip_whitespace
 	jal		get_hex_addr			# read dst_start from text buffer
-	bnez	a2, cmd_A_error			# abort command if not found
+	bnez		a2, cmd_A_error			# abort command if not found
 	mv		s0, a1
 
 cmd_A_input_loop:
@@ -44,11 +44,11 @@ cmd_A_input_loop:
 	li		t0, 4
 	beq		a0, t0, cmd_A_input_loop_write_4_bytes
 cmd_A_input_loop_write_2_bytes:
-	sh 		a1, 0(s0)
-	j 		cmd_A_continue
+	sh		a1, 0(s0)
+	j		cmd_A_continue
 cmd_A_input_loop_write_4_bytes: 
 	sw		a1, 0(s0)
-	j 		cmd_A_continue
+	j		cmd_A_continue
 
 	# user entered garbage in assembly line
 	la		a0, string_ass_error
@@ -65,18 +65,18 @@ cmd_A_error:
 	jal		print_string
 cmd_A_done:
 	j		main_prompt
-	.size cmd_A, .-cmd_A
+.size cmd_A, .-cmd_A
 
 
-	.data
+.data
 
 string_line_prefix_A:	.string "A ";
-	.size string_line_prefix_A, .-string_line_prefix_A
+.size string_line_prefix_A, .-string_line_prefix_A
 
 string_ass_prompt:	.string " := ";
-	.size string_ass_prompt, .-string_ass_prompt
+.size string_ass_prompt, .-string_ass_prompt
 
 string_ass_error:	.string "\t\t???\n\r";
-	.size string_ass_error, .-string_ass_error
+.size string_ass_error, .-string_ass_error
 
-	#endif /* WITH_CMD_A */
+#endif /* WITH_CMD_A */

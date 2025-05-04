@@ -1,12 +1,12 @@
-	#include "vmon/config.h"
-	#include "vmon/ASCII.h"
+#include "vmon/config.h"
+#include "vmon/ASCII.h"
 
 
-	#ifdef WITH_CMD_D
+#ifdef WITH_CMD_D
 
-	.global cmd_D
+.global cmd_D
 
-	.text
+.text
 
 
 cmd_D:
@@ -65,9 +65,9 @@ cmd_D_disass:
 	mv		a0, s6						# get instruction word again
 	jal		decode_opcode
 	beqz	a1, cmd_D_opcode_unknown
-	#ifdef ENABLE_RVC
+#ifdef ENABLE_RVC
 	jal		adjust_RVC_add_jal_ebreak
-	#endif	  
+#endif	  
 	jal		print_instruction
 	j		cmd_D_advance
 cmd_D_opcode_unknown:
@@ -88,11 +88,11 @@ cmd_D_done:
 	la		a0, last_address 
 	SAVE_X	s5, 0(a0)
 	j		main_prompt
-	.size cmd_D, .-cmd_D
+.size cmd_D, .-cmd_D
 	
 	
-	.data
+.data
 string_OP_UNKNOWN:		.string "???";
-	.size string_OP_UNKNOWN, .-string_OP_UNKNOWN
+.size string_OP_UNKNOWN, .-string_OP_UNKNOWN
 	
-	#endif /* WITH_CMD_D */
+#endif /* WITH_CMD_D */

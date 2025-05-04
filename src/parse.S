@@ -1,14 +1,14 @@
-	#include "vmon/config.h"
-	#include "vmon/ASCII.h"
+#include "vmon/config.h"
+#include "vmon/ASCII.h"
 
 
-	.global skip_whitespace
-	.global get_hex_addr
-	.global find_insn_name_end
-	.global find_register_name_end
-	.global is_ascii
+.global skip_whitespace
+.global get_hex_addr
+.global find_insn_name_end
+.global find_register_name_end
+.global is_ascii
 
-	.text
+.text
 
 
 	# in: buffer ptr in a0
@@ -25,7 +25,7 @@ skip_whitespace_advance:
 	j		skip_whitespace_next	
 skip_whitespace_done:
 	ret
-	.size skip_whitespace, .-skip_whitespace
+.size skip_whitespace, .-skip_whitespace
 
 
 	# in: buffer ptr in a0
@@ -45,7 +45,7 @@ find_insn_name_end_valid_char:
 	j		find_insn_name_end	  
 find_insn_name_end_done:
 	ret
-	.size find_insn_name_end, .-find_insn_name_end
+.size find_insn_name_end, .-find_insn_name_end
 
 
 	# in: buffer ptr in a0
@@ -66,7 +66,7 @@ find_register_name_end_valid_char:
 	j		find_register_name_end	  
 find_register_name_end_done:
 	ret
-	.size find_insn_name_end, .-find_insn_name_end
+.size find_insn_name_end, .-find_insn_name_end
 
 
 	# in: buffer ptr in a0
@@ -109,4 +109,4 @@ get_hex_addr_return_error:
 	li		a2, -1
 get_hex_addr_return:   
 	ret	
-	.size get_hex_addr, .-get_hex_addr
+.size get_hex_addr, .-get_hex_addr

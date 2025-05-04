@@ -1,16 +1,16 @@
-	#include "vmon/config.h"
-	#include "vmon/ASCII.h"
+#include "vmon/config.h"
+#include "vmon/ASCII.h"
 
-	#ifdef WITH_CMD_A
+#ifdef WITH_CMD_A
 
-	.global assemble_instruction
+.global assemble_instruction
 
-	.global assemble_DUMMY
-	.global assemble_VOID
-	.global assemble_BRANCH
+.global assemble_DUMMY
+.global assemble_VOID
+.global assemble_BRANCH
 
 
-	.text
+.text
 
 	# in: a0 = ptr to input text
 	# out: a0 = insn size (normal 4, 2 for RVC, 0 if error)
@@ -47,7 +47,7 @@ assemble_instruction_is_RVC:
 #else
 	li		a0, 4
 #endif
-	j 		assemble_instruction_done
+	j		assemble_instruction_done
 assemble_instruction_error:
 	mv		a0, zero
 assemble_instruction_done:
@@ -57,12 +57,12 @@ assemble_instruction_done:
 	LOAD_X	s2, (XLEN_BYTES*3)(sp)				 
 	addi	sp, sp, (XLEN_BYTES*4)
 	ret
-	.size assemble_instruction, .-assemble_instruction
+.size assemble_instruction, .-assemble_instruction
 
 
-# in: register number in a0
-# in: instruction word in a1
-# out: modified instruction word in a1
+	# in: register number in a0
+	# in: instruction word in a1
+	# out: modified instruction word in a1
 assemble_rd:
 	slli	a0, a0, 7
 	or		a1, a1, a0
@@ -70,9 +70,9 @@ assemble_rd:
 .size assemble_rd, .-assemble_rd
 
 
-# in: register number in a0
-# in: instruction word in a1
-# out: modified instruction word in a1
+	# in: register number in a0
+	# in: instruction word in a1
+	# out: modified instruction word in a1
 assemble_rs1:
 	slli	a0, a0, 15
 	or		a1, a1, a0
@@ -80,9 +80,9 @@ assemble_rs1:
 .size assemble_rs1, .-assemble_rs1
 
 
-# in: register number in a0
-# in: instruction word in a1
-# out: modified instruction word in a1
+	# in: register number in a0
+	# in: instruction word in a1
+	# out: modified instruction word in a1
 assemble_rs2:
 	slli	a0, a0, 20
 	or		a1, a1, a0
@@ -94,7 +94,7 @@ assemble_rs2:
 assemble_DUMMY:
 	li		a1, 0xffffffff
 	ret
-	.size assemble_DUMMY, .-assemble_DUMMY
+.size assemble_DUMMY, .-assemble_DUMMY
 
 
 	# in: input string ptr in a0
@@ -102,7 +102,7 @@ assemble_DUMMY:
 assemble_VOID:
 	# nothing to be done, a1 already contains final insn
 	ret
-	.size assemble_VOID, .-assemble_VOID
+.size assemble_VOID, .-assemble_VOID
 
 
 	# in: input string ptr in a0
@@ -132,7 +132,7 @@ assemble_BRANCH:
 
 	# add rs1 to instruction word
 	mv		a1, s2
-	jal 	assemble_rs1
+	jal	assemble_rs1
 	mv		s2, a1
 
 	# assemble register 1
@@ -143,7 +143,7 @@ assemble_BRANCH:
 	# parse address (or label)
 	# assemble address
 
-	j 		assemble_BRANCH_done	
+	j		assemble_BRANCH_done	
 assemble_BRANCH_error:
 	mv		a1, zero
 assemble_BRANCH_done:
@@ -157,4 +157,4 @@ assemble_BRANCH_done:
 .size assemble_BRANCH, .-assemble_BRANCH
 
 
-	#endif /* WITH_CMD_A */
+#endif /* WITH_CMD_A */

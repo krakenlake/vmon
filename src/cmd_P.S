@@ -1,11 +1,11 @@
-	#include "vmon/config.h"
+#include "vmon/config.h"
 
 
-	#ifdef WITH_CMD_P
+#ifdef WITH_CMD_P
 
-	.global cmd_P
+.global cmd_P
 
-	.text
+.text
 
 
 cmd_P:
@@ -35,7 +35,7 @@ cmd_P_error:
 
 cmd_P_done:
 	j		main_prompt
-	.size cmd_P, .-cmd_P
+.size cmd_P, .-cmd_P
 
 
-	#endif /* WITH_CMD_P */
+#endif /* WITH_CMD_P */
