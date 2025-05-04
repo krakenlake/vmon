@@ -1,17 +1,17 @@
-	#include "vmon/config.h"
+#include "vmon/config.h"
 
 
-	.global divrem
+.global divrem
 
-	.text
+.text
 
-	# Unsigned integer division without using M extension
-	# Thanks to Bruce Hoult!
-	# in: a0 = dividend
-	# in: a1 = divisor
-	# out: a0 = quotient 
-	# out: a1 = remainder
-	# clobbered: a2, a3, a4, a5
+# Unsigned integer division without using M extension
+# Thanks to Bruce Hoult!
+# in: a0 = dividend
+# in: a1 = divisor
+# out: a0 = quotient 
+# out: a1 = remainder
+# clobbered: a2, a3, a4, a5
 divrem:
 	# check for division by zero, if so immediately return
 	beqz	a1, divrem_zero
@@ -48,4 +48,4 @@ divrem_zero:
 	li		a0, 0			# Return quotient = 0 (or some error code if needed)
 	ret
 
-	.size divrem, .-divrem
+.size divrem, .-divrem

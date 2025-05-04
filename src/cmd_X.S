@@ -1,11 +1,11 @@
-	#include "vmon/config.h"
+#include "vmon/config.h"
 
 
-	#ifdef WITH_CMD_X
+#ifdef WITH_CMD_X
 
-	.global cmd_X
+.global cmd_X
 
-	.text
+.text
 
 
 cmd_X:
@@ -51,8 +51,10 @@ cmd_X:
 	.size cmd_X, .-cmd_X
 
 
-	.data
-string_exit:			.string "exiting: ret, ra=";
-	.size string_exit, .-string_exit
+.data
 
-	#endif /* WITH_CMD_X */
+
+string_exit:			.string "exiting: ret, ra=";
+.size string_exit, .-string_exit
+
+#endif /* WITH_CMD_X */

@@ -1,11 +1,11 @@
-	#include "vmon/config.h"
+#include "vmon/config.h"
 
 
-	#ifdef WITH_CMD_G
+#ifdef WITH_CMD_G
 
-	.global cmd_G
+.global cmd_G
 
-	.text
+.text
 
 
 cmd_G:
@@ -24,11 +24,13 @@ cmd_G_error:
 	la		a0, error_param
 	jal		print_string
 	j		main_prompt
-	.size cmd_G, .-cmd_G
+.size cmd_G, .-cmd_G
 
 
-	.data
-string_go:				.string "jumping to ";
-	.size string_go, .-string_go
+.data
 
-	#endif /* WITH_CMD_G */
+string_go:	.string "jumping to ";
+.size string_go, .-string_go
+
+
+#endif /* WITH_CMD_G */

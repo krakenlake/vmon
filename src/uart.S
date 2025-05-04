@@ -1,24 +1,24 @@
-	#include "vmon/config.h"
-	#include "vmon/drivers/uart/ns16550.h"
-	#include "vmon/ASCII.h"
+#include "vmon/config.h"
+#include "vmon/drivers/uart/ns16550.h"
+#include "vmon/ASCII.h"
 
 
 
-	.global uart_init
-	.global uart_wait_get_char
-	.global uart_output_char
-	.global uart_output_string
-	.global uart_output_buffer
-	.global uart_getline
+.global uart_init
+.global uart_wait_get_char
+.global uart_output_char
+.global uart_output_string
+.global uart_output_buffer
+.global uart_getline
 
-	.text
+.text
 
 uart_init:
 	li		t1, UART_BASE				   
 	li		t0, UART_MODE_8N1
 	sb		t0, UART_REG_LSR(t1)	  
 	ret
-	.size uart_init, .-uart_init
+.size uart_init, .-uart_init
 
 
 uart_clear_buffer:
@@ -29,11 +29,11 @@ uart_clear_buffer_loop:
 	addi	t0, t0, 4
 	ble		t0, t1, uart_clear_buffer_loop
 	ret
-	.size uart_clear_buffer, .-uart_clear_buffer
+.size uart_clear_buffer, .-uart_clear_buffer
 
 
-	# wait and get one character from UART 
-	# out: char (ASCII) in a0
+# wait and get one character from UART 
+# out: char (ASCII) in a0
 uart_wait_get_char:
 	li		t0, UART_BASE
 uart_get_char_wait:
@@ -44,11 +44,11 @@ uart_get_char_wait:
 	beqz	a0, uart_get_char_wait		# wait for char input
 	lbu		a0, 0(t0)					# get input from UART  
 	ret
-	.size uart_wait_get_char, .-uart_wait_get_char
+.size uart_wait_get_char, .-uart_wait_get_char
 
 
-	# output one char 
-	# in: char (ASCII) in a0
+# output one char 
+# in: char (ASCII) in a0
 uart_output_char:
 	addi	sp, sp, -(XLEN_BYTES*1)				
 	SAVE_X	ra, 0(sp)
@@ -59,11 +59,11 @@ uart_output_char:
 	LOAD_X	ra, 0(sp)			  
 	addi	sp, sp, (XLEN_BYTES*1)
 	ret
-	.size uart_output_char, .-uart_output_char
+.size uart_output_char, .-uart_output_char
 
 
-	# output zero-terminated string	 
-	# in: string ptr in a0
+# output zero-terminated string	 
+# in: string ptr in a0
 uart_output_string:
 	addi	sp, sp, -(XLEN_BYTES*1)				
 	SAVE_X	ra, 0(sp)
@@ -72,11 +72,11 @@ uart_output_string_loop:
 	lb		a0, 0(a1)
 	beqz	a0, uart_output_string_done
 	#ifdef USE_CRLF
-	li		t0, ASCII_NEWLINE
-	bne		a0, t0, uart_output_string_char
-	li		a0, ASCII_RETURN  # First output CR
-	jal		uart_output_char
-	li		a0, ASCII_NEWLINE # Put LF back in a0
+        li		t0, ASCII_NEWLINE
+        bne		a0, t0, uart_output_string_char
+        li		a0, ASCII_RETURN  # First output CR
+        jal		uart_output_char
+        li		a0, ASCII_NEWLINE # Put LF back in a0
 uart_output_string_char:
 	#endif
 	jal		uart_output_char
@@ -86,11 +86,11 @@ uart_output_string_done:
 	LOAD_X	ra, 0(sp)			  
 	addi	sp, sp, (XLEN_BYTES*1)
 	ret
-	.size uart_output_string, .-uart_output_string
+.size uart_output_string, .-uart_output_string
 
 
-	# print zero-terminated string in output buffer out_buf to UART
-	# buffer will be filled with zeros on return
+# print zero-terminated string in output buffer out_buf to UART
+# buffer will be filled with zeros on return
 uart_output_buffer:
 	addi	sp, sp, -(XLEN_BYTES*1)				
 	SAVE_X	ra, 0(sp)
@@ -116,11 +116,11 @@ uart_output_buffer_done:
 	LOAD_X	ra, 0(sp)			  
 	addi	sp, sp, (XLEN_BYTES*1)
 	ret
-	.size uart_output_buffer, .-uart_output_buffer
+.size uart_output_buffer, .-uart_output_buffer
 
 
-	# get a line of input from UART until RETURN is hit
-	# out: buffer start in a0
+# get a line of input from UART until RETURN is hit
+# out: buffer start in a0
 uart_getline:
 	addi	sp, sp, -(XLEN_BYTES*3)				
 	SAVE_X	ra, 0(sp)
@@ -181,12 +181,12 @@ uart_getline_done:
 	LOAD_X	s1, (XLEN_BYTES*2)(sp)				 
 	addi	sp, sp, (XLEN_BYTES*3)
 	ret
-	.size uart_getline, .-uart_getline
+.size uart_getline, .-uart_getline
 
 
-	.bss
-	
-	.align 8
-	.comm uart_input_buffer, BUFFER_SIZE
-	.size uart_input_buffer, BUFFER_SIZE
+.bss
+
+.align 8
+.comm uart_input_buffer, BUFFER_SIZE
+.size uart_input_buffer, BUFFER_SIZE
 

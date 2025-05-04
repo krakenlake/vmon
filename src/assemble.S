@@ -1,21 +1,21 @@
-	#include "vmon/config.h"
-	#include "vmon/ASCII.h"
+#include "vmon/config.h"
+#include "vmon/ASCII.h"
 
-	#ifdef WITH_CMD_A
+#ifdef WITH_CMD_A
 
-	.global assemble_instruction
+.global assemble_instruction
 
-	.global assemble_DUMMY
-	.global assemble_VOID
-	.global assemble_BRANCH
+.global assemble_DUMMY
+.global assemble_VOID
+.global assemble_BRANCH
 
 
-	.text
+.text
 
-	# in: a0 = ptr to input text
-	# in: a2 = current memory address to write (needed for branch calculation)
-	# out: a0 = insn size (normal 4, 2 for RVC, 0 if error)
-	# out: a1 = assembled instruction to be written into memory
+# in: a0 = ptr to input text
+# in: a2 = current memory address to write (needed for branch calculation)
+# out: a0 = insn size (normal 4, 2 for RVC, 0 if error)
+# out: a1 = assembled instruction to be written into memory
 assemble_instruction:
 	addi	sp, sp, -(XLEN_BYTES*4)
 	SAVE_X	ra, 0(sp)
@@ -59,7 +59,7 @@ assemble_instruction_done:
 	LOAD_X	s2, (XLEN_BYTES*3)(sp)				 
 	addi	sp, sp, (XLEN_BYTES*4)
 	ret
-	.size assemble_instruction, .-assemble_instruction
+.size assemble_instruction, .-assemble_instruction
 
 
 # in: register number in a0
@@ -130,28 +130,28 @@ assemble_branch_target_error:
 	mv		a1, zero
 assemble_branch_target_done:
 	ret
+.size assemble_branch_target, .-assemble_branch_target
 
 
-.size assemble_rs2, .-assemble_rs2
-	# in: input string ptr in a0
+# in: input string ptr in a0
 assemble_DUMMY:
 	li		a1, 0xffffffff
 	ret
-	.size assemble_DUMMY, .-assemble_DUMMY
+.size assemble_DUMMY, .-assemble_DUMMY
 
 
-	# in: input string ptr in a0
-	# in: MATCH value in a1
+# in: input string ptr in a0
+# in: MATCH value in a1
 assemble_VOID:
 	# nothing to be done, a1 already contains final insn
 	ret
-	.size assemble_VOID, .-assemble_VOID
+.size assemble_VOID, .-assemble_VOID
 
 
-	# in: a0 = input string ptr
-	# in: a1 = MATCH value
-	# in: a2 = origin address
-	# out: assembled instruction in a1
+# in: a0 = input string ptr
+# in: a1 = MATCH value
+# in: a2 = origin address
+# out: assembled instruction in a1
 assemble_BRANCH:
 	addi	sp, sp, -(XLEN_BYTES*5)				 
 	SAVE_X	ra, 0(sp)
@@ -228,4 +228,4 @@ assemble_BRANCH_done:
 .size assemble_BRANCH, .-assemble_BRANCH
 
 
-	#endif /* WITH_CMD_A */
+#endif /* WITH_CMD_A */

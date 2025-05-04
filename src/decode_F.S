@@ -1,23 +1,23 @@
-	#include "vmon/config.h"
+#include "vmon/config.h"
 
-	#ifdef WITH_CMD_D
+#ifdef WITH_CMD_D
 
-	#ifdef ENABLE_RVF
+#ifdef ENABLE_RVF
 
-	.global decode_FL
-	.global decode_FS
-	.global decode_FADD
-	.global decode_FSQRT
-	.global decode_FMA
-	.global decode_FCVT_SW
-	.global decode_FCVT_WS
-	.global decode_FCMP
-	.global decode_FCLASS
+.global decode_FL
+.global decode_FS
+.global decode_FADD
+.global decode_FSQRT
+.global decode_FMA
+.global decode_FCVT_SW
+.global decode_FCVT_WS
+.global decode_FCMP
+.global decode_FCLASS
 
 
-	.text
+.text
 
-	# in: instruction word in a0
+# in: instruction word in a0
 print_frd:
 	addi	sp, sp, -(XLEN_BYTES*1)				 
 	SAVE_X	ra, 0(sp) 
@@ -29,7 +29,7 @@ print_frd:
 	LOAD_X	ra, 0(sp)				
 	addi	sp, sp, (XLEN_BYTES*1)
 	ret
-	.size print_frd, .-print_frd
+.size print_frd, .-print_frd
 
 
 # in: instruction word in a0
@@ -45,28 +45,28 @@ print_float_register_name:
 .size print_float_register_name, .-print_float_register_name
 
 
-	# in: instruction word in a0
+# in: instruction word in a0
 print_frs1:
 	srli	a0, a0, 15			
 	j		print_float_register_name	
 .size print_frs1, .-print_frs1
 
 
-	# in: instruction word in a0
+# in: instruction word in a0
 print_frs2:
 	srli	a0, a0, 20			
 	j		print_float_register_name	
 .size print_frs2, .-print_frs2
 
 
-	# in: instruction word in a0
+# in: instruction word in a0
 print_frs3:
 	srli	a0, a0, 27			 
 	j		print_float_register_name	
 .size print_frs3, .-print_frs3
 
 
-	# in: instruction word in a0
+# in: instruction word in a0
 decode_FL:
 	addi	sp, sp, -(XLEN_BYTES*2)				 
 	SAVE_X	ra, 0(sp)
@@ -79,11 +79,11 @@ decode_FL:
 	LOAD_X	ra, 0(sp)				
 	addi	sp, sp, (XLEN_BYTES*2)
 	ret
-	.size decode_FL, .-decode_FL
+.size decode_FL, .-decode_FL
 
 
-	# TODO: can be joined with decode_S_type
-	# in: instruction word in a0
+# TODO: can be joined with decode_S_type
+# in: instruction word in a0
 decode_FS:
 	addi	sp, sp, -(XLEN_BYTES*2)				 
 	SAVE_X	ra, 0(sp)
@@ -97,10 +97,10 @@ decode_FS:
 	LOAD_X	ra, 0(sp)				
 	addi	sp, sp, (XLEN_BYTES*2)
 	ret
-	.size decode_FS, .-decode_FS
+.size decode_FS, .-decode_FS
 
 
-	# in: instruction word in a0
+# in: instruction word in a0
 decode_FADD:
 	addi	sp, sp, -(XLEN_BYTES*2)				 
 	SAVE_X	ra, 0(sp)
@@ -114,10 +114,10 @@ decode_FADD:
 	LOAD_X	ra, 0(sp)				
 	addi	sp, sp, (XLEN_BYTES*2)
 	ret
-	.size decode_FADD, .-decode_FADD
+.size decode_FADD, .-decode_FADD
 
 
-	# in: instruction word in a0
+# in: instruction word in a0
 decode_FMA:
 	addi	sp, sp, -(XLEN_BYTES*2)				 
 	SAVE_X	ra, 0(sp)
@@ -129,10 +129,10 @@ decode_FMA:
 	LOAD_X	ra, 0(sp)				
 	addi	sp, sp, (XLEN_BYTES*2)
 	ret
-	.size decode_FMA, .-decode_FMA
+.size decode_FMA, .-decode_FMA
 
 
-	# in: instruction word in a0
+# in: instruction word in a0
 decode_FSQRT:
 	addi	sp, sp, -(XLEN_BYTES*2)				 
 	SAVE_X	ra, 0(sp)
@@ -143,10 +143,10 @@ decode_FSQRT:
 	LOAD_X	ra, 0(sp)				
 	addi	sp, sp, (XLEN_BYTES*2)
 	ret
-	.size decode_FSQRT, .-decode_FSQRT
+.size decode_FSQRT, .-decode_FSQRT
 
 
-	# in: instruction word in a0
+# in: instruction word in a0
 decode_FCVT_SW:
 	addi	sp, sp, -(XLEN_BYTES*2)				 
 	SAVE_X	ra, 0(sp)
@@ -157,7 +157,7 @@ decode_FCVT_SW:
 	LOAD_X	ra, 0(sp)				
 	addi	sp, sp, (XLEN_BYTES*2)
 	ret
-	.size decode_FCVT_SW, .-decode_FCVT_SW
+.size decode_FCVT_SW, .-decode_FCVT_SW
 
 
 decode_FCVT_WS:
@@ -170,7 +170,7 @@ decode_FCVT_WS:
 	LOAD_X	ra, 0(sp)				
 	addi	sp, sp, (XLEN_BYTES*2)
 	ret
-	.size decode_FCVT_WS, .-decode_FCVT_WS
+.size decode_FCVT_WS, .-decode_FCVT_WS
 
 
 decode_FCLASS:
@@ -183,7 +183,7 @@ decode_FCLASS:
 	LOAD_X	ra, 0(sp)				
 	addi	sp, sp, (XLEN_BYTES*2)
 	ret
-	.size decode_FCLASS, .-decode_FCLASS
+.size decode_FCLASS, .-decode_FCLASS
 
 
 decode_FCMP:
@@ -197,11 +197,11 @@ decode_FCMP:
 	LOAD_X	ra, 0(sp)				
 	addi	sp, sp, (XLEN_BYTES*2)
 	ret
-	.size decode_FCMP, .-decode_FCMP
+.size decode_FCMP, .-decode_FCMP
 
 
-	.data
+.data
 
-	#endif /* ENABLE_RVF */
+#endif /* ENABLE_RVF */
 
-	#endif /* WITH_CMD_D */
+#endif /* WITH_CMD_D */

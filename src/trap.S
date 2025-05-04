@@ -1,14 +1,14 @@
-	#include "vmon/config.h"
+#include "vmon/config.h"
 
-	#ifdef BARE_METAL
+#ifdef BARE_METAL
 
-	.global setup_trap_handler
+.global setup_trap_handler
 
-	#define TIMER_INTERVAL 10000000
+#define TIMER_INTERVAL 10000000
 
-	#define MTIMECMP 0x2004000			# QEMU CLINT 0x2000000 + 0x4000 + 8*(hart_id)
+#define MTIMECMP 0x2004000			# QEMU CLINT 0x2000000 + 0x4000 + 8*(hart_id)
 
-	.text
+.text
 
 
 setup_trap_handler:
@@ -128,31 +128,31 @@ trap_handler_pop:
 	LOAD_X	s0, (XLEN_BYTES*4)(sp)
 	addi	sp, sp, (XLEN_BYTES*5)
 	mret
-	.size trap_handler, .-trap_handler
+.size trap_handler, .-trap_handler
 
 
-	.data
+.data
+
 
 string_exception_msg:		.string "\nexception:"
 string_mepc_msg:			.string "\n\tmepc\t= ";
 string_mtval_msg:			.string "\n\tmtval\t= ";
 string_mcause_msg:			.string "\n\tmcause\t= ";
 
-	#ifdef MCAUSE_VERBOSE
-string_CAUSE_MISALIGNED_FETCH:		.string "CAUSE_MISALIGNED_FETCH";
-string_CAUSE_FAULT_FETCH:			.string "CAUSE_FAULT_FETCH";
-string_CAUSE_ILLEGAL_INSTRUCTION:	.string "CAUSE_ILLEGAL_INSTRUCTION";
-string_CAUSE_BREAKPOINT:			.string "CAUSE_BREAKPOINT";
-string_CAUSE_MISALIGNED_LOAD:		.string "CAUSE_MISALIGNED_LOAD";
-string_CAUSE_FAULT_LOAD:			.string "CAUSE_FAULT_LOAD";
-string_CAUSE_MISALIGNED_STORE:		.string "CAUSE_MISALIGNED_STORE";
-string_CAUSE_FAULT_STORE:			.string "CAUSE_FAULT_STORE";
-string_CAUSE_USER_ECALL:			.string "CAUSE_USER_ECALL";
-string_CAUSE_SUPERVISOR_ECALL:		.string "CAUSE_SUPERVISOR_ECALL";
-string_CAUSE_HYPERVISOR_ECALL:		.string "CAUSE_HYPERVISOR_ECALL";
-string_CAUSE_MACHINE_ECALL:			.string "CAUSE_MACHINE_ECALL";
-
-	.align 4
+#ifdef MCAUSE_VERBOSE
+	string_CAUSE_MISALIGNED_FETCH:		.string "CAUSE_MISALIGNED_FETCH";
+	string_CAUSE_FAULT_FETCH:			.string "CAUSE_FAULT_FETCH";
+	string_CAUSE_ILLEGAL_INSTRUCTION:	.string "CAUSE_ILLEGAL_INSTRUCTION";
+	string_CAUSE_BREAKPOINT:			.string "CAUSE_BREAKPOINT";
+	string_CAUSE_MISALIGNED_LOAD:		.string "CAUSE_MISALIGNED_LOAD";
+	string_CAUSE_FAULT_LOAD:			.string "CAUSE_FAULT_LOAD";
+	string_CAUSE_MISALIGNED_STORE:		.string "CAUSE_MISALIGNED_STORE";
+	string_CAUSE_FAULT_STORE:			.string "CAUSE_FAULT_STORE";
+	string_CAUSE_USER_ECALL:			.string "CAUSE_USER_ECALL";
+	string_CAUSE_SUPERVISOR_ECALL:		.string "CAUSE_SUPERVISOR_ECALL";
+	string_CAUSE_HYPERVISOR_ECALL:		.string "CAUSE_HYPERVISOR_ECALL";
+	string_CAUSE_MACHINE_ECALL:			.string "CAUSE_MACHINE_ECALL";
+.align 4
 mcause_verbose_table:
 	.word string_CAUSE_MISALIGNED_FETCH
 	.word string_CAUSE_FAULT_FETCH
@@ -166,12 +166,14 @@ mcause_verbose_table:
 	.word string_CAUSE_SUPERVISOR_ECALL
 	.word string_CAUSE_HYPERVISOR_ECALL
 	.word string_CAUSE_MACHINE_ECALL
-	#endif 
+#endif /* MCAUSE_VERBOSE */
 
 
-	.bss
-	.align 8
-	.comm stackptr_reset, XLEN_BYTES
+.bss
 
 
-	#endif /* BARE_METAL */
+.align 8
+.comm stackptr_reset, XLEN_BYTES
+
+
+#endif /* BARE_METAL */

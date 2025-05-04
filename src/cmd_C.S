@@ -1,11 +1,11 @@
-	#include "vmon/config.h"
+#include "vmon/config.h"
 
 
-	#ifdef WITH_CMD_C
+#ifdef WITH_CMD_C
 
-	.global cmd_C
+.global cmd_C
 
-	.text
+.text
 
 
 cmd_C:
@@ -24,11 +24,11 @@ cmd_C:
 	jal		get_hex_addr			
 	bnez	a2, cmd_C_error			# abort command if not found
 	mv		a5, a1
-	
+
 	# a3: src_start
 	# a4: src_end
 	# a5: dst_start
-	
+
 	# loop forward or backwards, depending how areas might overlap
 	bgt		a5, a3, cmd_C_do_backwards
 
@@ -57,7 +57,7 @@ cmd_C_error:
 
 cmd_C_done:
 	j		main_prompt
-	.size cmd_C, .-cmd_C
+.size cmd_C, .-cmd_C
 
 
-	#endif /* WITH_CMD_C */
+#endif /* WITH_CMD_C */

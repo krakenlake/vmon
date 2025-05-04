@@ -1,22 +1,22 @@
-	#include "vmon/config.h"
-	#include "vmon/ASCII.h"
+#include "vmon/config.h"
+#include "vmon/ASCII.h"
 
 
-	#ifdef WITH_CMD_D
+#ifdef WITH_CMD_D
 
-	.global cmd_D
+.global cmd_D
 
-	.text
+.text
 
 
 cmd_D:
 	jal		skip_whitespace
-	jal		get_hex_addr			# read start addr from text buffer
-	bnez	a2, cmd_D_from_last		# none given? continue from last saved addr
-	mv		s5, a1					# save start addr of dump
+	jal		get_hex_addr				# read start addr from text buffer
+	bnez	a2, cmd_D_from_last			# none given? continue from last saved addr
+	mv		s5, a1						# save start addr of dump
 	jal		skip_whitespace
-	jal		get_hex_addr			# read start addr from text buffer
-	mv		s7, a1					# save end addr of dump
+	jal		get_hex_addr				# read start addr from text buffer
+	mv		s7, a1						# save end addr of dump
 	beqz	a2, cmd_D_next_instruction
 	j		cmd_D_add_default 
 cmd_D_from_last:
@@ -88,11 +88,13 @@ cmd_D_done:
 	la		a0, last_address 
 	SAVE_X	s5, 0(a0)
 	j		main_prompt
-	.size cmd_D, .-cmd_D
-	
-	
-	.data
+.size cmd_D, .-cmd_D
+
+
+.data
+
 string_OP_UNKNOWN:		.string "???";
-	.size string_OP_UNKNOWN, .-string_OP_UNKNOWN
-	
-	#endif /* WITH_CMD_D */
+.size string_OP_UNKNOWN, .-string_OP_UNKNOWN
+
+
+#endif /* WITH_CMD_D */
