@@ -5,9 +5,6 @@
 	#if defined (WITH_CMD_D) || defined (WITH_CMD_A)
 
 
-	.global get_register_index_by_name
-
-
 	# table with MASK, MATCH, decode_func_ptr, opcode_string, assemble_func_ptr
 	.global encoding_table
 	# table access functions
@@ -127,7 +124,6 @@ get_float_register_index_by_name:
 get_register_index_by_name:
 	addi	sp, sp, -(XLEN_BYTES*1)
 	SAVE_X	ra, 0(sp)
-	addi 	a1, a1, -1										# point a1 to actual last char
 	li		a3, 0											# init index counter
 	mv		a4, a0											# save a0 for reuse
 	li		t0, 32											# max entries in table
