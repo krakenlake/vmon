@@ -1,23 +1,24 @@
-	#include "vmon/config.h"
-	#include "vmon/ASCII.h"
+#include "vmon/config.h"
+#include "vmon/ASCII.h"
 
 
-	.global print_hex
-	.global print_hex_raw
-	.global print_hex_byte
-	.global print_ascii
-	.global print_char
-	.global print_string
-	.global print_decimal
-	.global print_comma
-	.global print_newline
-	.global out_buf
+.global print_hex
+.global print_hex_raw
+.global print_hex_byte
+.global print_ascii
+.global print_char
+.global print_string
+.global print_decimal
+.global print_comma
+.global print_newline
+.global out_buf
 
 
-	#define DEC_BUFFER_SIZE		 32
-	#define OUT_BUFFER_SIZE		 128
+#define DEC_BUFFER_SIZE		 32
+#define OUT_BUFFER_SIZE		 128
 
-	.text
+.text
+
 
 print_comma:
 	addi	sp, sp, -(XLEN_BYTES*1)				
@@ -25,31 +26,31 @@ print_comma:
 	li		a0, ','
 	jal		print_char
 	#ifdef SPACE_AFTER_COMMA
-	li		a0, ' '
-	jal		print_char
+        li		a0, ' '
+        jal		print_char
 	#endif
 	LOAD_X	ra, 0(sp)			  
 	addi	sp, sp, (XLEN_BYTES*1)
 	ret
-	.size print_comma, .-print_comma
+.size print_comma, .-print_comma
 
 
 print_newline:
 	addi	sp, sp, -(XLEN_BYTES*1)
 	SAVE_X	ra, 0(sp)
 	#ifdef USE_CRLF
-	li		a0, ASCII_RETURN
-	jal		print_char
+        li		a0, ASCII_RETURN
+        jal		print_char
 	#endif
 	li		a0, ASCII_NEWLINE
 	jal		print_char
 	LOAD_X	ra, 0(sp)
 	addi	sp, sp, (XLEN_BYTES*1)
 	ret
-	.size print_newline, .-print_newline
+.size print_newline, .-print_newline
 
 
-	# in: print value in a0 in hex with "0x" prefix
+# in: print value in a0 in hex with "0x" prefix
 print_hex:
 	addi	sp, sp, -(XLEN_BYTES*2)				
 	SAVE_X	ra, 0(sp)
@@ -70,8 +71,8 @@ print_hex:
 	.size print_hex, .-print_hex
 
 
-	# in: print value in a0 in hex
-	# no trailing zeroes, no prefix
+# in: print value in a0 in hex
+# no trailing zeroes, no prefix
 print_hex_raw:
 	addi	sp, sp, -(XLEN_BYTES*1)				
 	SAVE_X	ra, 0(sp)
@@ -99,11 +100,11 @@ print_hex_new_decimal:
 	LOAD_X	ra, 0(sp)			  
 	addi	sp, sp, (XLEN_BYTES*1)
 	ret
-	.size print_hex_raw, .-print_hex_raw
+.size print_hex_raw, .-print_hex_raw
 
 
-	# print a 2-digit hex value (with leading zero for 1-digit values)
-	# in: byte value in a0
+# print a 2-digit hex value (with leading zero for 1-digit values)
+# in: byte value in a0
 print_hex_byte:
 	addi	sp, sp, -(XLEN_BYTES*2)				
 	SAVE_X	ra, 0(sp)
@@ -121,10 +122,10 @@ print_hex_byte_two_digits:
 	LOAD_X	s1, (XLEN_BYTES*1)(sp)
 	addi	sp, sp, (XLEN_BYTES*2)
 	ret
-	.size print_hex_byte, .-print_hex_byte
+.size print_hex_byte, .-print_hex_byte
 
 
-	# print char in a0 to terminal (if printable, else '.')
+# print char in a0 to terminal (if printable, else '.')
 print_ascii:
 	addi	sp, sp, -(XLEN_BYTES*1)				
 	SAVE_X	ra, 0(sp)
@@ -141,24 +142,24 @@ print_ascii_out:
 	LOAD_X	ra, 0(sp)			  
 	addi	sp, sp, (XLEN_BYTES*1)
 	ret
-	.size print_ascii, .-print_ascii
+.size print_ascii, .-print_ascii
 
 
-	# print ASCII char in a0
+# print ASCII char in a0
 print_char:
 	j		uart_output_char
-	.size print_char, .-print_char
+.size print_char, .-print_char
 
 
-	# print string starting at addr in a0
+# print string starting at addr in a0
 print_string:
 	j		uart_output_string
-	.size print_string, .-print_string
+.size print_string, .-print_string
 
 
-	#ifdef WITH_CMD_D
+#ifdef WITH_CMD_D
 
-	# print 32-bit signed decimal in a0 to terminal
+# print 32-bit signed decimal in a0 to terminal
 print_decimal:
 	addi	sp, sp, -(XLEN_BYTES*2)			  
 	SAVE_X	ra, 0(sp)
@@ -205,19 +206,18 @@ print_decimal_done:
 	ret
 	.size print_decimal, .-print_decimal
 
+#endif /* WITH_CMD_D */
 
-	#endif /* WITH_CMD_D */
+.data
 
-	.data
+.align 8
 
-	.align 8
-
-	#ifdef WITH_CMD_D
-	.comm dec_buf, DEC_BUFFER_SIZE
-	.size dec_buf, DEC_BUFFER_SIZE
-	#endif /* WITH_CMD_D */
+#ifdef WITH_CMD_D
+    .comm dec_buf, DEC_BUFFER_SIZE
+    .size dec_buf, DEC_BUFFER_SIZE
+#endif /* WITH_CMD_D */
 
 
-	.comm out_buf, OUT_BUFFER_SIZE
-	.size out_buf, OUT_BUFFER_SIZE
+.comm out_buf, OUT_BUFFER_SIZE
+.size out_buf, OUT_BUFFER_SIZE
 

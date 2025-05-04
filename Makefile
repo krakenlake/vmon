@@ -115,5 +115,3 @@ device-tree:
 	dtc -I dtb -O dts $(BUILD)/qemu.dtb -o $(BUILD)/qemu-device-tree.dts
 	less $(BUILD)/qemu-device-tree.dts
 
-format:
-	./vmon-format.sh src/*.S

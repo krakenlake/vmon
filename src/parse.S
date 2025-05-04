@@ -1,18 +1,18 @@
-	#include "vmon/config.h"
-	#include "vmon/ASCII.h"
+#include "vmon/config.h"
+#include "vmon/ASCII.h"
 
 
-	.global skip_whitespace
-	.global consume_comma
-	.global get_hex_addr
-	.global find_insn_name_end
-	.global find_register_name_end
-	.global is_ascii
+.global skip_whitespace
+.global consume_comma
+.global get_hex_addr
+.global find_insn_name_end
+.global find_register_name_end
+.global is_ascii
 
-	.text
+.text
 
 
-	# in: buffer ptr in a0
+# in: buffer ptr in a0
 skip_whitespace:
 	li		t0, ' '
 	li		t1, '\t'
@@ -26,7 +26,7 @@ skip_whitespace_advance:
 	j		skip_whitespace_next	
 skip_whitespace_done:
 	ret
-	.size skip_whitespace, .-skip_whitespace
+.size skip_whitespace, .-skip_whitespace
 
 
 # in: buffer ptr in a0
@@ -41,8 +41,8 @@ consume_comma_done:
 	ret
 
 
-	# in: buffer ptr in a0
-	# out: ptr to end of word in a0
+# in: buffer ptr in a0
+# out: ptr to end of word in a0
 find_insn_name_end:
 	lb		t0, 0(a0)
 	# accept '.'
@@ -58,11 +58,11 @@ find_insn_name_end_valid_char:
 	j		find_insn_name_end	  
 find_insn_name_end_done:
 	ret
-	.size find_insn_name_end, .-find_insn_name_end
+.size find_insn_name_end, .-find_insn_name_end
 
 
-	# in: buffer ptr in a0
-	# out: ptr to end of word in a0
+# in: buffer ptr in a0
+# out: ptr to end of word in a0
 find_register_name_end:
 	lb		t0, 0(a0)
 	# accept a-z and 0-9
@@ -80,13 +80,13 @@ find_register_name_end_valid_char:
 find_register_name_end_done:
 	addi	a0, a0, -1
 	ret
-	.size find_insn_name_end, .-find_insn_name_end
+.size find_insn_name_end, .-find_insn_name_end
 
 
-	# in: buffer ptr in a0
-	# out: buffer ptr in a0
-	# out: parsed address value in a1
-	# out: error code in a2 (OK=0)
+# in: buffer ptr in a0
+# out: buffer ptr in a0
+# out: parsed address value in a1
+# out: error code in a2 (OK=0)
 get_hex_addr:
 	li		a1, 0					# reset address value
 	li		a2, -1					# set error code
@@ -123,4 +123,4 @@ get_hex_addr_return_error:
 	li		a2, -1
 get_hex_addr_return:   
 	ret	
-	.size get_hex_addr, .-get_hex_addr
+.size get_hex_addr, .-get_hex_addr

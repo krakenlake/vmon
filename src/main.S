@@ -1,64 +1,64 @@
-	/*
-	VMON - a RISC-V machine code monitor written in RISC-V assembly code
-	*/
+/*
+VMON - a RISC-V machine code monitor written in RISC-V assembly code
+*/
 
 
-	#include "vmon/config.h"
-	#include "vmon/drivers/uart/ns16550.h"
-	#include "vmon/ASCII.h"
+#include "vmon/config.h"
+#include "vmon/drivers/uart/ns16550.h"
+#include "vmon/ASCII.h"
 
 
-	.global start
-	.global main_prompt
-	.global string_asm_sep1
-	.global string_asm_sep2
-	.global string_asm_comment
-	.global string_OP_UNKNOWN
-	.global start_data
-	.global start_bss
+.global start
+.global main_prompt
+.global string_asm_sep1
+.global string_asm_sep2
+.global string_asm_comment
+.global string_OP_UNKNOWN
+.global start_data
+.global start_bss
 
 
-	.text
+.text
 
-	/*
-	application entry point
+/*
+application entry point
 
-	s5 = address of current instruction being disassembled	 
-	*/
+s5 = address of current instruction being disassembled	 
+*/
 start:
 
 	# I am alive
 	# try to output one char in the simplest way possible
 	# this will happen on all harts
-	#ifdef DEBUG
-	li		t1, UART_BASE				   
-	li		t0, UART_MODE_8N1
-	sb		t0, UART_REG_LSR(t1)
-	li		t0, '*'
-	sb		t0, UART_REG_THR(t1)	  
+	#ifdef DEBUG	
+		li		t1, UART_BASE				   
+		li		t0, UART_MODE_8N1
+		sb		t0, UART_REG_LSR(t1)
+		li		t0, '*'
+		sb		t0, UART_REG_THR(t1)	  
 	#endif
 
 	#ifdef BARE_METAL
-	#ifdef HW_QEMU
-	# run only on hart 0
-	# this works only in M-mode
-	csrr	t0, mhartid
-	bnez	t0, end
-	#endif
+		#ifdef HW_QEMU
+			# run only on hart 0
+			# this works only in M-mode
+			csrr	t0, mhartid
+			bnez	t0, end
+		#endif
 
-	#ifdef HW_VF2
-	# TODO: csrr is not allowed when called from U-Boot on VF2 (S-mode)	   
-	#endif
+		#ifdef HW_VF2
+			# TODO: csrr is not allowed when called from U-Boot on VF2 (S-mode)	   
+		#endif
 
-	# set up a stack 
-	mv		t0, sp						# save caller sp for later
-	la		sp, stack + STACK_SIZE		# point to end of our new stack
+		# set up a stack 
+		mv		t0, sp						# save caller sp for later
+		la		sp, stack + STACK_SIZE		# point to end of our new stack
 	#endif /* BARE_METAL */
 
 	# save registers on new stack
-	addi	sp, sp, -(XLEN_BYTES*31)		 
+	addi	sp, sp, -(XLEN_BYTES*31)
 	SAVE_X	ra, 0(sp)  
-	SAVE_X	t0, (XLEN_BYTES*1)(sp)		# the original sp from above
+	SAVE_X	t0, (XLEN_BYTES*1)(sp)			# the original sp from above
 	SAVE_X	x3, (XLEN_BYTES*2)(sp)
 	SAVE_X	x4, (XLEN_BYTES*3)(sp)
 	SAVE_X	x5, (XLEN_BYTES*4)(sp)
@@ -90,7 +90,7 @@ start:
 	SAVE_X	x31, (XLEN_BYTES*30)(sp)
 
 	#ifdef BARE_METAL
-	jal		setup_trap_handler
+		jal		setup_trap_handler
 	#endif /* BARE_METAL */
 
 	# init UART 
@@ -115,53 +115,53 @@ main_prompt_no_newline:
 	addi	a0, a0, 1
 
 	#ifdef WITH_CMD_A
-	li		t0, 'a'
-	beq		t1, t0, cmd_A
+		li		t0, 'a'
+		beq		t1, t0, cmd_A
 	#endif
 
 	#ifdef WITH_CMD_C
-	li		t0, 'c'
-	beq		t1, t0, cmd_C
+		li		t0, 'c'
+		beq		t1, t0, cmd_C
 	#endif
 
 	#ifdef WITH_CMD_D
-	li		t0, 'd'
-	beq		t1, t0, cmd_D
+		li		t0, 'd'
+		beq		t1, t0, cmd_D
 	#endif
 
 	#ifdef WITH_CMD_F
-	li		t0, 'f'
-	beq		t1, t0, cmd_F
+		li		t0, 'f'
+		beq		t1, t0, cmd_F
 	#endif
 
 	#ifdef WITH_CMD_G
-	li		t0, 'g'
-	beq		t1, t0, cmd_G
+		li		t0, 'g'
+		beq		t1, t0, cmd_G
 	#endif
 
 	#ifdef WITH_CMD_H
-	li		t0, 'h'
-	beq		t1, t0, cmd_H
+		li		t0, 'h'
+		beq		t1, t0, cmd_H
 	#endif
 
 	#ifdef WITH_CMD_I
-	li		t0, 'i'
-	beq		t1, t0, cmd_I
+		li		t0, 'i'
+		beq		t1, t0, cmd_I
 	#endif
 
 	#ifdef WITH_CMD_M
-	li		t0, 'm'
-	beq		t1, t0, cmd_M
+		li		t0, 'm'
+		beq		t1, t0, cmd_M
 	#endif
 
 	#ifdef WITH_CMD_P
-	li		t0, 'p'
-	beq		t1, t0, cmd_P
+		li		t0, 'p'
+		beq		t1, t0, cmd_P
 	#endif
 
 	#ifdef WITH_CMD_X
-	li		t0, 'x'
-	beq		t1, t0, cmd_X
+		li		t0, 'x'
+		beq		t1, t0, cmd_X
 	#endif
 
 	# no command given, user only hit return
@@ -174,38 +174,43 @@ unknown_command:
 	j		main_prompt
 	# end of main loop
 
-
+end:
 	#ifdef BARE_METAL
-	# only if hart !=0
-end: 
-	wfi
-	j		end
+		# only if hart !=0 
+		wfi
+		j		end
 	#endif /* BARE_METAL */
-	.size start, .-start
+.size start, .-start
 
 
-	.data
+.data
+
+
 start_data:
 
 string_startup:		.string "\nVMON - RISC-V machine code monitor";
-	.size string_startup, .-string_startup
+.size string_startup, .-string_startup
 string_prompt:		.string "> ";
-	.size string_prompt, .-string_prompt
+.size string_prompt, .-string_prompt
 
 string_asm_sep1:	.string ":";
-	.size string_asm_sep1, .-string_asm_sep1
-	#string_asm_sep2:	 .string "\t";
+.size string_asm_sep1, .-string_asm_sep1
+#string_asm_sep2:	 .string "\t";
 string_asm_sep2:	.string " ";
-	.size string_asm_sep2, .-string_asm_sep2
+.size string_asm_sep2, .-string_asm_sep2
 string_asm_comment: .string "\t# ";
-	.size string_asm_comment, .-string_asm_comment
+.size string_asm_comment, .-string_asm_comment
 
-	.bss
+.bss
+
+
 start_bss:
-	.align 8
-	.comm last_address, XLEN_BYTES	# last address used in m or d command
-	.size last_address, XLEN_BYTES
+.align 8
+# last address used in m or d command
+.comm last_address, XLEN_BYTES	
+.size last_address, XLEN_BYTES
 	
-	.align 8
-	.comm stack, STACK_SIZE			# our execution stack
-	.size stack, STACK_SIZE
+.align 8
+# our execution stack
+.comm stack, STACK_SIZE			
+.size stack, STACK_SIZE
