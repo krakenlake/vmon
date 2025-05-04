@@ -35,7 +35,7 @@ communication written in RISC-V assembly language.
 VMON understands the following commands:  
 
 
-**a <start_start>**
+**a <start_addr>**
 assembly input (ENTER to stop) [WIP - not fully working yet]
 
 **c <src_start> <src_end> <dst_addr>**
