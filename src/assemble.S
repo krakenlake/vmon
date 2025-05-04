@@ -98,6 +98,9 @@ assemble_rs2:
 # out: modified instruction word in a1
 assemble_branch_target:
 	sub		a0, a0, a2					# compute relative address
+	# range check
+	srli	t0, a0, 12
+	bnez	t0, assemble_branch_target_error
 	# bit 11 of addr -> bit 7 insn
 	mv		t0, a0
 	srli	t0, t0, 4
@@ -122,6 +125,10 @@ assemble_branch_target:
 	li		t1, 0b10000000000000000000000000000000
 	and		t0, t0, t1
 	or		a1, a1, t0
+	j 		assemble_branch_target_done
+assemble_branch_target_error:
+	mv		a1, zero
+assemble_branch_target_done:
 	ret
 
 
@@ -202,6 +209,7 @@ assemble_BRANCH:
 	mv		a1, s2						# instruction word
 	mv		a2, s3						# get saved origin addr back
 	jal		assemble_branch_target
+	beqz 	a1, assemble_BRANCH_error   # address too far away
 	mv		s2, a1						# save insn word
 	j 		assemble_BRANCH_OK	
 assemble_BRANCH_error:
