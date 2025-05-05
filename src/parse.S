@@ -188,15 +188,15 @@ parse_decimal_loop:
     lb		t0, 0(a0)      
     addi	t1, t0, -'0'  # potential digit value
     sltiu	t2, t1, 10    # is potential digit 0-9? (t2=1 if yes)
-    beqz 	t2, parse_decimal_check_term # if not 0-9
+    beqz	t2, parse_decimal_check_term # if not 0-9
 
 	# have a valid decimal digit, multiply accumulator by 10
 	# and add in the new digit value.
     li		t3, 1
     # a1 = a1 * 10
-    slli 	t4, a1, 3      # t4 = a1 * 8
-    slli 	t5, a1, 1      # t5 = a1 * 2
-    add  	a1, t5, t4     # a1 = a1 * 10
+    slli	t4, a1, 3      # t4 = a1 * 8
+    slli	t5, a1, 1      # t5 = a1 * 2
+    add		a1, t5, t4     # a1 = a1 * 10
     # a1 = a1 + digit_value
     add		a1, a1, t1
     addi	a0, a0, 1      # ptr++
@@ -204,20 +204,20 @@ parse_decimal_loop:
 
 parse_decimal_check_term:
     # Check terminators (' ' or ASCII_RETURN)
-    li   	t1, ' '
-    beq  	t0, t1, parse_decimal_check_flag
-    li   	t1, ASCII_RETURN
-    beq  	t0, t1, parse_decimal_check_flag
+    li		t1, ' '
+    beq		t0, t1, parse_decimal_check_flag
+    li		t1, ASCII_RETURN
+    beq		t0, t1, parse_decimal_check_flag
     # Invalid char: Jump to return (a2 is already -1)
-    j    	parse_decimal_final_return
+    j		parse_decimal_final_return
 
 parse_decimal_check_flag:
-    beqz 	t3, parse_decimal_final_return # If t3=0, error (a2 is -1)
+    beqz	t3, parse_decimal_final_return # If t3=0, error (a2 is -1)
 	# apply sign, if necessary
 	beqz	t6, parse_decimal_set_success
 	sub		a1, x0, a1 # 2's complement negation
 parse_decimal_set_success:
-    li   	a2, 0
+    li		a2, 0
 parse_decimal_final_return:
     ret
 
