@@ -8,6 +8,7 @@
 .global find_insn_name_end
 .global find_register_name_end
 .global is_ascii
+.global parse_binary
 
 .text
 
@@ -124,3 +125,33 @@ get_hex_addr_return_error:
 get_hex_addr_return:   
 	ret	
 .size get_hex_addr, .-get_hex_addr
+
+# in: buffer ptr in a0
+# out: buffer ptr in a0
+# out: parsed binary number in a1
+# out: error code in a2 (OK=0)
+parse_binary:
+	li		a2, -1
+	addi	a1, x0, 0
+parse_binary_next_bit:
+	lb		t0, 0(a0)
+	li		t1, ' '
+	beq		t0, t1, parse_binary_return
+	li		t1, ASCII_RETURN
+	beq		t0, t1, parse_binary_return
+	li		t1, '0'
+	beq		t0, t1, parse_binary_bit
+	li		t1, '1'
+	beq		t0, t1, parse_binary_bit
+	j		parse_binary_return_error
+parse_binary_bit:
+	addi	t0, t0, -'0'
+	slli	a1, a1, 1
+	or		a1, a1, t0
+	addi	a0, a0, 1
+	j		parse_binary_next_bit
+parse_binary_return:
+	li		a2, 0
+parse_binary_return_error:
+	ret
+.size parse_binary, .-parse_binary
