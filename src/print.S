@@ -233,14 +233,14 @@ print_binary_loop:
 
     # print a space every 8 bits for readability
 
-    beqz 	s1, skip_space_print # If loop counter is 0, we are finished
-    andi 	t3, s1, 7      # t3 = s1 & 0b111 (s1 mod 8). Use t3 as temporary.
-    bnez 	t3, skip_space_print # If loop counter is not a multiple of 8, skip space.
+    beqz 	s1, print_binary_skip_space # If loop counter is 0, we are finished
+    andi 	t3, s1, 7                   # t3 = s1 & 0b111 (s1 mod 8).
+    bnez 	t3, print_binary_skip_space # If loop counter is not a multiple of 8, skip space.
 
     li   	a0, ' '        # Load ASCII space character into a0
     call 	print_char
 
-skip_space_print:
+print_binary_skip_space:
     j    	print_binary_loop
 
 print_binary_end:
