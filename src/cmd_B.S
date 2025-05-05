@@ -9,7 +9,7 @@
 
 
 cmd_B:
-	addi	sp, sp, -(XLEN_BYTES*1) # XXX: should I also save ra? or no need as we j to main_prompt?
+	addi	sp, sp, -(XLEN_BYTES*1) # Don't need to save ra here as we are part of mainloop.
 	SAVE_X	s0, 0(sp)
     lb		t1, 0(a0)	# read byte following 'B'
 	addi	a0, a0, 1
