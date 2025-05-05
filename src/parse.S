@@ -84,7 +84,6 @@ find_register_name_end_done:
 	ret
 .size find_insn_name_end, .-find_insn_name_end
 
-
 # in: buffer ptr in a0
 # out: buffer ptr in a0
 # out: parsed address value in a1
@@ -92,39 +91,36 @@ find_register_name_end_done:
 get_hex_addr:
 	li		a1, 0					# reset address value
 	li		a2, -1					# set error code
+	li		t3, 0					# digit found flag (0=no)
 get_hex_addr_next_byte:
 	lb		t0, 0(a0)				# get byte from buffer
-	li		t1, ' '					# end parsing at next space or return
-	beq		t0, t1, get_hex_addr_return		 
-	li		t1, ASCII_RETURN
-	beq		t0, t1, get_hex_addr_return		 
-	li		t1, '0'					
-	blt		t0, t1, get_hex_addr_return_error
-	li		t1, '9'
-	bgt		t0, t1, get_hex_addr_check_alpha	
-	# got a digit
-	li		a2, 0					# clear error code
-	sll		a1, a1, 4	
-	addi	t0, t0, -48
-	or		a1, a1, t0
-	addi	a0, a0 ,1				# advance buffer ptr
+	li		t4, ' '					# end parsing at next space or return
+	beq		t0, t4, get_hex_addr_check
+	li		t4, ASCII_RETURN
+	beq		t0, t4, get_hex_addr_check
+
+	addi	t1, t0, -'0'
+	sltiu	t2, t1, 10				# is it 0-9 ?
+	bnez	t2, get_hex_addr_add_nibble
+
+	addi	t1, t0, -'a'
+	sltiu	t2, t1, 6				# 0-5 (maps to 'a' - 'f')
+	beqz	t2, get_hex_addr_return # found invalid char
+	add		t1, t1, 10				# t1 is now 10-15
+
+get_hex_addr_add_nibble:
+	li		t3, 1
+	slli	a1, a1, 4
+	or		a1, a1, t1
+	addi	a0, a0, 1
 	j		get_hex_addr_next_byte
-get_hex_addr_check_alpha:
-	li		t1, 'a'
-	blt		t0, t1, get_hex_addr_return_error
-	li		t1, 'f'
-	bgt		t0, t1, get_hex_addr_return_error	 
-	# got a valid alpha
+
+get_hex_addr_check:
+	beqz	t3, get_hex_addr_return # no digits -> err return
 	li		a2, 0					# clear error code
-	sll		a1, a1, 4	
-	addi	t0, t0, -87
-	or		a1, a1, t0
-	addi	a0, a0 ,1				# advance buffer ptr
-	j		get_hex_addr_next_byte
-get_hex_addr_return_error:
-	li		a2, -1
-get_hex_addr_return:   
-	ret	
+get_hex_addr_return:
+	ret
+
 .size get_hex_addr, .-get_hex_addr
 
 # in: buffer ptr in a0
