@@ -42,7 +42,7 @@ assembly input (ENTER to stop) [WIP - not fully working yet]
 Base conversion from hex. Prints value in hex, decimal, binary.
 
 **bd <dec_value>**
-Base conversion from decimal. Prints value in hex, decimal, binary. [WIP - not working yet]
+Base conversion from signed decimal. Prints value in hex, decimal, binary.
 
 **bb <bin_value>**
 Base conversion from binary. Prints value in hex, decimal, binary.
