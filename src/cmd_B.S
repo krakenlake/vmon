@@ -37,20 +37,22 @@ cmd_B_read_bin:
 
 cmd_B_display:
 	addi	sp, sp, -(XLEN_BYTES*1) # XXX: should I also save ra? or no need as we j to main_prompt?
-	SAVE_X	a1, 0(sp)
+	SAVE_X	s0, 0(sp)
+	mv		s0, a1
 	la		a0, string_info_hex
 	jal		print_string
-	LOAD_X	a0, 0(sp)
+	mv		a0, s0
 	jal		print_hex
 	la		a0, string_info_dec
 	jal		print_string
-	LOAD_X	a0, 0(sp)
+	mv		a0, s0
 	jal		print_decimal
 	la		a0, string_info_bin
 	jal		print_string
-	LOAD_X	a0, 0(sp)
+	mv		a0, s0
 	jal		print_binary
 	jal		print_newline
+	LOAD_X	s0, 0(sp)
 	addi	sp, sp, (XLEN_BYTES*1)
 	j		main_prompt
 
