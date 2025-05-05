@@ -212,44 +212,43 @@ print_decimal_done:
 #ifdef WITH_CMD_B
 # print a0 in binary (64 or 32 bits)
 print_binary:
-    addi sp, sp, -(XLEN_BYTES*3)        # Allocate stack (ra, s0, s1)
-    SAVE_X   s1, 0(sp)     			    # Save original value of s1
-    SAVE_X   s0, (XLEN_BYTES*1)(sp)     # Save original value of s0
-    SAVE_X   ra, (XLEN_BYTES*2)(sp)     # Save return address
+    addi 	sp, sp, -(XLEN_BYTES*3)
+    SAVE_X  s1, 0(sp)
+    SAVE_X  s0, (XLEN_BYTES*1)(sp)
+    SAVE_X  ra, (XLEN_BYTES*2)(sp)
 
-    mv   s0, a0         # Use s0 to store the number being processed
-    li   s1, XLEN       # Use s1 for the loop counter (32/64 down to 0)
+    mv   	s0, a0         # Use s0 to store the number being processed
+    li   	s1, XLEN       # Use s1 for the loop counter (32/64 down to 0)
 
 print_binary_loop:
-    beqz s1, print_binary_end # If counter (s1) is 0, we are done.
+    beqz 	s1, print_binary_end # If loop counter is 0, we are done.
 
-    srai t2, s0, XLEN-1 # Arithmetically shift s0 right by 31/63. t2 = 0 or -1.
-    andi t2, t2, 1      # Isolate the least significant bit. t2 is now 0 or 1.
-    addi a0, t2, '0'    # Calculate ASCII char: '0' or '1'. a0 has the char.
-    call print_char
+    srai 	t2, s0, XLEN-1 # Arithmetically shift s0 right by 31/63. t2 = 0 or -1.
+    andi 	t2, t2, 1      # Isolate the least significant bit. t2 is now 0 or 1.
+    addi 	a0, t2, '0'    # Calculate ASCII char: '0' or '1'. a0 has the char.
+    call 	print_char
 
-    slli s0, s0, 1      # Shift the number state in s0 left by 1 bit.
-    addi s1, s1, -1     # Decrement loop counter in s1.
+    slli 	s0, s0, 1      # Shift the number left by 1 bit.
+    addi 	s1, s1, -1     # Decrement loop counter
 
-    # print a space ever 8 bits for readability
+    # print a space every 8 bits for readability
 
-    beqz s1, skip_space_print # If s1 is 0, we just finished, skip space.
-    andi t3, s1, 7      # t3 = s1 & 0b111 (s1 mod 8). Use t3 as temporary.
-    bnez t3, skip_space_print # If s1 is not a multiple of 8, skip space.
+    beqz 	s1, skip_space_print # If loop counter is 0, we are finished
+    andi 	t3, s1, 7      # t3 = s1 & 0b111 (s1 mod 8). Use t3 as temporary.
+    bnez 	t3, skip_space_print # If loop counter is not a multiple of 8, skip space.
 
-    # If we reach here: s1 is non-zero and a multiple of 8. Print a space.
-    li   a0, ' '        # Load ASCII space character into a0
-    call print_char
+    li   	a0, ' '        # Load ASCII space character into a0
+    call 	print_char
 
 skip_space_print:
-    j    print_binary_loop
+    j    	print_binary_loop
 
 print_binary_end:
-    LOAD_X   s1, 0(sp)				# Restore original value of s1
-    LOAD_X   s0, (XLEN_BYTES*1)(sp)	# Restore original value of s0
-    LOAD_X   ra, (XLEN_BYTES*2)(sp)	# Restore return address
-    addi sp, sp, (XLEN_BYTES*3)     # Deallocate stack space
-    ret                 # Return to caller
+    LOAD_X  s1, 0(sp)
+    LOAD_X  s0, (XLEN_BYTES*1)(sp)
+    LOAD_X  ra, (XLEN_BYTES*2)(sp)
+    addi 	sp, sp, (XLEN_BYTES*3)
+    ret
 
 	.size print_binary, .-print_binary
 #endif
