@@ -25,10 +25,10 @@
 .global string_OP_C_EBREAK
 
 
-# in: input string ptr start in s0
-# in: input string ptr end+1 in s1
-# out: ptr to assemble function in a0 (0 if string was not found)
-# out: MATCH value for insn in a1 (undefined if string was not found)
+# in: s0 = ptr to search string start
+# in: s1 = ptr to last char of search string
+# out: a0 = ptr to assemble function (0 if string was not found)
+# out: a1  = MATCH value for insn (undefined if string was not found)
 get_data_by_insn_name:
 	la		t0, encoding_table
 get_data_by_insn_name_next:
