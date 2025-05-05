@@ -158,9 +158,9 @@ print_string:
 .size print_string, .-print_string
 
 
-#if defined(WITH_CMD_D) || defined(WITH_CMD_B)
+#if defined(WITH_CMD_D) || defined(WITH_CMD_SLASH)
 
-# print 32-bit signed decimal in a0 to terminal
+# print 32/64-bit signed decimal in a0 to terminal
 print_decimal:
 	addi	sp, sp, -(XLEN_BYTES*2)			  
 	SAVE_X	ra, 0(sp)
@@ -207,9 +207,9 @@ print_decimal_done:
 	ret
 	.size print_decimal, .-print_decimal
 
-#endif /* defined(WITH_CMD_D) || defined(WITH_CMD_B) */
+#endif /* defined(WITH_CMD_D) || defined(WITH_CMD_SLASH) */
 
-#ifdef WITH_CMD_B
+#ifdef WITH_CMD_SLASH
 # print a0 in binary (64 or 32 bits)
 print_binary:
     addi	sp, sp, -(XLEN_BYTES*3)
@@ -251,16 +251,16 @@ print_binary_end:
     ret
 
 	.size print_binary, .-print_binary
-#endif /* WITH_CMD_B */
+#endif /* WITH_CMD_SLASH */
 
 .data
 
 .align 8
 
-#if defined(WITH_CMD_D) || defined(WITH_CMD_B)
+#if defined(WITH_CMD_D) || defined(WITH_CMD_SLASH)
     .comm dec_buf, DEC_BUFFER_SIZE
     .size dec_buf, DEC_BUFFER_SIZE
-#endif /* defined(WITH_CMD_D) || defined(WITH_CMD_B) */
+#endif /* defined(WITH_CMD_D) || defined(WITH_CMD_SLASH) */
 
 .comm out_buf, OUT_BUFFER_SIZE
 .size out_buf, OUT_BUFFER_SIZE
