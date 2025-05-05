@@ -9,13 +9,14 @@
 .global print_char
 .global print_string
 .global print_decimal
+.global print_binary
 .global print_comma
 .global print_newline
 .global out_buf
 
 
-#define DEC_BUFFER_SIZE		 32
-#define OUT_BUFFER_SIZE		 128
+#define DEC_BUFFER_SIZE		32
+#define OUT_BUFFER_SIZE		128
 
 .text
 
@@ -26,8 +27,8 @@ print_comma:
 	li		a0, ','
 	jal		print_char
 	#ifdef SPACE_AFTER_COMMA
-        li		a0, ' '
-        jal		print_char
+	li		a0, ' '
+	jal		print_char
 	#endif
 	LOAD_X	ra, 0(sp)			  
 	addi	sp, sp, (XLEN_BYTES*1)
@@ -39,8 +40,8 @@ print_newline:
 	addi	sp, sp, -(XLEN_BYTES*1)
 	SAVE_X	ra, 0(sp)
 	#ifdef USE_CRLF
-        li		a0, ASCII_RETURN
-        jal		print_char
+	li		a0, ASCII_RETURN
+	jal		print_char
 	#endif
 	li		a0, ASCII_NEWLINE
 	jal		print_char
@@ -157,9 +158,9 @@ print_string:
 .size print_string, .-print_string
 
 
-#ifdef WITH_CMD_D
+#if defined(WITH_CMD_D) || defined(WITH_CMD_SLASH)
 
-# print 32-bit signed decimal in a0 to terminal
+# print 32/64-bit signed decimal in a0 to terminal
 print_decimal:
 	addi	sp, sp, -(XLEN_BYTES*2)			  
 	SAVE_X	ra, 0(sp)
@@ -206,17 +207,60 @@ print_decimal_done:
 	ret
 	.size print_decimal, .-print_decimal
 
-#endif /* WITH_CMD_D */
+#endif /* defined(WITH_CMD_D) || defined(WITH_CMD_SLASH) */
+
+#ifdef WITH_CMD_SLASH
+# print a0 in binary (64 or 32 bits)
+print_binary:
+    addi	sp, sp, -(XLEN_BYTES*3)
+    SAVE_X  s1, 0(sp)
+    SAVE_X  s0, (XLEN_BYTES*1)(sp)
+    SAVE_X  ra, (XLEN_BYTES*2)(sp)
+
+    mv		s0, a0	       # Use s0 to store the number being processed
+    li		s1, XLEN       # Use s1 for the loop counter (32/64 down to 0)
+
+print_binary_loop:
+    beqz	s1, print_binary_end # If loop counter is 0, we are done.
+
+    srai	t2, s0, XLEN-1 # Arithmetically shift s0 right by 31/63. t2 = 0 or -1.
+    andi	t2, t2, 1      # Isolate the least significant bit. t2 is now 0 or 1.
+    addi	a0, t2, '0'    # Calculate ASCII char: '0' or '1'. a0 has the char.
+    call	print_char
+
+    slli	s0, s0, 1      # Shift the number left by 1 bit.
+    addi	s1, s1, -1     # Decrement loop counter
+
+    # Print a space every 8 bits for readability
+
+    beqz	s1, print_binary_skip_space # If loop counter is 0, we are finished
+    andi	t3, s1, 7		    # t3 = s1 & 0b111 (s1 mod 8).
+    bnez	t3, print_binary_skip_space # If loop counter is not a multiple of 8, skip space.
+
+    li		a0, ' '	       # Load ASCII space character into a0
+    call	print_char
+
+print_binary_skip_space:
+    j		print_binary_loop
+
+print_binary_end:
+    LOAD_X  s1, 0(sp)
+    LOAD_X  s0, (XLEN_BYTES*1)(sp)
+    LOAD_X  ra, (XLEN_BYTES*2)(sp)
+    addi	sp, sp, (XLEN_BYTES*3)
+    ret
+
+	.size print_binary, .-print_binary
+#endif /* WITH_CMD_SLASH */
 
 .data
 
 .align 8
 
-#ifdef WITH_CMD_D
+#if defined(WITH_CMD_D) || defined(WITH_CMD_SLASH)
     .comm dec_buf, DEC_BUFFER_SIZE
     .size dec_buf, DEC_BUFFER_SIZE
-#endif /* WITH_CMD_D */
-
+#endif /* defined(WITH_CMD_D) || defined(WITH_CMD_SLASH) */
 
 .comm out_buf, OUT_BUFFER_SIZE
 .size out_buf, OUT_BUFFER_SIZE
