@@ -32,7 +32,10 @@ cmd_B_read_hex:
 	j		cmd_B_display
 
 cmd_B_read_dec:
-	j		cmd_B_display	# XXX: not yet implemented
+	jal		skip_whitespace
+	jal		parse_decimal
+	bnez	a2, cmd_B_error
+	j		cmd_B_display
 
 cmd_B_read_bin:
 	jal		skip_whitespace
