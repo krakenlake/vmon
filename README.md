@@ -45,7 +45,7 @@ Base conversion from hex. Prints value in hex, decimal, binary.
 Base conversion from decimal. Prints value in hex, decimal, binary. [WIP - not working yet]
 
 **bb <bin_value>**
-Base conversion from binary. Prints value in hex, decimal, binary. [WIP - not working yet]
+Base conversion from binary. Prints value in hex, decimal, binary.
 
 **c <src_start> <src_end> <dst_addr>**
 copy memory contents

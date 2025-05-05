@@ -35,7 +35,10 @@ cmd_B_read_dec:
 	j		cmd_B_display	# XXX: not yet implemented
 
 cmd_B_read_bin:
-	j		cmd_B_display	# XXX: not yet implemented
+	jal		skip_whitespace
+	jal		parse_binary
+	bnez	a2, cmd_B_error
+	j		cmd_B_display
 
 cmd_B_display:
 	mv		s0, a1
