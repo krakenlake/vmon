@@ -133,24 +133,27 @@ get_hex_addr_return:
 parse_binary:
 	li		a2, -1
 	addi	a1, x0, 0
+	li		t3, 0
 parse_binary_next_bit:
 	lb		t0, 0(a0)
+	addi	t1, t0, -'0' # valid digits will be 0 or 1
+	sltiu	t2, t1, 2	 # t2 = (t1 < 2U) ? 1 : 0 - check if t1 is 0 or 1
+	bnez	t2, parse_binary_bit
+	# check for valid terminators
 	li		t1, ' '
 	beq		t0, t1, parse_binary_return
 	li		t1, ASCII_RETURN
 	beq		t0, t1, parse_binary_return
-	li		t1, '0'
-	beq		t0, t1, parse_binary_bit
-	li		t1, '1'
-	beq		t0, t1, parse_binary_bit
-	j		parse_binary_return_error
+	# character is not 0, 1, space, or return - return error
+	ret
 parse_binary_bit:
-	addi	t0, t0, -'0'
+	li		t3, 1
 	slli	a1, a1, 1
-	or		a1, a1, t0
+	or		a1, a1, t1
 	addi	a0, a0, 1
 	j		parse_binary_next_bit
 parse_binary_return:
+	beqz	t3, parse_binary_return_error
 	li		a2, 0
 parse_binary_return_error:
 	ret
