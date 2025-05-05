@@ -231,7 +231,7 @@ print_binary_loop:
     slli 	s0, s0, 1      # Shift the number left by 1 bit.
     addi 	s1, s1, -1     # Decrement loop counter
 
-    # print a space every 8 bits for readability
+    # Print a space every 8 bits for readability
 
     beqz 	s1, print_binary_skip_space # If loop counter is 0, we are finished
     andi 	t3, s1, 7                   # t3 = s1 & 0b111 (s1 mod 8).
@@ -251,7 +251,7 @@ print_binary_end:
     ret
 
 	.size print_binary, .-print_binary
-#endif
+#endif /* WITH_CMD_B */
 
 .data
 
