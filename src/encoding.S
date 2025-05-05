@@ -62,7 +62,10 @@ get_data_by_insn_name_done:
 	ret
 .size get_data_by_insn_name, .-get_data_by_insn_name
 */
+
 get_data_by_insn_name:
+	addi	sp, sp, -(XLEN_BYTES*1)				 
+	SAVE_X	ra, 0(sp)
 	la		t0, encoding_table
 get_data_by_insn_name_next:								# check string in next table entry
 	# load values from current table entry
@@ -75,6 +78,16 @@ get_data_by_insn_name_next:								# check string in next table entry
 		lw		t1, 12(t0)								# get string ptr from table
 		lw		a0, 16(t0)								# get function ptr from table
 	#endif
+/*
+	mv		s9, a0
+	mv 		a0, t1
+	jal		print_string
+	li		a0, ' '
+	jal		print_char
+	mv		a0, s9
+*/
+
+
 	beqz	t1, get_data_by_insn_name_not_found			# if string in this entry is empty, then table end, no match found
 	# compare strings
 	mv		t2, s0										# iterate with t2 over search string
@@ -97,6 +110,8 @@ get_data_by_insn_name_check:
 	lbu		t4, 1(t1)									# check next byte in table string
 	bnez	t4, get_data_by_insn_name_next_entry		# if table string did not end yet, no match 
 get_data_by_insn_name_done:
+	LOAD_X	ra, 0(sp)				
+	addi	sp, sp, (XLEN_BYTES*1)
 	ret
 .size get_data_by_insn_name, .-get_data_by_insn_name
 
