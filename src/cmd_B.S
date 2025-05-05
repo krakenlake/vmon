@@ -9,6 +9,8 @@
 
 
 cmd_B:
+	addi	sp, sp, -(XLEN_BYTES*1) # XXX: should I also save ra? or no need as we j to main_prompt?
+	SAVE_X	s0, 0(sp)
     lb		t1, 0(a0)	# read byte following 'B'
 	addi	a0, a0, 1
 	li		t0, 'h'
@@ -21,7 +23,7 @@ cmd_B:
 cmd_B_error:
 	la		a0, error_param
 	jal		print_string
-	j		main_prompt
+	j		cmd_B_end
 
 cmd_B_read_hex:
 	jal		skip_whitespace
@@ -36,8 +38,6 @@ cmd_B_read_bin:
 	j		cmd_B_display	# XXX: not yet implemented
 
 cmd_B_display:
-	addi	sp, sp, -(XLEN_BYTES*1) # XXX: should I also save ra? or no need as we j to main_prompt?
-	SAVE_X	s0, 0(sp)
 	mv		s0, a1
 	la		a0, string_info_hex
 	jal		print_string
@@ -52,6 +52,7 @@ cmd_B_display:
 	mv		a0, s0
 	jal		print_binary
 	jal		print_newline
+cmd_B_end:
 	LOAD_X	s0, 0(sp)
 	addi	sp, sp, (XLEN_BYTES*1)
 	j		main_prompt
