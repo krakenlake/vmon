@@ -214,9 +214,9 @@ parse_decimal_check_term:
 parse_decimal_check_flag:
     beqz 	t3, parse_decimal_final_return # If t3=0, error (a2 is -1)
 	# apply sign, if necessary
-	beqz	t6, parse_binary_set_success
+	beqz	t6, parse_decimal_set_success
 	sub		a1, x0, a1 # 2's complement negation
-parse_binary_set_success:
+parse_decimal_set_success:
     li   	a2, 0
 parse_decimal_final_return:
     ret
