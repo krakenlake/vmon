@@ -15,14 +15,13 @@
 .global out_buf
 
 
-#define DEC_BUFFER_SIZE		32
-#define OUT_BUFFER_SIZE		128
+#define OUT_BUFFER_SIZE		32
 
 .text
 
 
 print_comma:
-	addi	sp, sp, -(XLEN_BYTES*1)				
+	addi	sp, sp, -(XLEN_BYTES*1)	
 	SAVE_X	ra, 0(sp)
 	li		a0, ','
 	jal		print_char
@@ -30,7 +29,7 @@ print_comma:
 	li		a0, ' '
 	jal		print_char
 	#endif
-	LOAD_X	ra, 0(sp)			  
+	LOAD_X	ra, 0(sp)
 	addi	sp, sp, (XLEN_BYTES*1)
 	ret
 .size print_comma, .-print_comma
@@ -53,7 +52,7 @@ print_newline:
 
 # in: print value in a0 in hex with "0x" prefix
 print_hex:
-	addi	sp, sp, -(XLEN_BYTES*2)				
+	addi	sp, sp, -(XLEN_BYTES*2)
 	SAVE_X	ra, 0(sp)
 	SAVE_X	s1, (XLEN_BYTES*1)(sp)
 	# print "0x"
@@ -65,22 +64,22 @@ print_hex:
 	mv		a0, s1						# restore a0
 	# print value
 	jal		print_hex_raw
-	LOAD_X	ra, 0(sp)			 
-	LOAD_X	s1, (XLEN_BYTES*1)(sp)		  
+	LOAD_X	ra, 0(sp)
+	LOAD_X	s1, (XLEN_BYTES*1)(sp)
 	addi	sp, sp, (XLEN_BYTES*2)
 	ret
-	.size print_hex, .-print_hex
+.size print_hex, .-print_hex
 
 
 # in: print value in a0 in hex
 # no trailing zeroes, no prefix
 print_hex_raw:
-	addi	sp, sp, -(XLEN_BYTES*1)				
+	addi	sp, sp, -(XLEN_BYTES*1)
 	SAVE_X	ra, 0(sp)
 	# terminate buffer at the end
 	# TODO: do buffer termination only once
-	la		t2, dec_buf
-	addi	t2, t2, (DEC_BUFFER_SIZE-1)
+	la		t2, out_buf
+	addi	t2, t2, (OUT_BUFFER_SIZE-1)
 	sb		zero, 0(t2)
 	# print to output buffer backwards
 print_hex_new_next_nibble:
@@ -90,7 +89,7 @@ print_hex_new_next_nibble:
 	sltiu	t3, t0, 10
 	bnez	t3, print_hex_new_decimal
 	addi	t0, t0, 39
-print_hex_new_decimal:	  
+print_hex_new_decimal:
 	addi	t0, t0, 48
 	sb		t0, 0(t2)						# to buffer
 	srli	a0, a0, 4						# next nibble
@@ -98,7 +97,7 @@ print_hex_new_decimal:
 	# print buffer
 	mv		a0, t2
 	jal		print_string
-	LOAD_X	ra, 0(sp)			  
+	LOAD_X	ra, 0(sp)
 	addi	sp, sp, (XLEN_BYTES*1)
 	ret
 .size print_hex_raw, .-print_hex_raw
@@ -107,7 +106,7 @@ print_hex_new_decimal:
 # print a 2-digit hex value (with leading zero for 1-digit values)
 # in: byte value in a0
 print_hex_byte:
-	addi	sp, sp, -(XLEN_BYTES*2)				
+	addi	sp, sp, -(XLEN_BYTES*2)
 	SAVE_X	ra, 0(sp)
 	SAVE_X	s1, (XLEN_BYTES*1)(sp)
 	li		t0, 15
@@ -119,7 +118,7 @@ print_hex_byte:
 	mv		a0, s1					# restore a0
 print_hex_byte_two_digits:
 	jal		print_hex_raw
-	LOAD_X	ra, 0(sp)			  
+	LOAD_X	ra, 0(sp)
 	LOAD_X	s1, (XLEN_BYTES*1)(sp)
 	addi	sp, sp, (XLEN_BYTES*2)
 	ret
@@ -128,7 +127,7 @@ print_hex_byte_two_digits:
 
 # print char in a0 to terminal (if printable, else '.')
 print_ascii:
-	addi	sp, sp, -(XLEN_BYTES*1)				
+	addi	sp, sp, -(XLEN_BYTES*1)
 	SAVE_X	ra, 0(sp)
 	# consider only chars from 0x20-0x7e as printable
 	li		t0, 0x20
@@ -140,7 +139,7 @@ print_ascii_substitute:
 	li		a0, '.'					# print dot if char is not printable
 print_ascii_out:
 	jal		print_char
-	LOAD_X	ra, 0(sp)			  
+	LOAD_X	ra, 0(sp)
 	addi	sp, sp, (XLEN_BYTES*1)
 	ret
 .size print_ascii, .-print_ascii
@@ -162,15 +161,15 @@ print_string:
 
 # print 32/64-bit signed decimal in a0 to terminal
 print_decimal:
-	addi	sp, sp, -(XLEN_BYTES*2)			  
+	addi	sp, sp, -(XLEN_BYTES*2)
 	SAVE_X	ra, 0(sp)
 	SAVE_X	s2, (XLEN_BYTES*1)(sp)
 	beqz	a0, print_decimal_zero
 	# save a0
 	mv		t6, a0
 	# terminate buffer at the end
-	la		s2, dec_buf
-	addi	s2, s2, (DEC_BUFFER_SIZE-1)
+	la		s2, out_buf
+	addi	s2, s2, (OUT_BUFFER_SIZE-1)
 	sb		zero, 0(s2)
 	# invert if negative
 	bgtz	t6, print_decimal_skip_invert
@@ -187,7 +186,7 @@ print_decimal_loop:
 	addi	t0, a1, 48
 	sb		t0, 0(s2)
 	# repeat
-	bnez	a0, print_decimal_loop	 
+	bnez	a0, print_decimal_loop
 	# print minus if negative
 	bgtz	t6, print_decimal_skip_minus
 	li		a0, '-'
@@ -201,67 +200,55 @@ print_decimal_zero:
 	li		a0, '0'
 	jal		print_char
 print_decimal_done:
-	LOAD_X	ra, 0(sp)			  
-	LOAD_X	s2, (XLEN_BYTES*1)(sp)				 
+	LOAD_X	ra, 0(sp)
+	LOAD_X	s2, (XLEN_BYTES*1)(sp)
 	addi	sp, sp, (XLEN_BYTES*2)
 	ret
-	.size print_decimal, .-print_decimal
-
+.size print_decimal, .-print_decimal
 #endif /* defined(WITH_CMD_D) || defined(WITH_CMD_SLASH) */
 
+
 #ifdef WITH_CMD_SLASH
+
 # print a0 in binary (64 or 32 bits)
 print_binary:
-    addi	sp, sp, -(XLEN_BYTES*3)
-    SAVE_X  s1, 0(sp)
-    SAVE_X  s0, (XLEN_BYTES*1)(sp)
-    SAVE_X  ra, (XLEN_BYTES*2)(sp)
-
-    mv		s0, a0	       # Use s0 to store the number being processed
-    li		s1, XLEN       # Use s1 for the loop counter (32/64 down to 0)
-
+	addi	sp, sp, -(XLEN_BYTES*3)
+	SAVE_X  s1, 0(sp)
+	SAVE_X  s0, (XLEN_BYTES*1)(sp)
+	SAVE_X  ra, (XLEN_BYTES*2)(sp)
+	mv		s0, a0	       # Use s0 to store the number being processed
+	li		s1, XLEN       # Use s1 for the loop counter (32/64 down to 0)
 print_binary_loop:
-    beqz	s1, print_binary_end # If loop counter is 0, we are done.
-
-    srai	t2, s0, XLEN-1 # Arithmetically shift s0 right by 31/63. t2 = 0 or -1.
-    andi	t2, t2, 1      # Isolate the least significant bit. t2 is now 0 or 1.
-    addi	a0, t2, '0'    # Calculate ASCII char: '0' or '1'. a0 has the char.
-    call	print_char
-
-    slli	s0, s0, 1      # Shift the number left by 1 bit.
-    addi	s1, s1, -1     # Decrement loop counter
-
-    # Print a space every 8 bits for readability
-
-    beqz	s1, print_binary_skip_space # If loop counter is 0, we are finished
-    andi	t3, s1, 7		    # t3 = s1 & 0b111 (s1 mod 8).
-    bnez	t3, print_binary_skip_space # If loop counter is not a multiple of 8, skip space.
-
-    li		a0, ' '	       # Load ASCII space character into a0
-    call	print_char
-
+	beqz	s1, print_binary_end # If loop counter is 0, we are done.
+	srai	t2, s0, XLEN-1 # Arithmetically shift s0 right by 31/63. t2 = 0 or -1.
+	andi	t2, t2, 1      # Isolate the least significant bit. t2 is now 0 or 1.
+	addi	a0, t2, '0'    # Calculate ASCII char: '0' or '1'. a0 has the char.
+	call	print_char
+	slli	s0, s0, 1      # Shift the number left by 1 bit.
+	addi	s1, s1, -1     # Decrement loop counter
+	# Print a space every 8 bits for readability
+	beqz	s1, print_binary_skip_space # If loop counter is 0, we are finished
+	andi	t3, s1, 7		    # t3 = s1 & 0b111 (s1 mod 8).
+	bnez	t3, print_binary_skip_space # If loop counter is not a multiple of 8, skip space.
+	li		a0, ' '	       # Load ASCII space character into a0
+	call	print_char
 print_binary_skip_space:
-    j		print_binary_loop
-
+	j		print_binary_loop
 print_binary_end:
-    LOAD_X  s1, 0(sp)
-    LOAD_X  s0, (XLEN_BYTES*1)(sp)
-    LOAD_X  ra, (XLEN_BYTES*2)(sp)
-    addi	sp, sp, (XLEN_BYTES*3)
-    ret
+	LOAD_X  s1, 0(sp)
+	LOAD_X  s0, (XLEN_BYTES*1)(sp)
+	LOAD_X  ra, (XLEN_BYTES*2)(sp)
+	addi	sp, sp, (XLEN_BYTES*3)
+	ret
+.size print_binary, .-print_binary
 
-	.size print_binary, .-print_binary
 #endif /* WITH_CMD_SLASH */
+
 
 .data
 
+
 .align 8
-
-#if defined(WITH_CMD_D) || defined(WITH_CMD_SLASH)
-    .comm dec_buf, DEC_BUFFER_SIZE
-    .size dec_buf, DEC_BUFFER_SIZE
-#endif /* defined(WITH_CMD_D) || defined(WITH_CMD_SLASH) */
-
 .comm out_buf, OUT_BUFFER_SIZE
 .size out_buf, OUT_BUFFER_SIZE
 
