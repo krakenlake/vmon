@@ -38,15 +38,6 @@ VMON understands the following commands:
 **a <start_addr>**
 assembly input (ENTER to stop) [WIP - not fully working yet]
 
-**bh <hex_value>**
-Base conversion from hex. Prints value in hex, decimal, binary.
-
-**bd <dec_value>**
-Base conversion from signed decimal. Prints value in hex, decimal, binary.
-
-**bb <bin_value>**
-Base conversion from binary. Prints value in hex, decimal, binary.
-
 **c <src_start> <src_end> <dst_addr>**
 copy memory contents
 
@@ -85,6 +76,15 @@ write <byte_value0> to <dst_addr>, <byte_value1> to <dst_addr+1>, ...
 
 **x**
 exit
+
+**/h <hex_value>**
+Base conversion from hex. Prints value in hex, decimal, binary.
+
+**/d <dec_value>**
+Base conversion from signed decimal. Prints value in hex, decimal, binary.
+
+**/b <bin_value>**
+Base conversion from binary. Prints value in hex, decimal, binary.
 
 ## Known Problems
 see [issues page](https://github.com/krakenlake/vmon/issues)
