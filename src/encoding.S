@@ -29,6 +29,7 @@
 # in: s1 = ptr to last char of search string
 # out: a0 = ptr to assemble function (0 if string was not found)
 # out: a1  = MATCH value for insn (undefined if string was not found)
+/*
 get_data_by_insn_name:
 	la		t0, encoding_table
 get_data_by_insn_name_next:
@@ -58,6 +59,44 @@ get_data_by_insn_name_not_found:
 	mv		a0, zero
 get_data_by_insn_name_done:
 	lw		a1, 4(t0)									# store MATCH value from table entry in a1
+	ret
+.size get_data_by_insn_name, .-get_data_by_insn_name
+*/
+get_data_by_insn_name:
+	la		t0, encoding_table
+get_data_by_insn_name_next:								# check string in next table entry
+	# load values from current table entry
+	#if XLEN >= 64
+		lwu		a1, 4(t0)								# store MATCH value from table entry in a1
+		lwu		t1, 12(t0)								# get string ptr from table
+		lwu		a0, 16(t0)								# get function ptr from table
+	#else
+		lw		a1, 4(t0)								# store MATCH value from table entry in a1
+		lw		t1, 12(t0)								# get string ptr from table
+		lw		a0, 16(t0)								# get function ptr from table
+	#endif
+	beqz	t1, get_data_by_insn_name_not_found			# if string in this entry is empty, then table end, no match found
+	# compare strings
+	mv		t2, s0										# iterate with t2 over search string
+get_data_by_insn_name_cmp_next_byte:
+	lbu		t3, 0(t2)									# load char from search string
+	lbu		t4, 0(t1)									# load char from table string
+	beq		t2, s1, get_data_by_insn_name_check			# search string ended, check if match
+	bne		t3, t4, get_data_by_insn_name_next_entry	# strings not equal
+	beqz	t4, get_data_by_insn_name_next_entry		# string in table ended
+	addi	t1, t1, 1
+	addi	t2, t2, 1
+	j		get_data_by_insn_name_cmp_next_byte
+get_data_by_insn_name_next_entry:
+	addi	t0, t0, 20									# next table entry
+	j		get_data_by_insn_name_next
+get_data_by_insn_name_not_found:
+	mv		a0, zero
+	j 		get_data_by_insn_name_done
+get_data_by_insn_name_check:
+	lbu		t4, 1(t1)									# check next byte in table string
+	bnez	t4, get_data_by_insn_name_next_entry		# if table string did not end yet, no match 
+get_data_by_insn_name_done:
 	ret
 .size get_data_by_insn_name, .-get_data_by_insn_name
 
