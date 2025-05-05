@@ -3,12 +3,12 @@
 
 #ifdef WITH_CMD_SLASH
 
-.global cmd_slash
+.global cmd_SLASH
 
 .text
 
 
-cmd_slash:
+cmd_SLASH:
 	addi	sp, sp, -(XLEN_BYTES*1) # Don't need to save ra here as we are part of mainloop.
 	SAVE_X	s0, 0(sp)
     lb		t1, 0(a0)	# read byte following 'B'
@@ -73,6 +73,6 @@ string_info_bin:
 	.string " bin: "
 .size string_info_bin, .-string_info_bin
 	
-.size cmd_slash, .-cmd_slash
+.size cmd_SLASH, .-cmd_SLASH
 
 #endif /* WITH_CMD_SLASH */

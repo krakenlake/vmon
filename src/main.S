@@ -119,9 +119,9 @@ main_prompt_no_newline:
 		beq		t1, t0, cmd_A
 	#endif
 
-	#ifdef WITH_CMD_B
-		li		t0, 'b'
-		beq		t1, t0, cmd_B
+	#ifdef WITH_CMD_SLASH
+		li		t0, '/'
+		beq		t1, t0, cmd_SLASH
 	#endif
 
 	#ifdef WITH_CMD_C
