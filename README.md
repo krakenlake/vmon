@@ -35,8 +35,17 @@ communication written in RISC-V assembly language.
 VMON understands the following commands:  
 
 
-**a <start_start>**
+**a <start_addr>**
 assembly input (ENTER to stop) [WIP - not fully working yet]
+
+**bh <hex_value>**
+Base conversion from hex. Prints value in hex, decimal, binary.
+
+**bd <dec_value>**
+Base conversion from decimal. Prints value in hex, decimal, binary. [WIP - not working yet]
+
+**bb <bin_value>**
+Base conversion from binary. Prints value in hex, decimal, binary. [WIP - not working yet]
 
 **c <src_start> <src_end> <dst_addr>**
 copy memory contents
