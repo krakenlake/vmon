@@ -28,6 +28,10 @@ testcode:
 .option norvc
 testcode_RV32I:
 	ret
+	add		s9, s9, s9
+	add		s10, s10, s10
+	add		s11, s11, s11
+	add		t3, t4, t5
 	nop
 	ecall
 	ebreak	

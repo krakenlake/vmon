@@ -8,6 +8,7 @@
 .global assemble_DUMMY
 .global assemble_VOID
 .global assemble_BRANCH
+.global assemble_RTYPE
 
 
 .text
@@ -230,6 +231,89 @@ assemble_BRANCH_done:
 	addi	sp, sp, (XLEN_BYTES*5)
 	ret
 .size assemble_BRANCH, .-assemble_BRANCH
+
+
+# in: a0 = input string ptr
+# in: a1 = MATCH value
+# in: a2 = origin address
+# out: assembled instruction in a1
+assemble_RTYPE:
+	addi	sp, sp, -(XLEN_BYTES*5)				 
+	SAVE_X	ra, 0(sp)
+	SAVE_X	s0, (XLEN_BYTES*1)(sp)
+	SAVE_X	s1, (XLEN_BYTES*2)(sp)
+	SAVE_X	s2, (XLEN_BYTES*3)(sp)
+	SAVE_X	s3, (XLEN_BYTES*4)(sp)
+	mv		s3, a2						# save for later
+	# assemble instruction word in s2, starting with MATCH value
+	mv		s2, a1	
+	# advance to parameter 1
+	jal		skip_whitespace
+	mv		s0, a0
+	jal		find_register_name_end
+	mv		s1, a0
+	# parse rd from user input
+	mv		a0, s0
+	mv		a1, s1
+	jal		get_int_register_index_by_name
+	bltz	a0, assemble_RTYPE_error
+	# add rd to instruction word
+	mv		a1, s2
+	jal 	assemble_rd
+	mv		s2, a1						# save insn word
+	# expect commma
+	addi	a0, s1, 1
+	jal		skip_whitespace
+	jal		consume_comma
+	beqz 	a0, assemble_RTYPE_error
+	# advance to parameter 2
+	jal		skip_whitespace
+	mv		s0, a0
+	jal		find_register_name_end
+	mv		s1, a0
+	# parse rs1 from user input
+	mv		a0, s0
+	mv		a1, s1
+	jal		get_int_register_index_by_name
+	bltz	a0, assemble_RTYPE_error
+	# add rs1 to instruction word
+	mv		a1, s2
+	jal 	assemble_rs1
+	mv		s2, a1						# save insn word
+	# expect commma
+	addi	a0, s1, 1
+	jal		skip_whitespace
+	jal		consume_comma
+	beqz 	a0, assemble_RTYPE_error
+	# advance to parameter 3
+	jal		skip_whitespace
+	mv		s0, a0
+	jal		find_register_name_end
+	mv		s1, a0
+	# parse rs2 from user input
+	mv		a0, s0
+	mv		a1, s1
+	jal		get_int_register_index_by_name
+	bltz	a0, assemble_RTYPE_error
+	# add rs2 to instruction word
+	mv		a1, s2
+	jal 	assemble_rs2
+	mv		s2, a1						# save insn word
+	j 		assemble_RTYPE_OK	
+assemble_RTYPE_error:
+	mv		a1, zero
+	j 		assemble_RTYPE_done
+assemble_RTYPE_OK:
+	mv		a1, s2
+assemble_RTYPE_done:
+	LOAD_X	ra, 0(sp)				
+	LOAD_X	s0, (XLEN_BYTES*1)(sp)				 
+	LOAD_X	s1, (XLEN_BYTES*2)(sp)				 
+	LOAD_X	s2, (XLEN_BYTES*3)(sp)				 
+	LOAD_X	s3, (XLEN_BYTES*4)(sp)				 
+	addi	sp, sp, (XLEN_BYTES*5)
+	ret
+.size assemble_RTYPE, .-assemble_RTYPE
 
 
 #endif /* WITH_CMD_A */
