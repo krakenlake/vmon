@@ -76,7 +76,7 @@ cmd_I:
 	la		a0, start_bss	 
 	jal		print_hex
 
-#ifdef BARE_METAL
+#ifdef M_MODE
 	la		a0, string_info_stackstart
 	jal		print_string
 	la		a0, stack	
@@ -92,7 +92,7 @@ cmd_I:
 	la		t0, stack	 
 	sub		a0, sp, t0
 	jal		print_hex
-#endif /* BARE_METAL */
+#endif /* M_MODE */
 
 #ifdef WITH_TESTCODE
 	la		a0, string_info_testcode

@@ -20,45 +20,25 @@ VMON - a RISC-V machine code monitor written in RISC-V assembly code
 
 .text
 
-/*
-application entry point
 
-s5 = address of current instruction being disassembled	 
-*/
+# application entry point
 start:
-
-	# I am alive
-	# try to output one char in the simplest way possible
-	# this will happen on all harts
-	#ifdef DEBUG	
-		li		t1, UART_BASE				   
-		li		t0, UART_MODE_8N1
-		sb		t0, UART_REG_LSR(t1)
-		li		t0, '*'
-		sb		t0, UART_REG_THR(t1)	  
-	#endif
-
-	#ifdef BARE_METAL
-		#ifdef HW_QEMU
-			# run only on hart 0
-			# this works only in M-mode
-			csrr	t0, mhartid
-			bnez	t0, end
-		#endif
-
-		#ifdef HW_VF2
-			# TODO: csrr is not allowed when called from U-Boot on VF2 (S-mode)	   
-		#endif
-
+	# do not add anything before this
+	#ifdef M_MODE
+		# immediately save sp in mscratch
+		csrw	mscratch, sp
+		# run only on hart 0
+		# as sp is already saved, we can use it now
+		csrr	sp, mhartid
+		bnez	sp, end
 		# set up a stack 
-		mv		t0, sp						# save caller sp for later
 		la		sp, stack + STACK_SIZE		# point to end of our new stack
-	#endif /* BARE_METAL */
+	#endif /* M_MODE */
 
-	# save registers on new stack
+	# save registers on stack
 	addi	sp, sp, -(XLEN_BYTES*31)
 	SAVE_X	ra, 0(sp)  
-	SAVE_X	t0, (XLEN_BYTES*1)(sp)			# the original sp from above
+	# sp intentionally missing here, see below
 	SAVE_X	x3, (XLEN_BYTES*2)(sp)
 	SAVE_X	x4, (XLEN_BYTES*3)(sp)
 	SAVE_X	x5, (XLEN_BYTES*4)(sp)
@@ -88,10 +68,18 @@ start:
 	SAVE_X	x29, (XLEN_BYTES*28)(sp)
 	SAVE_X	x30, (XLEN_BYTES*29)(sp)
 	SAVE_X	x31, (XLEN_BYTES*30)(sp)
+	# now we can safely use t0 to get back and save sp
+	#ifdef M_MODE
+		csrr	t0, mscratch					# read original sp back
+		SAVE_X	t0, (XLEN_BYTES*1)(sp)			# and save it
+		csrw	mscratch, zero					# do we have to?
+	#else
+		SAVE_X	sp, (XLEN_BYTES*1)(sp)
+	#endif /* M_MODE */
 
-	#ifdef BARE_METAL
+	#ifdef M_MODE
 		jal		setup_trap_handler
-	#endif /* BARE_METAL */
+	#endif /* M_MODE */
 
 	# init UART 
 	jal		uart_init
@@ -164,6 +152,11 @@ main_prompt_no_newline:
 		beq		t1, t0, cmd_P
 	#endif
 
+	#ifdef WITH_CMD_R
+		li		t0, 'r'
+		beq		t1, t0, cmd_R
+	#endif
+
 	#ifdef WITH_CMD_X
 		li		t0, 'x'
 		beq		t1, t0, cmd_X
@@ -180,11 +173,11 @@ unknown_command:
 	# end of main loop
 
 end:
-	#ifdef BARE_METAL
+	#ifdef M_MODE
 		# only if hart !=0 
 		wfi
 		j		end
-	#endif /* BARE_METAL */
+	#endif /* M_MODE */
 .size start, .-start
 
 

@@ -79,6 +79,9 @@ continue memory dump from last address used
 **p <dst_addr> <byte_value0> [<byte_value1>] [<byte_value2>] [...]**
 write <byte_value0> to <dst_addr>, <byte_value1> to <dst_addr+1>, ...
 
+**r**
+dump registers as saved on entry
+
 **x**
 exit
 

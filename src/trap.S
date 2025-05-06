@@ -1,6 +1,6 @@
 #include "vmon/config.h"
 
-#ifdef BARE_METAL
+#ifdef M_MODE
 
 .global setup_trap_handler
 
@@ -176,4 +176,4 @@ mcause_verbose_table:
 .comm stackptr_reset, XLEN_BYTES
 
 
-#endif /* BARE_METAL */
+#endif /* M_MODE */

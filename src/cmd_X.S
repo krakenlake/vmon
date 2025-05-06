@@ -13,6 +13,7 @@ cmd_X:
 	jal		print_string
 	LOAD_X	a0, 0(sp)	   
 	jal		print_hex
+	jal		print_newline
 	# restore registers
 	LOAD_X	ra, 0(sp)	   
 	LOAD_X	x3, (XLEN_BYTES*2)(sp)		
@@ -47,8 +48,8 @@ cmd_X:
 	# the original sp from caller
 	LOAD_X	sp, (XLEN_BYTES*1)(sp)	   
 	# return control to caller	   
-	jalr	zero, ra, 0		
-	.size cmd_X, .-cmd_X
+	ret
+.size cmd_X, .-cmd_X
 
 
 .data
