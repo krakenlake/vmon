@@ -513,16 +513,16 @@ encoding_table:
 #endif /* ENABLE_PSEUDO */
 
 # RV32I
-.word MASK_ADD, MATCH_ADD, decode_R_type, string_OP_ADD, assemble_DUMMY
-.word MASK_SUB, MATCH_SUB, decode_R_type, string_OP_SUB, assemble_DUMMY
-.word MASK_XOR, MATCH_XOR, decode_R_type, string_OP_XOR, assemble_DUMMY
-.word MASK_OR, MATCH_OR, decode_R_type, string_OP_OR, assemble_DUMMY
-.word MASK_AND, MATCH_AND, decode_R_type, string_OP_AND, assemble_DUMMY
-.word MASK_SLL, MATCH_SLL, decode_R_type, string_OP_SLL, assemble_DUMMY
-.word MASK_SRL, MATCH_SRL, decode_R_type, string_OP_SRL, assemble_DUMMY
-.word MASK_SRA, MATCH_SRA, decode_R_type, string_OP_SRA, assemble_DUMMY
-.word MASK_SLT, MATCH_SLT, decode_R_type, string_OP_SLT, assemble_DUMMY
-.word MASK_SLTU, MATCH_SLTU, decode_R_type, string_OP_SLTU, assemble_DUMMY
+.word MASK_ADD, MATCH_ADD, decode_R_type, string_OP_ADD, assemble_RTYPE
+.word MASK_SUB, MATCH_SUB, decode_R_type, string_OP_SUB, assemble_RTYPE
+.word MASK_XOR, MATCH_XOR, decode_R_type, string_OP_XOR, assemble_RTYPE
+.word MASK_OR, MATCH_OR, decode_R_type, string_OP_OR, assemble_RTYPE
+.word MASK_AND, MATCH_AND, decode_R_type, string_OP_AND, assemble_RTYPE
+.word MASK_SLL, MATCH_SLL, decode_R_type, string_OP_SLL, assemble_RTYPE
+.word MASK_SRL, MATCH_SRL, decode_R_type, string_OP_SRL, assemble_RTYPE
+.word MASK_SRA, MATCH_SRA, decode_R_type, string_OP_SRA, assemble_RTYPE
+.word MASK_SLT, MATCH_SLT, decode_R_type, string_OP_SLT, assemble_RTYPE
+.word MASK_SLTU, MATCH_SLTU, decode_R_type, string_OP_SLTU, assemble_RTYPE
 .word MASK_ADDI, MATCH_ADDI, decode_I_type, string_OP_ADDI, assemble_DUMMY
 .word MASK_XORI, MATCH_XORI, decode_I_type, string_OP_XORI, assemble_DUMMY
 .word MASK_ORI, MATCH_ORI, decode_I_type, string_OP_ORI, assemble_DUMMY
