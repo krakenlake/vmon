@@ -29,6 +29,8 @@ assemble_instruction:
 	# find string between s0 and s1 in encoding table
 	jal		get_data_by_insn_name
 	# function ptr now in a0
+	# MATCH value now in a1
+
 	mv		s2, a0								# save function ptr in s2
 	beqz	s2, assemble_instruction_done		# not found
 	mv		a0, s1
@@ -99,8 +101,10 @@ assemble_rs2:
 assemble_branch_target:
 	sub		a0, a0, a2					# compute relative address
 	# range check
-	srli	t0, a0, 12
-	bnez	t0, assemble_branch_target_error
+	li		t1, 4096
+	bge		t0, t1, assemble_branch_target_error
+	li		t1, -4096
+	blt		t0, t1, assemble_branch_target_error
 	# bit 11 of addr -> bit 7 insn
 	mv		t0, a0
 	srli	t0, t0, 4
