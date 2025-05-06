@@ -12,6 +12,8 @@
 .global print_binary
 .global print_comma
 .global print_newline
+.global print_saved_registers
+
 .global out_buf
 
 
@@ -209,7 +211,6 @@ print_decimal_done:
 
 
 #ifdef WITH_CMD_SLASH
-
 # print a0 in binary (64 or 32 bits)
 print_binary:
 	addi	sp, sp, -(XLEN_BYTES*3)
@@ -241,8 +242,45 @@ print_binary_end:
 	addi	sp, sp, (XLEN_BYTES*3)
 	ret
 .size print_binary, .-print_binary
-
 #endif /* WITH_CMD_SLASH */
+
+#ifdef WITH_CMD_R
+# dump registers saved on stack
+print_saved_registers:
+	addi	sp, sp, -(XLEN_BYTES*3)
+	SAVE_X  ra, 0(sp)
+	SAVE_X  s0, (XLEN_BYTES*1)(sp)
+	SAVE_X  s1, (XLEN_BYTES*2)(sp)
+	#ifdef M_MODE
+		la 		s0, stack + STACK_SIZE -(XLEN_BYTES*31)
+	#else
+		# ???
+	#endif
+	li		s1, 1						# skip register zero
+print_saved_registers_next:
+	li		a0, ASCII_NEWLINE
+	jal		print_char
+print_saved_registers_skip_newline:
+	mv		a0, s1						# index of register
+	jal		get_int_register_name_by_index
+	jal		print_string				# register name
+	li		a0, '='
+	jal		print_char
+	LOAD_X	a0, 0(s0)					# saved value
+	jal		print_hex
+	li		a0, '\t'
+	jal		print_char
+	addi	s0, s0, XLEN_BYTES			# next register
+	addi	s1, s1, 1					# next register name
+	# check if all int registers done
+	li		t0, 32						
+	blt		s1, t0, print_saved_registers_next
+	LOAD_X  ra, 0(sp)
+	LOAD_X  s0, (XLEN_BYTES*1)(sp)
+	LOAD_X  s1, (XLEN_BYTES*2)(sp)
+	addi	sp, sp, (XLEN_BYTES*3)
+	ret
+#endif /* WITH_CMD_R */
 
 
 .data
