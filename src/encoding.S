@@ -561,11 +561,11 @@ encoding_table:
 	.word MASK_SLLIW, MATCH_SLLIW, decode_I_type_SHIFT, string_OP_SLLIW, assemble_DUMMY
 	.word MASK_SRLIW, MATCH_SRLIW, decode_I_type_SHIFT, string_OP_SRLIW, assemble_DUMMY
 	.word MASK_SRAIW, MATCH_SRAIW, decode_I_type_SHIFT, string_OP_SRAIW, assemble_DUMMY
-	.word MASK_ADDW, MATCH_ADDW, decode_R_type, string_OP_ADDW, assemble_DUMMY
-	.word MASK_SUBW, MATCH_SUBW, decode_R_type, string_OP_SUBW, assemble_DUMMY
-	.word MASK_SLLW, MATCH_SLLW, decode_R_type, string_OP_SLLW, assemble_DUMMY
-	.word MASK_SRLW, MATCH_SRLW, decode_R_type, string_OP_SRLW, assemble_DUMMY
-	.word MASK_SRAW, MATCH_SRAW, decode_R_type, string_OP_SRAW, assemble_DUMMY
+	.word MASK_ADDW, MATCH_ADDW, decode_R_type, string_OP_ADDW, assemble_RTYPE
+	.word MASK_SUBW, MATCH_SUBW, decode_R_type, string_OP_SUBW, assemble_RTYPE
+	.word MASK_SLLW, MATCH_SLLW, decode_R_type, string_OP_SLLW, assemble_RTYPE
+	.word MASK_SRLW, MATCH_SRLW, decode_R_type, string_OP_SRLW, assemble_RTYPE
+	.word MASK_SRAW, MATCH_SRAW, decode_R_type, string_OP_SRAW, assemble_RTYPE
 	.word MASK_LD, MATCH_LD, decode_I_type_LOAD, string_OP_LD, assemble_DUMMY
 	.word MASK_LWU, MATCH_LWU, decode_I_type_LOAD, string_OP_LWU, assemble_DUMMY
 	.word MASK_SD, MATCH_SD, decode_S_type, string_OP_SD, assemble_DUMMY
@@ -574,21 +574,21 @@ encoding_table:
 # RVM
 #ifdef ENABLE_RVM
 	# RV32M
-	.word MASK_MUL, MATCH_MUL, decode_R_type, string_OP_MUL, assemble_DUMMY
-	.word MASK_MULH, MATCH_MULH, decode_R_type, string_OP_MULH, assemble_DUMMY
-	.word MASK_MULHSU, MATCH_MULHSU, decode_R_type, string_OP_MULHSU, assemble_DUMMY
-	.word MASK_MULHU, MATCH_MULHU, decode_R_type, string_OP_MULHU, assemble_DUMMY
-	.word MASK_DIV, MATCH_DIV, decode_R_type, string_OP_DIV, assemble_DUMMY
-	.word MASK_DIVU, MATCH_DIVU, decode_R_type, string_OP_DIVU, assemble_DUMMY
-	.word MASK_REM, MATCH_REM, decode_R_type, string_OP_REM, assemble_DUMMY
-	.word MASK_REMU, MATCH_REMU, decode_R_type, string_OP_REMU, assemble_DUMMY
+	.word MASK_MUL, MATCH_MUL, decode_R_type, string_OP_MUL, assemble_RTYPE
+	.word MASK_MULH, MATCH_MULH, decode_R_type, string_OP_MULH, assemble_RTYPE
+	.word MASK_MULHSU, MATCH_MULHSU, decode_R_type, string_OP_MULHSU, assemble_RTYPE
+	.word MASK_MULHU, MATCH_MULHU, decode_R_type, string_OP_MULHU, assemble_RTYPE
+	.word MASK_DIV, MATCH_DIV, decode_R_type, string_OP_DIV, assemble_RTYPE
+	.word MASK_DIVU, MATCH_DIVU, decode_R_type, string_OP_DIVU, assemble_RTYPE
+	.word MASK_REM, MATCH_REM, decode_R_type, string_OP_REM, assemble_RTYPE
+	.word MASK_REMU, MATCH_REMU, decode_R_type, string_OP_REMU, assemble_RTYPE
 	# RV64M
 	#if XLEN >= 64
-		.word MASK_MULW, MATCH_MULW, decode_R_type, string_OP_MULW, assemble_DUMMY
-		.word MASK_DIVW, MATCH_DIVW, decode_R_type, string_OP_DIVW, assemble_DUMMY
-		.word MASK_DIVUW, MATCH_DIVUW, decode_R_type, string_OP_DIVUW, assemble_DUMMY
-		.word MASK_REMW, MATCH_REMW, decode_R_type, string_OP_REMW, assemble_DUMMY
-		.word MASK_REMUW, MATCH_REMUW, decode_R_type, string_OP_REMUW, assemble_DUMMY
+		.word MASK_MULW, MATCH_MULW, decode_R_type, string_OP_MULW, assemble_RTYPE
+		.word MASK_DIVW, MATCH_DIVW, decode_R_type, string_OP_DIVW, assemble_RTYPE
+		.word MASK_DIVUW, MATCH_DIVUW, decode_R_type, string_OP_DIVUW, assemble_RTYPE
+		.word MASK_REMW, MATCH_REMW, decode_R_type, string_OP_REMW, assemble_RTYPE
+		.word MASK_REMUW, MATCH_REMUW, decode_R_type, string_OP_REMUW, assemble_RTYPE
 	#endif
 #endif /* ENABLE_RVM */
 
