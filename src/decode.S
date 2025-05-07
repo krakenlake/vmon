@@ -600,7 +600,7 @@ decode_opcode_search_next:
 	#endif
 	j		decode_opcode_done
 decode_opcode_continue:
-	addi	t0, t0, 20					# point to next table entry
+	addi	t0, t0, 36					# point to next table entry
 	j		decode_opcode_search_next	# repeat
 decode_opcode_done:
 	LOAD_X	ra, 0(sp)		   

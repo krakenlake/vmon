@@ -10,6 +10,7 @@
 .global assemble_BRANCH
 .global assemble_RTYPE
 
+.global ass_END
 
 .text
 
@@ -315,5 +316,8 @@ assemble_RTYPE_done:
 	ret
 .size assemble_RTYPE, .-assemble_RTYPE
 
+ass_END:
+	ret
+.size ass_END, .-ass_END
 
 #endif /* WITH_CMD_A */
