@@ -520,12 +520,12 @@ encoding_table:
 # order is important, these have to be at the beginning of the table
 #ifdef ENABLE_PSEUDO
 	#ifdef ENABLE_RVC
-		.word 0x0000ffff, 0x0000,	decode_EMPTY,	string_OP_C_UNIMP,	assemble_VOID,	ass_END,	ass_END,	ass_END,	ass_END
-		.word 0x0000ffff, 0x0001,	decode_EMPTY,	string_OP_C_NOP,	assemble_VOID,	ass_END,	ass_END,	ass_END,	ass_END
+		.word 0x0000ffff, 0x0000,	decode_EMPTY,	string_OP_C_UNIMP,	assemble_GENERIC,	0,	0,	0,	0
+		.word 0x0000ffff, 0x0001,	decode_EMPTY,	string_OP_C_NOP,	assemble_GENERIC,	0,	0,	0,	0
 	#endif /* ENABLE_RVC */
-	.word 0xffffffff, 0x00000000,	decode_EMPTY,	string_OP_UNIMP,	assemble_VOID,	ass_END,	ass_END,	ass_END,	ass_END
-	.word 0xffffffff, 0x00008067,	decode_EMPTY,	string_OP_RET,		assemble_VOID,	ass_END,	ass_END,	ass_END,	ass_END
-	.word 0xffffffff, 0x00000013,	decode_EMPTY,	string_OP_NOP,		assemble_VOID,	ass_END,	ass_END,	ass_END,	ass_END
+	.word 0xffffffff, 0x00000000,	decode_EMPTY,	string_OP_UNIMP,	assemble_GENERIC,	0,	0,	0,	0
+	.word 0xffffffff, 0x00008067,	decode_EMPTY,	string_OP_RET,		assemble_GENERIC,	0,	0,	0,	0
+	.word 0xffffffff, 0x00000013,	decode_EMPTY,	string_OP_NOP,		assemble_GENERIC,	0,	0,	0,	0
 #endif /* ENABLE_PSEUDO */
 
 # RV32I
@@ -557,7 +557,7 @@ encoding_table:
 .word MASK_SB,			MATCH_SB,		decode_S_type,			string_OP_SB,		assemble_DUMMY,		ass_END,	ass_END,	ass_END,	ass_END
 .word MASK_SH,			MATCH_SH,		decode_S_type,			string_OP_SH,		assemble_DUMMY,		ass_END,	ass_END,	ass_END,	ass_END
 .word MASK_SW,			MATCH_SW,		decode_S_type,			string_OP_SW,		assemble_DUMMY,		ass_END,	ass_END,	ass_END,	ass_END
-.word MASK_BEQ,			MATCH_BEQ,		decode_B_type,			string_OP_BEQ,		assemble_BRANCH,	ass_END,	ass_END,	ass_END,	ass_END
+.word MASK_BEQ,			MATCH_BEQ,		decode_B_type,			string_OP_BEQ,		assemble_GENERIC,	ass_rs1,	ass_rs2,	ass_BRA,	0
 .word MASK_BNE,			MATCH_BNE,		decode_B_type,			string_OP_BNE,		assemble_BRANCH,	ass_END,	ass_END,	ass_END,	ass_END
 .word MASK_BLT,			MATCH_BLT,		decode_B_type,			string_OP_BLT,		assemble_BRANCH,	ass_END,	ass_END,	ass_END,	ass_END
 .word MASK_BGE,			MATCH_BGE,		decode_B_type,			string_OP_BGE,		assemble_BRANCH,	ass_END,	ass_END,	ass_END,	ass_END
@@ -567,9 +567,9 @@ encoding_table:
 .word MASK_JALR,		MATCH_JALR,		decode_I_type_LOAD,		string_OP_JALR,		assemble_DUMMY,		ass_END,	ass_END,	ass_END,	ass_END
 .word MASK_LUI,			MATCH_LUI,		decode_U_type,			string_OP_LUI,		assemble_DUMMY,		ass_END,	ass_END,	ass_END,	ass_END
 .word MASK_AUIPC,		MATCH_AUIPC,	decode_U_type,			string_OP_AUIPC,	assemble_DUMMY,		ass_END,	ass_END,	ass_END,	ass_END
-.word MASK_ECALL,		MATCH_ECALL,	decode_ECALL,			string_OP_ECALL,	assemble_VOID,		ass_END,	ass_END,	ass_END,	ass_END
-.word MASK_EBREAK,		MATCH_EBREAK,	decode_EBREAK,			string_OP_EBREAK,	assemble_VOID,		ass_END,	ass_END,	ass_END,	ass_END
-.word MASK_FENCETSO,	MATCH_FENCETSO,	decode_FENCE_TSO,		string_OP_FENCETSO,	assemble_VOID,		ass_END,	ass_END,	ass_END,	ass_END
+.word MASK_ECALL,		MATCH_ECALL,	decode_ECALL,			string_OP_ECALL,	assemble_GENERIC,	0,	0,	0,	0
+.word MASK_EBREAK,		MATCH_EBREAK,	decode_EBREAK,			string_OP_EBREAK,	assemble_GENERIC,	0,	0,	0,	0
+.word MASK_FENCETSO,	MATCH_FENCETSO,	decode_FENCE_TSO,		string_OP_FENCETSO,	assemble_GENERIC,	0,	0,	0,	0
 .word MASK_FENCE,		MATCH_FENCE,	decode_FENCE,			string_OP_FENCE,	assemble_DUMMY,		ass_END,	ass_END,	ass_END,	ass_END
 
 # RV64I
@@ -755,11 +755,11 @@ encoding_table:
 	.word MASK_C_MV,		MATCH_C_MV,			decode_EMPTY,				string_OP_C_MV,			assemble_DUMMY,	ass_END,	ass_END,	ass_END,	ass_END
 	.word MASK_C_ADD,		MATCH_C_ADD,		decode_C_ADD_JAL_EBREAK,	string_OP_C_ADD,		assemble_DUMMY,	ass_END,	ass_END,	ass_END,	ass_END
 	.word MASK_C_SWSP,		MATCH_C_SWSP,		decode_EMPTY,				string_OP_C_SWSP,		assemble_DUMMY,	ass_END,	ass_END,	ass_END,	ass_END
-	.word MASK_C_NOP,		MATCH_C_NOP,		decode_EMPTY,				string_OP_C_NOP,		assemble_VOID,	ass_END,	ass_END,	ass_END,	ass_END
+	.word MASK_C_NOP,		MATCH_C_NOP,		decode_EMPTY,				string_OP_C_NOP,		assemble_GENERIC,	0,	0,	0,	0
 	.word MASK_C_ADDI16SP,	MATCH_C_ADDI16SP,	decode_EMPTY,				string_OP_C_ADDI16SP,	assemble_DUMMY,	ass_END,	ass_END,	ass_END,	ass_END
 	.word MASK_C_JR,		MATCH_C_JR,			decode_EMPTY,				string_OP_C_JR,			assemble_DUMMY,	ass_END,	ass_END,	ass_END,	ass_END
 	.word MASK_C_JALR,		MATCH_C_JALR,		decode_C_ADD_JAL_EBREAK,	string_OP_C_JALR,		assemble_DUMMY,	ass_END,	ass_END,	ass_END,	ass_END
-	.word MASK_C_EBREAK,	MATCH_C_EBREAK,		decode_C_ADD_JAL_EBREAK,	string_OP_C_EBREAK,		assemble_VOID,	ass_END,	ass_END,	ass_END,	ass_END
+	.word MASK_C_EBREAK,	MATCH_C_EBREAK,		decode_C_ADD_JAL_EBREAK,	string_OP_C_EBREAK,		assemble_GENERIC,	0,	0,	0,	0
 	.word MASK_C_LD,		MATCH_C_LD,			decode_EMPTY,				string_OP_C_LD,			assemble_DUMMY,	ass_END,	ass_END,	ass_END,	ass_END
 	.word MASK_C_SD,		MATCH_C_SD,			decode_EMPTY,				string_OP_C_SD,			assemble_DUMMY,	ass_END,	ass_END,	ass_END,	ass_END
 	.word MASK_C_ADDIW,		MATCH_C_ADDIW,		decode_EMPTY,				string_OP_C_ADDIW,		assemble_DUMMY,	ass_END,	ass_END,	ass_END,	ass_END
@@ -779,7 +779,7 @@ encoding_table:
 
 # Zifencei
 #ifdef ENABLE_RVZifencei
-	.word MASK_FENCE_I,		MATCH_FENCE_I,	decode_FENCE_I,	string_OP_FENCE_I,	assemble_VOID,	ass_END,	ass_END,	ass_END,	ass_END
+	.word MASK_FENCE_I,		MATCH_FENCE_I,	decode_FENCE_I,	string_OP_FENCE_I,	assemble_GENERIC,	0,	0,	0,	0
 #endif /* ENABLE_RVZifencei */
 
 # Zicsr
@@ -794,11 +794,11 @@ encoding_table:
 
 # Privileged
 #ifdef ENABLE_RVPRIV
-	.word MASK_WFI,			MATCH_WFI,			decode_WFI,			string_OP_WFI,			assemble_VOID,	ass_END,	ass_END,	ass_END,	ass_END
-	.word MASK_MRET,		MATCH_MRET,			decode_MRET,		string_OP_MRET,			assemble_VOID,	ass_END,	ass_END,	ass_END,	ass_END
-	.word MASK_SRET,		MATCH_SRET,			decode_SRET,		string_OP_SRET,			assemble_VOID,	ass_END,	ass_END,	ass_END,	ass_END
-	.word MASK_SFENCE_VM,	MATCH_SFENCE_VM,	decode_SFENCE_VM,	string_OP_SFENCE_VM,	assemble_VOID,	ass_END,	ass_END,	ass_END,	ass_END
-	.word MASK_SFENCE_VMA,	MATCH_SFENCE_VMA,	decode_SFENCE_VMA,	string_OP_SFENCE_VMA,	assemble_VOID,	ass_END,	ass_END,	ass_END,	ass_END
+	.word MASK_WFI,			MATCH_WFI,			decode_WFI,			string_OP_WFI,			assemble_GENERIC,	0,	0,	0,	0
+	.word MASK_MRET,		MATCH_MRET,			decode_MRET,		string_OP_MRET,			assemble_GENERIC,	0,	0,	0,	0
+	.word MASK_SRET,		MATCH_SRET,			decode_SRET,		string_OP_SRET,			assemble_GENERIC,	0,	0,	0,	0
+	.word MASK_SFENCE_VM,	MATCH_SFENCE_VM,	decode_SFENCE_VM,	string_OP_SFENCE_VM,	assemble_GENERIC,	0,	0,	0,	0
+	.word MASK_SFENCE_VMA,	MATCH_SFENCE_VMA,	decode_SFENCE_VMA,	string_OP_SFENCE_VMA,	assemble_GENERIC,	0,	0,	0,	0
 #endif /* ENABLE_RVPRIV */
 
 # table end marker
