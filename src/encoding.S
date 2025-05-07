@@ -133,33 +133,39 @@ get_register_index_by_name:
 	mv		a4, a0											# save a0 for reuse
 	li		t0, 32											# max entries in table
 get_register_index_by_name_compare_next:
-	lb		t1, 0(a0)
-	lb		t2, 0(a2)
-	# the compared characters do not match, so string does not match
-	bne		t1, t2, get_register_index_by_name_skip_string
-	# search string not fully matched yet, so continue comparing
-	bne		a0, a1, get_register_index_by_name_next_char	
-	# when table string is also at its end, we have a match
-	lb		t2,	1(a2)
-	beqz	t2,	get_register_index_by_name_found			
-	j 		get_register_index_by_name_skip_string
+	lb		t1, 0(a0)										# search string byte
+	lb		t2, 0(a2)										# table string byte
+	beq		t1, t2, get_register_index_by_name_next_char	# chars matched
+	# chars are not equal
+	beqz	t2, get_register_index_by_name_check1			# register name ended
+	bgt		a0, a1, get_register_index_by_name_check2		# search string ended
+	# chars did not match and register name did not terminate
+	j		get_register_index_by_name_next_reg
 get_register_index_by_name_next_char:
-	beqz	t2, get_register_index_by_name_skip_string		# table string ended before search string
-	addi	a0, a0, 1
-	addi	a2, a2, 1
+	addi	a0, a0,1
+	addi	a2, a2,1
 	j 		get_register_index_by_name_compare_next
+get_register_index_by_name_next_reg:
+	mv		a0, a4											# reset search string ptr
+get_register_index_by_name_to_reg_end:
+	addi	a2, a2, 1										# advance a2 to next reg
+	lb		t2, 0(a2)										# table string byte	
+	bnez	t2, get_register_index_by_name_to_reg_end		# until 0 reached
+	addi	a2, a2, 1										# start of next reg
+	addi	a3, a3, 1										# inc index counter
+	beq		a3, t0, get_register_index_by_name_not_found	# out of entries
+	j 		get_register_index_by_name_compare_next
+get_register_index_by_name_check1:
+	bgt		a0, a1,	get_register_index_by_name_found
+	addi	a3, a3, 1										# entry is prefix of search string
+	j		get_register_index_by_name_next_reg
+get_register_index_by_name_check2:
+	lb		t2, 1(a2)
+	beqz	t2, get_register_index_by_name_found
+	j		get_register_index_by_name_next_reg
 get_register_index_by_name_found:
 	mv		a0, a3											# return index counter
 	j 		get_register_index_by_name_done
-get_register_index_by_name_skip_string:
-	addi	a2, a2, 1
-	lb		t1, 0(a2)
-	bnez	t1, get_register_index_by_name_skip_string		# until string termination
-	addi	a2, a2, 1										# start of following string
-	addi	a3, a3, 1										# advance index counter
-	beq		a3, t0, get_register_index_by_name_not_found	# cancel if end of table
-	mv		a0, a4											# reset search string ptr
-	j 		get_register_index_by_name_compare_next			
 get_register_index_by_name_not_found:
 	li		a0, -1											# return error
 get_register_index_by_name_done:
