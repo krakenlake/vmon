@@ -36,6 +36,7 @@ assemble_instruction:
 	jal		get_data_by_insn_name
 	# function ptr now in a0
 	# MATCH value now in a1
+	# table entry ptr in a3
 
 	mv		s2, a0								# save function ptr in s2
 	beqz	s2, assemble_instruction_done		# not found
@@ -239,77 +240,58 @@ assemble_BRANCH_done:
 
 
 # in: a0 = ptr to remaining input string
-# in: a1 = MATCH value
 # in: a2 = origin address
-# in: a3 = assemble function for parameter 1
-# in: a4 = assemble function for parameter 2
-# in: a5 = assemble function for parameter 3
-# in: a6 = assemble function for parameter 4
+# in: a3 = ptr to encoding table entry
 # out: assembled instruction in a1
 assemble_GENERIC:
-	addi	sp, sp, -(XLEN_BYTES*5)				 
+	addi	sp, sp, -(XLEN_BYTES*4)				 
 	SAVE_X	ra, 0(sp)
 	SAVE_X	s0, (XLEN_BYTES*1)(sp)
 	SAVE_X	s1, (XLEN_BYTES*2)(sp)
-	SAVE_X	s2, (XLEN_BYTES*3)(sp)
-	SAVE_X	s3, (XLEN_BYTES*4)(sp)
-
-	mv		s3, a2						# save for later
-
-	# assemble instruction word in s2, starting with MATCH value
-	mv		s2, a1	
-	
-	# advance to parameter 1
+	SAVE_X	s3, (XLEN_BYTES*3)(sp)
+	# assemble instruction word in s1, starting with MATCH value from table
+	#if XLEN >= 64
+		lwu		s1, 4(a3)
+	#else
+		lw		s1, 4(a3)
+	#endif
+	# init offset to function pointers into encoding table entry
+	add		s3, a3, 20
+	# get function ptr for argument
+	#if XLEN >= 64
+		lwu		s0, 0(s3)
+	#else
+		lw		s0, 0(s3)
+	#endif
+	# done if no arguments at all
+	beqz	s0, assemble_GENERIC_done
+assemble_GENERIC_next_argument:
+	# advance string ptr to arg
 	jal		skip_whitespace
-	
-# for testing
-la	a3, ass_rd
-la	a4, ass_rs1
-la	a5, ass_rs2
-la	a6, ass_END
-
-	# assemble rd
-	mv		a1, s2
-	jal		ass_rd	
+	# assemble argument 1
+											# ptr to parameter start in a0
+	mv		a1, s1							# insn word in a1
+	jalr 	s0	
 	beqz	a1, assemble_GENERIC_error
-
+	mv		s1, a1
+	# get next function ptr
+	addi	s3, s3, 4
+	# get function ptr for argument
+	lwu		s0, 0(s3)
+	beqz	s0, assemble_GENERIC_done
 	# expect commma
 	jal		skip_whitespace
 	jal		consume_comma
 	beqz 	a0, assemble_GENERIC_error
-	jal		skip_whitespace
-
-	# assemble rs1
-	jal		ass_rs1	
-	beqz	a1, assemble_GENERIC_error
-
-	# expect commma
-	jal		skip_whitespace
-	jal		consume_comma
-	beqz 	a0, assemble_GENERIC_error
-	jal		skip_whitespace
-
-	# assemble rs2
-	jal		ass_rs2	
-	beqz	a1, assemble_GENERIC_error
-
-	# return a0
-	mv		s2, a0
-
-	j 		assemble_GENERIC_OK	
-
+	j 		assemble_GENERIC_next_argument
 assemble_GENERIC_error:
 	mv		a1, zero
-	j 		assemble_GENERIC_done
-assemble_GENERIC_OK:
-
 assemble_GENERIC_done:
 	LOAD_X	ra, 0(sp)				
 	LOAD_X	s0, (XLEN_BYTES*1)(sp)				 
 	LOAD_X	s1, (XLEN_BYTES*2)(sp)				 
-	LOAD_X	s2, (XLEN_BYTES*3)(sp)				 
-	LOAD_X	s3, (XLEN_BYTES*4)(sp)				 
-	addi	sp, sp, (XLEN_BYTES*5)
+	LOAD_X	s3, (XLEN_BYTES*3)(sp)				 
+	addi	sp, sp, (XLEN_BYTES*4)
 	ret
 .size assemble_GENERIC, .-assemble_GENERIC
 

@@ -28,7 +28,8 @@
 # in: s0 = ptr to search string start
 # in: s1 = ptr to last char of search string
 # out: a0 = ptr to assemble function (0 if string was not found)
-# out: a1  = MATCH value for insn (undefined if string was not found)
+# out: a1 = MATCH value for insn (undefined if string was not found)
+# out: a3 = ptr to table entry (undefined if string was not found)
 get_data_by_insn_name:
 	la		t0, encoding_table
 get_data_by_insn_name_next:								# check string in next table entry
@@ -64,6 +65,7 @@ get_data_by_insn_name_check:
 	lbu		t4, 0(t1)									# check next byte in table string
 	bnez	t4, get_data_by_insn_name_next_entry		# if table string did not end yet, no match 
 get_data_by_insn_name_done:
+	mv		a3, t0										# return also current table entry
 	ret
 .size get_data_by_insn_name, .-get_data_by_insn_name
 
@@ -527,6 +529,7 @@ encoding_table:
 #endif /* ENABLE_PSEUDO */
 
 # RV32I
+#     0					4				8						12					16					20			24			28			32
 .word MASK_ADD,			MATCH_ADD,		decode_R_type,			string_OP_ADD,		assemble_GENERIC,	ass_rd,		ass_rs1,	ass_rs2,	0
 .word MASK_SUB,			MATCH_SUB,		decode_R_type,			string_OP_SUB,		assemble_GENERIC,	ass_rd,		ass_rs1,	ass_rs2,	0
 .word MASK_XOR,			MATCH_XOR,		decode_R_type,			string_OP_XOR,		assemble_GENERIC,	ass_rd,		ass_rs1,	ass_rs2,	0
