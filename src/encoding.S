@@ -558,34 +558,34 @@ encoding_table:
 .word MASK_SH,			MATCH_SH,		decode_S_type,			string_OP_SH,		assemble_DUMMY,		ass_END,	ass_END,	ass_END,	ass_END
 .word MASK_SW,			MATCH_SW,		decode_S_type,			string_OP_SW,		assemble_DUMMY,		ass_END,	ass_END,	ass_END,	ass_END
 .word MASK_BEQ,			MATCH_BEQ,		decode_B_type,			string_OP_BEQ,		assemble_GENERIC,	ass_rs1,	ass_rs2,	ass_BRA,	0
-.word MASK_BNE,			MATCH_BNE,		decode_B_type,			string_OP_BNE,		assemble_BRANCH,	ass_END,	ass_END,	ass_END,	ass_END
-.word MASK_BLT,			MATCH_BLT,		decode_B_type,			string_OP_BLT,		assemble_BRANCH,	ass_END,	ass_END,	ass_END,	ass_END
-.word MASK_BGE,			MATCH_BGE,		decode_B_type,			string_OP_BGE,		assemble_BRANCH,	ass_END,	ass_END,	ass_END,	ass_END
-.word MASK_BLTU,		MATCH_BLTU,		decode_B_type,			string_OP_BLTU,		assemble_BRANCH,	ass_END,	ass_END,	ass_END,	ass_END
-.word MASK_BGEU,		MATCH_BGEU,		decode_B_type,			string_OP_BGEU,		assemble_BRANCH,	ass_END,	ass_END,	ass_END,	ass_END
-.word MASK_JAL,			MATCH_JAL,		decode_JAL,				string_OP_JAL,		assemble_DUMMY,		ass_END,	ass_END,	ass_END,	ass_END
-.word MASK_JALR,		MATCH_JALR,		decode_I_type_LOAD,		string_OP_JALR,		assemble_DUMMY,		ass_END,	ass_END,	ass_END,	ass_END
-.word MASK_LUI,			MATCH_LUI,		decode_U_type,			string_OP_LUI,		assemble_DUMMY,		ass_END,	ass_END,	ass_END,	ass_END
-.word MASK_AUIPC,		MATCH_AUIPC,	decode_U_type,			string_OP_AUIPC,	assemble_DUMMY,		ass_END,	ass_END,	ass_END,	ass_END
-.word MASK_ECALL,		MATCH_ECALL,	decode_ECALL,			string_OP_ECALL,	assemble_GENERIC,	0,	0,	0,	0
-.word MASK_EBREAK,		MATCH_EBREAK,	decode_EBREAK,			string_OP_EBREAK,	assemble_GENERIC,	0,	0,	0,	0
-.word MASK_FENCETSO,	MATCH_FENCETSO,	decode_FENCE_TSO,		string_OP_FENCETSO,	assemble_GENERIC,	0,	0,	0,	0
+.word MASK_BNE,			MATCH_BNE,		decode_B_type,			string_OP_BNE,		assemble_GENERIC,	ass_rs1,	ass_rs2,	ass_BRA,	0
+.word MASK_BLT,			MATCH_BLT,		decode_B_type,			string_OP_BLT,		assemble_GENERIC,	ass_rs1,	ass_rs2,	ass_BRA,	0
+.word MASK_BGE,			MATCH_BGE,		decode_B_type,			string_OP_BGE,		assemble_GENERIC,	ass_rs1,	ass_rs2,	ass_BRA,	0
+.word MASK_BLTU,		MATCH_BLTU,		decode_B_type,			string_OP_BLTU,		assemble_GENERIC,	ass_rs1,	ass_rs2,	ass_BRA,	0
+.word MASK_BGEU,		MATCH_BGEU,		decode_B_type,			string_OP_BGEU,		assemble_GENERIC,	ass_rs1,	ass_rs2,	ass_BRA,	0
+.word MASK_JAL,			MATCH_JAL,		decode_JAL,				string_OP_JAL,		assemble_GENERIC,	ass_rs1,	ass_rs2,	ass_BRA,	0
+.word MASK_JALR,		MATCH_JALR,		decode_I_type_LOAD,		string_OP_JALR,		assemble_GENERIC,	ass_rs1,	ass_rs2,	ass_BRA,	0
+.word MASK_LUI,			MATCH_LUI,		decode_U_type,			string_OP_LUI,		assemble_GENERIC,	ass_rs1,	ass_rs2,	ass_BRA,	0
+.word MASK_AUIPC,		MATCH_AUIPC,	decode_U_type,			string_OP_AUIPC,	assemble_GENERIC,	ass_rs1,	ass_rs2,	ass_BRA,	0
+.word MASK_ECALL,		MATCH_ECALL,	decode_ECALL,			string_OP_ECALL,	assemble_GENERIC,	0,			0,			0,			0
+.word MASK_EBREAK,		MATCH_EBREAK,	decode_EBREAK,			string_OP_EBREAK,	assemble_GENERIC,	0,			0,			0,			0
+.word MASK_FENCETSO,	MATCH_FENCETSO,	decode_FENCE_TSO,		string_OP_FENCETSO,	assemble_GENERIC,	0,			0,			0,			0
 .word MASK_FENCE,		MATCH_FENCE,	decode_FENCE,			string_OP_FENCE,	assemble_DUMMY,		ass_END,	ass_END,	ass_END,	ass_END
 
 # RV64I
 #if XLEN >= 64
-	.word MASK_ADDIW,	MATCH_ADDIW,	decode_I_type,			string_OP_ADDIW,	assemble_DUMMY,	ass_END,	ass_END,	ass_END,	ass_END
-	.word MASK_SLLIW,	MATCH_SLLIW,	decode_I_type_SHIFT,	string_OP_SLLIW,	assemble_DUMMY,	ass_END,	ass_END,	ass_END,	ass_END
-	.word MASK_SRLIW,	MATCH_SRLIW,	decode_I_type_SHIFT,	string_OP_SRLIW,	assemble_DUMMY,	ass_END,	ass_END,	ass_END,	ass_END
-	.word MASK_SRAIW,	MATCH_SRAIW,	decode_I_type_SHIFT,	string_OP_SRAIW,	assemble_DUMMY,	ass_END,	ass_END,	ass_END,	ass_END
+	.word MASK_ADDIW,	MATCH_ADDIW,	decode_I_type,			string_OP_ADDIW,	assemble_DUMMY,		ass_END,	ass_END,	ass_END,	ass_END
+	.word MASK_SLLIW,	MATCH_SLLIW,	decode_I_type_SHIFT,	string_OP_SLLIW,	assemble_DUMMY,		ass_END,	ass_END,	ass_END,	ass_END
+	.word MASK_SRLIW,	MATCH_SRLIW,	decode_I_type_SHIFT,	string_OP_SRLIW,	assemble_DUMMY,		ass_END,	ass_END,	ass_END,	ass_END
+	.word MASK_SRAIW,	MATCH_SRAIW,	decode_I_type_SHIFT,	string_OP_SRAIW,	assemble_DUMMY,		ass_END,	ass_END,	ass_END,	ass_END
 	.word MASK_ADDW, 	MATCH_ADDW,		decode_R_type,			string_OP_ADDW,		assemble_GENERIC,	ass_rd,		ass_rs1,	ass_rs2,	0
 	.word MASK_SUBW,	MATCH_SUBW,		decode_R_type,			string_OP_SUBW,		assemble_GENERIC,	ass_rd,		ass_rs1,	ass_rs2,	0
 	.word MASK_SLLW,	MATCH_SLLW,		decode_R_type,			string_OP_SLLW,		assemble_GENERIC,	ass_rd,		ass_rs1,	ass_rs2,	0
 	.word MASK_SRLW,	MATCH_SRLW,		decode_R_type,			string_OP_SRLW,		assemble_GENERIC,	ass_rd,		ass_rs1,	ass_rs2,	0
 	.word MASK_SRAW,	MATCH_SRAW,		decode_R_type,			string_OP_SRAW,		assemble_GENERIC,	ass_rd,		ass_rs1,	ass_rs2,	0
-	.word MASK_LD,		MATCH_LD,		decode_I_type_LOAD,		string_OP_LD,		assemble_DUMMY,	ass_END,	ass_END,	ass_END,	ass_END
-	.word MASK_LWU,		MATCH_LWU,		decode_I_type_LOAD,		string_OP_LWU,		assemble_DUMMY,	ass_END,	ass_END,	ass_END,	ass_END
-	.word MASK_SD,		MATCH_SD,		decode_S_type,			string_OP_SD,		assemble_DUMMY,	ass_END,	ass_END,	ass_END,	ass_END
+	.word MASK_LD,		MATCH_LD,		decode_I_type_LOAD,		string_OP_LD,		assemble_DUMMY,		ass_END,	ass_END,	ass_END,	ass_END
+	.word MASK_LWU,		MATCH_LWU,		decode_I_type_LOAD,		string_OP_LWU,		assemble_DUMMY,		ass_END,	ass_END,	ass_END,	ass_END
+	.word MASK_SD,		MATCH_SD,		decode_S_type,			string_OP_SD,		assemble_DUMMY,		ass_END,	ass_END,	ass_END,	ass_END
 #endif
 
 # RVM
@@ -729,42 +729,42 @@ encoding_table:
 
 # RVC
 #ifdef ENABLE_RVC
-	.word MASK_C_LW,		MATCH_C_LW,			decode_EMPTY,				string_OP_C_LW,			assemble_DUMMY,	ass_END,	ass_END,	ass_END,	ass_END
-	.word MASK_C_SW,		MATCH_C_SW,			decode_EMPTY,				string_OP_C_SW,			assemble_DUMMY,	ass_END,	ass_END,	ass_END,	ass_END
-	.word MASK_C_ADDI,		MATCH_C_ADDI,		decode_EMPTY,				string_OP_C_ADDI,		assemble_DUMMY,	ass_END,	ass_END,	ass_END,	ass_END
-	.word MASK_C_JAL,		MATCH_C_JAL,		decode_EMPTY,				string_OP_C_JAL,		assemble_DUMMY,	ass_END,	ass_END,	ass_END,	ass_END
-	.word MASK_C_LI,		MATCH_C_LI,			decode_EMPTY,				string_OP_C_LI,			assemble_DUMMY,	ass_END,	ass_END,	ass_END,	ass_END
-	.word MASK_C_LUI,		MATCH_C_LUI,		decode_EMPTY,				string_OP_C_LUI,		assemble_DUMMY,	ass_END,	ass_END,	ass_END,	ass_END
-	.word MASK_C_SRLI,		MATCH_C_SRLI,		decode_EMPTY,				string_OP_C_SRLI,		assemble_DUMMY,	ass_END,	ass_END,	ass_END,	ass_END
-	.word MASK_C_SRLI64,	MATCH_C_SRLI64,		decode_EMPTY,				string_OP_C_SRLI64,		assemble_DUMMY,	ass_END,	ass_END,	ass_END,	ass_END
-	.word MASK_C_SRAI,		MATCH_C_SRAI,		decode_EMPTY,				string_OP_C_SRAI,		assemble_DUMMY,	ass_END,	ass_END,	ass_END,	ass_END
-	.word MASK_C_SRAI64,	MATCH_C_SRAI64,		decode_EMPTY,				string_OP_C_SRAI64,		assemble_DUMMY,	ass_END,	ass_END,	ass_END,	ass_END
-	.word MASK_C_ANDI,		MATCH_C_ANDI,		decode_EMPTY,				string_OP_C_ANDI,		assemble_DUMMY,	ass_END,	ass_END,	ass_END,	ass_END
-	.word MASK_C_SUB,		MATCH_C_SUB,		decode_EMPTY,				string_OP_C_SUB,		assemble_DUMMY,	ass_END,	ass_END,	ass_END,	ass_END
-	.word MASK_C_XOR,		MATCH_C_XOR,		decode_EMPTY,				string_OP_C_XOR,		assemble_DUMMY,	ass_END,	ass_END,	ass_END,	ass_END
-	.word MASK_C_OR,		MATCH_C_OR,			decode_EMPTY,				string_OP_C_OR,			assemble_DUMMY,	ass_END,	ass_END,	ass_END,	ass_END
-	.word MASK_C_AND,		MATCH_C_AND,		decode_EMPTY,				string_OP_C_AND,		assemble_DUMMY,	ass_END,	ass_END,	ass_END,	ass_END
-	.word MASK_C_SUBW,		MATCH_C_SUBW,		decode_EMPTY,				string_OP_C_SUBW,		assemble_DUMMY,	ass_END,	ass_END,	ass_END,	ass_END
-	.word MASK_C_ADDW,		MATCH_C_ADDW,		decode_EMPTY,				string_OP_C_ADDW,		assemble_DUMMY,	ass_END,	ass_END,	ass_END,	ass_END
-	.word MASK_C_J,			MATCH_C_J,			decode_EMPTY,				string_OP_C_J,			assemble_DUMMY,	ass_END,	ass_END,	ass_END,	ass_END
-	.word MASK_C_BEQZ,		MATCH_C_BEQZ,		decode_EMPTY,				string_OP_C_BEQZ,		assemble_DUMMY,	ass_END,	ass_END,	ass_END,	ass_END
-	.word MASK_C_BNEZ,		MATCH_C_BNEZ,		decode_EMPTY,				string_OP_C_BNEZ,		assemble_DUMMY,	ass_END,	ass_END,	ass_END,	ass_END
-	.word MASK_C_SLLI,		MATCH_C_SLLI,		decode_EMPTY,				string_OP_C_SLLI,		assemble_DUMMY,	ass_END,	ass_END,	ass_END,	ass_END
-	.word MASK_C_SLLI64,	MATCH_C_SLLI64,		decode_EMPTY,				string_OP_C_SLLI64,		assemble_DUMMY,	ass_END,	ass_END,	ass_END,	ass_END
-	.word MASK_C_LWSP,		MATCH_C_LWSP,		decode_C_LWSP,				string_OP_C_LWSP,		assemble_DUMMY,	ass_END,	ass_END,	ass_END,	ass_END
-	.word MASK_C_MV,		MATCH_C_MV,			decode_EMPTY,				string_OP_C_MV,			assemble_DUMMY,	ass_END,	ass_END,	ass_END,	ass_END
-	.word MASK_C_ADD,		MATCH_C_ADD,		decode_C_ADD_JAL_EBREAK,	string_OP_C_ADD,		assemble_DUMMY,	ass_END,	ass_END,	ass_END,	ass_END
-	.word MASK_C_SWSP,		MATCH_C_SWSP,		decode_EMPTY,				string_OP_C_SWSP,		assemble_DUMMY,	ass_END,	ass_END,	ass_END,	ass_END
-	.word MASK_C_NOP,		MATCH_C_NOP,		decode_EMPTY,				string_OP_C_NOP,		assemble_GENERIC,	0,	0,	0,	0
-	.word MASK_C_ADDI16SP,	MATCH_C_ADDI16SP,	decode_EMPTY,				string_OP_C_ADDI16SP,	assemble_DUMMY,	ass_END,	ass_END,	ass_END,	ass_END
-	.word MASK_C_JR,		MATCH_C_JR,			decode_EMPTY,				string_OP_C_JR,			assemble_DUMMY,	ass_END,	ass_END,	ass_END,	ass_END
-	.word MASK_C_JALR,		MATCH_C_JALR,		decode_C_ADD_JAL_EBREAK,	string_OP_C_JALR,		assemble_DUMMY,	ass_END,	ass_END,	ass_END,	ass_END
-	.word MASK_C_EBREAK,	MATCH_C_EBREAK,		decode_C_ADD_JAL_EBREAK,	string_OP_C_EBREAK,		assemble_GENERIC,	0,	0,	0,	0
-	.word MASK_C_LD,		MATCH_C_LD,			decode_EMPTY,				string_OP_C_LD,			assemble_DUMMY,	ass_END,	ass_END,	ass_END,	ass_END
-	.word MASK_C_SD,		MATCH_C_SD,			decode_EMPTY,				string_OP_C_SD,			assemble_DUMMY,	ass_END,	ass_END,	ass_END,	ass_END
-	.word MASK_C_ADDIW,		MATCH_C_ADDIW,		decode_EMPTY,				string_OP_C_ADDIW,		assemble_DUMMY,	ass_END,	ass_END,	ass_END,	ass_END
-	.word MASK_C_LDSP,		MATCH_C_LDSP,		decode_EMPTY,				string_OP_C_LDSP,		assemble_DUMMY,	ass_END,	ass_END,	ass_END,	ass_END
-	.word MASK_C_SDSP,		MATCH_C_SDSP,		decode_EMPTY,				string_OP_C_SDSP,		assemble_DUMMY,	ass_END,	ass_END,	ass_END,	ass_END
+	.word MASK_C_LW,		MATCH_C_LW,			decode_EMPTY,				string_OP_C_LW,			assemble_DUMMY,		ass_END,	ass_END,	ass_END,	ass_END
+	.word MASK_C_SW,		MATCH_C_SW,			decode_EMPTY,				string_OP_C_SW,			assemble_DUMMY,		ass_END,	ass_END,	ass_END,	ass_END
+	.word MASK_C_ADDI,		MATCH_C_ADDI,		decode_EMPTY,				string_OP_C_ADDI,		assemble_DUMMY,		ass_END,	ass_END,	ass_END,	ass_END
+	.word MASK_C_JAL,		MATCH_C_JAL,		decode_EMPTY,				string_OP_C_JAL,		assemble_DUMMY,		ass_END,	ass_END,	ass_END,	ass_END
+	.word MASK_C_LI,		MATCH_C_LI,			decode_EMPTY,				string_OP_C_LI,			assemble_DUMMY,		ass_END,	ass_END,	ass_END,	ass_END
+	.word MASK_C_LUI,		MATCH_C_LUI,		decode_EMPTY,				string_OP_C_LUI,		assemble_DUMMY,		ass_END,	ass_END,	ass_END,	ass_END
+	.word MASK_C_SRLI,		MATCH_C_SRLI,		decode_EMPTY,				string_OP_C_SRLI,		assemble_DUMMY,		ass_END,	ass_END,	ass_END,	ass_END
+	.word MASK_C_SRLI64,	MATCH_C_SRLI64,		decode_EMPTY,				string_OP_C_SRLI64,		assemble_DUMMY,		ass_END,	ass_END,	ass_END,	ass_END
+	.word MASK_C_SRAI,		MATCH_C_SRAI,		decode_EMPTY,				string_OP_C_SRAI,		assemble_DUMMY,		ass_END,	ass_END,	ass_END,	ass_END
+	.word MASK_C_SRAI64,	MATCH_C_SRAI64,		decode_EMPTY,				string_OP_C_SRAI64,		assemble_DUMMY,		ass_END,	ass_END,	ass_END,	ass_END
+	.word MASK_C_ANDI,		MATCH_C_ANDI,		decode_EMPTY,				string_OP_C_ANDI,		assemble_DUMMY,		ass_END,	ass_END,	ass_END,	ass_END
+	.word MASK_C_SUB,		MATCH_C_SUB,		decode_EMPTY,				string_OP_C_SUB,		assemble_DUMMY,		ass_END,	ass_END,	ass_END,	ass_END
+	.word MASK_C_XOR,		MATCH_C_XOR,		decode_EMPTY,				string_OP_C_XOR,		assemble_DUMMY,		ass_END,	ass_END,	ass_END,	ass_END
+	.word MASK_C_OR,		MATCH_C_OR,			decode_EMPTY,				string_OP_C_OR,			assemble_DUMMY,		ass_END,	ass_END,	ass_END,	ass_END
+	.word MASK_C_AND,		MATCH_C_AND,		decode_EMPTY,				string_OP_C_AND,		assemble_DUMMY,		ass_END,	ass_END,	ass_END,	ass_END
+	.word MASK_C_SUBW,		MATCH_C_SUBW,		decode_EMPTY,				string_OP_C_SUBW,		assemble_DUMMY,		ass_END,	ass_END,	ass_END,	ass_END
+	.word MASK_C_ADDW,		MATCH_C_ADDW,		decode_EMPTY,				string_OP_C_ADDW,		assemble_DUMMY,		ass_END,	ass_END,	ass_END,	ass_END
+	.word MASK_C_J,			MATCH_C_J,			decode_EMPTY,				string_OP_C_J,			assemble_DUMMY,		ass_END,	ass_END,	ass_END,	ass_END
+	.word MASK_C_BEQZ,		MATCH_C_BEQZ,		decode_EMPTY,				string_OP_C_BEQZ,		assemble_DUMMY,		ass_END,	ass_END,	ass_END,	ass_END
+	.word MASK_C_BNEZ,		MATCH_C_BNEZ,		decode_EMPTY,				string_OP_C_BNEZ,		assemble_DUMMY,		ass_END,	ass_END,	ass_END,	ass_END
+	.word MASK_C_SLLI,		MATCH_C_SLLI,		decode_EMPTY,				string_OP_C_SLLI,		assemble_DUMMY,		ass_END,	ass_END,	ass_END,	ass_END
+	.word MASK_C_SLLI64,	MATCH_C_SLLI64,		decode_EMPTY,				string_OP_C_SLLI64,		assemble_DUMMY,		ass_END,	ass_END,	ass_END,	ass_END
+	.word MASK_C_LWSP,		MATCH_C_LWSP,		decode_C_LWSP,				string_OP_C_LWSP,		assemble_DUMMY,		ass_END,	ass_END,	ass_END,	ass_END
+	.word MASK_C_MV,		MATCH_C_MV,			decode_EMPTY,				string_OP_C_MV,			assemble_DUMMY,		ass_END,	ass_END,	ass_END,	ass_END
+	.word MASK_C_ADD,		MATCH_C_ADD,		decode_C_ADD_JAL_EBREAK,	string_OP_C_ADD,		assemble_DUMMY,		ass_END,	ass_END,	ass_END,	ass_END
+	.word MASK_C_SWSP,		MATCH_C_SWSP,		decode_EMPTY,				string_OP_C_SWSP,		assemble_DUMMY,		ass_END,	ass_END,	ass_END,	ass_END
+	.word MASK_C_NOP,		MATCH_C_NOP,		decode_EMPTY,				string_OP_C_NOP,		assemble_GENERIC,	0,			0,			0,			0
+	.word MASK_C_ADDI16SP,	MATCH_C_ADDI16SP,	decode_EMPTY,				string_OP_C_ADDI16SP,	assemble_DUMMY,		ass_END,	ass_END,	ass_END,	ass_END
+	.word MASK_C_JR,		MATCH_C_JR,			decode_EMPTY,				string_OP_C_JR,			assemble_DUMMY,		ass_END,	ass_END,	ass_END,	ass_END
+	.word MASK_C_JALR,		MATCH_C_JALR,		decode_C_ADD_JAL_EBREAK,	string_OP_C_JALR,		assemble_DUMMY,		ass_END,	ass_END,	ass_END,	ass_END
+	.word MASK_C_EBREAK,	MATCH_C_EBREAK,		decode_C_ADD_JAL_EBREAK,	string_OP_C_EBREAK,		assemble_GENERIC,	0,			0,			0,			0
+	.word MASK_C_LD,		MATCH_C_LD,			decode_EMPTY,				string_OP_C_LD,			assemble_DUMMY,		ass_END,	ass_END,	ass_END,	ass_END
+	.word MASK_C_SD,		MATCH_C_SD,			decode_EMPTY,				string_OP_C_SD,			assemble_DUMMY,		ass_END,	ass_END,	ass_END,	ass_END
+	.word MASK_C_ADDIW,		MATCH_C_ADDIW,		decode_EMPTY,				string_OP_C_ADDIW,		assemble_DUMMY,		ass_END,	ass_END,	ass_END,	ass_END
+	.word MASK_C_LDSP,		MATCH_C_LDSP,		decode_EMPTY,				string_OP_C_LDSP,		assemble_DUMMY,		ass_END,	ass_END,	ass_END,	ass_END
+	.word MASK_C_SDSP,		MATCH_C_SDSP,		decode_EMPTY,				string_OP_C_SDSP,		assemble_DUMMY,		ass_END,	ass_END,	ass_END,	ass_END
 	#ifdef ENABLE_RVF
 		.word MASK_C_FLD,	MATCH_C_FLD,	decode_EMPTY,	string_OP_C_FLD,	assemble_DUMMY,	ass_END,	ass_END,	ass_END,	ass_END
 		.word MASK_C_FSD,	MATCH_C_FSD,	decode_EMPTY,	string_OP_C_FSD,	assemble_DUMMY,	ass_END,	ass_END,	ass_END,	ass_END

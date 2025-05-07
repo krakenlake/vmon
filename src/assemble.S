@@ -6,7 +6,6 @@
 .global assemble_instruction
 
 .global assemble_DUMMY
-.global assemble_BRANCH
 
 .global assemble_GENERIC
 .global ass_rd
@@ -43,6 +42,7 @@ assemble_instruction:
 	mv		a0, s1
 	# current memory addr already in a2
 	jalr	s2									# call insn-specific assemble function
+
 	# now a1 = insn code
 	# in case insn == 0, 
 	beqz	a1, assemble_instruction_error		# error while assembling insn parameters
@@ -104,7 +104,7 @@ assemble_rs2:
 # in: a0 = absolute target address 
 # in: a1 = instruction word
 # in: a2 = absolute origin address of the branch instruction
-# out: modified instruction word in a1
+# out: a1 = modified instruction word
 assemble_branch_target:
 	sub		a0, a0, a2					# compute relative address
 	# range check
@@ -151,102 +151,27 @@ assemble_DUMMY:
 .size assemble_DUMMY, .-assemble_DUMMY
 
 
-# in: a0 = input string ptr
-# in: a1 = MATCH value
-# in: a2 = origin address
-# out: assembled instruction in a1
-assemble_BRANCH:
-	addi	sp, sp, -(XLEN_BYTES*5)				 
-	SAVE_X	ra, 0(sp)
-	SAVE_X	s0, (XLEN_BYTES*1)(sp)
-	SAVE_X	s1, (XLEN_BYTES*2)(sp)
-	SAVE_X	s2, (XLEN_BYTES*3)(sp)
-	SAVE_X	s3, (XLEN_BYTES*4)(sp)
-	mv		s3, a2						# save for later
-	# assemble instruction word in s2, starting with MATCH value
-	mv		s2, a1
-	# advance to first user input parameter
-	jal		skip_whitespace
-	mv		s0, a0
-	jal		find_register_name_end
-	mv		s1, a0
-	# parse register 1 from user input
-	mv		a0, s0
-	mv		a1, s1
-	jal		get_int_register_index_by_name
-	bltz	a0, assemble_BRANCH_error
-	# add rs1 to instruction word
-	mv		a1, s2
-	jal 	assemble_rs1
-	mv		s2, a1						# save insn word
-	# expect commma
-	addi	a0, s1, 1
-	jal		skip_whitespace
-	jal		consume_comma
-	beqz 	a0, assemble_BRANCH_error
-	# parse register 2
-	jal		skip_whitespace
-	mv		s0, a0
-	jal		find_register_name_end
-	mv		s1, a0
-	# parse register 2 from user input
-	mv		a0, s0
-	mv		a1, s1
-	jal		get_int_register_index_by_name
-	bltz	a0, assemble_BRANCH_error
-	# add rs2 to instruction word
-	mv		a1, s2
-	jal 	assemble_rs2
-	mv		s2, a1						# save insn word
-	# expect commma
-	addi	a0, s1, 1
-	jal		skip_whitespace
-	jal		consume_comma
-	beqz 	a0, assemble_BRANCH_error
-	# parse target address from user input
-	jal		skip_whitespace	
-	jal		get_hex_addr
-	bnez	a2, assemble_BRANCH_error
-	# add branch target address to instruction word
-	mv		a0, a1						# absolute target address
-	mv		a1, s2						# instruction word
-	mv		a2, s3						# get saved origin addr back
-	jal		assemble_branch_target
-	beqz 	a1, assemble_BRANCH_error   # address too far away
-	mv		s2, a1						# save insn word
-	j 		assemble_BRANCH_OK	
-assemble_BRANCH_error:
-	mv		a1, zero
-	j 		assemble_BRANCH_done
-assemble_BRANCH_OK:
-	mv		a1, s2
-assemble_BRANCH_done:
-	LOAD_X	ra, 0(sp)				
-	LOAD_X	s0, (XLEN_BYTES*1)(sp)				 
-	LOAD_X	s1, (XLEN_BYTES*2)(sp)				 
-	LOAD_X	s2, (XLEN_BYTES*3)(sp)				 
-	LOAD_X	s3, (XLEN_BYTES*4)(sp)				 
-	addi	sp, sp, (XLEN_BYTES*5)
-	ret
-.size assemble_BRANCH, .-assemble_BRANCH
-
-
 # in: a0 = ptr to remaining input string
 # in: a2 = origin address
 # in: a3 = ptr to encoding table entry
 # out: assembled instruction in a1
 assemble_GENERIC:
-	addi	sp, sp, -(XLEN_BYTES*4)				 
+	addi	sp, sp, -(XLEN_BYTES*5)
 	SAVE_X	ra, 0(sp)
 	SAVE_X	s0, (XLEN_BYTES*1)(sp)
 	SAVE_X	s1, (XLEN_BYTES*2)(sp)
-	SAVE_X	s3, (XLEN_BYTES*3)(sp)
+	SAVE_X	s2, (XLEN_BYTES*3)(sp)
+	SAVE_X	s3, (XLEN_BYTES*4)(sp)
+
+	mv		s2, a2
+
 	# assemble instruction word in s1, starting with MATCH value from table
 	#if XLEN >= 64
 		lwu		s1, 4(a3)
 	#else
 		lw		s1, 4(a3)
 	#endif
+	
 	# init offset to function pointers into encoding table entry
 	add		s3, a3, 20
 	# get function ptr for argument
@@ -255,22 +180,31 @@ assemble_GENERIC:
 	#else
 		lw		s0, 0(s3)
 	#endif
+
 	# done if no arguments at all
 	beqz	s0, assemble_GENERIC_done
 assemble_GENERIC_next_argument:
 	# advance string ptr to arg
 	jal		skip_whitespace
-	# assemble argument 1
+	# assemble argument
 											# ptr to parameter start in a0
 	mv		a1, s1							# insn word in a1
+	mv		a2, s2							# origin address in a2
 	jalr 	s0	
-	beqz	a1, assemble_GENERIC_error
-	mv		s1, a1
+
+
+	beqz	a1, assemble_GENERIC_error		# assembling argument failed
+	mv		s1, a1							# save insn word
 	# get next function ptr
 	addi	s3, s3, 4
 	# get function ptr for argument
-	lwu		s0, 0(s3)
+	#if XLEN >= 64
+		lwu		s0, 0(s3)
+	#else
+		lw		s0, 0(s3)
+	#endif
 	beqz	s0, assemble_GENERIC_done
+
 	# expect commma
 	jal		skip_whitespace
 	jal		consume_comma
@@ -279,21 +213,23 @@ assemble_GENERIC_next_argument:
 assemble_GENERIC_error:
 	mv		a1, zero
 assemble_GENERIC_done:
-	LOAD_X	ra, 0(sp)				
-	LOAD_X	s0, (XLEN_BYTES*1)(sp)				 
-	LOAD_X	s1, (XLEN_BYTES*2)(sp)				 
-	LOAD_X	s3, (XLEN_BYTES*3)(sp)				 
-	addi	sp, sp, (XLEN_BYTES*4)
+	LOAD_X	ra, 0(sp)
+	LOAD_X	s0, (XLEN_BYTES*1)(sp)
+	LOAD_X	s1, (XLEN_BYTES*2)(sp)
+	LOAD_X	s1, (XLEN_BYTES*3)(sp)
+	LOAD_X	s3, (XLEN_BYTES*4)(sp)
+	addi	sp, sp, (XLEN_BYTES*5)
 	ret
 .size assemble_GENERIC, .-assemble_GENERIC
 
 
-# in: a0 = ptr to first char of register name
-# in: a1 = insn word that rd will be added to
-# out: a0 = ptr to char after register name
+# in: a0 = ptr to first char of argument
+# in: a1 = insn word to be modifed
+# in: a2 = origin address
+# out: a0 = ptr to char after argument
 # out: a1 = insn word (0 on error)
 ass_rd:
-	addi	sp, sp, -(XLEN_BYTES*4)				 
+	addi	sp, sp, -(XLEN_BYTES*4)
 	SAVE_X	ra, 0(sp)
 	SAVE_X	s0, (XLEN_BYTES*1)(sp)
 	SAVE_X	s1, (XLEN_BYTES*2)(sp)
@@ -317,18 +253,19 @@ ass_rd_error:
 	mv		a1, zero
 ass_rd_done:
 	addi	a0, s2, 1							# return reg name end +1
-	LOAD_X	ra, 0(sp)				
-	LOAD_X	s0, (XLEN_BYTES*1)(sp)				 
-	LOAD_X	s1, (XLEN_BYTES*2)(sp)				 
-	LOAD_X	s2, (XLEN_BYTES*3)(sp)				 
+	LOAD_X	ra, 0(sp)
+	LOAD_X	s0, (XLEN_BYTES*1)(sp)
+	LOAD_X	s1, (XLEN_BYTES*2)(sp)
+	LOAD_X	s2, (XLEN_BYTES*3)(sp)
 	addi	sp, sp, (XLEN_BYTES*4)
 	ret
 .size ass_rd, .-ass_rd
 
 
-# in: a0 = ptr to first char of register name
-# in: a1 = insn word that rs1 will be added to
-# out: a0 = ptr to char after register name
+# in: a0 = ptr to first char of argument
+# in: a1 = insn word to be modifed
+# in: a2 = origin address
+# out: a0 = ptr to char after argument
 # out: a1 = insn word (0 on error)
 ass_rs1:
 	addi	sp, sp, -(XLEN_BYTES*4)				 
@@ -354,9 +291,10 @@ ass_rs1:
 .size ass_rs1, .-ass_rs1
 
 
-# in: a0 = ptr to first char of register name
-# in: a1 = insn word that rs2 will be added to
-# out: a0 = ptr to char after register name
+# in: a0 = ptr to first char of argument
+# in: a1 = insn word to be modifed
+# in: a2 = origin address
+# out: a0 = ptr to char after argument
 # out: a1 = insn word (0 on error)
 ass_rs2:
 	addi	sp, sp, -(XLEN_BYTES*4)				 
@@ -382,22 +320,51 @@ ass_rs2:
 .size ass_rs2, .-ass_rs2
 
 
-# in: a0 = ptr to first char of register name
-# in: a1 = insn word
-# out: a0 = insn word (0 on error)
 ass_END:
-	mv		a0, a1
 	ret
 .size ass_END, .-ass_END
 
 
-# in: a0 = ptr to first char of register name
-# in: a1 = insn word
-# out: a0 = insn word (0 on error)
+# in: a0 = ptr to first char of argument
+# in: a1 = insn word to be modifed
+# in: a2 = origin address
+# out: a0 = ptr to char after argument
+# out: a1 = insn word (0 on error)
 ass_BRA:
-	mv		a0, a1
+	addi	sp, sp, -(XLEN_BYTES*5)
+	SAVE_X	ra, 0(sp)
+	SAVE_X	s0, (XLEN_BYTES*1)(sp)
+	SAVE_X	s1, (XLEN_BYTES*2)(sp)
+	SAVE_X	s2, (XLEN_BYTES*3)(sp)
+	SAVE_X	s3, (XLEN_BYTES*4)(sp)
+	mv		s1, a1						# save insn word
+	mv		s3, a2						# save for later
+	
+	jal		get_hex_addr
+	# address in a1
+	bnez	a2, ass_BRA_error
+	mv		s2, a0						# return string ptr ater
+	# add branch target address to instruction word
+	mv		a0, a1						# absolute target address
+	mv		a1, s1						# instruction word
+	mv		a2, s3						# get saved origin addr back
+	jal		assemble_branch_target
+	beqz 	a1, ass_BRA_error			# address too far away
+	
+	# return a1 and a0
+	addi	a0, s2, 1							# string ptr +1
+	j		ass_BRA_done
+ass_BRA_error:
+	mv		a1, zero
+ass_BRA_done:
+	LOAD_X	ra, 0(sp)
+	LOAD_X	s0, (XLEN_BYTES*1)(sp)
+	LOAD_X	s1, (XLEN_BYTES*2)(sp)
+	LOAD_X	s2, (XLEN_BYTES*3)(sp)
+	LOAD_X	s3, (XLEN_BYTES*4)(sp)
+	addi	sp, sp, (XLEN_BYTES*5)
 	ret
-.size ass_END, .-ass_END
+.size ass_BRA, .-ass_BRA
 
 
 #endif /* WITH_CMD_A */
