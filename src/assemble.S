@@ -6,7 +6,6 @@
 .global assemble_instruction
 
 .global assemble_DUMMY
-.global assemble_VOID
 .global assemble_BRANCH
 
 .global assemble_GENERIC
@@ -15,6 +14,7 @@
 .global ass_rs2
 
 .global ass_END
+.global ass_BRA
 
 .text
 
@@ -149,14 +149,6 @@ assemble_DUMMY:
 	li		a1, 0xffffffff
 	ret
 .size assemble_DUMMY, .-assemble_DUMMY
-
-
-# in: input string ptr in a0
-# in: MATCH value in a1
-assemble_VOID:
-	# nothing to be done, a1 already contains final insn
-	ret
-.size assemble_VOID, .-assemble_VOID
 
 
 # in: a0 = input string ptr
@@ -390,7 +382,6 @@ ass_rs2:
 .size ass_rs2, .-ass_rs2
 
 
-
 # in: a0 = ptr to first char of register name
 # in: a1 = insn word
 # out: a0 = insn word (0 on error)
@@ -398,5 +389,15 @@ ass_END:
 	mv		a0, a1
 	ret
 .size ass_END, .-ass_END
+
+
+# in: a0 = ptr to first char of register name
+# in: a1 = insn word
+# out: a0 = insn word (0 on error)
+ass_BRA:
+	mv		a0, a1
+	ret
+.size ass_END, .-ass_END
+
 
 #endif /* WITH_CMD_A */
