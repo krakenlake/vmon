@@ -109,12 +109,20 @@ get_register_name_by_index_found:
 .size get_register_name_by_index, .-get_register_name_by_index
 
 
+# return index of int register given by name
+# in: a0 = string ptr to start of name
+# in: a1 = string ptr to end of name (after last char; no 0-termination expected)
+# out: a0 = index number of int register (-1 if error)
 get_int_register_index_by_name:
 	la		a2, int_register_names
 	j 		get_register_index_by_name
 .size get_int_register_index_by_name, .-get_int_register_index_by_name
 
 
+# return index of float register given by name
+# in: a0 = string ptr to start of name
+# in: a1 = string ptr to end of name (after last char; no 0-termination expected)
+# out: a0 = index number of float register (-1 if error)
 get_float_register_index_by_name:
 	la		a2, float_register_names
 	j 		get_register_index_by_name
@@ -519,16 +527,16 @@ encoding_table:
 #endif /* ENABLE_PSEUDO */
 
 # RV32I
-.word MASK_ADD,			MATCH_ADD,		decode_R_type,			string_OP_ADD,		assemble_RTYPE,		ass_END,	ass_END,	ass_END,	ass_END
-.word MASK_SUB,			MATCH_SUB,		decode_R_type,			string_OP_SUB,		assemble_RTYPE,		ass_END,	ass_END,	ass_END,	ass_END
-.word MASK_XOR,			MATCH_XOR,		decode_R_type,			string_OP_XOR,		assemble_RTYPE,		ass_END,	ass_END,	ass_END,	ass_END
-.word MASK_OR,			MATCH_OR,		decode_R_type,			string_OP_OR,		assemble_RTYPE,		ass_END,	ass_END,	ass_END,	ass_END
-.word MASK_AND,			MATCH_AND,		decode_R_type,			string_OP_AND,		assemble_RTYPE,		ass_END,	ass_END,	ass_END,	ass_END
-.word MASK_SLL,			MATCH_SLL,		decode_R_type,			string_OP_SLL,		assemble_RTYPE,		ass_END,	ass_END,	ass_END,	ass_END
-.word MASK_SRL,			MATCH_SRL,		decode_R_type,			string_OP_SRL,		assemble_RTYPE,		ass_END,	ass_END,	ass_END,	ass_END
-.word MASK_SRA,			MATCH_SRA,		decode_R_type,			string_OP_SRA,		assemble_RTYPE,		ass_END,	ass_END,	ass_END,	ass_END
-.word MASK_SLT,			MATCH_SLT,		decode_R_type,			string_OP_SLT,		assemble_RTYPE,		ass_END,	ass_END,	ass_END,	ass_END
-.word MASK_SLTU,		MATCH_SLTU,		decode_R_type,			string_OP_SLTU,		assemble_RTYPE,		ass_END,	ass_END,	ass_END,	ass_END
+.word MASK_ADD,			MATCH_ADD,		decode_R_type,			string_OP_ADD,		assemble_GENERIC,	ass_rd,		ass_rs1,	ass_rs2,	0
+.word MASK_SUB,			MATCH_SUB,		decode_R_type,			string_OP_SUB,		assemble_GENERIC,	ass_rd,		ass_rs1,	ass_rs2,	0
+.word MASK_XOR,			MATCH_XOR,		decode_R_type,			string_OP_XOR,		assemble_GENERIC,	ass_rd,		ass_rs1,	ass_rs2,	0
+.word MASK_OR,			MATCH_OR,		decode_R_type,			string_OP_OR,		assemble_GENERIC,	ass_rd,		ass_rs1,	ass_rs2,	0
+.word MASK_AND,			MATCH_AND,		decode_R_type,			string_OP_AND,		assemble_GENERIC,	ass_rd,		ass_rs1,	ass_rs2,	0
+.word MASK_SLL,			MATCH_SLL,		decode_R_type,			string_OP_SLL,		assemble_GENERIC,	ass_rd,		ass_rs1,	ass_rs2,	0
+.word MASK_SRL,			MATCH_SRL,		decode_R_type,			string_OP_SRL,		assemble_GENERIC,	ass_rd,		ass_rs1,	ass_rs2,	0
+.word MASK_SRA,			MATCH_SRA,		decode_R_type,			string_OP_SRA,		assemble_GENERIC,	ass_rd,		ass_rs1,	ass_rs2,	0
+.word MASK_SLT,			MATCH_SLT,		decode_R_type,			string_OP_SLT,		assemble_GENERIC,	ass_rd,		ass_rs1,	ass_rs2,	0
+.word MASK_SLTU,		MATCH_SLTU,		decode_R_type,			string_OP_SLTU,		assemble_GENERIC,	ass_rd,		ass_rs1,	ass_rs2,	0
 .word MASK_ADDI,		MATCH_ADDI,		decode_I_type,			string_OP_ADDI,		assemble_DUMMY,		ass_END,	ass_END,	ass_END,	ass_END
 .word MASK_XORI,		MATCH_XORI,		decode_I_type,			string_OP_XORI,		assemble_DUMMY,		ass_END,	ass_END,	ass_END,	ass_END
 .word MASK_ORI,			MATCH_ORI,		decode_I_type,			string_OP_ORI,		assemble_DUMMY,		ass_END,	ass_END,	ass_END,	ass_END
@@ -567,11 +575,11 @@ encoding_table:
 	.word MASK_SLLIW,	MATCH_SLLIW,	decode_I_type_SHIFT,	string_OP_SLLIW,	assemble_DUMMY,	ass_END,	ass_END,	ass_END,	ass_END
 	.word MASK_SRLIW,	MATCH_SRLIW,	decode_I_type_SHIFT,	string_OP_SRLIW,	assemble_DUMMY,	ass_END,	ass_END,	ass_END,	ass_END
 	.word MASK_SRAIW,	MATCH_SRAIW,	decode_I_type_SHIFT,	string_OP_SRAIW,	assemble_DUMMY,	ass_END,	ass_END,	ass_END,	ass_END
-	.word MASK_ADDW, 	MATCH_ADDW,		decode_R_type,			string_OP_ADDW,		assemble_RTYPE,	ass_END,	ass_END,	ass_END,	ass_END
-	.word MASK_SUBW,	MATCH_SUBW,		decode_R_type,			string_OP_SUBW,		assemble_RTYPE,	ass_END,	ass_END,	ass_END,	ass_END
-	.word MASK_SLLW,	MATCH_SLLW,		decode_R_type,			string_OP_SLLW,		assemble_RTYPE,	ass_END,	ass_END,	ass_END,	ass_END
-	.word MASK_SRLW,	MATCH_SRLW,		decode_R_type,			string_OP_SRLW,		assemble_RTYPE,	ass_END,	ass_END,	ass_END,	ass_END
-	.word MASK_SRAW,	MATCH_SRAW,		decode_R_type,			string_OP_SRAW,		assemble_RTYPE,	ass_END,	ass_END,	ass_END,	ass_END
+	.word MASK_ADDW, 	MATCH_ADDW,		decode_R_type,			string_OP_ADDW,		assemble_GENERIC,	ass_rd,		ass_rs1,	ass_rs2,	0
+	.word MASK_SUBW,	MATCH_SUBW,		decode_R_type,			string_OP_SUBW,		assemble_GENERIC,	ass_rd,		ass_rs1,	ass_rs2,	0
+	.word MASK_SLLW,	MATCH_SLLW,		decode_R_type,			string_OP_SLLW,		assemble_GENERIC,	ass_rd,		ass_rs1,	ass_rs2,	0
+	.word MASK_SRLW,	MATCH_SRLW,		decode_R_type,			string_OP_SRLW,		assemble_GENERIC,	ass_rd,		ass_rs1,	ass_rs2,	0
+	.word MASK_SRAW,	MATCH_SRAW,		decode_R_type,			string_OP_SRAW,		assemble_GENERIC,	ass_rd,		ass_rs1,	ass_rs2,	0
 	.word MASK_LD,		MATCH_LD,		decode_I_type_LOAD,		string_OP_LD,		assemble_DUMMY,	ass_END,	ass_END,	ass_END,	ass_END
 	.word MASK_LWU,		MATCH_LWU,		decode_I_type_LOAD,		string_OP_LWU,		assemble_DUMMY,	ass_END,	ass_END,	ass_END,	ass_END
 	.word MASK_SD,		MATCH_SD,		decode_S_type,			string_OP_SD,		assemble_DUMMY,	ass_END,	ass_END,	ass_END,	ass_END
@@ -580,21 +588,21 @@ encoding_table:
 # RVM
 #ifdef ENABLE_RVM
 	# RV32M
-	.word MASK_MUL,		MATCH_MUL,		decode_R_type,	string_OP_MUL,		assemble_RTYPE,	ass_END,	ass_END,	ass_END,	ass_END
-	.word MASK_MULH,	MATCH_MULH,		decode_R_type,	string_OP_MULH,		assemble_RTYPE,	ass_END,	ass_END,	ass_END,	ass_END
-	.word MASK_MULHSU,	MATCH_MULHSU,	decode_R_type,	string_OP_MULHSU,	assemble_RTYPE,	ass_END,	ass_END,	ass_END,	ass_END
-	.word MASK_MULHU,	MATCH_MULHU,	decode_R_type,	string_OP_MULHU,	assemble_RTYPE,	ass_END,	ass_END,	ass_END,	ass_END
-	.word MASK_DIV,		MATCH_DIV,		decode_R_type,	string_OP_DIV,		assemble_RTYPE,	ass_END,	ass_END,	ass_END,	ass_END
-	.word MASK_DIVU,	MATCH_DIVU,		decode_R_type,	string_OP_DIVU,		assemble_RTYPE,	ass_END,	ass_END,	ass_END,	ass_END
-	.word MASK_REM,		MATCH_REM,		decode_R_type,	string_OP_REM,		assemble_RTYPE,	ass_END,	ass_END,	ass_END,	ass_END
-	.word MASK_REMU,	MATCH_REMU,		decode_R_type,	string_OP_REMU,		assemble_RTYPE,	ass_END,	ass_END,	ass_END,	ass_END
+	.word MASK_MUL,		MATCH_MUL,		decode_R_type,	string_OP_MUL,		assemble_GENERIC,	ass_rd,		ass_rs1,	ass_rs2,	0
+	.word MASK_MULH,	MATCH_MULH,		decode_R_type,	string_OP_MULH,		assemble_GENERIC,	ass_rd,		ass_rs1,	ass_rs2,	0
+	.word MASK_MULHSU,	MATCH_MULHSU,	decode_R_type,	string_OP_MULHSU,	assemble_GENERIC,	ass_rd,		ass_rs1,	ass_rs2,	0
+	.word MASK_MULHU,	MATCH_MULHU,	decode_R_type,	string_OP_MULHU,	assemble_GENERIC,	ass_rd,		ass_rs1,	ass_rs2,	0
+	.word MASK_DIV,		MATCH_DIV,		decode_R_type,	string_OP_DIV,		assemble_GENERIC,	ass_rd,		ass_rs1,	ass_rs2,	0
+	.word MASK_DIVU,	MATCH_DIVU,		decode_R_type,	string_OP_DIVU,		assemble_GENERIC,	ass_rd,		ass_rs1,	ass_rs2,	0
+	.word MASK_REM,		MATCH_REM,		decode_R_type,	string_OP_REM,		assemble_GENERIC,	ass_rd,		ass_rs1,	ass_rs2,	0
+	.word MASK_REMU,	MATCH_REMU,		decode_R_type,	string_OP_REMU,		assemble_GENERIC,	ass_rd,		ass_rs1,	ass_rs2,	0
 	# RV64M
 	#if XLEN >= 64
-		.word MASK_MULW,	MATCH_MULW,		decode_R_type,	string_OP_MULW,		assemble_RTYPE,	ass_END,	ass_END,	ass_END,	ass_END
-		.word MASK_DIVW,	MATCH_DIVW,		decode_R_type,	string_OP_DIVW,		assemble_RTYPE,	ass_END,	ass_END,	ass_END,	ass_END
-		.word MASK_DIVUW,	MATCH_DIVUW,	decode_R_type,	string_OP_DIVUW,	assemble_RTYPE,	ass_END,	ass_END,	ass_END,	ass_END
-		.word MASK_REMW,	MATCH_REMW,		decode_R_type,	string_OP_REMW,		assemble_RTYPE,	ass_END,	ass_END,	ass_END,	ass_END
-		.word MASK_REMUW,	MATCH_REMUW,	decode_R_type,	string_OP_REMUW,	assemble_RTYPE,	ass_END,	ass_END,	ass_END,	ass_END
+		.word MASK_MULW,	MATCH_MULW,		decode_R_type,	string_OP_MULW,		assemble_GENERIC,	ass_rd,		ass_rs1,	ass_rs2,	0
+		.word MASK_DIVW,	MATCH_DIVW,		decode_R_type,	string_OP_DIVW,		assemble_GENERIC,	ass_rd,		ass_rs1,	ass_rs2,	0
+		.word MASK_DIVUW,	MATCH_DIVUW,	decode_R_type,	string_OP_DIVUW,	assemble_GENERIC,	ass_rd,		ass_rs1,	ass_rs2,	0
+		.word MASK_REMW,	MATCH_REMW,		decode_R_type,	string_OP_REMW,		assemble_GENERIC,	ass_rd,		ass_rs1,	ass_rs2,	0
+		.word MASK_REMUW,	MATCH_REMUW,	decode_R_type,	string_OP_REMUW,	assemble_GENERIC,	ass_rd,		ass_rs1,	ass_rs2,	0
 	#endif
 #endif /* ENABLE_RVM */
 

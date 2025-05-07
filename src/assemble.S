@@ -8,7 +8,11 @@
 .global assemble_DUMMY
 .global assemble_VOID
 .global assemble_BRANCH
-.global assemble_RTYPE
+
+.global assemble_GENERIC
+.global ass_rd
+.global ass_rs1
+.global ass_rs2
 
 .global ass_END
 
@@ -234,79 +238,72 @@ assemble_BRANCH_done:
 .size assemble_BRANCH, .-assemble_BRANCH
 
 
-# in: a0 = input string ptr
+# in: a0 = ptr to remaining input string
 # in: a1 = MATCH value
 # in: a2 = origin address
+# in: a3 = assemble function for parameter 1
+# in: a4 = assemble function for parameter 2
+# in: a5 = assemble function for parameter 3
+# in: a6 = assemble function for parameter 4
 # out: assembled instruction in a1
-assemble_RTYPE:
+assemble_GENERIC:
 	addi	sp, sp, -(XLEN_BYTES*5)				 
 	SAVE_X	ra, 0(sp)
 	SAVE_X	s0, (XLEN_BYTES*1)(sp)
 	SAVE_X	s1, (XLEN_BYTES*2)(sp)
 	SAVE_X	s2, (XLEN_BYTES*3)(sp)
 	SAVE_X	s3, (XLEN_BYTES*4)(sp)
+
 	mv		s3, a2						# save for later
+
 	# assemble instruction word in s2, starting with MATCH value
 	mv		s2, a1	
+	
 	# advance to parameter 1
 	jal		skip_whitespace
-	mv		s0, a0
-	jal		find_register_name_end
-	mv		s1, a0
-	# parse rd from user input
-	mv		a0, s0
-	mv		a1, s1
-	jal		get_int_register_index_by_name
-	bltz	a0, assemble_RTYPE_error
-	# add rd to instruction word
+	
+# for testing
+la	a3, ass_rd
+la	a4, ass_rs1
+la	a5, ass_rs2
+la	a6, ass_END
+
+	# assemble rd
 	mv		a1, s2
-	jal 	assemble_rd
-	mv		s2, a1						# save insn word
+	jal		ass_rd	
+	beqz	a1, assemble_GENERIC_error
+
 	# expect commma
-	addi	a0, s1, 1
 	jal		skip_whitespace
 	jal		consume_comma
-	beqz 	a0, assemble_RTYPE_error
-	# advance to parameter 2
+	beqz 	a0, assemble_GENERIC_error
 	jal		skip_whitespace
-	mv		s0, a0
-	jal		find_register_name_end
-	mv		s1, a0
-	# parse rs1 from user input
-	mv		a0, s0
-	mv		a1, s1
-	jal		get_int_register_index_by_name
-	bltz	a0, assemble_RTYPE_error
-	# add rs1 to instruction word
-	mv		a1, s2
-	jal 	assemble_rs1
-	mv		s2, a1						# save insn word
+
+	# assemble rs1
+	jal		ass_rs1	
+	beqz	a1, assemble_GENERIC_error
+
 	# expect commma
-	addi	a0, s1, 1
 	jal		skip_whitespace
 	jal		consume_comma
-	beqz 	a0, assemble_RTYPE_error
-	# advance to parameter 3
+	beqz 	a0, assemble_GENERIC_error
 	jal		skip_whitespace
-	mv		s0, a0
-	jal		find_register_name_end
-	mv		s1, a0
-	# parse rs2 from user input
-	mv		a0, s0
-	mv		a1, s1
-	jal		get_int_register_index_by_name
-	bltz	a0, assemble_RTYPE_error
-	# add rs2 to instruction word
-	mv		a1, s2
-	jal 	assemble_rs2
-	mv		s2, a1						# save insn word
-	j 		assemble_RTYPE_OK	
-assemble_RTYPE_error:
+
+	# assemble rs2
+	jal		ass_rs2	
+	beqz	a1, assemble_GENERIC_error
+
+	# return a0
+	mv		s2, a0
+
+	j 		assemble_GENERIC_OK	
+
+assemble_GENERIC_error:
 	mv		a1, zero
-	j 		assemble_RTYPE_done
-assemble_RTYPE_OK:
-	mv		a1, s2
-assemble_RTYPE_done:
+	j 		assemble_GENERIC_done
+assemble_GENERIC_OK:
+
+assemble_GENERIC_done:
 	LOAD_X	ra, 0(sp)				
 	LOAD_X	s0, (XLEN_BYTES*1)(sp)				 
 	LOAD_X	s1, (XLEN_BYTES*2)(sp)				 
@@ -314,9 +311,109 @@ assemble_RTYPE_done:
 	LOAD_X	s3, (XLEN_BYTES*4)(sp)				 
 	addi	sp, sp, (XLEN_BYTES*5)
 	ret
-.size assemble_RTYPE, .-assemble_RTYPE
+.size assemble_GENERIC, .-assemble_GENERIC
 
+
+# in: a0 = ptr to first char of register name
+# in: a1 = insn word that rd will be added to
+# out: a0 = ptr to char after register name
+# out: a1 = insn word (0 on error)
+ass_rd:
+	addi	sp, sp, -(XLEN_BYTES*4)				 
+	SAVE_X	ra, 0(sp)
+	SAVE_X	s0, (XLEN_BYTES*1)(sp)
+	SAVE_X	s1, (XLEN_BYTES*2)(sp)
+	SAVE_X	s2, (XLEN_BYTES*3)(sp)
+	mv		s1, a1								# save insn word
+	# parse register name
+	mv		s0, a0								# save string start
+	jal		find_register_name_end
+	# end in a0
+	mv		s2, a0								# save string end
+	mv		a1, a0								# reg name end
+	mv		a0, s0								# reg name start
+	jal		get_int_register_index_by_name
+	bltz	a0, ass_rd_error
+	# register number now in a0
+	# assemble rd
+	slli	a0, a0, 7
+	or		a1, s1, a0
+	j		ass_rd_done
+ass_rd_error:
+	mv		a1, zero
+ass_rd_done:
+	addi	a0, s2, 1							# return reg name end +1
+	LOAD_X	ra, 0(sp)				
+	LOAD_X	s0, (XLEN_BYTES*1)(sp)				 
+	LOAD_X	s1, (XLEN_BYTES*2)(sp)				 
+	LOAD_X	s2, (XLEN_BYTES*3)(sp)				 
+	addi	sp, sp, (XLEN_BYTES*4)
+	ret
+.size ass_rd, .-ass_rd
+
+
+# in: a0 = ptr to first char of register name
+# in: a1 = insn word that rs1 will be added to
+# out: a0 = ptr to char after register name
+# out: a1 = insn word (0 on error)
+ass_rs1:
+	addi	sp, sp, -(XLEN_BYTES*4)				 
+	SAVE_X	ra, 0(sp)
+	SAVE_X	s0, (XLEN_BYTES*1)(sp)
+	SAVE_X	s1, (XLEN_BYTES*2)(sp)
+	SAVE_X	s2, (XLEN_BYTES*3)(sp)
+	mv		s1, a1								# save insn word
+	# parse register name
+	mv		s0, a0								# save string start
+	jal		find_register_name_end
+	# end in a0
+	mv		s2, a0								# save string end
+	mv		a1, a0								# reg name end
+	mv		a0, s0								# reg name start
+	jal		get_int_register_index_by_name
+	bltz	a0, ass_rd_error					# reuse ass_rd
+	# register number now in a0
+	# assemble rs1
+	slli	a0, a0, 15
+	or		a1, s1, a0
+	j		ass_rd_done							# reuse ass_rd 
+.size ass_rs1, .-ass_rs1
+
+
+# in: a0 = ptr to first char of register name
+# in: a1 = insn word that rs2 will be added to
+# out: a0 = ptr to char after register name
+# out: a1 = insn word (0 on error)
+ass_rs2:
+	addi	sp, sp, -(XLEN_BYTES*4)				 
+	SAVE_X	ra, 0(sp)
+	SAVE_X	s0, (XLEN_BYTES*1)(sp)
+	SAVE_X	s1, (XLEN_BYTES*2)(sp)
+	SAVE_X	s2, (XLEN_BYTES*3)(sp)
+	mv		s1, a1								# save insn word
+	# parse register name
+	mv		s0, a0								# save string start
+	jal		find_register_name_end
+	# end in a0
+	mv		s2, a0								# save string end
+	mv		a1, a0								# reg name end
+	mv		a0, s0								# reg name start
+	jal		get_int_register_index_by_name
+	bltz	a0, ass_rd_error					# reuse ass_rd
+	# register number now in a0
+	# assemble rs1
+	slli	a0, a0, 20
+	or		a1, s1, a0
+	j		ass_rd_done							# reuse ass_rd 
+.size ass_rs2, .-ass_rs2
+
+
+
+# in: a0 = ptr to first char of register name
+# in: a1 = insn word
+# out: a0 = insn word (0 on error)
 ass_END:
+	mv		a0, a1
 	ret
 .size ass_END, .-ass_END
 
