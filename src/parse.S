@@ -84,6 +84,7 @@ find_register_name_end_done:
 	ret
 .size find_insn_name_end, .-find_insn_name_end
 
+
 # in: buffer ptr in a0
 # out: buffer ptr in a0
 # out: parsed address value in a1
