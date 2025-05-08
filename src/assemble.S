@@ -161,16 +161,13 @@ assemble_GENERIC:
 	SAVE_X	s1, (XLEN_BYTES*2)(sp)
 	SAVE_X	s2, (XLEN_BYTES*3)(sp)
 	SAVE_X	s3, (XLEN_BYTES*4)(sp)
-
 	mv		s2, a2
-
 	# assemble instruction word in s1, starting with MATCH value from table
 	#if XLEN >= 64
 		lwu		s1, 4(a3)
 	#else
 		lw		s1, 4(a3)
 	#endif
-	
 	# init offset to function pointers into encoding table entry
 	add		s3, a3, 20
 	# get function ptr for argument
@@ -179,7 +176,6 @@ assemble_GENERIC:
 	#else
 		lw		s0, 0(s3)
 	#endif
-
 	# done if no arguments at all
 	beqz	s0, assemble_GENERIC_done
 assemble_GENERIC_next_argument:
@@ -190,8 +186,6 @@ assemble_GENERIC_next_argument:
 	mv		a1, s1							# insn word in a1
 	mv		a2, s2							# origin address in a2
 	jalr 	s0	
-
-
 	beqz	a1, assemble_GENERIC_error		# assembling argument failed
 	mv		s1, a1							# save insn word
 	# get next function ptr
@@ -203,7 +197,6 @@ assemble_GENERIC_next_argument:
 		lw		s0, 0(s3)
 	#endif
 	beqz	s0, assemble_GENERIC_done
-
 	# expect commma
 	jal		skip_whitespace
 	jal		consume_comma
@@ -222,12 +215,55 @@ assemble_GENERIC_done:
 .size assemble_GENERIC, .-assemble_GENERIC
 
 
+# add one more parameter and call assemble_int_register
+ass_rd:
+	addi	sp, sp, -(XLEN_BYTES*2)
+	SAVE_X	ra, 0(sp)
+	SAVE_X	s3, (XLEN_BYTES*1)(sp)
+	li		s3, 7
+	jal		assemble_int_register
+	LOAD_X	ra, 0(sp)
+	LOAD_X	s3, (XLEN_BYTES*1)(sp)
+	addi	sp, sp, (XLEN_BYTES*2)
+	ret
+.size ass_rd, .-ass_rd
+
+
+# add one more parameter and call assemble_int_register
+ass_rs1:
+	addi	sp, sp, -(XLEN_BYTES*2)
+	SAVE_X	ra, 0(sp)
+	SAVE_X	s3, (XLEN_BYTES*1)(sp)
+	li		s3, 15
+	jal		assemble_int_register
+	LOAD_X	ra, 0(sp)
+	LOAD_X	s3, (XLEN_BYTES*1)(sp)
+	addi	sp, sp, (XLEN_BYTES*2)
+	ret
+.size ass_rs1, .-ass_rs1
+
+
+# add one more parameter and call assemble_int_register
+ass_rs2:
+	addi	sp, sp, -(XLEN_BYTES*2)
+	SAVE_X	ra, 0(sp)
+	SAVE_X	s3, (XLEN_BYTES*1)(sp)
+	li		s3, 20
+	jal		assemble_int_register
+	LOAD_X	ra, 0(sp)
+	LOAD_X	s3, (XLEN_BYTES*1)(sp)
+	addi	sp, sp, (XLEN_BYTES*2)
+	ret
+.size ass_rs2, .-ass_rs2
+
+
 # in: a0 = ptr to first char of argument
 # in: a1 = insn word to be modifed
 # in: a2 = origin address
+# in: s3 = number of slli shifts required (7 for rd, 15 for rs1, 20 for rs2)
 # out: a0 = ptr to char after argument
 # out: a1 = insn word (0 on error)
-ass_rd:
+assemble_int_register:
 	addi	sp, sp, -(XLEN_BYTES*4)
 	SAVE_X	ra, 0(sp)
 	SAVE_X	s0, (XLEN_BYTES*1)(sp)
@@ -242,15 +278,15 @@ ass_rd:
 	mv		a1, a0								# reg name end
 	mv		a0, s0								# reg name start
 	jal		get_int_register_index_by_name
-	bltz	a0, ass_rd_error
+	bltz	a0, assemble_int_register_error
 	# register number now in a0
-	# assemble rd
-	slli	a0, a0, 7
+	# assemble into a1
+	sll		a0, a0, s3
 	or		a1, s1, a0
-	j		ass_rd_done
-ass_rd_error:
+	j		assemble_int_register_done
+assemble_int_register_error:
 	mv		a1, zero
-ass_rd_done:
+assemble_int_register_done:
 	addi	a0, s2, 1							# return reg name end +1
 	LOAD_X	ra, 0(sp)
 	LOAD_X	s0, (XLEN_BYTES*1)(sp)
@@ -258,65 +294,7 @@ ass_rd_done:
 	LOAD_X	s2, (XLEN_BYTES*3)(sp)
 	addi	sp, sp, (XLEN_BYTES*4)
 	ret
-.size ass_rd, .-ass_rd
-
-
-# in: a0 = ptr to first char of argument
-# in: a1 = insn word to be modifed
-# in: a2 = origin address
-# out: a0 = ptr to char after argument
-# out: a1 = insn word (0 on error)
-ass_rs1:
-	addi	sp, sp, -(XLEN_BYTES*4)				 
-	SAVE_X	ra, 0(sp)
-	SAVE_X	s0, (XLEN_BYTES*1)(sp)
-	SAVE_X	s1, (XLEN_BYTES*2)(sp)
-	SAVE_X	s2, (XLEN_BYTES*3)(sp)
-	mv		s1, a1								# save insn word
-	# parse register name
-	mv		s0, a0								# save string start
-	jal		find_register_name_end
-	# end in a0
-	mv		s2, a0								# save string end
-	mv		a1, a0								# reg name end
-	mv		a0, s0								# reg name start
-	jal		get_int_register_index_by_name
-	bltz	a0, ass_rd_error					# reuse ass_rd
-	# register number now in a0
-	# assemble rs1
-	slli	a0, a0, 15
-	or		a1, s1, a0
-	j		ass_rd_done							# reuse ass_rd 
-.size ass_rs1, .-ass_rs1
-
-
-# in: a0 = ptr to first char of argument
-# in: a1 = insn word to be modifed
-# in: a2 = origin address
-# out: a0 = ptr to char after argument
-# out: a1 = insn word (0 on error)
-ass_rs2:
-	addi	sp, sp, -(XLEN_BYTES*4)				 
-	SAVE_X	ra, 0(sp)
-	SAVE_X	s0, (XLEN_BYTES*1)(sp)
-	SAVE_X	s1, (XLEN_BYTES*2)(sp)
-	SAVE_X	s2, (XLEN_BYTES*3)(sp)
-	mv		s1, a1								# save insn word
-	# parse register name
-	mv		s0, a0								# save string start
-	jal		find_register_name_end
-	# end in a0
-	mv		s2, a0								# save string end
-	mv		a1, a0								# reg name end
-	mv		a0, s0								# reg name start
-	jal		get_int_register_index_by_name
-	bltz	a0, ass_rd_error					# reuse ass_rd
-	# register number now in a0
-	# assemble rs1
-	slli	a0, a0, 20
-	or		a1, s1, a0
-	j		ass_rd_done							# reuse ass_rd 
-.size ass_rs2, .-ass_rs2
+.size assemble_int_register, .-assemble_int_register
 
 
 # in: a0 = ptr to first char of argument
