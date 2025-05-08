@@ -112,26 +112,22 @@ assemble_branch_target:
 	li		t1, -4096
 	blt		t0, t1, assemble_branch_target_error
 	# bit 11 of addr -> bit 7 insn
-	mv		t0, a0
-	srli	t0, t0, 4
+	srli	t0, a0, 4
 	li		t1, 0b10000000
 	and 	t0, t0, t1
 	or		a1, a1, t0
 	# bit 4..1 of addr -> bit 11..8 insn
-	mv		t0, a0
-	slli	t0, t0, 7
+	slli	t0,a0, 7
 	li		t1, 0b111100000000
 	and		t0, t0, t1
 	or		a1, a1, t0
 	# bit 5..10 of addr -> bit 25..30 insn
-	mv		t0, a0
-	slli	t0, t0, 20
+	slli	t0, a0, 20
 	li		t1, 0b01111110000000000000000000000000
 	and		t0, t0, t1
 	or		a1, a1, t0
 	# bit 12 of addr -> bit 31 insn
-	mv		t0, a0
-	slli	t0, t0, 19
+	slli	t0, a0, 19
 	li		t1, 0b10000000000000000000000000000000
 	and		t0, t0, t1
 	or		a1, a1, t0
