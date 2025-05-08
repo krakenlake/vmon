@@ -16,6 +16,7 @@
 
 .text
 
+
 # in: a0 = ptr to input text
 # in: a2 = current memory address to write (needed for branch calculation)
 # out: a0 = insn size (normal 4, 2 for RVC, 0 if error)
@@ -35,13 +36,11 @@ assemble_instruction:
 	# function ptr now in a0
 	# MATCH value now in a1
 	# table entry ptr in a3
-
 	mv		s2, a0								# save function ptr in s2
 	beqz	s2, assemble_instruction_done		# not found
 	mv		a0, s1
 	# current memory addr already in a2
 	jalr	s2									# call insn-specific assemble function
-
 	# now a1 = insn code
 	# in case insn == 0, 
 	beqz	a1, assemble_instruction_error		# error while assembling insn parameters
@@ -68,36 +67,6 @@ assemble_instruction_done:
 	addi	sp, sp, (XLEN_BYTES*4)
 	ret
 .size assemble_instruction, .-assemble_instruction
-
-
-# in: register number in a0
-# in: instruction word in a1
-# out: modified instruction word in a1
-assemble_rd:
-	slli	a0, a0, 7
-	or		a1, a1, a0
-	ret
-.size assemble_rd, .-assemble_rd
-
-
-# in: register number in a0
-# in: instruction word in a1
-# out: modified instruction word in a1
-assemble_rs1:
-	slli	a0, a0, 15
-	or		a1, a1, a0
-	ret
-.size assemble_rs1, .-assemble_rs1
-
-
-# in: register number in a0
-# in: instruction word in a1
-# out: modified instruction word in a1
-assemble_rs2:
-	slli	a0, a0, 20
-	or		a1, a1, a0
-	ret
-.size assemble_rs2, .-assemble_rs2
 
 
 # in: a0 = absolute target address 
@@ -307,7 +276,6 @@ ass_BRA:
 	SAVE_X	s3, (XLEN_BYTES*4)(sp)
 	mv		s1, a1						# save insn word
 	mv		s3, a2						# save for later
-	
 	jal		get_hex_addr
 	# address in a1
 	bnez	a2, ass_BRA_error
@@ -318,7 +286,6 @@ ass_BRA:
 	mv		a2, s3						# get saved origin addr back
 	jal		assemble_branch_target
 	beqz 	a1, ass_BRA_error			# address too far away
-	
 	# return a1 and a0
 	addi	a0, s2, 1							# string ptr +1
 	j		ass_BRA_done
