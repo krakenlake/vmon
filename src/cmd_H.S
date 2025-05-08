@@ -34,6 +34,8 @@ string_help:
 	m <start_addr> <end_addr> - memory dump from start_addr to end_addr\n\
 	m - continue memory dump from last address\n\
 	p <dst_addr> <byte_value0> [...] - write byte_value(s) starting at dst_addr\n\
+	pw <dst_addr> <32bit_value0> [...] - write 32bit_value(s) starting at dst_addr\n\
+	r - dump registers as saved on entry \n\
 	x - exit to caller\n\
 	/h <hex_value> base conversion from hex\n\
 	/d <dec_value> base conversion from decimal\n\
