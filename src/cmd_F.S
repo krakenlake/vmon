@@ -8,7 +8,6 @@
 .text
 
 cmd_F:
-	li		t3, 1						# size to look for (1, 2, 4 bytes)
 	lb		t1, 0(a0)					# read byte following f
 	addi	a0, a0, 1
 	li		t0, 'b'
