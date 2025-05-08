@@ -56,7 +56,14 @@ disassemble from <start_addr> to <end_addr>
 continue disassembly from last address used
 
 **f <start_addr> <end_addr> <byte_value>**
+**fb <start_addr> <end_addr> <byte_value>** 
 find <byte_value> in memory from <start_addr> to <end_addr>
+
+**fh <start_addr> <end_addr> <16bit_value>**
+find <16bit_value> in memory from <start_addr> to <end_addr>
+
+**fw <start_addr> <end_addr> <32bit_value>**
+find <32bit_value> in memory from <start_addr> to <end_addr>
 
 **g <start_addr>**
 start program execution at <start_addr>
