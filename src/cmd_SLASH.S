@@ -9,8 +9,6 @@
 
 
 cmd_SLASH:
-	addi	sp, sp, -(XLEN_BYTES*1) # Don't need to save ra here as we are part of mainloop.
-	SAVE_X	s0, 0(sp)
     lb		t1, 0(a0)	# read byte following 'B'
 	addi	a0, a0, 1
 	li		t0, 'h'
@@ -59,8 +57,6 @@ cmd_slash_display:
 	jal		print_binary
 	jal		print_newline
 cmd_slash_end:
-	LOAD_X	s0, 0(sp)
-	addi	sp, sp, (XLEN_BYTES*1)
 	j		main_prompt
 
 string_info_hex:
