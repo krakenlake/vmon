@@ -1,0 +1,58 @@
+Hi krakenlake,
+
+this isn't intended to be merged, just don't have another way to get
+in touch.
+
+This was the monitor I used:
+http://www.trs-80.org/tbug/
+
+I used it to debug all my assembly language programs when I was a
+kid. Z-80 assembler was the second language I learned after BASIC, I
+was in high school. I later wrote my own monitor as part of a FORTH
+implementation I wrote to use as a "built in" debugger. It also had an
+integrated editor and a primitive just-in-time compiler where as you
+executed the FORTH p-code it could be translated to Z-80 opcodes as it
+was run.
+
+I haven't coded much in the last 15 years, as I've been in management
+and consulting positions. So thank you for being patient with me as I
+have come back up to speed on writing code. I enjoyed the
+hex/binary/decimal conversion code the most. I like math a lot.
+
+I wanted to learn RISC-V as I think this processor core will
+eventually displace x86 and ARM, and possibly even CUDA/tensor cores
+on GPU cards. I ordered a couple of small seeed studio boards a while
+back but they have not arrived yet and with the US/China situation,
+who knows if they ever will arrive and how much I will have to pay in
+tariffs. So in the meantime, I have been using RISC-V emulators, QEMU
+and the javascript one at https://riscv-programming.org/simulator.html
+
+I have some projects I want to do on my own, but when I saw your
+monitor I thought it would be handy to have it to debug my own
+projects so I started to send you contributions. I think for me the
+most useful thing would be breakpoints, so maybe I will work on those
+next.
+
+I also noticed there is a cloud provider in EU that has RISC-V
+instances with 64-bit chips with vector extensions. This is very
+interesting to me as I work a lot in video encoding, which is highly
+compute intensive and uses a lot of matrix math:
+https://www.scaleway.com/en/elastic-metal-rv1/
+
+I will likely rent one of these instances for a month or two and do
+some testing of video software on it. Perhaps I will port VMON to
+Linux, I think it is fairly straightforward (define _start and _end
+symbols, and use ecall with the right syscall (64) to write to stdout
+in the "UART" routines, etc.)
+
+I was a C/C++ programmer on FreeBSD and Linux for many years. I never
+was a fan of gdb. I used to use dbx, but mostly just used printf() or
+printk().
+
+If you ever want to get in touch you can reach me at
+bmesan@protonmail.com
+
+Regards,
+Ben
+
+
