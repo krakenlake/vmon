@@ -12,7 +12,6 @@
 .global ass_rs1
 .global ass_rs2
 
-.global ass_END
 .global ass_BRA
 
 .text
@@ -318,11 +317,6 @@ ass_rs2:
 	or		a1, s1, a0
 	j		ass_rd_done							# reuse ass_rd 
 .size ass_rs2, .-ass_rs2
-
-
-ass_END:
-	ret
-.size ass_END, .-ass_END
 
 
 # in: a0 = ptr to first char of argument
