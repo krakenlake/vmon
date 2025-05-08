@@ -20,12 +20,12 @@ skip_whitespace:
 	li		t1, '\t'
 skip_whitespace_next:
 	lb		t2, 0(a0)				# get byte from buffer
-	beq		t2, t0, skip_whitespace_advance 
+	beq		t2, t0, skip_whitespace_advance
 	beq		t2, t1, skip_whitespace_advance
 	j		skip_whitespace_done
 skip_whitespace_advance:
 	addi	a0, a0, 1				# advance buffer pointer
-	j		skip_whitespace_next	
+	j		skip_whitespace_next
 skip_whitespace_done:
 	ret
 .size skip_whitespace, .-skip_whitespace
@@ -57,7 +57,7 @@ find_insn_name_end:
 	bgt		t0, t1, find_insn_name_end_done
 find_insn_name_end_valid_char:
 	addi	a0, a0, 1
-	j		find_insn_name_end	  
+	j		find_insn_name_end
 find_insn_name_end_done:
 	ret
 .size find_insn_name_end, .-find_insn_name_end
@@ -78,7 +78,7 @@ find_register_name_end:
 	bge		t0, t1, find_register_name_end_valid_char
 find_register_name_end_valid_char:
 	addi	a0, a0, 1
-	j		find_register_name_end	  
+	j		find_register_name_end
 find_register_name_end_done:
 	addi	a0, a0, -1
 	ret
@@ -162,9 +162,9 @@ parse_binary_return_error:
 # out: parsed binary number in a1
 # out: error code in a2 (OK=0)
 parse_decimal:
-    li		a2, -1 # error code
-    li		a1, 0  # result
-    li		t3, 0  # digit found flag
+	li		a2, -1 # error code
+	li		a1, 0  # result
+	li		t3, 0  # digit found flag
 	li		t6, 0  # negative flag
 
 	# check for negative number
@@ -181,40 +181,40 @@ parse_decimal_plus:
 	addi	a0, a0, 1
 
 parse_decimal_loop:
-    lb		t0, 0(a0)      
-    addi	t1, t0, -'0'  # potential digit value
-    sltiu	t2, t1, 10    # is potential digit 0-9? (t2=1 if yes)
-    beqz	t2, parse_decimal_check_term # if not 0-9
+	lb		t0, 0(a0)
+	addi	t1, t0, -'0'  # potential digit value
+	sltiu	t2, t1, 10	  # is potential digit 0-9? (t2=1 if yes)
+	beqz	t2, parse_decimal_check_term # if not 0-9
 
 	# have a valid decimal digit, multiply accumulator by 10
 	# and add in the new digit value.
-    li		t3, 1
-    # a1 = a1 * 10
-    slli	t4, a1, 3      # t4 = a1 * 8
-    slli	t5, a1, 1      # t5 = a1 * 2
-    add		a1, t5, t4     # a1 = a1 * 10
-    # a1 = a1 + digit_value
-    add		a1, a1, t1
-    addi	a0, a0, 1      # ptr++
-    j		parse_decimal_loop
+	li		t3, 1
+	# a1 = a1 * 10
+	slli	t4, a1, 3	   # t4 = a1 * 8
+	slli	t5, a1, 1	   # t5 = a1 * 2
+	add		a1, t5, t4	   # a1 = a1 * 10
+	# a1 = a1 + digit_value
+	add		a1, a1, t1
+	addi	a0, a0, 1	   # ptr++
+	j		parse_decimal_loop
 
 parse_decimal_check_term:
-    # Check terminators (' ' or ASCII_RETURN)
-    li		t1, ' '
-    beq		t0, t1, parse_decimal_check_flag
-    li		t1, ASCII_RETURN
-    beq		t0, t1, parse_decimal_check_flag
-    # Invalid char: Jump to return (a2 is already -1)
-    j		parse_decimal_final_return
+	# Check terminators (' ' or ASCII_RETURN)
+	li		t1, ' '
+	beq		t0, t1, parse_decimal_check_flag
+	li		t1, ASCII_RETURN
+	beq		t0, t1, parse_decimal_check_flag
+	# Invalid char: Jump to return (a2 is already -1)
+	j		parse_decimal_final_return
 
 parse_decimal_check_flag:
-    beqz	t3, parse_decimal_final_return # If t3=0, error (a2 is -1)
+	beqz	t3, parse_decimal_final_return # If t3=0, error (a2 is -1)
 	# apply sign, if necessary
 	beqz	t6, parse_decimal_set_success
 	sub		a1, x0, a1 # 2's complement negation
 parse_decimal_set_success:
-    li		a2, 0
+	li		a2, 0
 parse_decimal_final_return:
-    ret
+	ret
 
 .size parse_decimal, .-parse_decimal
