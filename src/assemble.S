@@ -180,12 +180,12 @@ assemble_GENERIC_done:
 .size assemble_GENERIC, .-assemble_GENERIC
 
 
-# add one more parameter and call assemble_int_register
+# add parameter for sll in s3 and call assemble_int_register
 ass_rd:
 	addi	sp, sp, -(XLEN_BYTES*2)
 	SAVE_X	ra, 0(sp)
 	SAVE_X	s3, (XLEN_BYTES*1)(sp)
-	li		s3, 7
+	li		s3, 7						# number of left shifts for rd
 	jal		assemble_int_register
 	LOAD_X	ra, 0(sp)
 	LOAD_X	s3, (XLEN_BYTES*1)(sp)
@@ -194,12 +194,12 @@ ass_rd:
 .size ass_rd, .-ass_rd
 
 
-# add one more parameter and call assemble_int_register
+# add parameter for sll in s3 and call assemble_int_register
 ass_rs1:
 	addi	sp, sp, -(XLEN_BYTES*2)
 	SAVE_X	ra, 0(sp)
 	SAVE_X	s3, (XLEN_BYTES*1)(sp)
-	li		s3, 15
+	li		s3, 15						# number of left shifts for rs1
 	jal		assemble_int_register
 	LOAD_X	ra, 0(sp)
 	LOAD_X	s3, (XLEN_BYTES*1)(sp)
@@ -208,12 +208,12 @@ ass_rs1:
 .size ass_rs1, .-ass_rs1
 
 
-# add one more parameter and call assemble_int_register
+# add parameter for sll in s3 and call assemble_int_register
 ass_rs2:
 	addi	sp, sp, -(XLEN_BYTES*2)
 	SAVE_X	ra, 0(sp)
 	SAVE_X	s3, (XLEN_BYTES*1)(sp)
-	li		s3, 20
+	li		s3, 20						# number of left shifts for rs2
 	jal		assemble_int_register
 	LOAD_X	ra, 0(sp)
 	LOAD_X	s3, (XLEN_BYTES*1)(sp)
