@@ -24,6 +24,9 @@ string_help:
 	d <start_addr> <end_addr> - disassemble from start_addr to end_addr\n\
 	d - continue disassembly from last address\n\
 	f <start_addr> <end_addr> <byte_value> - find byte value\n\
+	fb <start_addr> <end_addr> <byte_value> - find byte value\n\
+	fh <start_addr> <end_addr> <16bit_value> - find 16bit value\n\
+	fw <start_addr> <end_addr> <32bit_value> - find 32bit value\n\
 	g <start_addr> - go to start_addr\n\
 	h - help\n\
 	i - print segment and debugging information\n\
