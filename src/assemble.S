@@ -60,10 +60,10 @@ assemble_instruction_is_RVC:
 assemble_instruction_error:
 	mv		a0, zero
 assemble_instruction_done:
-	LOAD_X	ra, 0(sp)				
-	LOAD_X	s0, (XLEN_BYTES*1)(sp)				 
-	LOAD_X	s1, (XLEN_BYTES*2)(sp)				 
-	LOAD_X	s2, (XLEN_BYTES*3)(sp)				 
+	LOAD_X	ra, 0(sp)
+	LOAD_X	s0, (XLEN_BYTES*1)(sp)
+	LOAD_X	s1, (XLEN_BYTES*2)(sp)
+	LOAD_X	s2, (XLEN_BYTES*3)(sp)
 	addi	sp, sp, (XLEN_BYTES*4)
 	ret
 .size assemble_instruction, .-assemble_instruction
