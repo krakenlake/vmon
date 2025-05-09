@@ -296,12 +296,11 @@ assemble_int_register_done:
 # out: a0 = ptr to char after argument
 # out: a1 = insn word (0 on error)
 ass_BRA:
-	addi	sp, sp, -(XLEN_BYTES*5)
+	addi	sp, sp, -(XLEN_BYTES*4)
 	SAVE_X	ra, 0(sp)
-	SAVE_X	s0, (XLEN_BYTES*1)(sp)
-	SAVE_X	s1, (XLEN_BYTES*2)(sp)
-	SAVE_X	s2, (XLEN_BYTES*3)(sp)
-	SAVE_X	s3, (XLEN_BYTES*4)(sp)
+	SAVE_X	s1, (XLEN_BYTES*1)(sp)
+	SAVE_X	s2, (XLEN_BYTES*2)(sp)
+	SAVE_X	s3, (XLEN_BYTES*3)(sp)
 	mv		s1, a1						# save insn word
 	mv		s3, a2						# save for later
 	jal		get_hex_addr
@@ -321,11 +320,10 @@ ass_BRA_error:
 	mv		a1, zero
 ass_BRA_done:
 	LOAD_X	ra, 0(sp)
-	LOAD_X	s0, (XLEN_BYTES*1)(sp)
-	LOAD_X	s1, (XLEN_BYTES*2)(sp)
-	LOAD_X	s2, (XLEN_BYTES*3)(sp)
-	LOAD_X	s3, (XLEN_BYTES*4)(sp)
-	addi	sp, sp, (XLEN_BYTES*5)
+	LOAD_X	s1, (XLEN_BYTES*1)(sp)
+	LOAD_X	s2, (XLEN_BYTES*2)(sp)
+	LOAD_X	s3, (XLEN_BYTES*3)(sp)
+	addi	sp, sp, (XLEN_BYTES*4)
 	ret
 .size ass_BRA, .-ass_BRA
 
@@ -336,12 +334,10 @@ ass_BRA_done:
 # out: a0 = ptr to char after argument
 # out: a1 = insn word (0 on error)
 ass_I_imm:
-	addi	sp, sp, -(XLEN_BYTES*5)
+	addi	sp, sp, -(XLEN_BYTES*3)
 	SAVE_X	ra, 0(sp)
-	SAVE_X	s0, (XLEN_BYTES*1)(sp)
-	SAVE_X	s1, (XLEN_BYTES*2)(sp)
-	SAVE_X	s2, (XLEN_BYTES*3)(sp)
-	SAVE_X	s3, (XLEN_BYTES*4)(sp)
+	SAVE_X	s1, (XLEN_BYTES*1)(sp)
+	SAVE_X	s2, (XLEN_BYTES*2)(sp)
 	mv		s1, a1						# save insn word
 	jal		parse_decimal
 	# address in a1
@@ -350,8 +346,22 @@ ass_I_imm:
 	# add imm value to instruction word
 	mv		a0, a1						# imm value
 	mv		a1, s1						# instruction word
+	# check funct3 of insn  - are assembling a shift insn?
+	srli	t0, s1, 12
+	andi	t0, t0, 0b111
+	li		t1, 1						# slli
+	beq		t0, t1, ass_I_imm_its_shift
+	li		t1, 5						# srli or srai
+	beq		t0, t1, ass_I_imm_its_shift
+	# fall through for boolean insns
+ass_I_imm_its_bool:
 	jal		assemble_I_imm_bool
-	beqz 	a1, ass_I_imm_error			# address too far away
+	beqz 	a1, ass_I_imm_error			# imm too big for boolean op
+	j		ass_I_imm_continue
+ass_I_imm_its_shift:
+	jal		assemble_I_imm_shift
+	beqz 	a1, ass_I_imm_error			# imm too big for shift
+ass_I_imm_continue:
 	# return a1 and a0
 	addi	a0, s2, 1					# string ptr +1
 	j		ass_I_imm_done
@@ -359,49 +369,9 @@ ass_I_imm_error:
 	mv		a1, zero
 ass_I_imm_done:
 	LOAD_X	ra, 0(sp)
-	LOAD_X	s0, (XLEN_BYTES*1)(sp)
-	LOAD_X	s1, (XLEN_BYTES*2)(sp)
-	LOAD_X	s2, (XLEN_BYTES*3)(sp)
-	LOAD_X	s3, (XLEN_BYTES*4)(sp)
-	addi	sp, sp, (XLEN_BYTES*5)
-	ret
-.size ass_I_imm, .-ass_I_imm
-
-
-# in: a0 = ptr to first char of argument
-# in: a1 = insn word to be modifed
-# in: a2 = origin address
-# out: a0 = ptr to char after argument
-# out: a1 = insn word (0 on error)
-ass_I_shift:
-	addi	sp, sp, -(XLEN_BYTES*5)
-	SAVE_X	ra, 0(sp)
-	SAVE_X	s0, (XLEN_BYTES*1)(sp)
-	SAVE_X	s1, (XLEN_BYTES*2)(sp)
-	SAVE_X	s2, (XLEN_BYTES*3)(sp)
-	SAVE_X	s3, (XLEN_BYTES*4)(sp)
-	mv		s1, a1						# save insn word
-	jal		parse_decimal
-	# address in a1
-	bnez	a2, ass_I_shift_error
-	mv		s2, a0						# return string ptr later
-	# add imm value to instruction word
-	mv		a0, a1						# imm value
-	mv		a1, s1						# instruction word
-	jal		assemble_I_imm_shift
-	beqz 	a1, ass_I_shift_error			# address too far away
-	# return a1 and a0
-	addi	a0, s2, 1					# string ptr +1
-	j		ass_I_shift_done
-ass_I_shift_error:
-	mv		a1, zero
-ass_I_shift_done:
-	LOAD_X	ra, 0(sp)
-	LOAD_X	s0, (XLEN_BYTES*1)(sp)
-	LOAD_X	s1, (XLEN_BYTES*2)(sp)
-	LOAD_X	s2, (XLEN_BYTES*3)(sp)
-	LOAD_X	s3, (XLEN_BYTES*4)(sp)
-	addi	sp, sp, (XLEN_BYTES*5)
+	LOAD_X	s1, (XLEN_BYTES*1)(sp)
+	LOAD_X	s2, (XLEN_BYTES*2)(sp)
+	addi	sp, sp, (XLEN_BYTES*3)
 	ret
 .size ass_I_imm, .-ass_I_imm
 
