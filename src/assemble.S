@@ -1,5 +1,6 @@
 #include "vmon/config.h"
 #include "vmon/ASCII.h"
+#include "vmon/encoding.h"
 
 #ifdef WITH_CMD_A
 
@@ -158,12 +159,12 @@ assemble_GENERIC:
 	mv		s2, a2
 	# assemble instruction word in s1, starting with MATCH value from table
 	#if XLEN >= 64
-		lwu		s1, 4(a3)
+		lwu		s1, ENC_OFF_MATCH(a3)
 	#else
-		lw		s1, 4(a3)
+		lw		s1, ENC_OFF_MATCH(a3)
 	#endif
 	# init offset to function pointers into encoding table entry
-	add		s3, a3, 20
+	add		s3, a3, ENC_OFF_FUNC_ARG1
 	# get function ptr for argument
 	#if XLEN >= 64
 		lwu		s0, 0(s3)

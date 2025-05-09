@@ -1,4 +1,6 @@
 #include "vmon/config.h"
+#include "vmon/encoding.h"
+
 
 #ifdef WITH_CMD_D
 
@@ -578,29 +580,29 @@ decode_opcode:
 	mv		a2, zero
 decode_opcode_search_next:
 	#if XLEN >= 64
-		lwu		t2, 0(t0)				# get mask word from table
+		lwu		t2, ENC_OFF_MASK(t0)			# get mask word from table
 	#else
-		lw		t2, 0(t0)				# get mask word from table
+		lw		t2, ENC_OFF_MASK(t0)			# get mask word from table
 	#endif
-	beqz	t2, decode_opcode_done		# table end, no match found	  
-	and		t2, a0, t2					# apply mask
+	beqz	t2, decode_opcode_done				# table end, no match found	  
+	and		t2, a0, t2							# apply mask
 	#if XLEN >= 64
-		lwu		t3, 4(t0)				# get match word from table
+		lwu		t3, ENC_OFF_MATCH(t0)			# get match word from table
 	#else
-		lw		t3, 4(t0)				# get match word from table
+		lw		t3, ENC_OFF_MATCH(t0)			# get match word from table
 	#endif
 	bne		t2, t3, decode_opcode_continue
 	# found a match
 	#if XLEN >=64
-		lwu		a1, 8(t0)				# get function ptr from table
-		lwu		a2, 12(t0)				# get string ptr from table
+		lwu		a1, ENC_OFF_FUNC_DECODE(t0)		# get function ptr from table
+		lwu		a2, ENC_OFF_OP_STRING(t0)		# get string ptr from table
 	#else
-		lw		a1, 8(t0)				# get function ptr from table
-		lw		a2, 12(t0)				# get string ptr from table
+		lw		a1, ENC_OFF_FUNC_DECODE(t0)		# get function ptr from table
+		lw		a2, ENC_OFF_OP_STRING(t0)		# get string ptr from table
 	#endif
 	j		decode_opcode_done
 decode_opcode_continue:
-	addi	t0, t0, 36					# point to next table entry
+	addi	t0, t0, ENC_ENTRY_SIZE				# point to next table entry
 	j		decode_opcode_search_next	# repeat
 decode_opcode_done:
 	LOAD_X	ra, 0(sp)		   

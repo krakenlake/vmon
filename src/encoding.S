@@ -1,5 +1,7 @@
 #include "vmon/config.h"
 #include "riscv/riscv-opc.h"
+#include "vmon/encoding.h"
+
 
 #if defined (WITH_CMD_D) || defined (WITH_CMD_A)
 
@@ -35,13 +37,13 @@ get_data_by_insn_name:
 get_data_by_insn_name_next:								# check string in next table entry
 	# load values from current table entry
 	#if XLEN >= 64
-		lwu		a1, 4(t0)								# store MATCH value from table entry in a1
-		lwu		t1, 12(t0)								# get string ptr from table
-		lwu		a0, 16(t0)								# get function ptr from table
+		lwu		a1, ENC_OFF_MATCH(t0)					# store MATCH value from table entry in a1
+		lwu		t1, ENC_OFF_OP_STRING(t0)				# get string ptr from table
+		lwu		a0, ENC_OFF_FUNC_ASS(t0)				# get function ptr from table
 	#else
-		lw		a1, 4(t0)								# store MATCH value from table entry in a1
-		lw		t1, 12(t0)								# get string ptr from table
-		lw		a0, 16(t0)								# get function ptr from table
+		lw		a1, ENC_OFF_MATCH(t0)					# store MATCH value from table entry in a1
+		lw		t1, ENC_OFF_OP_STRING(t0)				# get string ptr from table
+		lw		a0, ENC_OFF_FUNC_ASS(t0)				# get function ptr from table
 	#endif
 	beqz	t1, get_data_by_insn_name_not_found			# if string in this entry is empty, then table end, no match found
 	# compare strings
@@ -56,7 +58,7 @@ get_data_by_insn_name_cmp_next_byte:
 	addi	t2, t2, 1
 	j		get_data_by_insn_name_cmp_next_byte
 get_data_by_insn_name_next_entry:
-	addi	t0, t0, 36									# next table entry
+	addi	t0, t0, ENC_ENTRY_SIZE						# next table entry
 	j		get_data_by_insn_name_next
 get_data_by_insn_name_not_found:
 	mv		a0, zero
