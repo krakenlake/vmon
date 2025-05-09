@@ -15,8 +15,7 @@
 .global ass_BRA							# expect branch target address in hex
 .global ass_I_imm						# expect immediate for I-type AND/ADD/OR/XOR in dec
 .global ass_I_shift						# expect immediate for I-type shifts in dec
-.global ass_I_MEM						# expect imm(reg) parameter for load 
-.global ass_S_MEM						# expect imm(reg) parameter for store
+.global ass_MEM							# expect imm(reg) parameter for load/store
 
 .text
 
@@ -378,12 +377,15 @@ ass_I_imm_done:
 .size ass_I_imm, .-ass_I_imm
 
 
+# process I-type and S-type memory-relative parameter
+# in the same function
+#
 # in: a0 = ptr to first char of argument
 # in: a1 = insn word to be modifed
 # in: a2 = origin address
 # out: a0 = ptr to char after argument
 # out: a1 = insn word (0 on error)
-ass_I_MEM:
+ass_MEM:
 	addi	sp, sp, -(XLEN_BYTES*3)
 	SAVE_X	ra, 0(sp)
 	SAVE_X	s1, (XLEN_BYTES*1)(sp)
@@ -391,50 +393,57 @@ ass_I_MEM:
 	mv		s1, a1						# save insn word
 	jal		parse_decimal
 	# imm value in a1
-	bnez	a2, ass_I_MEM_error
+	bnez	a2, ass_MEM_error
 	mv		s2, a0						# return string ptr later
-	# add imm value to instruction word
+	# check if we have LOAD (opc=0b0000011) or STORE (opc=0b0100011)
+	and 	t0, s1, 0b1111111			# look at insn opcode bits
+	li		t1, 0b0000011
+	beq		t0, t1, ass_MEM_load
+ass_MEM_store:
+	# add S-type imm value to instruction word
+	slli	t0, a1, 7					# imm4:0 -> bit 7-11
+	li		t1, 0b111110000000
+	and		t0, t0, t1
+	or		s1, s1, t0
+	slli	t0,	a1, 20					# imm11:5 -> bit 25-31
+	li		t1, 0b11111110000000000000000000000000
+	and		t0, t0, t1
+	or		s1, s1, t0
+	j 		ass_MEM_rs1
+ass_MEM_load:
+	# add I-type imm value to instruction word
 	slli	t0, a1, 20
 	or		s1, s1, t0
+ass_MEM_rs1:
 	# expect (
 	jal		skip_whitespace
 	jal		consume_open_paren
-	beqz	a0, ass_I_MEM_error
+	beqz	a0, ass_MEM_error
 	jal		skip_whitespace
 	# process rs1
 	mv		a1, s1
 	jal		ass_rs1
-	beqz	a1, ass_I_MEM_error
+	beqz	a1, ass_MEM_error
 	mv 		s1, a1
 	# expect )
 	jal		skip_whitespace
 	jal		consume_close_paren
-	beqz	a0, ass_I_MEM_error
+	beqz	a0, ass_MEM_error
 	# assemble in a1
 	mv		a1, s1
-ass_I_MEM_continue:
+ass_MEM_continue:
 	# return a1 and a0
 	addi	a0, s2, 1					# string ptr +1
-	j		ass_I_imm_done
-ass_I_MEM_error:
+	j		ass_MEM_done
+ass_MEM_error:
 	mv		a1, zero
-ass_I_MEM_done:
+ass_MEM_done:
 	LOAD_X	ra, 0(sp)
 	LOAD_X	s1, (XLEN_BYTES*1)(sp)
 	LOAD_X	s2, (XLEN_BYTES*2)(sp)
 	addi	sp, sp, (XLEN_BYTES*3)
 	ret
-.size ass_I_MEM, .-ass_I_MEM
-
-
-# in: a0 = ptr to first char of argument
-# in: a1 = insn word to be modifed
-# in: a2 = origin address
-# out: a0 = ptr to char after argument
-# out: a1 = insn word (0 on error)
-ass_S_MEM:
-	ret
-.size ass_S_MEM, .-ass_S_MEM
+.size ass_MEM, .-ass_MEM
 
 
 #endif /* WITH_CMD_A */
