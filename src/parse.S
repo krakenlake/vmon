@@ -38,7 +38,7 @@ skip_whitespace_done:
 consume_char_in_t0:
 	lb		t1, 0(a0)
 	beq		t1, t0, consume_comma_done
-	li		a0, -1
+	li		a0, -1						# to return 0 in the next step
 consume_comma_done:
 	addi	a0, a0, 1
 	ret
@@ -60,7 +60,6 @@ consume_open_paren:
 consume_close_paren:
 	li		t0, ')'
 	j 		consume_char_in_t0
-
 
 
 # in: buffer ptr in a0
@@ -220,6 +219,7 @@ parse_decimal_loop:
 	j		parse_decimal_loop
 
 parse_decimal_check_term:
+/*
 	# Check terminators (' ' or ASCII_RETURN)
 	li		t1, ' '
 	beq		t0, t1, parse_decimal_check_flag
@@ -227,6 +227,8 @@ parse_decimal_check_term:
 	beq		t0, t1, parse_decimal_check_flag
 	# Invalid char: Jump to return (a2 is already -1)
 	j		parse_decimal_final_return
+*/
+	j		parse_decimal_check_flag
 
 parse_decimal_check_flag:
 	beqz	t3, parse_decimal_final_return # If t3=0, error (a2 is -1)
