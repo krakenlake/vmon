@@ -15,6 +15,8 @@
 .global ass_BRA							# expect branch target address in hex
 .global ass_I_imm						# expect immediate for I-type AND/ADD/OR/XOR in dec
 .global ass_I_shift						# expect immediate for I-type shifts in dec
+.global ass_I_MEM						# expect imm(reg) parameter for load 
+.global ass_S_MEM						# expect imm(reg) parameter for store
 
 .text
 
@@ -250,7 +252,7 @@ ass_rs2:
 .size ass_rs2, .-ass_rs2
 
 
-# in: a0 = ptr to first char of argument
+# in: a0 = ptr to first char
 # in: a1 = insn word to be modifed
 # in: a2 = origin address
 # in: s3 = number of slli shifts required (7 for rd, 15 for rs1, 20 for rs2)
@@ -340,7 +342,7 @@ ass_I_imm:
 	SAVE_X	s2, (XLEN_BYTES*2)(sp)
 	mv		s1, a1						# save insn word
 	jal		parse_decimal
-	# address in a1
+	# imm  value in a1
 	bnez	a2, ass_I_imm_error
 	mv		s2, a0						# return string ptr later
 	# add imm value to instruction word
@@ -374,6 +376,65 @@ ass_I_imm_done:
 	addi	sp, sp, (XLEN_BYTES*3)
 	ret
 .size ass_I_imm, .-ass_I_imm
+
+
+# in: a0 = ptr to first char of argument
+# in: a1 = insn word to be modifed
+# in: a2 = origin address
+# out: a0 = ptr to char after argument
+# out: a1 = insn word (0 on error)
+ass_I_MEM:
+	addi	sp, sp, -(XLEN_BYTES*3)
+	SAVE_X	ra, 0(sp)
+	SAVE_X	s1, (XLEN_BYTES*1)(sp)
+	SAVE_X	s2, (XLEN_BYTES*2)(sp)
+	mv		s1, a1						# save insn word
+	jal		parse_decimal
+	# imm value in a1
+	bnez	a2, ass_I_MEM_error
+	mv		s2, a0						# return string ptr later
+	# add imm value to instruction word
+	slli	t0, a1, 20
+	or		s1, s1, t0
+	# expect (
+	jal		skip_whitespace
+	jal		consume_open_paren
+	beqz	a0, ass_I_MEM_error
+	jal		skip_whitespace
+	# process rs1
+	mv		a1, s1
+	jal		ass_rs1
+	beqz	a1, ass_I_MEM_error
+	mv 		s1, a1
+	# expect )
+	jal		skip_whitespace
+	jal		consume_close_paren
+	beqz	a0, ass_I_MEM_error
+	# assemble in a1
+	mv		a1, s1
+ass_I_MEM_continue:
+	# return a1 and a0
+	addi	a0, s2, 1					# string ptr +1
+	j		ass_I_imm_done
+ass_I_MEM_error:
+	mv		a1, zero
+ass_I_MEM_done:
+	LOAD_X	ra, 0(sp)
+	LOAD_X	s1, (XLEN_BYTES*1)(sp)
+	LOAD_X	s2, (XLEN_BYTES*2)(sp)
+	addi	sp, sp, (XLEN_BYTES*3)
+	ret
+.size ass_I_MEM, .-ass_I_MEM
+
+
+# in: a0 = ptr to first char of argument
+# in: a1 = insn word to be modifed
+# in: a2 = origin address
+# out: a0 = ptr to char after argument
+# out: a1 = insn word (0 on error)
+ass_S_MEM:
+	ret
+.size ass_S_MEM, .-ass_S_MEM
 
 
 #endif /* WITH_CMD_A */

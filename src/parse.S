@@ -4,6 +4,8 @@
 
 .global skip_whitespace
 .global consume_comma
+.global consume_open_paren
+.global consume_close_paren
 .global get_hex_addr
 .global find_insn_name_end
 .global find_register_name_end
@@ -33,14 +35,32 @@ skip_whitespace_done:
 
 # in: buffer ptr in a0
 # out: a0 = buffer ptr after comma or a0 = 0 on error
-consume_comma:
-	li		t0, ','
+consume_char_in_t0:
 	lb		t1, 0(a0)
 	beq		t1, t0, consume_comma_done
 	li		a0, -1
 consume_comma_done:
 	addi	a0, a0, 1
 	ret
+
+# in: buffer ptr in a0
+# out: a0 = buffer ptr after comma or a0 = 0 on error
+consume_comma:
+	li		t0, ','
+	j 		consume_char_in_t0
+
+# in: buffer ptr in a0
+# out: a0 = buffer ptr after comma or a0 = 0 on error
+consume_open_paren:
+	li		t0, '('
+	j 		consume_char_in_t0
+
+# in: buffer ptr in a0
+# out: a0 = buffer ptr after comma or a0 = 0 on error
+consume_close_paren:
+	li		t0, ')'
+	j 		consume_char_in_t0
+
 
 
 # in: buffer ptr in a0
