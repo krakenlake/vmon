@@ -17,6 +17,8 @@
 .global ass_I_imm						# expect immediate for I-type AND/ADD/OR/XOR in dec
 .global ass_I_shift						# expect immediate for I-type shifts in dec
 .global ass_MEM							# expect imm(reg) parameter for load/store
+.global ass_PRE							# expect iorw predecessor parameter for fence
+.global ass_SUC							# expect iorw sucessor parameter for fence
 
 .text
 
@@ -445,6 +447,74 @@ ass_MEM_done:
 	addi	sp, sp, (XLEN_BYTES*3)
 	ret
 .size ass_MEM, .-ass_MEM
+
+
+
+# in: a0 = ptr to first char of argument
+# in: a1 = insn word to be modifed
+# in: a2 = origin address
+# in: s3 = number of slli shifts (predecessor=24, sucessor=20)
+# out: a0 = ptr to char after argument
+# out: a1 = insn word (0 on error)
+ass_iorw:
+	addi	sp, sp, -(XLEN_BYTES*3)
+	SAVE_X	ra, 0(sp)
+	SAVE_X	s1, (XLEN_BYTES*1)(sp)
+	SAVE_X	s2, (XLEN_BYTES*2)(sp)
+	mv		s1, a1						# save insn word
+	jal		parse_iorw
+	# iorw bits in bits 0-3 of a1
+	bnez	a2, ass_iorw_error
+	mv		s2, a0						# return string ptr later
+	# add iorw bits to instruction word
+	sll	a1, a1, s3
+	or		a1, s1, a1						# instruction word
+	j		ass_iorw_done
+ass_iorw_error:
+	mv		a1, zero
+ass_iorw_done:
+	LOAD_X	ra, 0(sp)
+	LOAD_X	s1, (XLEN_BYTES*1)(sp)
+	LOAD_X	s2, (XLEN_BYTES*2)(sp)
+	addi	sp, sp, (XLEN_BYTES*3)
+	ret
+.size ass_iorw, .-ass_iorw
+
+
+# in: a0 = ptr to first char of argument
+# in: a1 = insn word to be modifed
+# in: a2 = origin address
+# out: a0 = ptr to char after argument
+# out: a1 = insn word (0 on error)
+ass_PRE:
+	addi	sp, sp, -(XLEN_BYTES*2)
+	SAVE_X	ra, 0(sp)
+	SAVE_X	s3, (XLEN_BYTES*1)(sp)
+	li		s3, 24						# number of left shifts for predecessor
+	jal		ass_iorw
+	LOAD_X	ra, 0(sp)
+	LOAD_X	s3, (XLEN_BYTES*1)(sp)
+	addi	sp, sp, (XLEN_BYTES*2)
+	ret
+.size ass_PRE, .-ass_PRE
+
+
+# in: a0 = ptr to first char of argument
+# in: a1 = insn word to be modifed
+# in: a2 = origin address
+# out: a0 = ptr to char after argument
+# out: a1 = insn word (0 on error)
+ass_SUC:
+	addi	sp, sp, -(XLEN_BYTES*2)
+	SAVE_X	ra, 0(sp)
+	SAVE_X	s3, (XLEN_BYTES*1)(sp)
+	li		s3, 20						# number of left shifts for successor
+	jal		ass_iorw
+	LOAD_X	ra, 0(sp)
+	LOAD_X	s3, (XLEN_BYTES*1)(sp)
+	addi	sp, sp, (XLEN_BYTES*2)
+	ret
+.size ass_SUC, .-ass_SUC
 
 
 #endif /* WITH_CMD_A */

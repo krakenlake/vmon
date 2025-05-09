@@ -574,14 +574,14 @@ encoding_table:
 .word MASK_BGE,			MATCH_BGE,		decode_B_type,			string_OP_BGE,		assemble_GENERIC,	ass_rs1,	ass_rs2,	ass_BRA,	0
 .word MASK_BLTU,		MATCH_BLTU,		decode_B_type,			string_OP_BLTU,		assemble_GENERIC,	ass_rs1,	ass_rs2,	ass_BRA,	0
 .word MASK_BGEU,		MATCH_BGEU,		decode_B_type,			string_OP_BGEU,		assemble_GENERIC,	ass_rs1,	ass_rs2,	ass_BRA,	0
-.word MASK_JAL,			MATCH_JAL,		decode_JAL,				string_OP_JAL,		assemble_GENERIC,	ass_rs1,	ass_rs2,	ass_BRA,	0
-.word MASK_JALR,		MATCH_JALR,		decode_I_type_LOAD,		string_OP_JALR,		assemble_GENERIC,	ass_rs1,	ass_rs2,	ass_BRA,	0
-.word MASK_LUI,			MATCH_LUI,		decode_U_type,			string_OP_LUI,		assemble_GENERIC,	ass_rs1,	ass_rs2,	ass_BRA,	0
-.word MASK_AUIPC,		MATCH_AUIPC,	decode_U_type,			string_OP_AUIPC,	assemble_GENERIC,	ass_rs1,	ass_rs2,	ass_BRA,	0
+.word MASK_JAL,			MATCH_JAL,		decode_JAL,				string_OP_JAL,		assemble_GENERIC,	0,			0,			0,			0
+.word MASK_JALR,		MATCH_JALR,		decode_I_type_LOAD,		string_OP_JALR,		assemble_GENERIC,	0,			0,			0,			0
+.word MASK_LUI,			MATCH_LUI,		decode_U_type,			string_OP_LUI,		assemble_GENERIC,	0,			0,			0,			0
+.word MASK_AUIPC,		MATCH_AUIPC,	decode_U_type,			string_OP_AUIPC,	assemble_GENERIC,	0,			0,			0,			0
 .word MASK_ECALL,		MATCH_ECALL,	decode_ECALL,			string_OP_ECALL,	assemble_GENERIC,	0,			0,			0,			0
 .word MASK_EBREAK,		MATCH_EBREAK,	decode_EBREAK,			string_OP_EBREAK,	assemble_GENERIC,	0,			0,			0,			0
 .word MASK_FENCETSO,	MATCH_FENCETSO,	decode_FENCE_TSO,		string_OP_FENCETSO,	assemble_GENERIC,	0,			0,			0,			0
-.word MASK_FENCE,		MATCH_FENCE,	decode_FENCE,			string_OP_FENCE,	assemble_GENERIC,	0,			0,			0,			0
+.word MASK_FENCE,		MATCH_FENCE,	decode_FENCE,			string_OP_FENCE,	assemble_GENERIC,	ass_PRE,	ass_SUC,	0,			0
 
 # RV64I
 #if XLEN >= 64
