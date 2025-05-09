@@ -195,12 +195,10 @@ decode_I_type_SHIFT:
 	mv		a0, s2
 	jal		print_rs1
 	jal		print_comma
-	# inst[24:20] -> imm[5:0]
-	#if XLEN >=64
-		sext.w	s2, s2					# sign-extend to 64 bits
-	#endif
-	srli	a0, s2, 20+6
-	jal		print_hex
+	# inst[24:20] -> imm[4:0]
+	srli	a0, s2, 20
+	andi	a0, a0, 0b11111
+	jal		print_decimal
 	LOAD_X	ra, 0(sp)				
 	LOAD_X	s2, (XLEN_BYTES*1)(sp)				 
 	addi	sp, sp, (XLEN_BYTES*2)
