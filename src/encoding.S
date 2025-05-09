@@ -514,7 +514,15 @@ string_OP_EBREAK:	.string "ebreak";
 .align 4
 
 encoding_table:
-# format: MASK, MATCH, decode function ptr, opcode string
+# This encoding table is used to lookup instructions during assembly 
+# and disassembly:
+# - MASK/MATCH are defined by the RISC-V standard
+# - during disassembly, the decode function is called for each 
+#   instruction when MASK/MATCH match
+# - during assembly, the assemble function is called and calls the 
+#   arg1-4 functions to parse the arguments of the user input
+#
+# format: MASK, MATCH, decode function ptr, opcode string, assemble func ptr, arg1 func ptr, arg2 func ptr, arg3 func ptr, arg4 func ptr
 
 # pseudo opcodes
 # order is important, these have to be at the beginning of the table
@@ -529,6 +537,7 @@ encoding_table:
 #endif /* ENABLE_PSEUDO */
 
 # RV32I
+# offset in bytes from start of each entry:
 #     0					4				8						12					16					20			24			28			32
 .word MASK_ADD,			MATCH_ADD,		decode_R_type,			string_OP_ADD,		assemble_GENERIC,	ass_rd,		ass_rs1,	ass_rs2,	0
 .word MASK_SUB,			MATCH_SUB,		decode_R_type,			string_OP_SUB,		assemble_GENERIC,	ass_rd,		ass_rs1,	ass_rs2,	0
