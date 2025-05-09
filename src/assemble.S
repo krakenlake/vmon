@@ -19,6 +19,7 @@
 .global ass_MEM							# expect imm(reg) parameter for load/store
 .global ass_PRE							# expect iorw predecessor parameter for fence
 .global ass_SUC							# expect iorw sucessor parameter for fence
+.global ass_J							# expect J-type address
 
 .text
 
@@ -515,6 +516,54 @@ ass_SUC:
 	addi	sp, sp, (XLEN_BYTES*2)
 	ret
 .size ass_SUC, .-ass_SUC
+
+
+# in: a0 = ptr to first char of argument
+# in: a1 = insn word to be modifed
+# in: a2 = origin address
+# out: a0 = ptr to char after argument
+# out: a1 = insn word (0 on error)
+ass_J:
+	addi	sp, sp, -(XLEN_BYTES*3)
+	SAVE_X	ra, 0(sp)
+	SAVE_X	s1, (XLEN_BYTES*1)(sp)
+	SAVE_X	s2, (XLEN_BYTES*2)(sp)
+	mv		s1, a1						# save insn word
+	mv		s2, a2						# save origin addr
+	jal		get_hex_addr
+	# addr in a1
+	bnez	a2, ass_J_error
+	sub		a1, a1, s2					# calc offset to target addr
+	# add address bits to instruction word
+	# imm19:12 -> bit 19-12
+	li		t1, 0b11111111 << 12
+	and		t0, a1, t1
+	or		s1, s1, t0
+	# imm11 -> bit 20
+	li		t1, 1<<11
+	and		t0, a1, t1
+	slli	t0, t0, 9
+	or		s1, s1, t0
+	# imm10:1 -> bit 21-30
+	li		t1, 0b11111111110
+	and		t0, a1, t1
+	slli	t0, t0, 20
+	or		s1, s1, t0
+	# imm20 -> bit 31
+	li		t1, 1<<20
+	and		t0, a1, t1
+	slli	t0, t0, 11
+	or		a1, s1, t0					# final one directly into a1
+	j		ass_J_done
+ass_J_error:
+	mv		a1, zero
+ass_J_done:
+	LOAD_X	ra, 0(sp)
+	LOAD_X	s1, (XLEN_BYTES*1)(sp)
+	LOAD_X	s2, (XLEN_BYTES*2)(sp)
+	addi	sp, sp, (XLEN_BYTES*3)
+	ret
+.size ass_iorw, .-ass_iorw
 
 
 #endif /* WITH_CMD_A */
