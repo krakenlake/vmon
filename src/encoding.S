@@ -6,7 +6,7 @@
 #if defined (WITH_CMD_D) || defined (WITH_CMD_A)
 
 
-# table with MASK, MATCH, decode_func_ptr, opcode_string, assemble_func_ptr
+# table with MASK, MATCH, decode_func_ptr, opcode_string, assemble_func_ptr, parameter function ptrs
 .global encoding_table
 # table access functions
 .global get_data_by_insn_name
@@ -540,7 +540,7 @@ encoding_table:
 
 # RV32I
 # offset in bytes from start of each entry:
-#     0					4				8						12					16					20			24			28				32
+#     0					4				8						12					16					20			24			28			32
 .word MASK_ADD,			MATCH_ADD,		decode_R_type,			string_OP_ADD,		assemble_GENERIC,	ass_rd,		ass_rs1,	ass_rs2,	0
 .word MASK_SUB,			MATCH_SUB,		decode_R_type,			string_OP_SUB,		assemble_GENERIC,	ass_rd,		ass_rs1,	ass_rs2,	0
 .word MASK_XOR,			MATCH_XOR,		decode_R_type,			string_OP_XOR,		assemble_GENERIC,	ass_rd,		ass_rs1,	ass_rs2,	0

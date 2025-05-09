@@ -177,6 +177,7 @@ parse_binary_return_error:
 	ret
 .size parse_binary, .-parse_binary
 
+
 # signed decimal input
 # in: buffer ptr in a0
 # out: buffer ptr in a0
