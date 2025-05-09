@@ -8,11 +8,13 @@
 .global assemble_DUMMY
 
 .global assemble_GENERIC
-.global ass_rd
-.global ass_rs1
-.global ass_rs2
+.global ass_rd							# expect int register name and use it for rd
+.global ass_rs1							# expect int register name and use it for rs1
+.global ass_rs2							# expect int register name and use it for rs2
 
-.global ass_BRA
+.global ass_BRA							# expect branch target address in hex
+.global ass_I_imm						# expect immediate for I-type AND/ADD/OR/XOR in dec
+.global ass_I_shift						# expect immediate for I-type shifts in dec
 
 .text
 
@@ -72,7 +74,7 @@ assemble_instruction_done:
 # in: a0 = absolute target address 
 # in: a1 = instruction word
 # in: a2 = absolute origin address of the branch instruction
-# out: a1 = modified instruction word
+# out: a1 = modified instruction word (0 on error)
 assemble_branch_target:
 	sub		a0, a0, a2					# compute relative address
 	# range check
@@ -106,6 +108,32 @@ assemble_branch_target_error:
 assemble_branch_target_done:
 	ret
 .size assemble_branch_target, .-assemble_branch_target
+
+# in: a0 = imm value
+# in: a1 = instruction word
+# out: a1 = modified instruction word
+assemble_I_imm_bool:
+	slli	a0, a0, 20
+	or		a1, a1, a0
+	ret
+.size assemble_I_imm_bool, .-assemble_I_imm_bool
+
+
+# in: a0 = imm value (accepted values are 0 <= imm <= 31)
+# in: a1 = instruction word
+# out: a1 = modified instruction word (0 on error)
+assemble_I_imm_shift:
+	bltz	a0, assemble_I_imm_shift_error
+	li		t0, 32
+	bge		a0, t0, assemble_I_imm_shift_error
+	slli	a0, a0, 20
+	or		a1, a1, a0
+	j		assemble_I_imm_shift_done
+assemble_I_imm_shift_error:
+	mv		a1, zero
+assemble_I_imm_shift_done:
+	ret
+.size assemble_I_imm_shift, .-assemble_I_imm_shift
 
 
 # in: input string ptr in a0
@@ -279,7 +307,7 @@ ass_BRA:
 	jal		get_hex_addr
 	# address in a1
 	bnez	a2, ass_BRA_error
-	mv		s2, a0						# return string ptr ater
+	mv		s2, a0						# return string ptr later
 	# add branch target address to instruction word
 	mv		a0, a1						# absolute target address
 	mv		a1, s1						# instruction word
@@ -300,6 +328,82 @@ ass_BRA_done:
 	addi	sp, sp, (XLEN_BYTES*5)
 	ret
 .size ass_BRA, .-ass_BRA
+
+
+# in: a0 = ptr to first char of argument
+# in: a1 = insn word to be modifed
+# in: a2 = origin address
+# out: a0 = ptr to char after argument
+# out: a1 = insn word (0 on error)
+ass_I_imm:
+	addi	sp, sp, -(XLEN_BYTES*5)
+	SAVE_X	ra, 0(sp)
+	SAVE_X	s0, (XLEN_BYTES*1)(sp)
+	SAVE_X	s1, (XLEN_BYTES*2)(sp)
+	SAVE_X	s2, (XLEN_BYTES*3)(sp)
+	SAVE_X	s3, (XLEN_BYTES*4)(sp)
+	mv		s1, a1						# save insn word
+	jal		parse_decimal
+	# address in a1
+	bnez	a2, ass_I_imm_error
+	mv		s2, a0						# return string ptr later
+	# add imm value to instruction word
+	mv		a0, a1						# imm value
+	mv		a1, s1						# instruction word
+	jal		assemble_I_imm_bool
+	beqz 	a1, ass_I_imm_error			# address too far away
+	# return a1 and a0
+	addi	a0, s2, 1					# string ptr +1
+	j		ass_I_imm_done
+ass_I_imm_error:
+	mv		a1, zero
+ass_I_imm_done:
+	LOAD_X	ra, 0(sp)
+	LOAD_X	s0, (XLEN_BYTES*1)(sp)
+	LOAD_X	s1, (XLEN_BYTES*2)(sp)
+	LOAD_X	s2, (XLEN_BYTES*3)(sp)
+	LOAD_X	s3, (XLEN_BYTES*4)(sp)
+	addi	sp, sp, (XLEN_BYTES*5)
+	ret
+.size ass_I_imm, .-ass_I_imm
+
+
+# in: a0 = ptr to first char of argument
+# in: a1 = insn word to be modifed
+# in: a2 = origin address
+# out: a0 = ptr to char after argument
+# out: a1 = insn word (0 on error)
+ass_I_shift:
+	addi	sp, sp, -(XLEN_BYTES*5)
+	SAVE_X	ra, 0(sp)
+	SAVE_X	s0, (XLEN_BYTES*1)(sp)
+	SAVE_X	s1, (XLEN_BYTES*2)(sp)
+	SAVE_X	s2, (XLEN_BYTES*3)(sp)
+	SAVE_X	s3, (XLEN_BYTES*4)(sp)
+	mv		s1, a1						# save insn word
+	jal		parse_decimal
+	# address in a1
+	bnez	a2, ass_I_shift_error
+	mv		s2, a0						# return string ptr later
+	# add imm value to instruction word
+	mv		a0, a1						# imm value
+	mv		a1, s1						# instruction word
+	jal		assemble_I_imm_shift
+	beqz 	a1, ass_I_shift_error			# address too far away
+	# return a1 and a0
+	addi	a0, s2, 1					# string ptr +1
+	j		ass_I_shift_done
+ass_I_shift_error:
+	mv		a1, zero
+ass_I_shift_done:
+	LOAD_X	ra, 0(sp)
+	LOAD_X	s0, (XLEN_BYTES*1)(sp)
+	LOAD_X	s1, (XLEN_BYTES*2)(sp)
+	LOAD_X	s2, (XLEN_BYTES*3)(sp)
+	LOAD_X	s3, (XLEN_BYTES*4)(sp)
+	addi	sp, sp, (XLEN_BYTES*5)
+	ret
+.size ass_I_imm, .-ass_I_imm
 
 
 #endif /* WITH_CMD_A */
