@@ -595,18 +595,18 @@ encoding_table:
 
 # RV64I
 #if XLEN >= 64
-	.word MASK_ADDIW,	MATCH_ADDIW,	decode_I_type,			string_OP_ADDIW,	assemble_DUMMY,		0,			0,			0,			0
-	.word MASK_SLLIW,	MATCH_SLLIW,	decode_I_type_SHIFT,	string_OP_SLLIW,	assemble_DUMMY,		0,			0,			0,			0
-	.word MASK_SRLIW,	MATCH_SRLIW,	decode_I_type_SHIFT,	string_OP_SRLIW,	assemble_DUMMY,		0,			0,			0,			0
-	.word MASK_SRAIW,	MATCH_SRAIW,	decode_I_type_SHIFT,	string_OP_SRAIW,	assemble_DUMMY,		0,			0,			0,			0
+	.word MASK_ADDIW,	MATCH_ADDIW,	decode_I_type,			string_OP_ADDIW,	assemble_GENERIC,	ass_rd,		ass_rs1,	ass_I_imm,	0
+	.word MASK_SLLIW,	MATCH_SLLIW,	decode_I_type_SHIFT,	string_OP_SLLIW,	assemble_GENERIC,	ass_rd,		ass_rs1,	ass_I_imm,	0
+	.word MASK_SRLIW,	MATCH_SRLIW,	decode_I_type_SHIFT,	string_OP_SRLIW,	assemble_GENERIC,	ass_rd,		ass_rs1,	ass_I_imm,	0
+	.word MASK_SRAIW,	MATCH_SRAIW,	decode_I_type_SHIFT,	string_OP_SRAIW,	assemble_GENERIC,	ass_rd,		ass_rs1,	ass_I_imm,	0
 	.word MASK_ADDW, 	MATCH_ADDW,		decode_R_type,			string_OP_ADDW,		assemble_GENERIC,	ass_rd,		ass_rs1,	ass_rs2,	0
 	.word MASK_SUBW,	MATCH_SUBW,		decode_R_type,			string_OP_SUBW,		assemble_GENERIC,	ass_rd,		ass_rs1,	ass_rs2,	0
 	.word MASK_SLLW,	MATCH_SLLW,		decode_R_type,			string_OP_SLLW,		assemble_GENERIC,	ass_rd,		ass_rs1,	ass_rs2,	0
 	.word MASK_SRLW,	MATCH_SRLW,		decode_R_type,			string_OP_SRLW,		assemble_GENERIC,	ass_rd,		ass_rs1,	ass_rs2,	0
 	.word MASK_SRAW,	MATCH_SRAW,		decode_R_type,			string_OP_SRAW,		assemble_GENERIC,	ass_rd,		ass_rs1,	ass_rs2,	0
-	.word MASK_LD,		MATCH_LD,		decode_I_type_LOAD,		string_OP_LD,		assemble_DUMMY,		0,			0,			0,			0
-	.word MASK_LWU,		MATCH_LWU,		decode_I_type_LOAD,		string_OP_LWU,		assemble_DUMMY,		0,			0,			0,			0
-	.word MASK_SD,		MATCH_SD,		decode_S_type,			string_OP_SD,		assemble_DUMMY,		0,			0,			0,			0
+	.word MASK_LD,		MATCH_LD,		decode_I_type_LOAD,		string_OP_LD,		assemble_GENERIC,	ass_rd,		ass_MEM,	0,			0
+	.word MASK_LWU,		MATCH_LWU,		decode_I_type_LOAD,		string_OP_LWU,		assemble_GENERIC,	ass_rd,		ass_MEM,	0,			0
+	.word MASK_SD,		MATCH_SD,		decode_S_type,			string_OP_SD,		assemble_GENERIC,	ass_rs2,	ass_MEM,	0,			0
 #endif
 
 # RVM

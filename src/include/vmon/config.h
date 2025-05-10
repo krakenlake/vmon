@@ -34,7 +34,7 @@
 // if undefined, simply "x0...x31" will be used instead
 #define ABI_REGISTER_NAMES
 // if this is defined, "fp" will be used for x8 instead of "s0"
-#define ABI_REGISTER_NAMES_X8_FP
+//#define ABI_REGISTER_NAMES_X8_FP
 
 // include test code in the binary?
 // if yes, the "i" command shows the location at runtime

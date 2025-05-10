@@ -397,7 +397,6 @@ ass_MEM:
 	SAVE_X	s2, (XLEN_BYTES*2)(sp)
 	mv		s1, a1						# save insn word
 	jal		parse_decimal
-	# imm value in a1
 	bnez	a2, ass_MEM_error
 	mv		s2, a0						# return string ptr later
 	# check if we have LOAD (opc=0b0000011) or STORE (opc=0b0100011)
