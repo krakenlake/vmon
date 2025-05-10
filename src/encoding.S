@@ -11,6 +11,7 @@
 # table access functions
 .global get_data_by_insn_name
 
+
 # tables with register names
 .global int_register_names
 .global float_register_names
@@ -19,6 +20,7 @@
 .global get_float_register_name_by_index
 .global get_int_register_index_by_name
 .global get_float_register_index_by_name
+
 
 .global string_OP_UNKNOWN
 # necessary for c.add/c.jalr/c.ebreak adjustment
@@ -82,7 +84,6 @@ get_float_register_name_by_index:
 	la		a1, float_register_names
 	j 		get_register_name_by_index
 .size get_float_register_name_by_index, .-get_float_register_name_by_index
-
 
 
 # return a string ptr to the name of the n-th register
@@ -197,10 +198,17 @@ int_register_names:
 	.string "x16", "x17", "x18", "x19", "x20", "x21", "x22", "x23"
 	.string "x24", "x25", "x26", "x27", "x28", "x29", "x30", "x31"
 #else
-	.string "zero", "ra",  "sp",  "gp", "tp", "t0", "t1", "t2"
-	.string "fp",	"s1",  "a0",  "a1", "a2", "a3", "a4", "a5"
-	.string "a6",	"a7",  "s2",  "s3", "s4", "s5", "s6", "s7"
-	.string "s8",	"s9", "s10", "s11", "t3", "t4", "t5", "t6"
+	#ifdef ABI_REGISTER_NAMES_X8_FP
+		.string "zero", "ra",  "sp",  "gp", "tp", "t0", "t1", "t2"
+		.string "fp",	"s1",  "a0",  "a1", "a2", "a3", "a4", "a5"		# x8 = fp
+		.string "a6",	"a7",  "s2",  "s3", "s4", "s5", "s6", "s7"
+		.string "s8",	"s9", "s10", "s11", "t3", "t4", "t5", "t6"
+	#else
+		.string "zero", "ra",  "sp",  "gp", "tp", "t0", "t1", "t2"
+		.string "s0",	"s1",  "a0",  "a1", "a2", "a3", "a4", "a5"		# x8 = s0
+		.string "a6",	"a7",  "s2",  "s3", "s4", "s5", "s6", "s7"
+		.string "s8",	"s9", "s10", "s11", "t3", "t4", "t5", "t6"
+	#endif
 #endif
 .size int_register_names, .-int_register_names
 
@@ -222,7 +230,9 @@ float_register_names:
 .size float_register_names, .-float_register_names
 #endif /* ENABLE_RVF */
 
+
 # ---------- opcode strings ----------
+
 
 # RV32I
 string_opcodes:
