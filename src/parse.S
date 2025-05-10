@@ -13,6 +13,7 @@
 .global parse_binary
 .global	parse_decimal
 .global	parse_iorw
+.global	parse_aqrl
 
 .text
 
@@ -284,4 +285,52 @@ parse_iorw_done:
 .size parse_iorw, .-parse_iorw
 
 
+# parse aqrl string for RVA insns
+# in: buffer ptr in a0
+# out: buffer ptr in a0
+# out: aqrl bits in bits 25-26 of a1
+# out: error code in a2 (OK=0)
+parse_aqrl:
+	mv		a1, zero					# clear return value
+	mv		a2, zero					# clear error
+	li		t2, 'a'
+	li		t3, 'q'
+	li		t4, 'r'
+	li		t5, 'l'
+	li		t6, 1
+parse_aqrl_loop:
+	lb		t0, 0(a0)					# get next input char
+	addi	a0, a0, 1					# advance one char
+	# accept "aq" or "rl" and set bits in a1 accordingly
+	beq		t0, t2, parse_aqrl_need_q
+	beq		t0, t4, parse_aqrl_need_r
+	# when we encounter anything other than 'a' or 'r' we are done
+	j		parse_aqrl_done
+
+parse_aqrl_need_q:
+	lb		t0, 1(a0)					# get char after current
+	beq		t0, t3, parse_aqrl_add_aq	# we have aq
+	addi	a0, a0, 1
+	j		parse_aqrl_loop
+parse_aqrl_add_aq:
+	slli	t0, t6, 1
+	or		a1, a1, t0
+	j		parse_aqrl_loop
+
+parse_aqrl_need_r:
+	lb		t0, 1(a0)					# get char after current
+	beq		t0, t5, parse_aqrl_add_rl	# we have aq
+	addi	a0, a0, 1
+	j		parse_aqrl_loop
+parse_aqrl_add_rl:
+	or		a1, a1, t0
+	j		parse_aqrl_loop
+	beq		t0, t5, parse_aqrl_loop		# no further shift of t1 necessary
+	addi	a0, a0, -1					# one step back if no match
+	j		parse_aqrl_done
+
+parse_aqrl_done:
+	slli	a1, a1, 25
+	ret
+.size parse_aqrl, .-parse_aqrl
 

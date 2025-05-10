@@ -12,7 +12,6 @@
 .global ass_rd							# expect int register name and use it for rd
 .global ass_rs1							# expect int register name and use it for rs1
 .global ass_rs2							# expect int register name and use it for rs2
-
 .global ass_BRA							# expect branch target address in hex
 .global ass_I_imm						# expect immediate for I-type AND/ADD/OR/XOR in dec
 .global ass_I_shift						# expect immediate for I-type shifts in dec
@@ -21,6 +20,8 @@
 .global ass_SUC							# expect iorw sucessor parameter for fence
 .global ass_J							# expect J-type address
 .global ass_U_imm						# expect immediate for U-type (LUI/AUIPC)
+.global ass_aqrl						# expect ".aqrl" extension for RVA
+.global ass_AMEM						# expect (reg) parameter for RVA
 
 .text
 
@@ -468,7 +469,7 @@ ass_iorw:
 	bnez	a2, ass_iorw_error
 	mv		s2, a0						# return string ptr later
 	# add iorw bits to instruction word
-	sll	a1, a1, s3
+	sll		a1, a1, s3
 	or		a1, s1, a1						# instruction word
 	j		ass_iorw_done
 ass_iorw_error:
@@ -588,6 +589,51 @@ ass_U_imm_done:
 	addi	sp, sp, (XLEN_BYTES*3)
 	ret
 .size ass_U_imm, .-ass_U_imm
+
+
+# in: a0 = ptr to first char of argument
+# in: a1 = insn word to be modifed
+# in: a2 = origin address
+# out: a0 = ptr to char after argument
+# out: a1 = insn word (0 on error)
+ass_aqrl:
+	addi	sp, sp, -(XLEN_BYTES*3)
+	SAVE_X	ra, 0(sp)
+	SAVE_X	s1, (XLEN_BYTES*1)(sp)
+	SAVE_X	s2, (XLEN_BYTES*2)(sp)
+	mv		s1, a1						# save insn word
+
+	# expect . 
+
+	# jal		parse_aqrl
+	
+	
+	LOAD_X	ra, 0(sp)
+	LOAD_X	s1, (XLEN_BYTES*1)(sp)
+	LOAD_X	s2, (XLEN_BYTES*2)(sp)
+	addi	sp, sp, (XLEN_BYTES*3)
+	ret
+
+
+# in: a0 = ptr to first char of argument
+# in: a1 = insn word to be modifed
+# in: a2 = origin address
+# out: a0 = ptr to char after argument
+# out: a1 = insn word (0 on error)
+ass_AMEM:
+	addi	sp, sp, -(XLEN_BYTES*3)
+	SAVE_X	ra, 0(sp)
+	SAVE_X	s1, (XLEN_BYTES*1)(sp)
+	SAVE_X	s2, (XLEN_BYTES*2)(sp)
+	mv		s1, a1						# save insn word
+
+	# parse (reg)
+
+	LOAD_X	ra, 0(sp)
+	LOAD_X	s1, (XLEN_BYTES*1)(sp)
+	LOAD_X	s2, (XLEN_BYTES*2)(sp)
+	addi	sp, sp, (XLEN_BYTES*3)
+	ret
 
 
 #endif /* WITH_CMD_A */
