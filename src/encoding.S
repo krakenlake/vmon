@@ -576,8 +576,8 @@ encoding_table:
 .word MASK_BGEU,		MATCH_BGEU,		decode_B_type,			string_OP_BGEU,		assemble_GENERIC,	ass_rs1,	ass_rs2,	ass_BRA,	0
 .word MASK_JAL,			MATCH_JAL,		decode_JAL,				string_OP_JAL,		assemble_GENERIC,	ass_rd,		ass_J,		0,			0
 .word MASK_JALR,		MATCH_JALR,		decode_I_type,			string_OP_JALR,		assemble_GENERIC,	ass_rd,		ass_rs1,	ass_J,		0
-.word MASK_LUI,			MATCH_LUI,		decode_U_type,			string_OP_LUI,		assemble_GENERIC,	0,			0,			0,			0
-.word MASK_AUIPC,		MATCH_AUIPC,	decode_U_type,			string_OP_AUIPC,	assemble_GENERIC,	0,			0,			0,			0
+.word MASK_LUI,			MATCH_LUI,		decode_U_type,			string_OP_LUI,		assemble_GENERIC,	ass_rd,		ass_U_imm,	0,			0
+.word MASK_AUIPC,		MATCH_AUIPC,	decode_U_type,			string_OP_AUIPC,	assemble_GENERIC,	ass_rd,		ass_U_imm,	0,			0
 .word MASK_ECALL,		MATCH_ECALL,	decode_ECALL,			string_OP_ECALL,	assemble_GENERIC,	0,			0,			0,			0
 .word MASK_EBREAK,		MATCH_EBREAK,	decode_EBREAK,			string_OP_EBREAK,	assemble_GENERIC,	0,			0,			0,			0
 .word MASK_FENCETSO,	MATCH_FENCETSO,	decode_FENCE_TSO,		string_OP_FENCETSO,	assemble_GENERIC,	0,			0,			0,			0

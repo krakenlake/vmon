@@ -20,6 +20,7 @@
 .global ass_PRE							# expect iorw predecessor parameter for fence
 .global ass_SUC							# expect iorw sucessor parameter for fence
 .global ass_J							# expect J-type address
+.global ass_U_imm						# expect immediate for U-type (LUI/AUIPC)
 
 .text
 
@@ -555,6 +556,39 @@ ass_J_done:
 	addi	sp, sp, (XLEN_BYTES*4)
 	ret
 .size ass_J, .-ass_J
+
+
+# in: a0 = ptr to first char of argument
+# in: a1 = insn word to be modifed
+# in: a2 = origin address
+# out: a0 = ptr to char after argument
+# out: a1 = insn word (0 on error)
+ass_U_imm:
+	addi	sp, sp, -(XLEN_BYTES*3)
+	SAVE_X	ra, 0(sp)
+	SAVE_X	s1, (XLEN_BYTES*1)(sp)
+	SAVE_X	s2, (XLEN_BYTES*2)(sp)
+	mv		s1, a1						# save insn word
+	jal		parse_decimal
+	# imm  value in a1
+	bnez	a2, ass_U_imm_error
+	mv		s2, a0						# return string ptr later
+	# add imm value to instruction word
+	li		t0, 0xfffff000				# bits 12-31 of imm only
+	and		a1, a1, t0
+	or		a1, a1, s1					# return insn in a1
+	# return a1 and a0
+	addi	a0, s2, 1					# string ptr +1
+	j		ass_U_imm_done
+ass_U_imm_error:
+	mv		a1, zero
+ass_U_imm_done:
+	LOAD_X	ra, 0(sp)
+	LOAD_X	s1, (XLEN_BYTES*1)(sp)
+	LOAD_X	s2, (XLEN_BYTES*2)(sp)
+	addi	sp, sp, (XLEN_BYTES*3)
+	ret
+.size ass_U_imm, .-ass_U_imm
 
 
 #endif /* WITH_CMD_A */
