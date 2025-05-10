@@ -57,6 +57,13 @@ trap_handler:
 	and		a0, a0, t0
 	bnez	a0, trap_handler_irq
 	# was exception
+
+	# check if exception was caused by ebreak
+	# TODO: save/restore  all registers on trap entry/exit?
+	csrr	t0, mcause
+	li		t1, 3						# breakpoint exception?
+	beq		t0, t1, start
+
 trap_handler_exception:
 	# in case of an exception:
 	# 1. print the exception
