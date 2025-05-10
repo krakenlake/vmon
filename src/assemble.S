@@ -451,7 +451,6 @@ ass_MEM_done:
 .size ass_MEM, .-ass_MEM
 
 
-
 # in: a0 = ptr to first char of argument
 # in: a1 = insn word to be modifed
 # in: a2 = origin address
@@ -602,12 +601,16 @@ ass_aqrl:
 	SAVE_X	s1, (XLEN_BYTES*1)(sp)
 	SAVE_X	s2, (XLEN_BYTES*2)(sp)
 	mv		s1, a1						# save insn word
-
-	# expect . 
-
-	# jal		parse_aqrl
-	
-	
+	li		t1, '.'						# consume '.'
+	lb		t0, 0(a0)
+	bne 	t0, t1, ass_aqrl_error
+	addi	a0, a0, 1
+	jal		parse_aqrl
+	or		a1 , s1, a1
+	j 		ass_aqrl_done
+ass_aqrl_error:
+	mv		a1, zero
+ass_aqrl_done:
 	LOAD_X	ra, 0(sp)
 	LOAD_X	s1, (XLEN_BYTES*1)(sp)
 	LOAD_X	s2, (XLEN_BYTES*2)(sp)

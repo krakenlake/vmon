@@ -67,18 +67,26 @@ consume_close_paren:
 # in: buffer ptr in a0
 # out: ptr to end of word in a0
 find_insn_name_end:
+	li		t1, '.'
+	li		t2, 'a'
+	li		t3, 'z'
+	li		t4, -2						# count dots here for RVA insns
+find_insn_name_loop:
 	lb		t0, 0(a0)
 	# accept '.'
-	li		t1, '.'
-	beq		t0, t1, find_insn_name_end_valid_char
+	bne		t0, t1, find_insn_name_end_no_dot
+	# we have a dot
+	addi	t4, t4, 1
+	bnez	t4, find_insn_name_end_valid_char
+	# end here if we found the second dot
+	j 		find_insn_name_end_done
+find_insn_name_end_no_dot:
 	# accept a-z
-	li		t1, 'a'
-	blt		t0, t1, find_insn_name_end_done
-	li		t1, 'z'
-	bgt		t0, t1, find_insn_name_end_done
+	blt		t0, t2, find_insn_name_end_done
+	bgt		t0, t3, find_insn_name_end_done
 find_insn_name_end_valid_char:
 	addi	a0, a0, 1
-	j		find_insn_name_end
+	j		find_insn_name_loop
 find_insn_name_end_done:
 	ret
 .size find_insn_name_end, .-find_insn_name_end
@@ -306,29 +314,23 @@ parse_aqrl_loop:
 	beq		t0, t4, parse_aqrl_need_r
 	# when we encounter anything other than 'a' or 'r' we are done
 	j		parse_aqrl_done
-
 parse_aqrl_need_q:
-	lb		t0, 1(a0)					# get char after current
+	lb		t0, 0(a0)					# get char after current
 	beq		t0, t3, parse_aqrl_add_aq	# we have aq
-	addi	a0, a0, 1
-	j		parse_aqrl_loop
+	j		parse_aqrl_done
 parse_aqrl_add_aq:
 	slli	t0, t6, 1
 	or		a1, a1, t0
-	j		parse_aqrl_loop
-
-parse_aqrl_need_r:
-	lb		t0, 1(a0)					# get char after current
-	beq		t0, t5, parse_aqrl_add_rl	# we have aq
 	addi	a0, a0, 1
 	j		parse_aqrl_loop
-parse_aqrl_add_rl:
-	or		a1, a1, t0
-	j		parse_aqrl_loop
-	beq		t0, t5, parse_aqrl_loop		# no further shift of t1 necessary
-	addi	a0, a0, -1					# one step back if no match
+parse_aqrl_need_r:
+	lb		t0, 0(a0)					# get char after current
+	beq		t0, t5, parse_aqrl_add_rl	# we have rl
 	j		parse_aqrl_done
-
+parse_aqrl_add_rl:
+	or		a1, a1, t6
+	addi	a0, a0, 1
+	j		parse_aqrl_loop
 parse_aqrl_done:
 	slli	a1, a1, 25
 	ret
