@@ -87,12 +87,12 @@ get_int_register_name_by_index:
 	j 		get_register_name_by_index
 .size get_int_register_name_by_index, .-get_int_register_name_by_index
 
-
+#ifdef ENABLE_RVF
 get_float_register_name_by_index:
 	la		a1, float_register_names
 	j 		get_register_name_by_index
 .size get_float_register_name_by_index, .-get_float_register_name_by_index
-
+#endif /* ENABLE_RVF */
 
 # return a string ptr to the name of the n-th register
 # in:	a0 = n
@@ -131,7 +131,7 @@ get_int_register_index_by_name:
 	j 		get_register_index_by_name
 .size get_int_register_index_by_name, .-get_int_register_index_by_name
 
-
+#ifdef ENABLE_RVF
 # return index of float register given by name
 # in: a0 = string ptr to start of name
 # in: a1 = string ptr to end of name (after last char; no 0-termination expected)
@@ -140,7 +140,7 @@ get_float_register_index_by_name:
 	la		a2, float_register_names
 	j 		get_register_index_by_name
 .size get_float_register_index_by_name, .-get_float_register_index_by_name
-
+#endif /* ENABLE_RVF */
 
 # return index of register given by name
 # in: a0 = start of string ptr to name
