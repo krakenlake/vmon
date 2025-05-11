@@ -8,6 +8,7 @@
 
 .global assemble_DUMMY
 
+# these are called through function ptrs in the encoding table
 .global assemble_GENERIC
 .global ass_rd							# expect int register name and use it for rd
 .global ass_rs1							# expect int register name and use it for rs1
@@ -249,6 +250,20 @@ ass_rs2:
 	SAVE_X	ra, 0(sp)
 	SAVE_X	s3, (XLEN_BYTES*1)(sp)
 	li		s3, 20						# number of left shifts for rs2
+	jal		assemble_int_register
+	LOAD_X	ra, 0(sp)
+	LOAD_X	s3, (XLEN_BYTES*1)(sp)
+	addi	sp, sp, (XLEN_BYTES*2)
+	ret
+.size ass_rs2, .-ass_rs2
+
+
+# add parameter for sll in s3 and call assemble_int_register
+ass_rs3:
+	addi	sp, sp, -(XLEN_BYTES*2)
+	SAVE_X	ra, 0(sp)
+	SAVE_X	s3, (XLEN_BYTES*1)(sp)
+	li		s3, 27						# number of left shifts for rs3
 	jal		assemble_int_register
 	LOAD_X	ra, 0(sp)
 	LOAD_X	s3, (XLEN_BYTES*1)(sp)
