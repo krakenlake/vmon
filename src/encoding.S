@@ -670,32 +670,32 @@ encoding_table:
 
 # RVF / RVD / RVQ
 #ifdef ENABLE_RVF
-	.word MASK_FLW,			MATCH_FLW,			decode_FL,			string_OP_FLW,			assemble_DUMMY,	0,			0,			0,			0
-	.word MASK_FSW,			MATCH_FSW,			decode_FS,			string_OP_FSW,			assemble_DUMMY,	0,			0,			0,			0
-	.word MASK_FMADD_S,		MATCH_FMADD_S,		decode_FMA,			string_OP_FMADD_S,		assemble_DUMMY,	0,			0,			0,			0
-	.word MASK_FMSUB_S,		MATCH_FMSUB_S,		decode_FMA,			string_OP_FMSUB_S,		assemble_DUMMY,	0,			0,			0,			0
-	.word MASK_FNMADD_S,	MATCH_FNMADD_S,		decode_FMA,			string_OP_FNMADD_S,		assemble_DUMMY,	0,			0,			0,			0
-	.word MASK_FNMSUB_S,	MATCH_FNMSUB_S,		decode_FMA,			string_OP_FNMSUB_S,		assemble_DUMMY,	0,			0,			0,			0
-	.word MASK_FSUB_S,		MATCH_FSUB_S,		decode_FADD,		string_OP_FSUB_S,		assemble_DUMMY,	0,			0,			0,			0
-	.word MASK_FADD_S,		MATCH_FADD_S,		decode_FADD,		string_OP_FADD_S,		assemble_DUMMY,	0,			0,			0,			0
-	.word MASK_FMUL_S,		MATCH_FMUL_S,		decode_FADD,		string_OP_FMUL_S,		assemble_DUMMY,	0,			0,			0,			0
-	.word MASK_FDIV_S,		MATCH_FDIV_S,		decode_FADD,		string_OP_FDIV_S,		assemble_DUMMY,	0,			0,			0,			0
-	.word MASK_FSQRT_S,		MATCH_FSQRT_S,		decode_FSQRT,		string_OP_FSQRT_S,		assemble_DUMMY,	0,			0,			0,			0
-	.word MASK_FSGNJ_S,		MATCH_FSGNJ_S,		decode_FADD,		string_OP_FSGNJ_S,		assemble_DUMMY,	0,			0,			0,			0
-	.word MASK_FSGNJN_S,	MATCH_FSGNJN_S,		decode_FADD,		string_OP_FSGNJN_S,		assemble_DUMMY,	0,			0,			0,			0
-	.word MASK_FSGNJX_S,	MATCH_FSGNJX_S,		decode_FADD,		string_OP_FSGNJX_S,		assemble_DUMMY,	0,			0,			0,			0
-	.word MASK_FMIN_S,		MATCH_FMIN_S,		decode_FADD,		string_OP_FMIN_S,		assemble_DUMMY,	0,			0,			0,			0
-	.word MASK_FMAX_S,		MATCH_FMAX_S,		decode_FADD,		string_OP_FMAX_S,		assemble_DUMMY,	0,			0,			0,			0
-	.word MASK_FCVT_S_W,	MATCH_FCVT_S_W,		decode_FCVT_SW,		string_OP_FCVT_S_W,		assemble_DUMMY,	0,			0,			0,			0
-	.word MASK_FCVT_S_WU,	MATCH_FCVT_S_WU,	decode_FCVT_SW,		string_OP_FCVT_S_WU,	assemble_DUMMY,	0,			0,			0,			0
-	.word MASK_FCVT_W_S,	MATCH_FCVT_W_S,		decode_FCVT_WS,		string_OP_FCVT_W_S,		assemble_DUMMY,	0,			0,			0,			0
-	.word MASK_FCVT_WU_S,	MATCH_FCVT_WU_S,	decode_FCVT_WS,		string_OP_FCVT_WU_S,	assemble_DUMMY,	0,			0,			0,			0
-	.word MASK_FMV_X_S,		MATCH_FMV_X_S,		decode_FCVT_WS,		string_OP_FMV_X_S,		assemble_DUMMY,	0,			0,			0,			0
-	.word MASK_FMV_S_X,		MATCH_FMV_S_X,		decode_FCVT_SW,		string_OP_FMV_S_X,		assemble_DUMMY,	0,			0,			0,			0
-	.word MASK_FLT_S,		MATCH_FLT_S,		decode_FCMP,		string_OP_FLT_S,		assemble_DUMMY,	0,			0,			0,			0
-	.word MASK_FEQ_S,		MATCH_FEQ_S,		decode_FCMP,		string_OP_FEQ_S,		assemble_DUMMY,	0,			0,			0,			0
-	.word MASK_FLE_S,		MATCH_FLE_S,		decode_FCMP,		string_OP_FLE_S,		assemble_DUMMY,	0,			0,			0,			0
-	.word MASK_FCLASS_S,	MATCH_FCLASS_S,		decode_FCLASS,		string_OP_FCLASS_S,		assemble_DUMMY,	0,			0,			0,			0
+	.word MASK_FLW,			MATCH_FLW,			decode_FL,			string_OP_FLW,			assemble_DUMMY,		0,			0,			0,			0
+	.word MASK_FSW,			MATCH_FSW,			decode_FS,			string_OP_FSW,			assemble_DUMMY,		0,			0,			0,			0
+	.word MASK_FMADD_S,		MATCH_FMADD_S,		decode_FMA,			string_OP_FMADD_S,		assemble_GENERIC,	ass_frd,	ass_frs1,	ass_frs2,	ass_frs3
+	.word MASK_FMSUB_S,		MATCH_FMSUB_S,		decode_FMA,			string_OP_FMSUB_S,		assemble_GENERIC,	ass_frd,	ass_frs1,	ass_frs2,	ass_frs3
+	.word MASK_FNMADD_S,	MATCH_FNMADD_S,		decode_FMA,			string_OP_FNMADD_S,		assemble_GENERIC,	ass_frd,	ass_frs1,	ass_frs2,	ass_frs3
+	.word MASK_FNMSUB_S,	MATCH_FNMSUB_S,		decode_FMA,			string_OP_FNMSUB_S,		assemble_GENERIC,	ass_frd,	ass_frs1,	ass_frs2,	ass_frs3
+	.word MASK_FSUB_S,		MATCH_FSUB_S,		decode_FADD,		string_OP_FSUB_S,		assemble_GENERIC,	ass_frd,	ass_frs1,	ass_frs2,	0
+	.word MASK_FADD_S,		MATCH_FADD_S,		decode_FADD,		string_OP_FADD_S,		assemble_GENERIC,	ass_frd,	ass_frs1,	ass_frs2,	0
+	.word MASK_FMUL_S,		MATCH_FMUL_S,		decode_FADD,		string_OP_FMUL_S,		assemble_GENERIC,	ass_frd,	ass_frs1,	ass_frs2,	0
+	.word MASK_FDIV_S,		MATCH_FDIV_S,		decode_FADD,		string_OP_FDIV_S,		assemble_GENERIC,	ass_frd,	ass_frs1,	ass_frs2,	0
+	.word MASK_FSQRT_S,		MATCH_FSQRT_S,		decode_FSQRT,		string_OP_FSQRT_S,		assemble_GENERIC,	ass_frd,	ass_frs1,	0,			0
+	.word MASK_FSGNJ_S,		MATCH_FSGNJ_S,		decode_FADD,		string_OP_FSGNJ_S,		assemble_GENERIC,	ass_frd,	ass_frs1,	ass_frs2,	0
+	.word MASK_FSGNJN_S,	MATCH_FSGNJN_S,		decode_FADD,		string_OP_FSGNJN_S,		assemble_GENERIC,	ass_frd,	ass_frs1,	ass_frs2,	0
+	.word MASK_FSGNJX_S,	MATCH_FSGNJX_S,		decode_FADD,		string_OP_FSGNJX_S,		assemble_GENERIC,	ass_frd,	ass_frs1,	ass_frs2,	0
+	.word MASK_FMIN_S,		MATCH_FMIN_S,		decode_FADD,		string_OP_FMIN_S,		assemble_GENERIC,	ass_frd,	ass_frs1,	ass_frs2,	0
+	.word MASK_FMAX_S,		MATCH_FMAX_S,		decode_FADD,		string_OP_FMAX_S,		assemble_GENERIC,	ass_frd,	ass_frs1,	ass_frs2,	0
+	.word MASK_FCVT_S_W,	MATCH_FCVT_S_W,		decode_FCVT_SW,		string_OP_FCVT_S_W,		assemble_DUMMY,		0,			0,			0,			0
+	.word MASK_FCVT_S_WU,	MATCH_FCVT_S_WU,	decode_FCVT_SW,		string_OP_FCVT_S_WU,	assemble_DUMMY,		0,			0,			0,			0
+	.word MASK_FCVT_W_S,	MATCH_FCVT_W_S,		decode_FCVT_WS,		string_OP_FCVT_W_S,		assemble_DUMMY,		0,			0,			0,			0
+	.word MASK_FCVT_WU_S,	MATCH_FCVT_WU_S,	decode_FCVT_WS,		string_OP_FCVT_WU_S,	assemble_DUMMY,		0,			0,			0,			0
+	.word MASK_FMV_X_S,		MATCH_FMV_X_S,		decode_FCVT_WS,		string_OP_FMV_X_S,		assemble_DUMMY,		0,			0,			0,			0
+	.word MASK_FMV_S_X,		MATCH_FMV_S_X,		decode_FCVT_SW,		string_OP_FMV_S_X,		assemble_DUMMY,		0,			0,			0,			0
+	.word MASK_FLT_S,		MATCH_FLT_S,		decode_FCMP,		string_OP_FLT_S,		assemble_GENERIC,	ass_frd,	ass_frs1,	ass_frs2,	0
+	.word MASK_FEQ_S,		MATCH_FEQ_S,		decode_FCMP,		string_OP_FEQ_S,		assemble_GENERIC,	ass_frd,	ass_frs1,	ass_frs2,	0
+	.word MASK_FLE_S,		MATCH_FLE_S,		decode_FCMP,		string_OP_FLE_S,		assemble_GENERIC,	ass_frd,	ass_frs1,	ass_frs2,	0
+	.word MASK_FCLASS_S,	MATCH_FCLASS_S,		decode_FCLASS,		string_OP_FCLASS_S,		assemble_DUMMY,		ass_frd,	0,			0,			0
 	#ifdef ENABLE_RVD
 		.word MASK_FLD,			MATCH_FLD,			decode_FL,		string_OP_FLD,			assemble_DUMMY,	0,			0,			0,			0
 		.word MASK_FSD,			MATCH_FSD,			decode_FS,		string_OP_FSD,			assemble_DUMMY,	0,			0,			0,			0

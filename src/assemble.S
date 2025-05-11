@@ -21,8 +21,18 @@
 .global ass_SUC							# expect iorw sucessor parameter for fence
 .global ass_J							# expect J-type address
 .global ass_U_imm						# expect immediate for U-type (LUI/AUIPC)
-.global ass_aqrl						# expect ".aqrl" extension for RVA
-.global ass_AMEM						# expect (reg) parameter for RVA
+
+#ifdef ENABLE_RVA
+	.global ass_aqrl						# expect ".aqrl" extension for RVA
+	.global ass_AMEM						# expect (reg) parameter for RVA
+#endif /* ENABLE_RVA */
+
+#ifdef ENABLE_RVF
+.global ass_frd							# expect int register name and use it for frd
+.global ass_frs1						# expect int register name and use it for RVF frs1
+.global ass_frs2						# expect int register name and use it for RVFfrs2
+.global ass_frs3						# expect int register name and use it for RVF frs3
+#endif /* ENABLE_RVF */
 
 .text
 
@@ -156,12 +166,14 @@ assemble_DUMMY:
 # in: a3 = ptr to encoding table entry
 # out: assembled instruction in a1
 assemble_GENERIC:
-	addi	sp, sp, -(XLEN_BYTES*5)
+	addi	sp, sp, -(XLEN_BYTES*6)
 	SAVE_X	ra, 0(sp)
 	SAVE_X	s0, (XLEN_BYTES*1)(sp)
 	SAVE_X	s1, (XLEN_BYTES*2)(sp)
 	SAVE_X	s2, (XLEN_BYTES*3)(sp)
 	SAVE_X	s3, (XLEN_BYTES*4)(sp)
+	SAVE_X	s4, (XLEN_BYTES*5)(sp)
+	li		s4,	-4							# process max. 4 arguments
 	mv		s2, a2
 	# assemble instruction word in s1, starting with MATCH value from table
 	#if XLEN >= 64
@@ -189,6 +201,9 @@ assemble_GENERIC_next_argument:
 	jalr 	s0	
 	beqz	a1, assemble_GENERIC_error		# assembling argument failed
 	mv		s1, a1							# save insn word
+	# check if we have processed 4 arguments already
+	addi	s4, s4, 1
+	beqz	s4, assemble_GENERIC_done
 	# get next function ptr
 	addi	s3, s3, 4
 	# get function ptr for argument
@@ -211,74 +226,161 @@ assemble_GENERIC_done:
 	LOAD_X	s1, (XLEN_BYTES*2)(sp)
 	LOAD_X	s1, (XLEN_BYTES*3)(sp)
 	LOAD_X	s3, (XLEN_BYTES*4)(sp)
-	addi	sp, sp, (XLEN_BYTES*5)
+	LOAD_X	s4, (XLEN_BYTES*5)(sp)
+	addi	sp, sp, (XLEN_BYTES*6)
 	ret
 .size assemble_GENERIC, .-assemble_GENERIC
 
-
-# add parameter for sll in s3 and call assemble_int_register
+# facade for assemble_register:
+# - add parameter for sll in s3
+# - add parameter for lookup function in s4
+# - call assemble_register 
 ass_rd:
-	addi	sp, sp, -(XLEN_BYTES*2)
+	addi	sp, sp, -(XLEN_BYTES*3)
 	SAVE_X	ra, 0(sp)
 	SAVE_X	s3, (XLEN_BYTES*1)(sp)
+	SAVE_X	s4, (XLEN_BYTES*2)(sp)
 	li		s3, 7						# number of left shifts for rd
+	la		s4, get_int_register_index_by_name
 	jal		assemble_register
 	LOAD_X	ra, 0(sp)
 	LOAD_X	s3, (XLEN_BYTES*1)(sp)
-	addi	sp, sp, (XLEN_BYTES*2)
+	LOAD_X	s4, (XLEN_BYTES*2)(sp)
+	addi	sp, sp, (XLEN_BYTES*3)
 	ret
 .size ass_rd, .-ass_rd
 
 
-# add parameter for sll in s3 and call assemble_int_register
+# facade for assemble_register:
+# - add parameter for sll in s3
+# - add parameter for lookup function in s4
+# - call assemble_register 
 ass_rs1:
-	addi	sp, sp, -(XLEN_BYTES*2)
+	addi	sp, sp, -(XLEN_BYTES*3)
 	SAVE_X	ra, 0(sp)
 	SAVE_X	s3, (XLEN_BYTES*1)(sp)
+	SAVE_X	s4, (XLEN_BYTES*2)(sp)
 	li		s3, 15						# number of left shifts for rs1
+	la		s4, get_int_register_index_by_name
 	jal		assemble_register
 	LOAD_X	ra, 0(sp)
 	LOAD_X	s3, (XLEN_BYTES*1)(sp)
-	addi	sp, sp, (XLEN_BYTES*2)
+	LOAD_X	s4, (XLEN_BYTES*2)(sp)
+	addi	sp, sp, (XLEN_BYTES*3)
 	ret
 .size ass_rs1, .-ass_rs1
 
 
-# add parameter for sll in s3 and call assemble_int_register
+# facade for assemble_register:
+# - add parameter for sll in s3
+# - add parameter for lookup function in s4
+# - call assemble_register 
 ass_rs2:
-	addi	sp, sp, -(XLEN_BYTES*2)
+	addi	sp, sp, -(XLEN_BYTES*3)
 	SAVE_X	ra, 0(sp)
 	SAVE_X	s3, (XLEN_BYTES*1)(sp)
+	SAVE_X	s4, (XLEN_BYTES*2)(sp)
 	li		s3, 20						# number of left shifts for rs2
+	la		s4, get_int_register_index_by_name
 	jal		assemble_register
 	LOAD_X	ra, 0(sp)
 	LOAD_X	s3, (XLEN_BYTES*1)(sp)
-	addi	sp, sp, (XLEN_BYTES*2)
+	LOAD_X	s4, (XLEN_BYTES*2)(sp)
+	addi	sp, sp, (XLEN_BYTES*3)
 	ret
 .size ass_rs2, .-ass_rs2
 
-
-# add parameter for sll in s3 and call assemble_int_register
-ass_rs3:
-	addi	sp, sp, -(XLEN_BYTES*2)
+#ifdef ENABLE_RVF
+# facade for assemble_register:
+# - add parameter for sll in s3
+# - add parameter for lookup function in s4
+# - call assemble_register 
+ass_frd:
+	addi	sp, sp, -(XLEN_BYTES*3)
 	SAVE_X	ra, 0(sp)
 	SAVE_X	s3, (XLEN_BYTES*1)(sp)
-	li		s3, 27						# number of left shifts for rs3
+	SAVE_X	s4, (XLEN_BYTES*2)(sp)
+	li		s3, 7						# number of left shifts for rd
+	la		s4, get_float_register_index_by_name
 	jal		assemble_register
 	LOAD_X	ra, 0(sp)
 	LOAD_X	s3, (XLEN_BYTES*1)(sp)
-	addi	sp, sp, (XLEN_BYTES*2)
+	LOAD_X	s4, (XLEN_BYTES*2)(sp)
+	addi	sp, sp, (XLEN_BYTES*3)
 	ret
-.size ass_rs2, .-ass_rs2
+.size ass_frd, .-ass_frd
+
+
+# facade for assemble_register:
+# - add parameter for sll in s3
+# - add parameter for lookup function in s4
+# - call assemble_register 
+ass_frs1:
+	addi	sp, sp, -(XLEN_BYTES*3)
+	SAVE_X	ra, 0(sp)
+	SAVE_X	s3, (XLEN_BYTES*1)(sp)
+	SAVE_X	s4, (XLEN_BYTES*2)(sp)
+	li		s3, 15						# number of left shifts for rs1
+	la		s4, get_float_register_index_by_name
+	jal		assemble_register
+	LOAD_X	ra, 0(sp)
+	LOAD_X	s3, (XLEN_BYTES*1)(sp)
+	LOAD_X	s4, (XLEN_BYTES*2)(sp)
+	addi	sp, sp, (XLEN_BYTES*3)
+	ret
+.size ass_frs1, .-ass_frs1
+
+
+# facade for assemble_register:
+# - add parameter for sll in s3
+# - add parameter for lookup function in s4
+# - call assemble_register 
+ass_frs2:
+	addi	sp, sp, -(XLEN_BYTES*3)
+	SAVE_X	ra, 0(sp)
+	SAVE_X	s3, (XLEN_BYTES*1)(sp)
+	SAVE_X	s4, (XLEN_BYTES*2)(sp)
+	li		s3, 20						# number of left shifts for rs2
+	la		s4, get_float_register_index_by_name
+	jal		assemble_register
+	LOAD_X	ra, 0(sp)
+	LOAD_X	s3, (XLEN_BYTES*1)(sp)
+	LOAD_X	s4, (XLEN_BYTES*2)(sp)
+	addi	sp, sp, (XLEN_BYTES*3)
+	ret
+.size ass_frs2, .-ass_frs2
+
+
+# facade for assemble_register:
+# - add parameter for sll in s3
+# - add parameter for lookup function in s4
+# - call assemble_register 
+ass_frs3:
+	addi	sp, sp, -(XLEN_BYTES*3)
+	SAVE_X	ra, 0(sp)
+	SAVE_X	s3, (XLEN_BYTES*1)(sp)
+	SAVE_X	s4, (XLEN_BYTES*2)(sp)
+	li		s3, 27						# number of left shifts for rs3
+	la		s4, get_float_register_index_by_name
+	jal		assemble_register
+	LOAD_X	ra, 0(sp)
+	LOAD_X	s3, (XLEN_BYTES*1)(sp)
+	LOAD_X	s4, (XLEN_BYTES*2)(sp)
+	addi	sp, sp, (XLEN_BYTES*3)
+	ret
+.size ass_frs3, .-ass_frs3
+#endif /* ENABLE_RVF */
 
 
 # We use this for int and float registers, as they are the
-# same bits in insns - only the name is different
+# same bits in insns - only the name is different.
+# This gets called from the ass_r* functions above.
 #
 # in: a0 = ptr to first char
 # in: a1 = insn word to be modifed
 # in: a2 = origin address
 # in: s3 = number of slli shifts required (7 for rd, 15 for rs1, 20 for rs2)
+# in: s4 = register lookup function ptr
 # out: a0 = ptr to char after argument
 # out: a1 = insn word (0 on error)
 assemble_register:
@@ -295,15 +397,10 @@ assemble_register:
 	mv		s2, a0								# save string end
 	mv		a1, a0								# reg name end
 	mv		a0, s0								# reg name start
-	jal		get_int_register_index_by_name		# try if we have an int register name
-	bge		a0, zero, assemble_register_do		# yes, assemble
-	# get registers back first
-	mv		a0, s0
-	mv		a1, s2
-	jal		get_float_register_index_by_name	# try if we have a float register name
-	bge		a0, zero, assemble_register_do		# yes, assemble
-	j		assemble_register_error				# error if neither int nor float register name found
-assemble_register_do:
+	# now look into either int register table or float register table
+	# and get the index of the register back (a0 < 0 on error)
+	jalr	s4
+	bltz	a0, assemble_register_error
 	# register number now in a0
 	# assemble into a1
 	sll		a0, a0, s3
