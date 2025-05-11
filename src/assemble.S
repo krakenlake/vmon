@@ -222,7 +222,7 @@ ass_rd:
 	SAVE_X	ra, 0(sp)
 	SAVE_X	s3, (XLEN_BYTES*1)(sp)
 	li		s3, 7						# number of left shifts for rd
-	jal		assemble_int_register
+	jal		assemble_register
 	LOAD_X	ra, 0(sp)
 	LOAD_X	s3, (XLEN_BYTES*1)(sp)
 	addi	sp, sp, (XLEN_BYTES*2)
@@ -236,7 +236,7 @@ ass_rs1:
 	SAVE_X	ra, 0(sp)
 	SAVE_X	s3, (XLEN_BYTES*1)(sp)
 	li		s3, 15						# number of left shifts for rs1
-	jal		assemble_int_register
+	jal		assemble_register
 	LOAD_X	ra, 0(sp)
 	LOAD_X	s3, (XLEN_BYTES*1)(sp)
 	addi	sp, sp, (XLEN_BYTES*2)
@@ -250,7 +250,7 @@ ass_rs2:
 	SAVE_X	ra, 0(sp)
 	SAVE_X	s3, (XLEN_BYTES*1)(sp)
 	li		s3, 20						# number of left shifts for rs2
-	jal		assemble_int_register
+	jal		assemble_register
 	LOAD_X	ra, 0(sp)
 	LOAD_X	s3, (XLEN_BYTES*1)(sp)
 	addi	sp, sp, (XLEN_BYTES*2)
@@ -264,7 +264,7 @@ ass_rs3:
 	SAVE_X	ra, 0(sp)
 	SAVE_X	s3, (XLEN_BYTES*1)(sp)
 	li		s3, 27						# number of left shifts for rs3
-	jal		assemble_int_register
+	jal		assemble_register
 	LOAD_X	ra, 0(sp)
 	LOAD_X	s3, (XLEN_BYTES*1)(sp)
 	addi	sp, sp, (XLEN_BYTES*2)
@@ -272,13 +272,16 @@ ass_rs3:
 .size ass_rs2, .-ass_rs2
 
 
+# We use this for int and float registers, as they are the
+# same bits in insns - only the name is different
+#
 # in: a0 = ptr to first char
 # in: a1 = insn word to be modifed
 # in: a2 = origin address
 # in: s3 = number of slli shifts required (7 for rd, 15 for rs1, 20 for rs2)
 # out: a0 = ptr to char after argument
 # out: a1 = insn word (0 on error)
-assemble_int_register:
+assemble_register:
 	addi	sp, sp, -(XLEN_BYTES*4)
 	SAVE_X	ra, 0(sp)
 	SAVE_X	s0, (XLEN_BYTES*1)(sp)
@@ -292,16 +295,23 @@ assemble_int_register:
 	mv		s2, a0								# save string end
 	mv		a1, a0								# reg name end
 	mv		a0, s0								# reg name start
-	jal		get_int_register_index_by_name
-	bltz	a0, assemble_int_register_error
+	jal		get_int_register_index_by_name		# try if we have an int register name
+	bge		a0, zero, assemble_register_do		# yes, assemble
+	# get registers back first
+	mv		a0, s0
+	mv		a1, s2
+	jal		get_float_register_index_by_name	# try if we have a float register name
+	bge		a0, zero, assemble_register_do		# yes, assemble
+	j		assemble_register_error				# error if neither int nor float register name found
+assemble_register_do:
 	# register number now in a0
 	# assemble into a1
 	sll		a0, a0, s3
 	or		a1, s1, a0
-	j		assemble_int_register_done
-assemble_int_register_error:
+	j		assemble_register_done
+assemble_register_error:
 	mv		a1, zero
-assemble_int_register_done:
+assemble_register_done:
 	addi	a0, s2, 1							# return reg name end +1
 	LOAD_X	ra, 0(sp)
 	LOAD_X	s0, (XLEN_BYTES*1)(sp)
@@ -309,7 +319,7 @@ assemble_int_register_done:
 	LOAD_X	s2, (XLEN_BYTES*3)(sp)
 	addi	sp, sp, (XLEN_BYTES*4)
 	ret
-.size assemble_int_register, .-assemble_int_register
+.size assemble_register, .-assemble_register
 
 
 # in: a0 = ptr to first char of argument
