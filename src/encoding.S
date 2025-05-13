@@ -24,6 +24,8 @@
 
 # encoding helper functions
 .global insn_is_compressed
+.global insn_is_LOAD
+.global insn_is_STORE
 
 .global string_OP_UNKNOWN
 # necessary for c.add/c.jalr/c.ebreak adjustment
@@ -49,12 +51,12 @@ insn_is_compressed_yes:
 .size insn_is_compressed, .-insn_is_compressed
 
 
-# in: a0 = insn word
-# out: a1 = 0 if not, nonzero if yes
+# in: a3 = insn word
+# out: a4 = 0 if not, nonzero if yes
 insn_is_LOAD:
-	mv		a1, zero
+	mv		a4, zero
 	li		t1, 0x707f			# MASK for load insns
-	and 	t0, a0, t1			# look at insn opcode bits
+	and 	t0, a3, t1			# look at insn opcode bits
 	# int
 	li		t1, MATCH_LB
 	beq		t0, t1, insn_is_LOAD_YES
@@ -78,19 +80,20 @@ insn_is_LOAD:
 	beq		t0, t1, insn_is_LOAD_YES
 	li		t1, MATCH_FLQ
 	beq		t0, t1, insn_is_LOAD_YES
+	j		insn_is_LOAD_NO
 #endif /* ENABLE_RVF */
 insn_is_LOAD_YES:
-	li		a1, 1
+	li		a4, 1
 insn_is_LOAD_NO:
 	ret
 
 
-# in: a0 = insn word
-# out: a1 = 0 if not, nonzero if yes
+# in: a3 = insn word
+# out: a4 = 0 if not, nonzero if yes
 insn_is_STORE:
-	mv		a1, zero
+	mv		a4, zero
 	li		t1, 0x707f			# MASK for store insns
-	and 	t0, a0, t1			# look at insn opcode bits
+	and 	t0, a3, t1			# look at insn opcode bits
 	# int
 	li		t1, MATCH_SB
 	beq		t0, t1, insn_is_STORE_YES
@@ -108,9 +111,10 @@ insn_is_STORE:
 	beq		t0, t1, insn_is_STORE_YES
 	li		t1, MATCH_FSQ
 	beq		t0, t1, insn_is_STORE_YES
+	j		insn_is_STORE_NO
 #endif /* ENABLE_RVF */
 insn_is_STORE_YES:
-	li		a1, 1
+	li		a4, 1
 insn_is_STORE_NO:
 	ret
 

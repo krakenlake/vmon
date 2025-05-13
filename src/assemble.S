@@ -1,7 +1,6 @@
 #include "vmon/config.h"
 #include "vmon/ASCII.h"
 #include "vmon/encoding.h"
-#include "riscv/riscv-opc.h"
 
 
 #ifdef WITH_CMD_A
@@ -556,54 +555,12 @@ ass_MEM:
 	jal		parse_decimal
 	bnez	a2, ass_MEM_error
 	mv		s2, a0						# return string ptr later
-
-	# TODO this is ugly and needs to go somewhere else
-	# TODO can this be done simpler?
-	# check if we have LOAD (opc=0b0000011) or STORE (opc=0b0100011)
-	li		t1, 0x707f			# MASK for load/store insns
-	and 	t0, s1, t1			# look at insn opcode bits
-	# load int
-	li		t1, MATCH_LB
-	beq		t0, t1, ass_MEM_load
-	li		t1, MATCH_LH
-	beq		t0, t1, ass_MEM_load
-	li		t1, MATCH_LW
-	beq		t0, t1, ass_MEM_load
-	li		t1, MATCH_LD
-	beq		t0, t1, ass_MEM_load
-	li		t1, MATCH_LBU
-	beq		t0, t1, ass_MEM_load
-	li		t1, MATCH_LHU
-	beq		t0, t1, ass_MEM_load
-	li		t1, MATCH_LWU
-	beq		t0, t1, ass_MEM_load
-	# store int
-	li		t1, MATCH_SB
-	beq		t0, t1, ass_MEM_store
-	li		t1, MATCH_SH
-	beq		t0, t1, ass_MEM_store
-	li		t1, MATCH_SW
-	beq		t0, t1, ass_MEM_store
-	li		t1, MATCH_SD
-	beq		t0, t1, ass_MEM_store
-
-#ifdef ENABLE_RVF
-	# load float
-	li		t1, MATCH_FLW
-	beq		t0, t1, ass_MEM_load
-	li		t1, MATCH_FLD
-	beq		t0, t1, ass_MEM_load
-	li		t1, MATCH_FLQ
-	beq		t0, t1, ass_MEM_load
-	# store float
-	li		t1, MATCH_FSW
-	beq		t0, t1, ass_MEM_store
-	li		t1, MATCH_FSD
-	beq		t0, t1, ass_MEM_store
-	li		t1, MATCH_FSQ
-	beq		t0, t1, ass_MEM_store
-#endif /* ENABLE_RVF */
-
+	# check if we deal with load or store
+	mv		a3, s1
+	jal		insn_is_LOAD
+	bnez	a4, ass_MEM_load
+	jal		insn_is_STORE
+	bnez	a4, ass_MEM_store
 	j		ass_MEM_rs1
 ass_MEM_store:
 	# add S-type imm value to instruction word
