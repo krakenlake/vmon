@@ -46,7 +46,9 @@ cmd_slash_display:
 	la		a0, string_info_hex
 	jal		print_string
 	mv		a0, s0
-	jal		print_hex
+	li		a1, XLEN_BYTES
+	li		a2, 1
+	call	print_hex_fixed_width
 	la		a0, string_info_dec
 	jal		print_string
 	mv		a0, s0
