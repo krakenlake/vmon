@@ -41,7 +41,7 @@ communication written in RISC-V assembly language.
 VMON understands the following commands:  
 
 **a <start_addr>**
-assembly input (ENTER to stop) [WIP - not fully working yet]
+RV64G assembly input (ENTER to stop) [alpha testing]
 
 **c <src_start> <src_end> <dst_addr>**
 copy memory contents
