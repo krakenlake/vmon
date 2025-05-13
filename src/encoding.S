@@ -86,6 +86,7 @@ insn_is_LOAD_YES:
 	li		a4, 1
 insn_is_LOAD_NO:
 	ret
+.size insn_is_LOAD, .-insn_is_LOAD
 
 
 # in: a3 = insn word
@@ -117,6 +118,7 @@ insn_is_STORE_YES:
 	li		a4, 1
 insn_is_STORE_NO:
 	ret
+.size insn_is_STORE, .-insn_is_STORE
 
 
 # in: s0 = ptr to search string start
