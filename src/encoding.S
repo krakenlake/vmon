@@ -641,30 +641,30 @@ encoding_table:
 # RVA
 #ifdef ENABLE_RVA
 	# RV32A
-	.word MASK_LR_W,		MATCH_LR_W,			decode_LRSC,	string_OP_LRW, 		assemble_GENERIC,	ass_aqrl,	ass_rd,		ass_AMEM,	0
-	.word MASK_SC_W,		MATCH_SC_W,			decode_LRSC,	string_OP_SCW,		assemble_GENERIC,	ass_aqrl,	ass_rd,		ass_rs2,	ass_AMEM
-	.word MASK_AMOSWAP_W,	MATCH_AMOSWAP_W,	decode_AMO,		string_OP_AMOSWAPW,	assemble_GENERIC,	ass_aqrl,	ass_rd,		ass_rs2,	ass_AMEM
-	.word MASK_AMOADD_W,	MATCH_AMOADD_W,		decode_AMO,		string_OP_AMOADDW,	assemble_GENERIC,	ass_aqrl,	ass_rd,		ass_rs2,	ass_AMEM
-	.word MASK_AMOAND_W,	MATCH_AMOAND_W,		decode_AMO,		string_OP_AMOANDW,	assemble_GENERIC,	ass_aqrl,	ass_rd,		ass_rs2,	ass_AMEM
-	.word MASK_AMOOR_W,		MATCH_AMOOR_W,		decode_AMO,		string_OP_AMOORW,	assemble_GENERIC,	ass_aqrl,	ass_rd,		ass_rs2,	ass_AMEM
-	.word MASK_AMOXOR_W,	MATCH_AMOXOR_W,		decode_AMO,		string_OP_AMOXORW,	assemble_GENERIC,	ass_aqrl,	ass_rd,		ass_rs2,	ass_AMEM
-	.word MASK_AMOMAX_W,	MATCH_AMOMAX_W,		decode_AMO,		string_OP_AMOMAXW,	assemble_GENERIC,	ass_aqrl,	ass_rd,		ass_rs2,	ass_AMEM
-	.word MASK_AMOMIN_W,	MATCH_AMOMIN_W,		decode_AMO,		string_OP_AMOMINW,	assemble_GENERIC,	ass_aqrl,	ass_rd,		ass_rs2,	ass_AMEM
-	.word MASK_AMOMAXU_W,	MATCH_AMOMAXU_W,	decode_AMO,		string_OP_AMOMAXUW,	assemble_GENERIC,	ass_aqrl,	ass_rd,		ass_rs2,	ass_AMEM
-	.word MASK_AMOMINU_W,	MATCH_AMOMINU_W,	decode_AMO,		string_OP_AMOMINUW,	assemble_GENERIC,	ass_aqrl,	ass_rd,		ass_rs2,	ass_AMEM
+	.word MASK_LR_W,		MATCH_LR_W,			decode_LRSC,	string_OP_LRW, 		assemble_GENERIC,	ass_rd,	ass_AMEM,	0,			0
+	.word MASK_SC_W,		MATCH_SC_W,			decode_LRSC,	string_OP_SCW,		assemble_GENERIC,	ass_rd,	ass_rs2, 	ass_AMEM,	0
+	.word MASK_AMOSWAP_W,	MATCH_AMOSWAP_W,	decode_AMO,		string_OP_AMOSWAPW,	assemble_GENERIC,	ass_rd,	ass_rs2, 	ass_AMEM,	0
+	.word MASK_AMOADD_W,	MATCH_AMOADD_W,		decode_AMO,		string_OP_AMOADDW,	assemble_GENERIC,	ass_rd,	ass_rs2, 	ass_AMEM,	0
+	.word MASK_AMOAND_W,	MATCH_AMOAND_W,		decode_AMO,		string_OP_AMOANDW,	assemble_GENERIC,	ass_rd,	ass_rs2, 	ass_AMEM,	0
+	.word MASK_AMOOR_W,		MATCH_AMOOR_W,		decode_AMO,		string_OP_AMOORW,	assemble_GENERIC,	ass_rd,	ass_rs2, 	ass_AMEM,	0
+	.word MASK_AMOXOR_W,	MATCH_AMOXOR_W,		decode_AMO,		string_OP_AMOXORW,	assemble_GENERIC,	ass_rd,	ass_rs2, 	ass_AMEM,	0
+	.word MASK_AMOMAX_W,	MATCH_AMOMAX_W,		decode_AMO,		string_OP_AMOMAXW,	assemble_GENERIC,	ass_rd,	ass_rs2, 	ass_AMEM,	0
+	.word MASK_AMOMIN_W,	MATCH_AMOMIN_W,		decode_AMO,		string_OP_AMOMINW,	assemble_GENERIC,	ass_rd,	ass_rs2, 	ass_AMEM,	0
+	.word MASK_AMOMAXU_W,	MATCH_AMOMAXU_W,	decode_AMO,		string_OP_AMOMAXUW,	assemble_GENERIC,	ass_rd,	ass_rs2, 	ass_AMEM,	0
+	.word MASK_AMOMINU_W,	MATCH_AMOMINU_W,	decode_AMO,		string_OP_AMOMINUW,	assemble_GENERIC,	ass_rd,	ass_rs2, 	ass_AMEM,	0
 		# RV64A
 	#if XLEN >= 64
-		.word MASK_LR_D, 		MATCH_LR_D,			decode_LRSC,	string_OP_LRD,		assemble_GENERIC,	ass_aqrl,	ass_rd,		ass_AMEM,	0
-		.word MASK_SC_D, 		MATCH_SC_D, 		decode_LRSC,	string_OP_SCD,		assemble_GENERIC,	ass_aqrl,	ass_rd,		ass_rs2,	ass_AMEM
-		.word MASK_AMOSWAP_D,	MATCH_AMOSWAP_D,	decode_AMO,		string_OP_AMOSWAPD,	assemble_GENERIC,	ass_aqrl,	ass_rd,		ass_rs2,	ass_AMEM
-		.word MASK_AMOADD_D,	MATCH_AMOADD_D,		decode_AMO,		string_OP_AMOADDD,	assemble_GENERIC,	ass_aqrl,	ass_rd,		ass_rs2,	ass_AMEM
-		.word MASK_AMOAND_D,	MATCH_AMOAND_D,		decode_AMO,		string_OP_AMOANDD,	assemble_GENERIC,	ass_aqrl,	ass_rd,		ass_rs2,	ass_AMEM
-		.word MASK_AMOOR_D,		MATCH_AMOOR_D,		decode_AMO,		string_OP_AMOORD,	assemble_GENERIC,	ass_aqrl,	ass_rd,		ass_rs2,	ass_AMEM
-		.word MASK_AMOXOR_D,	MATCH_AMOXOR_D,		decode_AMO,		string_OP_AMOXORD,	assemble_GENERIC,	ass_aqrl,	ass_rd,		ass_rs2,	ass_AMEM
-		.word MASK_AMOMAX_D,	MATCH_AMOMAX_D,		decode_AMO,		string_OP_AMOMAXD,	assemble_GENERIC,	ass_aqrl,	ass_rd,		ass_rs2,	ass_AMEM
-		.word MASK_AMOMIN_D,	MATCH_AMOMIN_D,		decode_AMO,		string_OP_AMOMIND,	assemble_GENERIC,	ass_aqrl,	ass_rd,		ass_rs2,	ass_AMEM
-		.word MASK_AMOMAXU_D,	MATCH_AMOMAXU_D,	decode_AMO,		string_OP_AMOMAXUD,	assemble_GENERIC,	ass_aqrl,	ass_rd,		ass_rs2,	ass_AMEM
-		.word MASK_AMOMINU_D,	MATCH_AMOMINU_D,	decode_AMO,		string_OP_AMOMINUD,	assemble_GENERIC,	ass_aqrl,	ass_rd,		ass_rs2,	ass_AMEM
+		.word MASK_LR_D, 		MATCH_LR_D,			decode_LRSC,	string_OP_LRD,		assemble_GENERIC,	ass_rd,	ass_AMEM,	0,			0
+		.word MASK_SC_D, 		MATCH_SC_D, 		decode_LRSC,	string_OP_SCD,		assemble_GENERIC,	ass_rd,	ass_rs2, 	ass_AMEM,	0
+		.word MASK_AMOSWAP_D,	MATCH_AMOSWAP_D,	decode_AMO,		string_OP_AMOSWAPD,	assemble_GENERIC,	ass_rd,	ass_rs2, 	ass_AMEM,	0
+		.word MASK_AMOADD_D,	MATCH_AMOADD_D,		decode_AMO,		string_OP_AMOADDD,	assemble_GENERIC,	ass_rd,	ass_rs2, 	ass_AMEM,	0
+		.word MASK_AMOAND_D,	MATCH_AMOAND_D,		decode_AMO,		string_OP_AMOANDD,	assemble_GENERIC,	ass_rd,	ass_rs2, 	ass_AMEM,	0
+		.word MASK_AMOOR_D,		MATCH_AMOOR_D,		decode_AMO,		string_OP_AMOORD,	assemble_GENERIC,	ass_rd,	ass_rs2, 	ass_AMEM,	0
+		.word MASK_AMOXOR_D,	MATCH_AMOXOR_D,		decode_AMO,		string_OP_AMOXORD,	assemble_GENERIC,	ass_rd,	ass_rs2, 	ass_AMEM,	0
+		.word MASK_AMOMAX_D,	MATCH_AMOMAX_D,		decode_AMO,		string_OP_AMOMAXD,	assemble_GENERIC,	ass_rd,	ass_rs2, 	ass_AMEM,	0
+		.word MASK_AMOMIN_D,	MATCH_AMOMIN_D,		decode_AMO,		string_OP_AMOMIND,	assemble_GENERIC,	ass_rd,	ass_rs2, 	ass_AMEM,	0
+		.word MASK_AMOMAXU_D,	MATCH_AMOMAXU_D,	decode_AMO,		string_OP_AMOMAXUD,	assemble_GENERIC,	ass_rd,	ass_rs2, 	ass_AMEM,	0
+		.word MASK_AMOMINU_D,	MATCH_AMOMINU_D,	decode_AMO,		string_OP_AMOMINUD,	assemble_GENERIC,	ass_rd,	ass_rs2, 	ass_AMEM,	0
 	#endif
 #endif /* ENABLE_RVA */
 

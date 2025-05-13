@@ -160,7 +160,6 @@ print_string:
 
 
 #if defined(WITH_CMD_D) || defined(WITH_CMD_SLASH)
-
 # print 32/64-bit signed decimal in a0 to terminal
 print_decimal:
 	addi	sp, sp, -(XLEN_BYTES*2)

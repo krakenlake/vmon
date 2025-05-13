@@ -42,20 +42,43 @@
 # out: a0 = insn size (normal 4, 2 for RVC, 0 if error)
 # out: a1 = assembled instruction to be written into memory
 assemble_instruction:
-	addi	sp, sp, -(XLEN_BYTES*4)
+	addi	sp, sp, -(XLEN_BYTES*5)
 	SAVE_X	ra, 0(sp)
 	SAVE_X	s0, (XLEN_BYTES*1)(sp)
 	SAVE_X	s1, (XLEN_BYTES*2)(sp)
 	SAVE_X	s2, (XLEN_BYTES*3)(sp)
+	SAVE_X	s3, (XLEN_BYTES*4)(sp)
+	mv		s3, zero							# clear RVA aqrl bits
 	jal		skip_whitespace
-	mv		s0, a0
-	jal		find_insn_name_end
+	mv		s0, a0								# insn string start
+	jal		parse_insn_string
+	mv		s1, a0								# insn string end
+
+#ifdef ENABLE_RVA
+	mv		s2, a1								# ptr to second '.' in string (if present)
+	beqz	a1, assemble_instruction_not_aqrl
+	# RVA insns may end with ".aq", ".rl", or ".aqrl".
+	# Those insns are stored in the encoding table without these extensions.
+	# So if one of these extensions is present
+	# - assemble the aq/rl bits
+	# - set up s1 so that only the part without extension will be used for lookup later
+	addi	a0, s2, 1							# advance to char after second dot
+	jal		parse_aqrl
+	mv		s3, a1
+	# set s1 so that the string between s0 and s1 is that part
+	# of the insn that does not contain the ".aqrl" extension
+	mv		a0, s1
+	jal		skip_whitespace
 	mv		s1, a0
+assemble_instruction_not_aqrl:
+#endif /* ENABLE_RVA */
+
 	# find string between s0 and s1 in encoding table
 	jal		get_data_by_insn_name
 	# function ptr now in a0
 	# MATCH value now in a1
 	# table entry ptr in a3
+	or		a1, a1, s3							# add RVA aqrl bits if there were any
 	mv		s2, a0								# save function ptr in s2
 	beqz	s2, assemble_instruction_done		# not found
 	mv		a0, s1
@@ -84,7 +107,8 @@ assemble_instruction_done:
 	LOAD_X	s0, (XLEN_BYTES*1)(sp)
 	LOAD_X	s1, (XLEN_BYTES*2)(sp)
 	LOAD_X	s2, (XLEN_BYTES*3)(sp)
-	addi	sp, sp, (XLEN_BYTES*4)
+	LOAD_X	s3, (XLEN_BYTES*4)(sp)
+	addi	sp, sp, (XLEN_BYTES*5)
 	ret
 .size assemble_instruction, .-assemble_instruction
 
@@ -126,6 +150,7 @@ assemble_branch_target_error:
 assemble_branch_target_done:
 	ret
 .size assemble_branch_target, .-assemble_branch_target
+
 
 # in: a0 = imm value
 # in: a1 = instruction word
@@ -213,7 +238,6 @@ assemble_GENERIC_next_argument:
 		lw		s0, 0(s3)
 	#endif
 	beqz	s0, assemble_GENERIC_done
-	# expect commma
 	jal		skip_whitespace
 	jal		consume_comma
 	beqz 	a0, assemble_GENERIC_error
@@ -230,6 +254,7 @@ assemble_GENERIC_done:
 	addi	sp, sp, (XLEN_BYTES*6)
 	ret
 .size assemble_GENERIC, .-assemble_GENERIC
+
 
 # facade for assemble_register:
 # - add parameter for sll in s3
@@ -290,6 +315,7 @@ ass_rs2:
 	ret
 .size ass_rs2, .-ass_rs2
 
+
 #ifdef ENABLE_RVF
 # facade for assemble_register:
 # - add parameter for sll in s3
@@ -309,8 +335,10 @@ ass_frd:
 	addi	sp, sp, (XLEN_BYTES*3)
 	ret
 .size ass_frd, .-ass_frd
+#endif /* ENABLE_RVF */
 
 
+#ifdef ENABLE_RVF
 # facade for assemble_register:
 # - add parameter for sll in s3
 # - add parameter for lookup function in s4
@@ -329,8 +357,10 @@ ass_frs1:
 	addi	sp, sp, (XLEN_BYTES*3)
 	ret
 .size ass_frs1, .-ass_frs1
+#endif /* ENABLE_RVF */
 
 
+#ifdef ENABLE_RVF
 # facade for assemble_register:
 # - add parameter for sll in s3
 # - add parameter for lookup function in s4
@@ -349,8 +379,10 @@ ass_frs2:
 	addi	sp, sp, (XLEN_BYTES*3)
 	ret
 .size ass_frs2, .-ass_frs2
+#endif /* ENABLE_RVF */
 
 
+#ifdef ENABLE_RVF
 # facade for assemble_register:
 # - add parameter for sll in s3
 # - add parameter for lookup function in s4
@@ -712,6 +744,7 @@ ass_U_imm_done:
 .size ass_U_imm, .-ass_U_imm
 
 
+#ifdef ENABLE_RVA
 # in: a0 = ptr to first char of argument
 # in: a1 = insn word to be modifed
 # in: a2 = origin address
@@ -738,8 +771,11 @@ ass_aqrl_done:
 	LOAD_X	s2, (XLEN_BYTES*2)(sp)
 	addi	sp, sp, (XLEN_BYTES*3)
 	ret
+.size ass_aqrl, .-ass_aqrl
+#endif /* ENABLE_RVA */
 
 
+#ifdef ENABLE_RVA
 # in: a0 = ptr to first char of argument
 # in: a1 = insn word to be modifed
 # in: a2 = origin address
@@ -751,14 +787,36 @@ ass_AMEM:
 	SAVE_X	s1, (XLEN_BYTES*1)(sp)
 	SAVE_X	s2, (XLEN_BYTES*2)(sp)
 	mv		s1, a1						# save insn word
-
-	# parse (reg)
-
+	mv		s2, a0						# return string ptr later
+	# expect (
+	jal		skip_whitespace
+	jal		consume_open_paren
+	beqz	a0, ass_AMEM_error
+	jal		skip_whitespace
+	# process rs1
+	mv		a1, s1
+	jal		ass_rs1
+	beqz	a1, ass_AMEM_error
+	mv 		s1, a1
+	# expect )
+	jal		skip_whitespace
+	jal		consume_close_paren
+	beqz	a0, ass_AMEM_error
+	# assemble in a1
+	mv		a1, s1
+ass_AMEM_continue:
+	addi	a0, s2, 1					# string ptr +1
+	j		ass_AMEM_done
+ass_AMEM_error:
+	mv		a1, zero
+ass_AMEM_done:
 	LOAD_X	ra, 0(sp)
 	LOAD_X	s1, (XLEN_BYTES*1)(sp)
 	LOAD_X	s2, (XLEN_BYTES*2)(sp)
 	addi	sp, sp, (XLEN_BYTES*3)
 	ret
+.size ass_AMEM, .-ass_AMEM
+#endif /* ENABLE_RVA */
 
 
 #endif /* WITH_CMD_A */

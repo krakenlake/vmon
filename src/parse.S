@@ -7,7 +7,7 @@
 .global consume_open_paren
 .global consume_close_paren
 .global get_hex_addr
-.global find_insn_name_end
+.global parse_insn_string
 .global find_register_name_end
 .global is_ascii
 .global parse_binary
@@ -65,31 +65,34 @@ consume_close_paren:
 
 
 # in: buffer ptr in a0
-# out: ptr to end of word in a0
-find_insn_name_end:
-	li		t1, '.'
+# out: a0 = ptr to end of parsed insn word
+# out: a1 = ptr to second '.' if present (otherwise 0)
+parse_insn_string:
+	mv		a1, zero					# clear second dot ptr 
+	li		t1, '.'						# pre-load relevant chars to compare
 	li		t2, 'a'
 	li		t3, 'z'
-	li		t4, -2						# count dots here for RVA insns
-find_insn_name_loop:
+	li		t4, 2						# count dots here for RVA insns
+parse_insn_string_loop:
 	lb		t0, 0(a0)
 	# accept '.'
-	bne		t0, t1, find_insn_name_end_no_dot
+	bne		t0, t1, parse_insn_string_no_dot
 	# we have a dot
-	addi	t4, t4, 1
-	bnez	t4, find_insn_name_end_valid_char
-	# end here if we found the second dot
-	j 		find_insn_name_end_done
-find_insn_name_end_no_dot:
+	addi	t4, t4, -1
+	bnez	t4, parse_insn_string_valid_char
+	# second dot is present
+	mv		a1, a0
+	j 		parse_insn_string_valid_char
+parse_insn_string_no_dot:
 	# accept a-z
-	blt		t0, t2, find_insn_name_end_done
-	bgt		t0, t3, find_insn_name_end_done
-find_insn_name_end_valid_char:
+	blt		t0, t2, parse_insn_string_done
+	bgt		t0, t3, parse_insn_string_done
+parse_insn_string_valid_char:
 	addi	a0, a0, 1
-	j		find_insn_name_loop
-find_insn_name_end_done:
+	j		parse_insn_string_loop
+parse_insn_string_done:
 	ret
-.size find_insn_name_end, .-find_insn_name_end
+.size parse_insn_string, .-parse_insn_string
 
 
 # in: buffer ptr in a0
@@ -111,7 +114,7 @@ find_register_name_end_valid_char:
 find_register_name_end_done:
 	addi	a0, a0, -1
 	ret
-.size find_insn_name_end, .-find_insn_name_end
+.size find_register_name_end, .-find_register_name_end
 
 
 # in: buffer ptr in a0
@@ -299,35 +302,35 @@ parse_iorw_done:
 # out: aqrl bits in bits 25-26 of a1
 # out: error code in a2 (OK=0)
 parse_aqrl:
-	mv		a1, zero					# clear return value
-	mv		a2, zero					# clear error
+	mv		a1, zero						# clear assembly bits return value
+	mv		a2, zero						# clear error
 	li		t2, 'a'
 	li		t3, 'q'
 	li		t4, 'r'
 	li		t5, 'l'
 	li		t6, 1
 parse_aqrl_loop:
-	lb		t0, 0(a0)					# get next input char
-	addi	a0, a0, 1					# advance one char
+	lb		t0, 0(a0)						# get next input char
+	addi	a0, a0, 1						# advance one char
 	# accept "aq" or "rl" and set bits in a1 accordingly
 	beq		t0, t2, parse_aqrl_need_q
 	beq		t0, t4, parse_aqrl_need_r
 	# when we encounter anything other than 'a' or 'r' we are done
 	j		parse_aqrl_done
 parse_aqrl_need_q:
-	lb		t0, 0(a0)					# get char after current
-	beq		t0, t3, parse_aqrl_add_aq	# we have aq
+	lb		t0, 0(a0)						# get char after current
+	beq		t0, t3, parse_aqrl_add_aq_bit	# we have aq
 	j		parse_aqrl_done
-parse_aqrl_add_aq:
+parse_aqrl_add_aq_bit:
 	slli	t0, t6, 1
 	or		a1, a1, t0
 	addi	a0, a0, 1
 	j		parse_aqrl_loop
 parse_aqrl_need_r:
-	lb		t0, 0(a0)					# get char after current
-	beq		t0, t5, parse_aqrl_add_rl	# we have rl
+	lb		t0, 0(a0)						# get char after current
+	beq		t0, t5, parse_aqrl_add_rl_bit	# we have rl
 	j		parse_aqrl_done
-parse_aqrl_add_rl:
+parse_aqrl_add_rl_bit:
 	or		a1, a1, t6
 	addi	a0, a0, 1
 	j		parse_aqrl_loop
