@@ -26,6 +26,7 @@ cmd_D_from_last:
 cmd_D_add_default:
 	# no end addr? use default 
 	addi	s7, s5, DEFAULT_D_LINES*4-1			 
+	li		s8, DEFAULT_D_LINES			# count lines as well (due to RVC)
 	# start addr now in s5, end addr now in s7
 cmd_D_next_instruction:
 	# print memory address
@@ -78,10 +79,13 @@ cmd_D_advance:
 	mv		a0, s6						# get instruction word again
 	addi	s5, s5, 2					# advance 2 bytes in any case
 	jal		insn_is_compressed
-	bnez	a0, cmd_D_advance_done
+	bnez	a0, cmd_D_check_end
 	addi	s5, s5, 2					# add 2 more bytes if not compressed
-cmd_D_advance_done:
+cmd_D_check_end:
 	bgt		s5, s7, cmd_D_done			# check if end address reached
+	addi	s8, s8, -1
+	beqz	s8, cmd_D_done				# check if default number of lines reached
+cmd_D_check_end_no:
 	jal		print_newline
 	j		cmd_D_next_instruction
 cmd_D_done:
