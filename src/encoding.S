@@ -49,6 +49,72 @@ insn_is_compressed_yes:
 .size insn_is_compressed, .-insn_is_compressed
 
 
+# in: a0 = insn word
+# out: a1 = 0 if not, nonzero if yes
+insn_is_LOAD:
+	mv		a1, zero
+	li		t1, 0x707f			# MASK for load insns
+	and 	t0, a0, t1			# look at insn opcode bits
+	# int
+	li		t1, MATCH_LB
+	beq		t0, t1, insn_is_LOAD_YES
+	li		t1, MATCH_LH
+	beq		t0, t1, insn_is_LOAD_YES
+	li		t1, MATCH_LW
+	beq		t0, t1, insn_is_LOAD_YES
+	li		t1, MATCH_LD
+	beq		t0, t1, insn_is_LOAD_YES
+	li		t1, MATCH_LBU
+	beq		t0, t1, insn_is_LOAD_YES
+	li		t1, MATCH_LHU
+	beq		t0, t1, insn_is_LOAD_YES
+	li		t1, MATCH_LWU
+	beq		t0, t1, insn_is_LOAD_YES
+#ifdef ENABLE_RVF
+	# float
+	li		t1, MATCH_FLW
+	beq		t0, t1, insn_is_LOAD_YES
+	li		t1, MATCH_FLD
+	beq		t0, t1, insn_is_LOAD_YES
+	li		t1, MATCH_FLQ
+	beq		t0, t1, insn_is_LOAD_YES
+#endif /* ENABLE_RVF */
+insn_is_LOAD_YES:
+	li		a1, 1
+insn_is_LOAD_NO:
+	ret
+
+
+# in: a0 = insn word
+# out: a1 = 0 if not, nonzero if yes
+insn_is_STORE:
+	mv		a1, zero
+	li		t1, 0x707f			# MASK for store insns
+	and 	t0, a0, t1			# look at insn opcode bits
+	# int
+	li		t1, MATCH_SB
+	beq		t0, t1, insn_is_STORE_YES
+	li		t1, MATCH_SH
+	beq		t0, t1, insn_is_STORE_YES
+	li		t1, MATCH_SW
+	beq		t0, t1, insn_is_STORE_YES
+	li		t1, MATCH_SD
+	beq		t0, t1, insn_is_STORE_YES
+#ifdef ENABLE_RVF
+	# float
+	li		t1, MATCH_FSW
+	beq		t0, t1, insn_is_STORE_YES
+	li		t1, MATCH_FSD
+	beq		t0, t1, insn_is_STORE_YES
+	li		t1, MATCH_FSQ
+	beq		t0, t1, insn_is_STORE_YES
+#endif /* ENABLE_RVF */
+insn_is_STORE_YES:
+	li		a1, 1
+insn_is_STORE_NO:
+	ret
+
+
 # in: s0 = ptr to search string start
 # in: s1 = ptr to last char of search string
 # out: a0 = ptr to assemble function (0 if string was not found)
