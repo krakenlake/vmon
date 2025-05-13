@@ -49,10 +49,10 @@
 #define WITH_TESTCODE_RVF
 #define WITH_TESTCODE_RVD
 #define WITH_TESTCODE_RVQ
-#define WITH_TESTCODE_RVC
+//#define WITH_TESTCODE_RVC
 //#define WITH_TESTCODE_RVB
 //#define WITH_TESTCODE_RVP
-#define WITH_TESTCODE_RVV
+//#define WITH_TESTCODE_RVV
 //#define WITH_TESTCODE_RVH
 #define WITH_TESTCODE_RVZicsr
 #define WITH_TESTCODE_RVZifencei
@@ -66,7 +66,7 @@
 #define ENABLE_RVF
 #define ENABLE_RVD
 #define ENABLE_RVQ
-#define ENABLE_RVC
+//#define ENABLE_RVC
 //#define ENABLE_RVB
 //#define ENABLE_RVP
 //#define ENABLE_RVV
