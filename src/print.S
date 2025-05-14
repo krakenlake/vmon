@@ -299,8 +299,12 @@ print_saved_registers_skip_newline:
 	jal		print_string				# register name
 	li		a0, '='
 	jal		print_char
+	li		a0, '\t'
+	jal		print_char
 	LOAD_X	a0, 0(s0)					# saved value
-	jal		print_hex
+	li		a1, XLEN_BYTES
+	li		a2, 1
+	jal		print_hex_fixed_width
 	li		a0, '\t'
 	jal		print_char
 	addi	s0, s0, XLEN_BYTES			# next register
