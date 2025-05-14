@@ -27,6 +27,7 @@
 .global insn_is_LOAD
 .global insn_is_STORE
 
+
 .global string_OP_UNKNOWN
 # necessary for c.add/c.jalr/c.ebreak adjustment
 .global string_OP_C_ADD
