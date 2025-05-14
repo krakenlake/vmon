@@ -53,7 +53,8 @@ print_newline:
 .size print_newline, .-print_newline
 
 
-# in: print value in a0 in hex with "0x" prefix
+# print hex value with "0x" prefix
+# in: a0 = value to print
 print_hex:
 	addi	sp, sp, -(XLEN_BYTES*2)
 	SAVE_X	ra, 0(sp)
@@ -74,8 +75,8 @@ print_hex:
 .size print_hex, .-print_hex
 
 
-# in: print value in a0 in hex
-# no trailing zeroes, no prefix
+# print hex value (no trailing zeroes, no prefix)
+# in: a0 = value to print
 print_hex_raw:
 	addi	sp, sp, -(XLEN_BYTES*1)
 	SAVE_X	ra, 0(sp)
@@ -127,11 +128,11 @@ print_hex_byte_two_digits:
 	ret
 .size print_hex_byte, .-print_hex_byte
 
-# Print a hex value with a fixed number of bytes
-# a0 value to print
-# a1 width (in bytes) to print	
-# a2 a2=0, no leading 0x, otherwise 0x
 
+# Print a hex value with a fixed number of bytes
+# in: a0 = value to print
+# in: a1 = width (in bytes) to print	
+# in: a2 = print 0x prefix? (0=no, otherwise yes)
 print_hex_fixed_width:
 	addi	sp, sp, -(XLEN_BYTES*3)
 	SAVE_X	ra, 0(sp)
@@ -139,13 +140,11 @@ print_hex_fixed_width:
 	SAVE_X	s1, (XLEN_BYTES*2)(sp)
 	mv		s0, a0
 	mv		s1, a1
-
 	beqz	a2, print_hex_fixed_width_loop
 	li		a0, '0'
 	call	print_char
 	li		a0, 'x'
 	call	print_char
-
 print_hex_fixed_width_loop:	
 	addi	s1, s1, -1
 	slli	t0, s1, 3		# t0 = a1 * 3
@@ -153,7 +152,6 @@ print_hex_fixed_width_loop:
 	and		a0, a0, 0xff 	# mask low order byte and print
 	call	print_hex_byte
 	bnez	s1, print_hex_fixed_width_loop
-
 	LOAD_X	ra, 0(sp)
 	LOAD_X	s0, (XLEN_BYTES*1)(sp)
 	LOAD_X	s1, (XLEN_BYTES*2)(sp)
@@ -161,7 +159,9 @@ print_hex_fixed_width_loop:
 	ret
 .size print_hex_fixed_width, .-print_hex_fixed_width
 
-# print char in a0 to terminal (if printable, else '.')
+
+# print char to terminal (if printable, else '.')
+# in: a0 = char to print
 print_ascii:
 	addi	sp, sp, -(XLEN_BYTES*1)
 	SAVE_X	ra, 0(sp)
@@ -181,20 +181,23 @@ print_ascii_out:
 .size print_ascii, .-print_ascii
 
 
-# print ASCII char in a0
+# print ASCII char to terminal
+# in: a0 = char to print
 print_char:
 	j		uart_output_char
 .size print_char, .-print_char
 
 
-# print string starting at addr in a0
+# print string to terminal
+# in: a0 = string ptr
 print_string:
 	j		uart_output_string
 .size print_string, .-print_string
 
 
 #if defined(WITH_CMD_D) || defined(WITH_CMD_SLASH)
-# print 32/64-bit signed decimal in a0 to terminal
+# print 32/64-bit signed decimal to terminal
+# in: a0 = value to print
 print_decimal:
 	addi	sp, sp, -(XLEN_BYTES*2)
 	SAVE_X	ra, 0(sp)
@@ -244,7 +247,8 @@ print_decimal_done:
 
 
 #ifdef WITH_CMD_SLASH
-# print a0 in binary (64 or 32 bits)
+# print binary value (64 or 32 bits) to terminal
+# in: a0 = value to print
 print_binary:
 	addi	sp, sp, -(XLEN_BYTES*3)
 	SAVE_X  s1, 0(sp)
@@ -276,6 +280,7 @@ print_binary_end:
 	ret
 .size print_binary, .-print_binary
 #endif /* WITH_CMD_SLASH */
+
 
 #ifdef WITH_CMD_R
 # dump registers saved on stack
