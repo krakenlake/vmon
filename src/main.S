@@ -85,10 +85,14 @@ start:
 	#endif /* M_MODE */
 
 	#ifdef ENABLE_RVF
-	# save f0-f31 registers on stack
-
-	# todo: check mstatus if RVF enabled
-/* 		
+		# enable RVF in mstatus of cpu (this is disabled in QEMU per default)
+		li		t0, 0b11
+		slli	t0, t0, 13
+		csrr	t1, mstatus
+		or		t1, t0, t1
+		csrw	mstatus, t1
+	
+		# save f0-f31 registers on stack
 		addi	sp, sp, -(XLEN_BYTES*32)
 		SAVE_F	f0, 0(sp)
 		SAVE_F	f1, (XLEN_BYTES*1)(sp)
@@ -122,7 +126,6 @@ start:
 		SAVE_F	f29, (XLEN_BYTES*29)(sp)
 		SAVE_F	f30, (XLEN_BYTES*30)(sp)
 		SAVE_F	f31, (XLEN_BYTES*31)(sp)
-*/
 	#endif /* ENABLE_RVF */
 
 	#ifdef M_MODE

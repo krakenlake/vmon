@@ -17,13 +17,12 @@ cmd_G:
 	jal		print_string
 	mv		a0, s1
 	jal		print_hex
-	
-	# TODO: restore registers
-	
-	# TODO make this a far call
-	
-	jalr	ra, s1, 0
-	j		start					# start over if the call returns
+
+	# patch ra that was saved on the stack on entry, exit routine will load it later
+	la		a0, stack + STACK_SIZE - (XLEN_BYTES*31)
+	SAVE_X	s1, 0(a0)
+
+	j		vmon_exit
 cmd_G_error:
 	la		a0, error_param
 	jal		print_string
