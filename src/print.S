@@ -5,6 +5,7 @@
 .global print_hex
 .global print_hex_raw
 .global print_hex_byte
+.global print_hex_fixed_width
 .global print_ascii
 .global print_char
 .global print_string
@@ -126,6 +127,39 @@ print_hex_byte_two_digits:
 	ret
 .size print_hex_byte, .-print_hex_byte
 
+# Print a hex value with a fixed number of bytes
+# a0 value to print
+# a1 width (in bytes) to print	
+# a2 a2=0, no leading 0x, otherwise 0x
+
+print_hex_fixed_width:
+	addi	sp, sp, -(XLEN_BYTES*3)
+	SAVE_X	ra, 0(sp)
+	SAVE_X	s0, (XLEN_BYTES*1)(sp)
+	SAVE_X	s1, (XLEN_BYTES*2)(sp)
+	mv		s0, a0
+	mv		s1, a1
+
+	beqz	a2, print_hex_fixed_width_loop
+	li		a0, '0'
+	call	print_char
+	li		a0, 'x'
+	call	print_char
+
+print_hex_fixed_width_loop:	
+	addi	s1, s1, -1
+	slli	t0, s1, 3		# t0 = a1 * 3
+	srl		a0, s0, t0  	# shift byte of interest to lowest byte
+	and		a0, a0, 0xff 	# mask low order byte and print
+	call	print_hex_byte
+	bnez	s1, print_hex_fixed_width_loop
+
+	LOAD_X	ra, 0(sp)
+	LOAD_X	s0, (XLEN_BYTES*1)(sp)
+	LOAD_X	s1, (XLEN_BYTES*2)(sp)
+	addi	sp, sp, (XLEN_BYTES*3)
+	ret
+.size print_hex_fixed_width, .-print_hex_fixed_width
 
 # print char in a0 to terminal (if printable, else '.')
 print_ascii:
