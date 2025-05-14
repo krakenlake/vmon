@@ -35,9 +35,9 @@ start:
 		la		sp, stack + STACK_SIZE		# point to end of our new stack
 	#endif /* M_MODE */
 
-	# save registers on stack
+	# save x1-x31 registers on stack
 	addi	sp, sp, -(XLEN_BYTES*31)
-	SAVE_X	ra, 0(sp)  
+	SAVE_X	ra, 0(sp)
 	# sp intentionally missing here, see below
 	SAVE_X	x3, (XLEN_BYTES*2)(sp)
 	SAVE_X	x4, (XLEN_BYTES*3)(sp)
@@ -68,14 +68,62 @@ start:
 	SAVE_X	x29, (XLEN_BYTES*28)(sp)
 	SAVE_X	x30, (XLEN_BYTES*29)(sp)
 	SAVE_X	x31, (XLEN_BYTES*30)(sp)
-	# now we can safely use t0 to get back and save sp
+
+	# now we can safely use t0 to get back and save sp in that same stack frame above
 	#ifdef M_MODE
 		csrr	t0, mscratch					# read original sp back
 		SAVE_X	t0, (XLEN_BYTES*1)(sp)			# and save it
-		csrw	mscratch, zero					# do we have to?
 	#else
 		SAVE_X	sp, (XLEN_BYTES*1)(sp)
 	#endif /* M_MODE */
+
+	# also save mepc on stack
+	#ifdef M_MODE
+		addi	sp, sp, -(XLEN_BYTES*1)
+		csrr	t0, mepc
+		SAVE_X	t0, 0(sp)
+	#endif /* M_MODE */
+
+	#ifdef ENABLE_RVF
+	# save f0-f31 registers on stack
+
+	# todo: check mstatus if RVF enabled
+/* 		
+		addi	sp, sp, -(XLEN_BYTES*32)
+		SAVE_F	f0, 0(sp)
+		SAVE_F	f1, (XLEN_BYTES*1)(sp)
+		SAVE_F	f2, (XLEN_BYTES*2)(sp)
+		SAVE_F	f3, (XLEN_BYTES*3)(sp)
+		SAVE_F	f4, (XLEN_BYTES*4)(sp)
+		SAVE_F	f5, (XLEN_BYTES*5)(sp)
+		SAVE_F	f6, (XLEN_BYTES*6)(sp)
+		SAVE_F	f7, (XLEN_BYTES*7)(sp)
+		SAVE_F	f8, (XLEN_BYTES*8)(sp)
+		SAVE_F	f9, (XLEN_BYTES*9)(sp)
+		SAVE_F	f10, (XLEN_BYTES*10)(sp)
+		SAVE_F	f11, (XLEN_BYTES*11)(sp)
+		SAVE_F	f12, (XLEN_BYTES*12)(sp)
+		SAVE_F	f13, (XLEN_BYTES*13)(sp)
+		SAVE_F	f14, (XLEN_BYTES*14)(sp)
+		SAVE_F	f15, (XLEN_BYTES*15)(sp)
+		SAVE_F	f16, (XLEN_BYTES*16)(sp)
+		SAVE_F	f17, (XLEN_BYTES*17)(sp)
+		SAVE_F	f18, (XLEN_BYTES*18)(sp)
+		SAVE_F	f19, (XLEN_BYTES*19)(sp)
+		SAVE_F	f20, (XLEN_BYTES*20)(sp)
+		SAVE_F	f21, (XLEN_BYTES*21)(sp)
+		SAVE_F	f22, (XLEN_BYTES*22)(sp)
+		SAVE_F	f23, (XLEN_BYTES*23)(sp)
+		SAVE_F	f24, (XLEN_BYTES*24)(sp)
+		SAVE_F	f25, (XLEN_BYTES*25)(sp)
+		SAVE_F	f26, (XLEN_BYTES*26)(sp)
+		SAVE_F	f27, (XLEN_BYTES*27)(sp)
+		SAVE_F	f28, (XLEN_BYTES*28)(sp)
+		SAVE_F	f29, (XLEN_BYTES*29)(sp)
+		SAVE_F	f30, (XLEN_BYTES*30)(sp)
+		SAVE_F	f31, (XLEN_BYTES*31)(sp)
+*/
+	#endif /* ENABLE_RVF */
 
 	#ifdef M_MODE
 		jal		setup_trap_handler

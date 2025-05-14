@@ -41,7 +41,7 @@ communication written in RISC-V assembly language.
 VMON understands the following commands:  
 
 **a <start_addr>**
-RV64G assembly input (ENTER to stop) [alpha testing]
+assembly input (ENTER to stop) [alpha testing, currently RV64G supported]
 
 **c <src_start> <src_end> <dst_addr>**
 copy memory contents
@@ -66,7 +66,7 @@ find <16bit_value> in memory from <start_addr> to <end_addr>
 find <32bit_value> in memory from <start_addr> to <end_addr>
 
 **g <start_addr>**
-start program execution at <start_addr>
+goto (restore registers and execute 'j <start_addr>')
 
 **h**
 help
@@ -93,7 +93,7 @@ write <32bit_value0> to <dst_addr>, <32bit_value1> to <dst_addr+4>, ...
 dump registers as saved on entry
 
 **x**
-exit
+exit (restore registers and execute a 'ret')
 
 **/h <hex_value>**
 Base conversion from hex. Prints value in hex, decimal, binary.

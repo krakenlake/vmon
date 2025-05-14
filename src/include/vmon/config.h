@@ -1,7 +1,7 @@
 #ifndef VMON_CONFIG_H
 #define VMON_CONFIG_H
 
-// register width
+// int register width
 #if XLEN == 32
 	#define	SAVE_X	sw
 	#define LOAD_X	lw
@@ -11,6 +11,17 @@
 	#define LOAD_X	ld
 #endif
 #define XLEN_BYTES			(XLEN/8)
+
+// float register width
+#if FLEN == 32
+	#define SAVE_F	fsw
+	#define LOAD_F	flw
+#endif
+#if FLEN == 64
+	#define	SAVE_F	fsd
+	#define LOAD_F	fld
+#endif
+#define FLEN_BYTES			(FLEN/8)
 
 // always use only one of these
 #define M_MODE
@@ -47,8 +58,8 @@
 #define WITH_TESTCODE_RVM
 #define WITH_TESTCODE_RVA
 #define WITH_TESTCODE_RVF
-#define WITH_TESTCODE_RVD
-#define WITH_TESTCODE_RVQ
+//#define WITH_TESTCODE_RVD
+//#define WITH_TESTCODE_RVQ
 //#define WITH_TESTCODE_RVC
 //#define WITH_TESTCODE_RVB
 //#define WITH_TESTCODE_RVP
@@ -64,8 +75,8 @@
 #define ENABLE_RVM
 #define ENABLE_RVA
 #define ENABLE_RVF
-#define ENABLE_RVD
-#define ENABLE_RVQ
+//#define ENABLE_RVD
+//#define ENABLE_RVQ
 //#define ENABLE_RVC
 //#define ENABLE_RVB
 //#define ENABLE_RVP

@@ -9,6 +9,9 @@ TARGET 		?= qemu
 #XLEN 		?= 32
 XLEN 		?= 64
 
+#FLEN 		?= 32
+FLEN 		?= 64
+
 #ISA_STRING	?= g
 ISA_STRING	?= gc
 #ISA_STRING	?= gqc
@@ -20,8 +23,8 @@ DEBUG ?= -DDEBUG
 ifeq ($(TARGET), qemu)
 	ARCH    	?= riscv$(XLEN)-unknown-elf
 	TOOLBIN 	?= /opt/riscv/rv$(XLEN)g/bin
-	ADDFLAGS	= -DHW_QEMU -DXLEN=$(XLEN) -march=rv$(XLEN)$(ISA_STRING) 
-	QEMU_FLAGS	= -machine virt -cpu rv$(XLEN),pmp=false -smp 2 -gdb tcp::1234 -bios none -serial stdio -display none -kernel $(BUILD)/$(NAME).img
+	ADDFLAGS	= -DHW_QEMU -DXLEN=$(XLEN) -DFLEN=$(FLEN) -march=rv$(XLEN)$(ISA_STRING) 
+	QEMU_FLAGS	= -machine virt -cpu rv$(XLEN),pmp=false,f=true -smp 2 -gdb tcp::1234 -bios none -serial stdio -display none -kernel $(BUILD)/$(NAME).img
 	RUN			= qemu-system-riscv$(XLEN) $(QEMU_FLAGS) 
 endif
 
@@ -30,7 +33,7 @@ ifeq ($(TARGET), vf2)
 	ARCH    	?= riscv64-unknown-elf
 	XLEN		= 64
 	TOOLBIN 	?= /opt/riscv/rv64g/bin
-	ADDFLAGS	= -DHW_VF2 -DXLEN=$(XLEN) -march=rv64gc
+	ADDFLAGS	= -DHW_VF2 -DXLEN=$(XLEN) -DFLEN=$(FLEN) -march=rv64gc
 	PLATFORM	= vf2
 define VF2_RUN_MSG
 

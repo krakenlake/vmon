@@ -17,7 +17,11 @@ cmd_G:
 	jal		print_string
 	mv		a0, s1
 	jal		print_hex
-	# TODO: what about stack?
+	
+	# TODO: restore registers
+	
+	# TODO make this a far call
+	
 	jalr	ra, s1, 0
 	j		start					# start over if the call returns
 cmd_G_error:
