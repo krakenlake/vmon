@@ -3,7 +3,8 @@
 #include "vmon/stack.h"
 
 
-.global print_saved_registers
+.global print_int_registers
+.global print_float_registers
 
 
 .text
@@ -12,56 +13,91 @@
 #ifdef WITH_CMD_R
 
 print_int_registers:
+	addi	sp, sp, -(XLEN_BYTES*1)
+	SAVE_X  ra, 0(sp)
 	la		a0, get_int_register_name_by_index
 	li		a1, 1
-	li		a2, 31 
-	la		a3, stack + (STACK_SIZE) - (STK_FRAME_SIZE_INT)
+	li		a2, 31
+	#ifdef M_MODE
+		la		a3, stack + (STACK_SIZE) - (STK_FRAME_SIZE_INT) + STK_OFF_RA
+	#else
+		# ???
+	#endif
+	li		a4, XLEN_BYTES
 	jal		print_saved_registers
+	LOAD_X  ra, 0(sp)
+	addi	sp, sp, (XLEN_BYTES*1)
 	ret
 .size print_int_registers, .-print_int_registers
 
 
+#ifdef ENABLE_RVF
 print_float_registers:
+	addi	sp, sp, -(XLEN_BYTES*1)
+	SAVE_X  ra, 0(sp)
 	la		a0, get_float_register_name_by_index
-	li		a1, 1
+	li		a1, 0
 	li		a2, 31 
 	la		a3, stack + (STACK_SIZE) - (STK_FRAME_SIZE_INT) - (STK_FRAME_SIZE_FLOAT)
+	li		a4, FLEN_BYTES
 	jal		print_saved_registers
+	LOAD_X  ra, 0(sp)
+	addi	sp, sp, (XLEN_BYTES*1)
 	ret
 .size print_float_registers, .-print_float_registers
+#endif /* ENABLE_RVF */
 
 
 # dump registers saved on stack
-# in: a0 = register name table to look at
-# in: a1 = start register index
-# in: a2 = end register index
-# in: a3 = addr on stack to start from
+# in: a0 = register name lookup func ptr
+# in: a1 = first register index
+# in: a2 = last register index
+# in: a3 = stack frame base addr
+# in: a4 = size of one register in bytes
 print_saved_registers:
-	addi	sp, sp, -(XLEN_BYTES*4)
+	addi	sp, sp, -(XLEN_BYTES*9)
 	SAVE_X  ra, 0(sp)
 	SAVE_X  s0, (XLEN_BYTES*1)(sp)
 	SAVE_X  s1, (XLEN_BYTES*2)(sp)
 	SAVE_X	s2, (XLEN_BYTES*3)(sp)
-	#ifdef M_MODE
-		la 		s0, stack + STACK_SIZE - (STK_FRAME_SIZE_INT) + STK_OFF_RA
-	#else
-		# ???
-	#endif
-	li		s1, 1						# skip register zero
+	SAVE_X	s3, (XLEN_BYTES*4)(sp)
+	SAVE_X	s4, (XLEN_BYTES*5)(sp)
+	SAVE_X	s5, (XLEN_BYTES*6)(sp)
+	SAVE_X	s6, (XLEN_BYTES*7)(sp)
+	SAVE_X	s7, (XLEN_BYTES*8)(sp)
+	mv		s5, a0						# register name lookup func ptr
+	mv		s1, a1						# first register index
+	mv		s2, a2						# last register index
+	mv		s0, a3						# stack frame base addr
+	mv		s4, a4						# register size
 print_saved_registers_next:
-	li		s2, 3
+	li		s3, 3						# print newline after every 3 registers
 	jal		print_newline
 print_saved_registers_skip_newline:
-	# print space if not s10 or s11 to align everything nicely
-	li		t0, 26						# index of s10
-	li		t1, 27						# index of s11
-	beq		s1, t0, print_saved_registers_skip_space
-	beq		s1, t1, print_saved_registers_skip_space
+	mv		a0, s1						# index of register
+	jalr	s5
+	mv		s7, a0						# name string ptr
+	# determine length of found name
+	mv		t0, s7						# string ptr
+	li		t1, 0						# len counter
+print_saved_registers_len_loop:
+	lb		t3, 0(t0)
+	beqz	t3, print_saved_registers_len_done
+	addi	t0, t0, 1
+	addi	t1, t1, 1
+	j		print_saved_registers_len_loop
+print_saved_registers_len_done:
+	# length now in t1, print spaces if register name is shorter than 6
+	li		t2, 6						
+	sub 	s6, t2, t1
+print_saved_registers_space_loop:
+	beqz	s6, print_saved_registers_skip_space
 	li		a0, ' '
 	jal		print_char
+	addi	s6, s6, -1
+	j 		print_saved_registers_space_loop
 print_saved_registers_skip_space:
-	mv		a0, s1						# index of register
-	jal		get_int_register_name_by_index
+	mv		a0, s7
 	jal		print_string				# register name
 	li		a0, '='
 	jal		print_char
@@ -69,22 +105,27 @@ print_saved_registers_skip_space:
 	li		a1, XLEN_BYTES
 	li		a2, 1
 	jal		print_hex_fixed_width
-	li		a0, '\t'
-	jal		print_char
-	addi	s0, s0, XLEN_BYTES			# next register
-	addi	s1, s1, 1					# next register name
-	# check if all int registers done
-	li		t0, 32						
+	# check if all registers done
+	li		t0, 31						# last valid index in any case
 	bge		s1, t0, print_saved_registers_done
-	addi	s2, s2, -1
-	beqz	s2, print_saved_registers_next
+	# stop also if register specified in s2 reached
+	beq		s1, s2, print_saved_registers_done
+	add		s0, s0, s4					# next register
+	addi	s1, s1, 1					# next register name
+	addi	s3, s3, -1					# count number of printed registers
+	beqz	s3, print_saved_registers_next
 	j		print_saved_registers_skip_newline
 print_saved_registers_done:
 	LOAD_X  ra, 0(sp)
 	LOAD_X  s0, (XLEN_BYTES*1)(sp)
 	LOAD_X  s1, (XLEN_BYTES*2)(sp)
 	LOAD_X  s2, (XLEN_BYTES*3)(sp)
-	addi	sp, sp, (XLEN_BYTES*4)
+	LOAD_X  s3, (XLEN_BYTES*4)(sp)
+	LOAD_X  s4, (XLEN_BYTES*5)(sp)
+	LOAD_X  s5, (XLEN_BYTES*6)(sp)
+	LOAD_X  s6, (XLEN_BYTES*7)(sp)
+	LOAD_X  s7, (XLEN_BYTES*8)(sp)
+	addi	sp, sp, (XLEN_BYTES*9)
 	ret
 .size print_saved_registers, .-print_saved_registers
 
