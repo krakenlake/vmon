@@ -460,7 +460,7 @@ ass_BRA:
 	SAVE_X	s3, (XLEN_BYTES*3)(sp)
 	mv		s1, a1						# save insn word
 	mv		s3, a2						# save for later
-	jal		get_hex_addr
+	jal		get_numeric
 	# address in a1
 	bnez	a2, ass_BRA_error
 	mv		s2, a0						# return string ptr later
@@ -496,7 +496,7 @@ ass_I_imm:
 	SAVE_X	s1, (XLEN_BYTES*1)(sp)
 	SAVE_X	s2, (XLEN_BYTES*2)(sp)
 	mv		s1, a1						# save insn word
-	jal		parse_decimal
+	jal		get_numeric
 	# imm  value in a1
 	bnez	a2, ass_I_imm_error
 	mv		s2, a0						# return string ptr later
@@ -547,7 +547,7 @@ ass_MEM:
 	SAVE_X	s1, (XLEN_BYTES*1)(sp)
 	SAVE_X	s2, (XLEN_BYTES*2)(sp)
 	mv		s1, a1						# save insn word
-	jal		parse_decimal
+	jal		get_numeric
 	bnez	a2, ass_MEM_error
 	mv		s2, a0						# return string ptr later
 	# check if we deal with load or store
@@ -685,7 +685,7 @@ ass_J:
 	SAVE_X	s3, (XLEN_BYTES*3)(sp)
 	mv		s1, a1						# save insn word
 	mv		s3, a2						# save origin address
-	jal		get_hex_addr
+	jal		get_numeric
 	# imm  value in a1
 	bnez	a2, ass_J_error
 	mv		s2, a0						# return string ptr later
@@ -722,7 +722,7 @@ ass_U_imm:
 	SAVE_X	s1, (XLEN_BYTES*1)(sp)
 	SAVE_X	s2, (XLEN_BYTES*2)(sp)
 	mv		s1, a1						# save insn word
-	jal		parse_decimal
+	jal		get_numeric
 	# imm  value in a1
 	bnez	a2, ass_U_imm_error
 	mv		s2, a0						# return string ptr later

@@ -11,11 +11,11 @@
 
 cmd_M:
 	jal		skip_whitespace
-	jal		get_hex_addr			# read start addr from text buffer
+	jal		get_numeric			# read start addr from text buffer
 	bnez	a2, cmd_M_from_last		# none given? continue from last saved addr
 	mv		s5, a1					# save start addr of dump
 	jal		skip_whitespace
-	jal		get_hex_addr			# read end addr from text buffer
+	jal		get_numeric			# read end addr from text buffer
 	mv		s7, a1					# save end addr of dump
 	beqz	a2, cmd_M_next_line
 	j		cmd_M_add_default 

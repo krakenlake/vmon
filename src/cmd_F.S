@@ -28,17 +28,17 @@ cmd_F_find_w:
 cmd_F_read_start:
 	# read src_start from text buffer
 	jal		skip_whitespace
-	jal		get_hex_addr				# read start_addr from text buffer
+	jal		get_numeric				# read start_addr from text buffer
 	bnez	a2, cmd_F_error				# abort command if not found
 	mv		a3, a1
 	# read src_end from text buffer
 	jal		skip_whitespace
-	jal		get_hex_addr				# read end_addr from text buffer
+	jal		get_numeric				# read end_addr from text buffer
 	bnez	a2, cmd_F_error				# abort command if not found
 	mv		a4, a1
 	# read search value from text buffer
 	jal		skip_whitespace
-	jal		get_hex_addr
+	jal		get_numeric
 	bnez	a2, cmd_F_error				# abort command if not found
 	mv		a5, a1
 

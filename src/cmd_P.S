@@ -22,14 +22,14 @@ cmd_P_poke4:
 cmd_P_poke:	
 	# read dst_addr from text buffer	
 	jal		skip_whitespace
-	jal		get_hex_addr			# read src_start from text buffer
+	jal		get_numeric			# read src_start from text buffer
 	bnez	a2, cmd_P_error			# abort command if not found
 	mv		a3, a1
 
 	# read poke value from text buffer
 cmd_P_next_value:
 	jal		skip_whitespace
-	jal		get_hex_addr			
+	jal		get_numeric			
 	bnez	a2, cmd_P_done		   # end if no more valid input
 	mv		a4, a1
 

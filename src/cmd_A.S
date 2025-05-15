@@ -12,7 +12,7 @@
 cmd_A:
 	# read dst_start from text buffer	
 	jal		skip_whitespace
-	jal		get_hex_addr				# read dst_start from text buffer
+	jal		get_numeric				# read dst_start from text buffer
 	bnez	a2, cmd_A_error				# abort command if not found
 	mv		s0, a1
 

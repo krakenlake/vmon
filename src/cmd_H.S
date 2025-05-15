@@ -40,7 +40,7 @@ string_help:
 	/h <hex_value> base conversion from hex\n\
 	/d <dec_value> base conversion from decimal\n\
 	/b <bin_value> base conversion from binary\n\
-	All address and value entries are in hex (without 0x prefix).\n"
+	All addresses and values are accepted in hex (0x...), bin (0b...) or decimal (no prefix).\n"
 .size string_help, .-string_help
 
 

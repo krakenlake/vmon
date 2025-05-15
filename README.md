@@ -104,6 +104,10 @@ Base conversion from signed decimal. Prints value in hex, decimal, binary.
 **/b <bin_value>**
 Base conversion from binary. Prints value in hex, decimal, binary.
 
+**Numeric values**
+All addresses and values are accepted in hex (0x...), bin (0b...) or decimal (no prefix).
+
+
 ## Known Problems
 
 see [issues page](https://github.com/krakenlake/vmon/issues)

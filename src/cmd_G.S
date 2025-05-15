@@ -11,7 +11,7 @@
 
 cmd_G:
 	jal		skip_whitespace
-	jal		get_hex_addr			# read start addr from text buffer
+	jal		get_numeric			# read start addr from text buffer
 	bnez	a2, cmd_G_error			# abort command if not found
 	mv		s1, a1
 	la		a0, string_go

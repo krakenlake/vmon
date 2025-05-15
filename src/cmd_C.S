@@ -11,17 +11,17 @@
 cmd_C:
 	# read src_start from text buffer	
 	jal		skip_whitespace
-	jal		get_hex_addr			# read src_start from text buffer
+	jal		get_numeric			# read src_start from text buffer
 	bnez	a2, cmd_C_error			# abort command if not found
 	mv		a3, a1
 	# read src_end from text buffer
 	jal		skip_whitespace
-	jal		get_hex_addr			
+	jal		get_numeric			
 	bnez	a2, cmd_C_error			# abort command if not found
 	mv		a4, a1
 	# read dst_start from text buffer
 	jal		skip_whitespace
-	jal		get_hex_addr			
+	jal		get_numeric			
 	bnez	a2, cmd_C_error			# abort command if not found
 	mv		a5, a1
 

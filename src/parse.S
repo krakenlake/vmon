@@ -14,6 +14,7 @@
 .global	parse_decimal
 .global	parse_iorw
 .global	parse_aqrl
+.global	get_numeric
 
 .text
 
@@ -121,6 +122,52 @@ find_register_name_end_done:
 # out: buffer ptr in a0
 # out: parsed address value in a1
 # out: error code in a2 (OK=0)
+get_numeric:
+	addi	sp, sp, -(XLEN_BYTES*3)
+	SAVE_X	ra, 0(sp)
+	SAVE_X	s0, (XLEN_BYTES*1)(sp)
+	SAVE_X	s1, (XLEN_BYTES*2)(sp)
+	mv		a2, zero						# clear error
+	lb		t0, 0(a0)
+	li		t1, '0'
+	beq		t0, t1, get_numeric_hex_bin
+	j		get_numeric_dec
+get_numeric_hex_bin:						# first char is '0'
+	addi	a0, a0, 1
+	lb		t0, 0(a0)
+	li		t1, 'x'
+	beq		t0, t1, get_numeric_hex			# second char is 'x'
+	li		t1, 'b'
+	beq		t0, t1, get_numeric_bin			# second char is 'b'
+	# not hex, not bin, take it as decimal
+	j		get_numeric_dec
+get_numeric_hex:
+	addi	a0, a0, 1
+	jal		get_hex_addr
+	j		get_numeric_done
+get_numeric_bin:
+	addi	a0, a0, 1
+	jal		parse_binary
+	j		get_numeric_done
+get_numeric_dec:
+	addi	a0, a0, 1
+	jal		parse_decimal
+	j		get_numeric_done
+get_numeric_error:
+	li		a2, -1
+get_numeric_done:
+	LOAD_X	ra, 0(sp)
+	LOAD_X	s0, (XLEN_BYTES*1)(sp)
+	LOAD_X	s1, (XLEN_BYTES*2)(sp)
+	addi	sp, sp, (XLEN_BYTES*3)
+	ret
+.size get_numeric, .-get_numeric
+
+
+# in: buffer ptr in a0
+# out: buffer ptr in a0
+# out: parsed address value in a1
+# out: error code in a2 (OK=0)
 get_hex_addr:
 	li		a1, 0					# reset address value
 	li		a2, -1					# set error code
@@ -155,6 +202,7 @@ get_hex_addr_return:
 	ret
 
 .size get_hex_addr, .-get_hex_addr
+
 
 # in: buffer ptr in a0
 # out: buffer ptr in a0
