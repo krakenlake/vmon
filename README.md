@@ -3,7 +3,8 @@
 VMON is a tiny machine code monitor for RISC-V systems with UART
 communication written in RISC-V assembly language.
 
-![Screenshot 2024-07-10 at 08 43 44](https://github.com/krakenlake/vmon/assets/119040831/bec982cd-4b34-4433-8ef7-bfcc173d30bd)
+![Screenshot 2025-05-15 at 23 55 12](https://github.com/user-attachments/assets/fe625a98-4e65-4455-98a1-bdcfa1c57d05)
+
 
 ## Features
 
