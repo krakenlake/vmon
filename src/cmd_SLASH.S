@@ -9,7 +9,7 @@
 
 
 cmd_SLASH:
-    lb		t1, 0(a0)	# read byte following 'B'
+    lb		t1, 0(a0)	# read byte following '/'
 	addi	a0, a0, 1
 	li		t0, 'h'
 	beq		t0, t1, cmd_slash_read_hex
