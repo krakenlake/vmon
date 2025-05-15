@@ -1,8 +1,8 @@
 #ifndef STACK_H
 #define STACK_H
 
-# int register offsets from start of stack frame
-# store pc here; x0 is alway 0 and will not be saved on stack
+# int register offsets from start of int stack frame
+# store pc here; x0 is always 0 and will not be saved on stack
 #define STK_OFF_PC		(0)
 #define STK_OFF_X1		(XLEN_BYTES*1)
 #define STK_OFF_X2		(XLEN_BYTES*2)
@@ -43,7 +43,7 @@
 #define STK_OFF_SP		(STK_OFF_X2)
 
 
-# float register offsets from start of stack frame
+# float register offsets from start of float stack frame
 #define STK_OFF_F0		(0)
 #define STK_OFF_F1		(FLEN_BYTES*1)
 #define STK_OFF_F2		(FLEN_BYTES*2)
