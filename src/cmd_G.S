@@ -1,4 +1,5 @@
 #include "vmon/config.h"
+#include "vmon/stack.h"
 
 
 #ifdef WITH_CMD_G
@@ -19,7 +20,7 @@ cmd_G:
 	jal		print_hex
 
 	# patch ra that was saved on the stack on entry, exit routine will load it later
-	la		a0, stack + STACK_SIZE - (XLEN_BYTES*31)
+	la		a0, stack + STACK_SIZE - STK_FRAME_SIZE_INT + STK_OFF_RA
 	SAVE_X	s1, 0(a0)
 
 	j		vmon_exit
