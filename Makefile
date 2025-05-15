@@ -24,7 +24,7 @@ ifeq ($(TARGET), qemu)
 	ARCH    	?= riscv$(XLEN)-unknown-elf
 	TOOLBIN 	?= /opt/riscv/rv$(XLEN)g/bin
 	ADDFLAGS	= -DHW_QEMU -DXLEN=$(XLEN) -DFLEN=$(FLEN) -march=rv$(XLEN)$(ISA_STRING) 
-	QEMU_FLAGS	= -machine virt -cpu rv$(XLEN),pmp=false,f=true -smp 2 -gdb tcp::1234 -bios none -serial stdio -display none -kernel $(BUILD)/$(NAME).img
+	QEMU_FLAGS	= -machine virt -cpu rv$(XLEN),pmp=false -smp 2 -gdb tcp::1234 -bios none -serial stdio -display none -kernel $(BUILD)/$(NAME).img
 	RUN			= qemu-system-riscv$(XLEN) $(QEMU_FLAGS) 
 endif
 
