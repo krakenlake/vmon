@@ -7,8 +7,6 @@
 
 .global assemble_instruction
 
-.global assemble_DUMMY
-
 # these are called through function ptrs in the encoding table
 .global assemble_GENERIC
 .global ass_rd							# expect int register name and use it for rd
@@ -79,16 +77,20 @@ assemble_instruction_not_aqrl:
 	# function ptr now in a0
 	# MATCH value now in a1
 	# table entry ptr in a3
-	or		a1, a1, s3							# add RVA aqrl bits if there were any
-	mv		s2, a0								# save function ptr in s2
-	beqz	s2, assemble_instruction_done		# not found
-	mv		a0, s1
+	beqz	a0, assemble_instruction_done		# not found
+	mv		a0, s1								# input  string ptr
 	# current memory addr already in a2
-	jalr	s2									# call insn-specific assemble function
+	jal		assemble_GENERIC					# handle all insns
 	# now a1 = insn code
 	# in case insn == 0, 
 	beqz	a1, assemble_instruction_error		# error while assembling insn parameters
-	# now use a0 to return insn size
+
+#ifdef ENABLE_RVA
+	# add RVA aqrl bits if there were any from above
+	or		a1, a1, s3
+#endif /* ENABLE_RVA */
+
+	# now return insn size in a0
 #ifdef ENABLE_RVC
 	mv		a0, a1
 	jal		insn_is_compressed
@@ -178,13 +180,6 @@ assemble_I_imm_shift_error:
 assemble_I_imm_shift_done:
 	ret
 .size assemble_I_imm_shift, .-assemble_I_imm_shift
-
-
-# in: input string ptr in a0
-assemble_DUMMY:
-	li		a1, 0xffffffff
-	ret
-.size assemble_DUMMY, .-assemble_DUMMY
 
 
 # in: a0 = ptr to remaining input string
