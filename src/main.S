@@ -6,6 +6,7 @@ VMON - a RISC-V machine code monitor written in RISC-V assembly code
 #include "vmon/config.h"
 #include "vmon/drivers/uart/ns16550.h"
 #include "vmon/ASCII.h"
+#include "vmon/stack.h"
 
 
 .global start
@@ -35,54 +36,52 @@ start:
 		la		sp, stack + STACK_SIZE		# point to end of our new stack
 	#endif /* M_MODE */
 
-	# save x1-x31 registers on stack
-	addi	sp, sp, -(XLEN_BYTES*31)
-	SAVE_X	ra, 0(sp)
+	# save int registers on stack
+	addi	sp, sp, -(STK_FRAME_SIZE_INT)
+	SAVE_X	ra, (STK_OFF_RA)(sp)
 	# sp intentionally missing here, see below
-	SAVE_X	x3, (XLEN_BYTES*2)(sp)
-	SAVE_X	x4, (XLEN_BYTES*3)(sp)
-	SAVE_X	x5, (XLEN_BYTES*4)(sp)
-	SAVE_X	x6, (XLEN_BYTES*5)(sp)
-	SAVE_X	x7, (XLEN_BYTES*6)(sp)
-	SAVE_X	x8, (XLEN_BYTES*7)(sp)
-	SAVE_X	x9, (XLEN_BYTES*8)(sp)
-	SAVE_X	x10, (XLEN_BYTES*9)(sp)
-	SAVE_X	x11, (XLEN_BYTES*10)(sp)
-	SAVE_X	x12, (XLEN_BYTES*11)(sp)
-	SAVE_X	x13, (XLEN_BYTES*12)(sp)
-	SAVE_X	x14, (XLEN_BYTES*13)(sp)
-	SAVE_X	x15, (XLEN_BYTES*14)(sp)
-	SAVE_X	x16, (XLEN_BYTES*15)(sp)
-	SAVE_X	x17, (XLEN_BYTES*16)(sp)
-	SAVE_X	x18, (XLEN_BYTES*17)(sp)
-	SAVE_X	x19, (XLEN_BYTES*18)(sp)
-	SAVE_X	x20, (XLEN_BYTES*19)(sp)
-	SAVE_X	x21, (XLEN_BYTES*20)(sp)
-	SAVE_X	x22, (XLEN_BYTES*21)(sp)
-	SAVE_X	x23, (XLEN_BYTES*22)(sp)
-	SAVE_X	x24, (XLEN_BYTES*23)(sp)
-	SAVE_X	x25, (XLEN_BYTES*24)(sp)
-	SAVE_X	x26, (XLEN_BYTES*25)(sp)
-	SAVE_X	x27, (XLEN_BYTES*26)(sp)
-	SAVE_X	x28, (XLEN_BYTES*27)(sp)
-	SAVE_X	x29, (XLEN_BYTES*28)(sp)
-	SAVE_X	x30, (XLEN_BYTES*29)(sp)
-	SAVE_X	x31, (XLEN_BYTES*30)(sp)
-
+	SAVE_X	x3, (STK_OFF_X3)(sp)
+	SAVE_X	x4, (STK_OFF_X4)(sp)
+	SAVE_X	x5, (STK_OFF_X5)(sp)
+	SAVE_X	x6, (STK_OFF_X6)(sp)
+	SAVE_X	x7, (STK_OFF_X7)(sp)
+	SAVE_X	x8, (STK_OFF_X8)(sp)
+	SAVE_X	x9, (STK_OFF_X9)(sp)
+	SAVE_X	x10, (STK_OFF_X10)(sp)
+	SAVE_X	x11, (STK_OFF_X11)(sp)
+	SAVE_X	x12, (STK_OFF_X12)(sp)
+	SAVE_X	x13, (STK_OFF_X13)(sp)
+	SAVE_X	x14, (STK_OFF_X14)(sp)
+	SAVE_X	x15, (STK_OFF_X15)(sp)
+	SAVE_X	x16, (STK_OFF_X16)(sp)
+	SAVE_X	x17, (STK_OFF_X17)(sp)
+	SAVE_X	x18, (STK_OFF_X18)(sp)
+	SAVE_X	x19, (STK_OFF_X19)(sp)
+	SAVE_X	x20, (STK_OFF_X20)(sp)
+	SAVE_X	x21, (STK_OFF_X21)(sp)
+	SAVE_X	x22, (STK_OFF_X22)(sp)
+	SAVE_X	x23, (STK_OFF_X23)(sp)
+	SAVE_X	x24, (STK_OFF_X24)(sp)
+	SAVE_X	x25, (STK_OFF_X25)(sp)
+	SAVE_X	x26, (STK_OFF_X26)(sp)
+	SAVE_X	x27, (STK_OFF_X27)(sp)
+	SAVE_X	x28, (STK_OFF_X28)(sp)
+	SAVE_X	x29, (STK_OFF_X29)(sp)
+	SAVE_X	x30, (STK_OFF_X30)(sp)
+	SAVE_X	x31, (STK_OFF_X31)(sp)
 	# now we can safely use t0 to get back and save sp in that same stack frame above
 	#ifdef M_MODE
 		csrr	t0, mscratch					# read original sp back
-		SAVE_X	t0, (XLEN_BYTES*1)(sp)			# and save it
+		SAVE_X	t0, (STK_OFF_SP)(sp)			# and save it
 	#else
-		SAVE_X	sp, (XLEN_BYTES*1)(sp)
+		SAVE_X	sp, (STK_OFF_SP)(sp)
+	#endif /* M_MODE */
+	# save mepc
+	#ifdef M_MODE
+		csrr	t0, mepc
+		SAVE_X	t0, (STK_OFF_PC)(sp)
 	#endif /* M_MODE */
 
-	# also save mepc on stack
-	#ifdef M_MODE
-		addi	sp, sp, -(XLEN_BYTES*1)
-		csrr	t0, mepc
-		SAVE_X	t0, 0(sp)
-	#endif /* M_MODE */
 
 	#ifdef ENABLE_RVF
 		# enable RVF in mstatus of cpu (this is disabled in QEMU per default)
@@ -93,39 +92,39 @@ start:
 		csrw	mstatus, t1
 	
 		# save f0-f31 registers on stack
-		addi	sp, sp, -(XLEN_BYTES*32)
-		SAVE_F	f0, 0(sp)
-		SAVE_F	f1, (XLEN_BYTES*1)(sp)
-		SAVE_F	f2, (XLEN_BYTES*2)(sp)
-		SAVE_F	f3, (XLEN_BYTES*3)(sp)
-		SAVE_F	f4, (XLEN_BYTES*4)(sp)
-		SAVE_F	f5, (XLEN_BYTES*5)(sp)
-		SAVE_F	f6, (XLEN_BYTES*6)(sp)
-		SAVE_F	f7, (XLEN_BYTES*7)(sp)
-		SAVE_F	f8, (XLEN_BYTES*8)(sp)
-		SAVE_F	f9, (XLEN_BYTES*9)(sp)
-		SAVE_F	f10, (XLEN_BYTES*10)(sp)
-		SAVE_F	f11, (XLEN_BYTES*11)(sp)
-		SAVE_F	f12, (XLEN_BYTES*12)(sp)
-		SAVE_F	f13, (XLEN_BYTES*13)(sp)
-		SAVE_F	f14, (XLEN_BYTES*14)(sp)
-		SAVE_F	f15, (XLEN_BYTES*15)(sp)
-		SAVE_F	f16, (XLEN_BYTES*16)(sp)
-		SAVE_F	f17, (XLEN_BYTES*17)(sp)
-		SAVE_F	f18, (XLEN_BYTES*18)(sp)
-		SAVE_F	f19, (XLEN_BYTES*19)(sp)
-		SAVE_F	f20, (XLEN_BYTES*20)(sp)
-		SAVE_F	f21, (XLEN_BYTES*21)(sp)
-		SAVE_F	f22, (XLEN_BYTES*22)(sp)
-		SAVE_F	f23, (XLEN_BYTES*23)(sp)
-		SAVE_F	f24, (XLEN_BYTES*24)(sp)
-		SAVE_F	f25, (XLEN_BYTES*25)(sp)
-		SAVE_F	f26, (XLEN_BYTES*26)(sp)
-		SAVE_F	f27, (XLEN_BYTES*27)(sp)
-		SAVE_F	f28, (XLEN_BYTES*28)(sp)
-		SAVE_F	f29, (XLEN_BYTES*29)(sp)
-		SAVE_F	f30, (XLEN_BYTES*30)(sp)
-		SAVE_F	f31, (XLEN_BYTES*31)(sp)
+		addi	sp, sp, -(STK_FRAME_SIZE_FLOAT)
+		SAVE_F	f0, (STK_OFF_F0)(sp)
+		SAVE_F	f1, (STK_OFF_F1)(sp)
+		SAVE_F	f2, (STK_OFF_F2)(sp)
+		SAVE_F	f3, (STK_OFF_F3)(sp)
+		SAVE_F	f4, (STK_OFF_F4)(sp)
+		SAVE_F	f5, (STK_OFF_F5)(sp)
+		SAVE_F	f6, (STK_OFF_F6)(sp)
+		SAVE_F	f7, (STK_OFF_F7)(sp)
+		SAVE_F	f8, (STK_OFF_F8)(sp)
+		SAVE_F	f9, (STK_OFF_F9)(sp)
+		SAVE_F	f10, (STK_OFF_F10)(sp)
+		SAVE_F	f11, (STK_OFF_F11)(sp)
+		SAVE_F	f12, (STK_OFF_F12)(sp)
+		SAVE_F	f13, (STK_OFF_F13)(sp)
+		SAVE_F	f14, (STK_OFF_F14)(sp)
+		SAVE_F	f15, (STK_OFF_F15)(sp)
+		SAVE_F	f16, (STK_OFF_F16)(sp)
+		SAVE_F	f17, (STK_OFF_F17)(sp)
+		SAVE_F	f18, (STK_OFF_F18)(sp)
+		SAVE_F	f19, (STK_OFF_F19)(sp)
+		SAVE_F	f20, (STK_OFF_F20)(sp)
+		SAVE_F	f21, (STK_OFF_F21)(sp)
+		SAVE_F	f22, (STK_OFF_F22)(sp)
+		SAVE_F	f23, (STK_OFF_F23)(sp)
+		SAVE_F	f24, (STK_OFF_F24)(sp)
+		SAVE_F	f25, (STK_OFF_F25)(sp)
+		SAVE_F	f26, (STK_OFF_F26)(sp)
+		SAVE_F	f27, (STK_OFF_F27)(sp)
+		SAVE_F	f28, (STK_OFF_F28)(sp)
+		SAVE_F	f29, (STK_OFF_F29)(sp)
+		SAVE_F	f30, (STK_OFF_F30)(sp)
+		SAVE_F	f31, (STK_OFF_F31)(sp)
 	#endif /* ENABLE_RVF */
 
 	#ifdef M_MODE

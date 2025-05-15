@@ -1,5 +1,6 @@
 #include "vmon/config.h"
 #include "vmon/ASCII.h"
+#include "vmon/stack.h"
 
 
 .global print_saved_registers
@@ -9,7 +10,32 @@
 
 
 #ifdef WITH_CMD_R
+
+print_int_registers:
+	la		a0, get_int_register_name_by_index
+	li		a1, 1
+	li		a2, 31 
+	la		a3, stack + (STACK_SIZE) - (STK_FRAME_SIZE_INT)
+	jal		print_saved_registers
+	ret
+.size print_int_registers, .-print_int_registers
+
+
+print_float_registers:
+	la		a0, get_float_register_name_by_index
+	li		a1, 1
+	li		a2, 31 
+	la		a3, stack + (STACK_SIZE) - (STK_FRAME_SIZE_INT) - (STK_FRAME_SIZE_FLOAT)
+	jal		print_saved_registers
+	ret
+.size print_float_registers, .-print_float_registers
+
+
 # dump registers saved on stack
+# in: a0 = register name table to look at
+# in: a1 = start register index
+# in: a2 = end register index
+# in: a3 = addr on stack to start from
 print_saved_registers:
 	addi	sp, sp, -(XLEN_BYTES*4)
 	SAVE_X  ra, 0(sp)
@@ -17,7 +43,7 @@ print_saved_registers:
 	SAVE_X  s1, (XLEN_BYTES*2)(sp)
 	SAVE_X	s2, (XLEN_BYTES*3)(sp)
 	#ifdef M_MODE
-		la 		s0, stack + STACK_SIZE -(XLEN_BYTES*31)
+		la 		s0, stack + STACK_SIZE - (STK_FRAME_SIZE_INT) + STK_OFF_RA
 	#else
 		# ???
 	#endif
@@ -60,5 +86,7 @@ print_saved_registers_done:
 	LOAD_X  s2, (XLEN_BYTES*3)(sp)
 	addi	sp, sp, (XLEN_BYTES*4)
 	ret
+.size print_saved_registers, .-print_saved_registers
+
 #endif /* WITH_CMD_R */
 

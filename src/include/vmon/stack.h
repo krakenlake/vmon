@@ -1,0 +1,83 @@
+#ifndef STACK_H
+#define STACK_H
+
+# int register offsets from start of stack frame
+# store pc here; x0 is alway 0 and will not be saved on stack
+#define STK_OFF_PC		(0)
+#define STK_OFF_X1		(XLEN_BYTES*1)
+#define STK_OFF_X2		(XLEN_BYTES*2)
+#define STK_OFF_X3		(XLEN_BYTES*3)
+#define STK_OFF_X4		(XLEN_BYTES*4)
+#define STK_OFF_X5		(XLEN_BYTES*5)
+#define STK_OFF_X6		(XLEN_BYTES*6)
+#define STK_OFF_X7		(XLEN_BYTES*7)
+#define STK_OFF_X8		(XLEN_BYTES*8)
+#define STK_OFF_X9		(XLEN_BYTES*9)
+#define STK_OFF_X10		(XLEN_BYTES*10)
+#define STK_OFF_X11		(XLEN_BYTES*11)
+#define STK_OFF_X12		(XLEN_BYTES*12)
+#define STK_OFF_X13		(XLEN_BYTES*13)
+#define STK_OFF_X14		(XLEN_BYTES*14)
+#define STK_OFF_X15		(XLEN_BYTES*15)
+#define STK_OFF_X16		(XLEN_BYTES*16)
+#define STK_OFF_X17		(XLEN_BYTES*17)
+#define STK_OFF_X18		(XLEN_BYTES*18)
+#define STK_OFF_X19		(XLEN_BYTES*19)
+#define STK_OFF_X20		(XLEN_BYTES*20)
+#define STK_OFF_X21		(XLEN_BYTES*21)
+#define STK_OFF_X22		(XLEN_BYTES*22)
+#define STK_OFF_X23		(XLEN_BYTES*23)
+#define STK_OFF_X24		(XLEN_BYTES*24)
+#define STK_OFF_X25		(XLEN_BYTES*25)
+#define STK_OFF_X26		(XLEN_BYTES*26)
+#define STK_OFF_X27		(XLEN_BYTES*27)
+#define STK_OFF_X28		(XLEN_BYTES*28)
+#define STK_OFF_X29		(XLEN_BYTES*29)
+#define STK_OFF_X30		(XLEN_BYTES*30)
+#define STK_OFF_X31		(XLEN_BYTES*31)
+
+#define STK_FRAME_SIZE_INT		(XLEN_BYTES*32)
+
+# aliases
+#define STK_OFF_RA		(STK_OFF_X1)
+#define STK_OFF_SP		(STK_OFF_X2)
+
+
+# float register offsets from start of stack frame
+#define STK_OFF_F0		(0)
+#define STK_OFF_F1		(FLEN_BYTES*1)
+#define STK_OFF_F2		(FLEN_BYTES*2)
+#define STK_OFF_F3		(FLEN_BYTES*3)
+#define STK_OFF_F4		(FLEN_BYTES*4)
+#define STK_OFF_F5		(FLEN_BYTES*5)
+#define STK_OFF_F6		(FLEN_BYTES*6)
+#define STK_OFF_F7		(FLEN_BYTES*7)
+#define STK_OFF_F8		(FLEN_BYTES*8)
+#define STK_OFF_F9		(FLEN_BYTES*9)
+#define STK_OFF_F10		(FLEN_BYTES*10)
+#define STK_OFF_F11		(FLEN_BYTES*11)
+#define STK_OFF_F12		(FLEN_BYTES*12)
+#define STK_OFF_F13		(FLEN_BYTES*13)
+#define STK_OFF_F14		(FLEN_BYTES*14)
+#define STK_OFF_F15		(FLEN_BYTES*15)
+#define STK_OFF_F16		(FLEN_BYTES*16)
+#define STK_OFF_F17		(FLEN_BYTES*17)
+#define STK_OFF_F18		(FLEN_BYTES*18)
+#define STK_OFF_F19		(FLEN_BYTES*19)
+#define STK_OFF_F20		(FLEN_BYTES*20)
+#define STK_OFF_F21		(FLEN_BYTES*21)
+#define STK_OFF_F22		(FLEN_BYTES*22)
+#define STK_OFF_F23		(FLEN_BYTES*23)
+#define STK_OFF_F24		(FLEN_BYTES*24)
+#define STK_OFF_F25		(FLEN_BYTES*25)
+#define STK_OFF_F26		(FLEN_BYTES*26)
+#define STK_OFF_F27		(FLEN_BYTES*27)
+#define STK_OFF_F28		(FLEN_BYTES*28)
+#define STK_OFF_F29		(FLEN_BYTES*29)
+#define STK_OFF_F30		(FLEN_BYTES*30)
+#define STK_OFF_F31		(FLEN_BYTES*31)
+
+#define STK_FRAME_SIZE_FLOAT	(FLEN_BYTES*32)
+
+
+#endif /* STACK_H */
