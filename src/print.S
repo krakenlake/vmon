@@ -245,7 +245,7 @@ print_decimal_done:
 #endif /* defined(WITH_CMD_D) || defined(WITH_CMD_SLASH) */
 
 
-#ifdef WITH_CMD_SLASH
+#ifdef WITH_CMD_QMARK
 # print binary value (64 or 32 bits) to terminal
 # in: a0 = value to print
 print_binary:
@@ -278,7 +278,7 @@ print_binary_end:
 	addi	sp, sp, (XLEN_BYTES*3)
 	ret
 .size print_binary, .-print_binary
-#endif /* WITH_CMD_SLASH */
+#endif /* WITH_CMD_QMARK */
 
 
 .data

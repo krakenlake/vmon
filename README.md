@@ -110,17 +110,12 @@ Dump registers as they were saved on entry.
 
 Exit VMON (restore registers as they were saved on entry and then go to address in `ra`).
 
-#### `/h <hex_value>` ####
+#### `? <numeric_value>` ####
 
-Base conversion from hex. Prints value in hex, decimal, binary.
-
-#### `/d <dec_value>` ####
-
-Base conversion from signed decimal. Prints value in hex, decimal, binary.
-
-#### `/b <bin_value>` ####
-
-Base conversion from binary. Prints value in hex, decimal, binary.
+Print <numeric_value> in hex, decimal and binary representation.
+<numeric_value> will be interpreted as hex, if it starts with "0x",
+and it will be interpreted as binary, if it starts with "0b".
+Otherwise, it will be interpreted as decimal.
 
 ### Numeric values ###
 
