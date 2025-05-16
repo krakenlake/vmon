@@ -123,10 +123,10 @@ assemble_instruction_done:
 assemble_branch_target:
 	sub		a0, a0, a2					# compute relative address
 	# range check
-	li		t1, 4096
-	bge		t0, t1, assemble_branch_target_error
+	li		t1, 4094
+	bgt		a0, t1, assemble_branch_target_error
 	li		t1, -4096
-	blt		t0, t1, assemble_branch_target_error
+	blt		a0, t1, assemble_branch_target_error
 	# bit 11 of addr -> bit 7 insn
 	srli	t0, a0, 4
 	li		t1, 0b10000000
