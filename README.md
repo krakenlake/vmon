@@ -1,7 +1,7 @@
 # VMON - a RISC-V machine code monitor
 
 VMON is a tiny machine code monitor for RISC-V systems with UART
-communication written in RISC-V assembly language.
+communication written entirely in RISC-V assembly language.
 
 ![Screenshot 2025-05-16 at 00 02 59](https://github.com/user-attachments/assets/d5b9390c-b760-4423-af9e-ff9bced5b0a2)
 
@@ -10,9 +10,13 @@ communication written in RISC-V assembly language.
 ## Features
 
 - hex and ASCII monitor
-- disassembler with hex and decimal output
-- currently disassembles RV32/64G instructions
+- assembler/disassembler with hex and decimal output
+- currently RV64G instructions supported
 - (some) pseudo instructions supported
+- hex/dec/bin conversion
+- searching in memory areas
+- copying memory areas
+- exception catching
 - can be built for RV32 or RV64 targets
 - runs in QEMU or on RISC-V hardware
 - runs bare-metal or can be called from outside
@@ -29,90 +33,108 @@ communication written in RISC-V assembly language.
 
 ## Building
 
-- set up TARGET in Makefile
-- review config.h and define/undefine to taste
-- review src/include/vmon/UART.h for target UART settings
-- make
+- set up `TARGET` in Makefile
+- review `config.h` and define/undefine to taste
+- review `src/include/vmon/UART.h` for target UART settings
+- `make`
 
 ## Running
 
-- "make run" to run on QEMU
+- `make run` to run on QEMU
 
-## Commands
+## Using VMON
+
+### Command Line ###
 
 VMON understands the following commands:  
 
-**a <start_addr>**
-assembly input (ENTER to stop) [alpha testing, currently RV64G supported]
+#### `a <start_addr>` ###
 
-**c <src_start> <src_end> <dst_addr>**
-copy memory contents
+Assembly input (press ENTER to stop) [alpha testing, currently RV64G instructions supported].
 
-**d <start_addr>**
-disassemble 16 instructions starting at start_addr
+#### `c <src_start> <src_end> <dst_addr>` ####
 
-**d <start_addr> <end_addr>**
-disassemble from <start_addr> to <end_addr>
+Copy memory contents. This also works correctly when both areas overlap.
 
-**d**
-continue disassembly from last address used
+#### `d [<start_addr>] [<end_addr]>` ####
 
-**f <start_addr> <end_addr> <byte_value>**
-**fb <start_addr> <end_addr> <byte_value>** 
-find <byte_value> in memory from <start_addr> to <end_addr>
+Disassemble from <start_addr> to <end_addr>.
+If <end_addr> is not given, 16 instructions are printed by default. 
+If no address is given, dump will start from the last address used before.
 
-**fh <start_addr> <end_addr> <16bit_value>**
-find <16bit_value> in memory from <start_addr> to <end_addr>
+#### `f <start_addr> <end_addr> <byte_value>` ####
 
-**fw <start_addr> <end_addr> <32bit_value>**
-find <32bit_value> in memory from <start_addr> to <end_addr>
+#### `fb <start_addr> <end_addr> <byte_value>` ####
 
-**g <start_addr>**
-goto (restore registers and execute 'j <start_addr>')
+Find <byte_value> in memory from <start_addr> to <end_addr>.
 
-**h**
-help
+#### `fh <start_addr> <end_addr> <16bit_value>` ####
 
-**i**
-print some internal information
+Find <16bit_value> in memory from <start_addr> to <end_addr>.
 
-**m <start_addr>**
-memory dump 128 bytes starting at <start_addr>
+#### `fw <start_addr> <end_addr> <32bit_value>` ####
 
-**m <start_addr> <end_addr>**
-memory dump from <start_addr> to <end_addr>
+Find <32bit_value> in memory from <start_addr> to <end_addr>.
 
-**m**
-continue memory dump from last address used
+#### `g <start_addr>` ####
 
-**p <dst_addr> <byte_value0> [<byte_value1>] [<byte_value2>] [...]**
-write <byte_value0> to <dst_addr>, <byte_value1> to <dst_addr+1>, ...
+Go to <start_addr> (restore registers as they were on entry and then execute `j <start_addr>`).
 
-**pw <dst_addr> <32bit_value0> [<32bit_value1>] [<32bit_value2>] [...]**
-write <32bit_value0> to <dst_addr>, <32bit_value1> to <dst_addr+4>, ...
+#### `h` ####
 
-**r**
-dump registers as saved on entry
+Print command line help information.
 
-**x**
-exit (restore registers and execute a 'ret')
+#### `i` ####
 
-**/h <hex_value>**
+Print some internal information.
+
+#### `m [<start_addr>] [<end_addr>]` ####
+
+Memory dump from <start_addr> to <end_addr>.
+If <end_addr> is not given, 16 lines (128 bytes) are printed by default.
+If no address is given, dump will continue from the last address used before.
+
+#### `p <dst_addr> <byte_value0> [<byte_value1>] [<byte_value2>] [...]` ####
+
+Write ("poke") <byte_value0> to <dst_addr>, <byte_value1> to <dst_addr+1>, ...
+
+#### `pw <dst_addr> <32bit_value0> [<32bit_value1>] [<32bit_value2>] [...]` ####
+
+Write ("poke") <32bit_value0> to <dst_addr>, <32bit_value1> to <dst_addr+4>, ...
+
+#### `r` ####
+
+Dump registers as they were saved on entry.
+
+#### `x` ####
+
+Exit VMON (restore registers as they were saved on entry and then go to address in `ra`).
+
+#### `/h <hex_value>` ####
+
 Base conversion from hex. Prints value in hex, decimal, binary.
 
-**/d <dec_value>**
+#### `/d <dec_value>` ####
+
 Base conversion from signed decimal. Prints value in hex, decimal, binary.
 
-**/b <bin_value>**
+#### `/b <bin_value>` ####
+
 Base conversion from binary. Prints value in hex, decimal, binary.
 
-**Numeric values**
-All addresses and values are accepted in hex (0x...), bin (0b...) or decimal (no prefix).
+### Numeric values ###
 
+**All addresses and values are accepted in hex ("0x..."), binary ("0b..."), or decimal (no prefix).**
+
+### Exceptions ###
+
+VMON installs a trap handler (if running in M-mode) in order to catch exceptions. Exceptions are printed:
+
+![Screenshot 2025-05-16 at 09 36 18](https://github.com/user-attachments/assets/f344bbd6-ae28-46a1-8e33-ba65f898c903)
 
 ## Known Problems
 
-see [issues page](https://github.com/krakenlake/vmon/issues)
+See [issues page](https://github.com/krakenlake/vmon/issues).
 
 ## History
 
