@@ -25,7 +25,7 @@ cmd_slash_error:
 
 cmd_slash_read_hex:
 	jal		skip_whitespace
-	jal		get_hex_addr
+	jal		parse_hex
 	bnez	a2, cmd_slash_error
 	j		cmd_slash_display
 

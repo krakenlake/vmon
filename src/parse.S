@@ -6,7 +6,8 @@
 .global consume_comma
 .global consume_open_paren
 .global consume_close_paren
-.global get_hex_addr
+#.global get_hex_addr
+.global parse_hex
 .global parse_insn_string
 .global find_register_name_end
 .global is_ascii
@@ -133,8 +134,7 @@ get_numeric:
 	beq		t0, t1, get_numeric_hex_bin
 	j		get_numeric_dec
 get_numeric_hex_bin:						# first char is '0'
-	addi	a0, a0, 1
-	lb		t0, 0(a0)
+	lb		t0, 1(a0)
 	li		t1, 'x'
 	beq		t0, t1, get_numeric_hex			# second char is 'x'
 	li		t1, 'b'
@@ -142,15 +142,15 @@ get_numeric_hex_bin:						# first char is '0'
 	# not hex, not bin, take it as decimal
 	j		get_numeric_dec
 get_numeric_hex:
-	addi	a0, a0, 1
-	jal		get_hex_addr
+	addi	a0, a0, 2
+#	jal		get_hex_addr
+	jal		parse_hex
 	j		get_numeric_done
 get_numeric_bin:
-	addi	a0, a0, 1
+	addi	a0, a0, 2
 	jal		parse_binary
 	j		get_numeric_done
 get_numeric_dec:
-	addi	a0, a0, 1
 	jal		parse_decimal
 	j		get_numeric_done
 get_numeric_error:
@@ -168,40 +168,31 @@ get_numeric_done:
 # out: buffer ptr in a0
 # out: parsed address value in a1
 # out: error code in a2 (OK=0)
-get_hex_addr:
-	li		a1, 0					# reset address value
-	li		a2, -1					# set error code
+parse_hex:
+	li		a1, 0					# reset return value
+	li		a2, -1					# set error flag
 	li		t3, 0					# digit found flag (0=no)
-get_hex_addr_next_byte:
+parse_hex_next_byte:
 	lb		t0, 0(a0)				# get byte from buffer
-	li		t4, ' '					# end parsing at next space or return
-	beq		t0, t4, get_hex_addr_check
-	li		t4, ASCII_RETURN
-	beq		t0, t4, get_hex_addr_check
-
 	addi	t1, t0, -'0'
 	sltiu	t2, t1, 10				# is it 0-9 ?
-	bnez	t2, get_hex_addr_add_nibble
-
+	bnez	t2, parse_hex_add_nibble
 	addi	t1, t0, -'a'
 	sltiu	t2, t1, 6				# 0-5 (maps to 'a' - 'f')
-	beqz	t2, get_hex_addr_return # found invalid char
+	beqz	t2, parse_hex_check		# found invalid char
 	add		t1, t1, 10				# t1 is now 10-15
-
-get_hex_addr_add_nibble:
-	li		t3, 1
+parse_hex_add_nibble:
+	li		t3, 1					# set digit found flag
 	slli	a1, a1, 4
 	or		a1, a1, t1
 	addi	a0, a0, 1
-	j		get_hex_addr_next_byte
-
-get_hex_addr_check:
-	beqz	t3, get_hex_addr_return # no digits -> err return
+	j		parse_hex_next_byte
+parse_hex_check:
+	beqz	t3, parse_hex_return	# no digits -> err return
 	li		a2, 0					# clear error code
-get_hex_addr_return:
+parse_hex_return:
 	ret
-
-.size get_hex_addr, .-get_hex_addr
+.size parse_hex, .-parse_hex
 
 
 # in: buffer ptr in a0
