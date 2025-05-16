@@ -499,6 +499,10 @@ ass_I_imm:
 	jal		get_numeric
 	# imm  value in a1
 	bnez	a2, ass_I_imm_error
+	li		t0, -2048
+	blt		a1, t0, ass_I_imm_error		# numeric too small
+	li		t0, 2047
+	bgt		a1, t0, ass_I_imm_error		# numeric too big
 	mv		s2, a0						# return string ptr later
 	# add imm value to instruction word
 	mv		a0, a1						# imm value
