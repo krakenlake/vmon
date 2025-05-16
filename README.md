@@ -135,7 +135,8 @@ VMON installs a trap handler (if running in M-mode) in order to catch exceptions
 ### Stack handling ###
 If VMON is running in M-mode, it will set up its own stack on startup.
 Otherwise, the incoming `sp` from the caller will be used.
-In any case, all integer and float registers will be saved to the stack on entry and restored on exit.
+In any case, all integer and float registers will be saved on the stack on entry and restored on exit. 
+The saved registers can be printed using the `r`command.
 
 ## Known Problems
 
