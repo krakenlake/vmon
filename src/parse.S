@@ -121,7 +121,7 @@ find_register_name_end_done:
 
 # in: buffer ptr in a0
 # out: buffer ptr in a0
-# out: parsed address value in a1
+# out: parsed value in a1
 # out: error code in a2 (OK=0)
 get_numeric:
 	addi	sp, sp, -(XLEN_BYTES*3)

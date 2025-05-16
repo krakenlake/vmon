@@ -549,6 +549,10 @@ ass_MEM:
 	mv		s1, a1						# save insn word
 	jal		get_numeric
 	bnez	a2, ass_MEM_error
+	li		t0, -2048
+	blt		a1, t0, ass_MEM_error		# numeric too small
+	li		t0, 2047
+	bgt		a1, t0, ass_MEM_error		# numeric too big
 	mv		s2, a0						# return string ptr later
 	# check if we deal with load or store
 	mv		a3, s1
