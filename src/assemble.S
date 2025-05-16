@@ -702,6 +702,10 @@ ass_J:
 	mv		a1, s1						# instruction word
 	# compute from origin address
 	sub		a0, a0, s3					# calc offset to target addr
+	li		t0, 1048574
+	bgt		a0, t0, ass_J_error
+	li		t0, -1048576
+	blt		a0, t0, ass_J_error
 	jal		assemble_I_imm_bool
 	beqz 	a1, ass_J_error				# imm too big 
 	# return a1 and a0
