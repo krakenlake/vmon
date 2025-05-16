@@ -39,7 +39,7 @@ cmd_A_input_loop:
 	jal		assemble_instruction
 	# insn size now in a0
 	# insn now in a1
-	beqz	a0, cmd_A_continue
+	beqz	a0, cmd_A_assembly_error
 
 	# write assembled insn to memory
 	li		t0, 4
@@ -51,10 +51,10 @@ cmd_A_input_loop_write_4_bytes:
 	sw		a1, 0(s0)
 	j 		cmd_A_continue
 
+cmd_A_assembly_error:
 	# user entered garbage in assembly line
 	la		a0, string_ass_error
 	jal		print_string
-	j		cmd_A_input_loop
 
 cmd_A_continue:
 	# advance dst addr			

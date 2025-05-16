@@ -77,7 +77,7 @@
 #define ENABLE_RVF
 #define ENABLE_RVD
 #define ENABLE_RVQ
-#define ENABLE_RVC
+//#define ENABLE_RVC
 //#define ENABLE_RVB
 //#define ENABLE_RVP
 //#define ENABLE_RVV
