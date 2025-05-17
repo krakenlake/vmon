@@ -257,8 +257,4 @@ start_bss:
 # last address used in m or d command
 .comm last_address, XLEN_BYTES	
 .size last_address, XLEN_BYTES
-	
-.align 8
-# our execution stack
-.comm stack, STACK_SIZE			
-.size stack, STACK_SIZE
+

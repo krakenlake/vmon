@@ -131,3 +131,10 @@ print_saved_registers_done:
 
 #endif /* WITH_CMD_R */
 
+.bss
+
+.align 8
+
+.comm stack, STACK_SIZE
+.size stack, STACK_SIZE
+
