@@ -688,7 +688,7 @@ encoding_table:
 .word MASK_BLTU,		MATCH_BLTU,		decode_B_type,			string_OP_BLTU,		ass_rs1,	ass_rs2,	ass_BRA,	0
 .word MASK_BGEU,		MATCH_BGEU,		decode_B_type,			string_OP_BGEU,		ass_rs1,	ass_rs2,	ass_BRA,	0
 .word MASK_JAL,			MATCH_JAL,		decode_JAL,				string_OP_JAL,		ass_rd,		ass_J,		0,			0
-.word MASK_JALR,		MATCH_JALR,		decode_I_type,			string_OP_JALR,		ass_rd,		ass_rs1,	ass_J,		0
+.word MASK_JALR,		MATCH_JALR,		decode_I_type,			string_OP_JALR,		ass_rd,		ass_rs1,	ass_I_imm,	0
 .word MASK_LUI,			MATCH_LUI,		decode_U_type,			string_OP_LUI,		ass_rd,		ass_U_imm,	0,			0
 .word MASK_AUIPC,		MATCH_AUIPC,	decode_U_type,			string_OP_AUIPC,	ass_rd,		ass_U_imm,	0,			0
 .word MASK_ECALL,		MATCH_ECALL,	decode_ECALL,			string_OP_ECALL,	0,			0,			0,			0

@@ -737,10 +737,11 @@ ass_U_imm:
 	jal		get_numeric
 	# imm  value in a1
 	bnez	a2, ass_U_imm_error
+	li		t0, 1048576
+	bge		a1, t0, ass_U_imm_error
 	mv		s2, a0						# return string ptr later
 	# add imm value to instruction word
-	li		t0, 0xfffff000				# bits 12-31 of imm only
-	and		a1, a1, t0
+	slli	a1, a1, 12
 	or		a1, a1, s1					# return insn in a1
 	# return a1 and a0
 	addi	a0, s2, 1					# string ptr +1
