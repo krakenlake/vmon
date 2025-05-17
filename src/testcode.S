@@ -165,6 +165,8 @@ testcode_jal_forward:
 	auipc	x0, 0
 	auipc	x0, 31
 	auipc	x0, 1048575
+	.word 0x00000000					# this should show up as "unimp"
+	.word 0x00000001					# this should show up as "???"
 .option pop /* norvc */
 .size testcode_RV32I, .-testcode_RV32I
 #endif /* WITH_TESTCODE_RV32I */

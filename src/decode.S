@@ -581,6 +581,7 @@ decode_opcode_search_next:
 		lw		a1, ENC_OFF_FUNC_DECODE(t0)		# get function ptr from table
 		lw		a2, ENC_OFF_OP_STRING(t0)		# get string ptr from table
 	#endif
+	# last table entry is all zeros, so a1 = 0 if insn was not found
 	j		decode_opcode_done
 decode_opcode_continue:
 	addi	t0, t0, ENC_ENTRY_SIZE				# point to next table entry
