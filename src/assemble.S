@@ -697,7 +697,6 @@ ass_J:
 	# imm  value in a1
 	bnez	a2, ass_J_error
 	mv		s2, a0						# return string ptr later
-	# add imm value to instruction word
 	mv		a0, a1						# imm value
 	mv		a1, s1						# instruction word
 	# compute from origin address
@@ -706,8 +705,21 @@ ass_J:
 	bgt		a0, t0, ass_J_error
 	li		t0, -1048576
 	blt		a0, t0, ass_J_error
-	jal		assemble_I_imm_bool
-	beqz 	a1, ass_J_error				# imm too big 
+	# add imm value to instruction word
+	li		t1, 0b11111111000000000000	# imm19:12
+	and		t0, a0, t1
+	or		a1, a1, t0
+	li		t1, 1 << 11					# imm11
+	and		t0, a0, t1
+	slli	t0, t0, 9
+	or		a1, a1, t0
+	andi	t0, a0, 0b11111111110		# imm10:1
+	slli	t0, t0, 20
+	or		a1, a1, t0
+	li		t1, 1<< 20					# imm20
+	and		t0, a0, t1
+	slli	t0, t0, 11
+	or		a1, a1, t0
 	# return a1 and a0
 	addi	a0, s2, 1					# string ptr +1
 	j		ass_J_done
