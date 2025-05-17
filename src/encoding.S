@@ -133,13 +133,8 @@ get_data_by_insn_name:
 	li		t6, '.'
 get_data_by_insn_name_next:								# check string in next table entry
 	# load values from current table entry
-	#if XLEN >= 64
-		lwu		a1, ENC_OFF_MATCH(t0)					# store MATCH value from table entry in a1
-		lwu		t1, ENC_OFF_OP_STRING(t0)				# get string ptr from table
-	#else
-		lw		a1, ENC_OFF_MATCH(t0)					# store MATCH value from table entry in a1
-		lw		t1, ENC_OFF_OP_STRING(t0)				# get string ptr from table
-	#endif
+	LWU		a1, ENC_OFF_MATCH(t0)						# store MATCH value from table entry in a1
+	LWU		t1, ENC_OFF_OP_STRING(t0)					# get string ptr from table
 	beqz	t1, get_data_by_insn_name_not_found			# if string in this entry is empty, then table end, no match found
 	# compare strings
 	mv		t2, s0										# iterate with t2 over search string

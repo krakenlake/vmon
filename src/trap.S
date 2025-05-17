@@ -91,7 +91,8 @@ trap_handler_exception:
 	mv		s0, a0								# save for later
 	jal		print_hex
 	# print MCAUSE verbose
-	#ifdef MCAUSE_VERBOSE
+
+#ifdef MCAUSE_VERBOSE
 	li		a0, ' '
 	jal		print_char
 	li		a0, '('
@@ -100,15 +101,11 @@ trap_handler_exception:
 	slli	a0, s0, 2							# set a0 = mcause * 4
 	la		s0, mcause_verbose_table			# start of MCAUSE string table
 	add		a0, a0, s0
-	#if XLEN >= 64
-	lwu		a0, 0(a0)
-	#else
-	lw		a0, 0(a0)
-	#endif
+	LWU		a0, 0(a0)
 	jal		print_string
 	li		a0, ')'
 	jal		print_char
-	#endif
+#endif
 
 	# set return address for leaving trap handler
 	la		a0, main_prompt

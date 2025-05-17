@@ -560,27 +560,14 @@ decode_opcode:
 	mv		a1, zero
 	mv		a2, zero
 decode_opcode_search_next:
-	#if XLEN >= 64
-		lwu		t2, ENC_OFF_MASK(t0)			# get mask word from table
-	#else
-		lw		t2, ENC_OFF_MASK(t0)			# get mask word from table
-	#endif
+	LWU		t2, ENC_OFF_MASK(t0)				# get mask word from table
 	beqz	t2, decode_opcode_done				# table end, no match found	  
 	and		t2, a0, t2							# apply mask
-	#if XLEN >= 64
-		lwu		t3, ENC_OFF_MATCH(t0)			# get match word from table
-	#else
-		lw		t3, ENC_OFF_MATCH(t0)			# get match word from table
-	#endif
+	LWU		t3, ENC_OFF_MATCH(t0)				# get match word from table
 	bne		t2, t3, decode_opcode_continue
 	# found a match
-	#if XLEN >=64
-		lwu		a1, ENC_OFF_FUNC_DECODE(t0)		# get function ptr from table
-		lwu		a2, ENC_OFF_OP_STRING(t0)		# get string ptr from table
-	#else
-		lw		a1, ENC_OFF_FUNC_DECODE(t0)		# get function ptr from table
-		lw		a2, ENC_OFF_OP_STRING(t0)		# get string ptr from table
-	#endif
+	LWU		a1, ENC_OFF_FUNC_DECODE(t0)			# get function ptr from table
+	LWU		a2, ENC_OFF_OP_STRING(t0)			# get string ptr from table
 	# last table entry is all zeros, so a1 = 0 if insn was not found
 	j		decode_opcode_done
 decode_opcode_continue:

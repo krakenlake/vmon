@@ -5,10 +5,12 @@
 #if XLEN == 32
 	#define	SAVE_X	sw
 	#define LOAD_X	lw
+	#define LWU		lw
 #endif
 #if XLEN == 64
 	#define	SAVE_X	sd
 	#define LOAD_X	ld
+	#define LWU		lwu
 #endif
 #define XLEN_BYTES			(XLEN/8)
 

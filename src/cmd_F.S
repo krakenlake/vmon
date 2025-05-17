@@ -59,11 +59,7 @@ cmd_F_loop_h:
 	lhu		t0, 0(a3)
 	j		cmd_F_compare
 cmd_F_loop_w:
-#if	XLEN == 32
-	lw		t0, 0(a3)
-#else
-	lwu		t0, 0(a3)
-#endif
+	LWU		t0, 0(a3)
 cmd_F_compare:
 	beq		t0, a5, cmd_F_found
 	addi	a3, a3, 1

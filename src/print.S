@@ -28,8 +28,8 @@ print_comma:
 	li		a0, ','
 	jal		print_char
 	#ifdef SPACE_AFTER_COMMA
-	li		a0, ' '
-	jal		print_char
+		li		a0, ' '
+		jal		print_char
 	#endif
 	LOAD_X	ra, 0(sp)
 	addi	sp, sp, (XLEN_BYTES*1)
@@ -41,8 +41,8 @@ print_newline:
 	addi	sp, sp, -(XLEN_BYTES*1)
 	SAVE_X	ra, 0(sp)
 	#ifdef USE_CRLF
-	li		a0, ASCII_RETURN
-	jal		print_char
+		li		a0, ASCII_RETURN
+		jal		print_char
 	#endif
 	li		a0, ASCII_NEWLINE
 	jal		print_char
