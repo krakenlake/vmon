@@ -1,5 +1,6 @@
 #include "vmon/config.h"
 #include "vmon/ASCII.h"
+#include "vmon/stack.h"
 
 
 .global print_hex
@@ -264,11 +265,7 @@ print_binary_loop:
 print_binary_skip_space:
 	j		print_binary_loop
 print_binary_end:
-	LOAD_X  s1, 0(sp)
-	LOAD_X  s0, (XLEN_BYTES*1)(sp)
-	LOAD_X  ra, (XLEN_BYTES*2)(sp)
-	addi	sp, sp, (XLEN_BYTES*3)
-	ret
+	j		pop_s1_s0_ra_ret
 .size print_binary, .-print_binary
 #endif /* WITH_CMD_QMARK */
 
