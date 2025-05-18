@@ -657,12 +657,12 @@ ass_SUC:
 # out: a1 = insn word (0 on error)
 ass_J:
 	addi	sp, sp, -(XLEN_BYTES*4)
-	SAVE_X	ra, 0(sp)
+	SAVE_X	s2, 0(sp)
 	SAVE_X	s1, (XLEN_BYTES*1)(sp)
-	SAVE_X	s2, (XLEN_BYTES*2)(sp)
-	SAVE_X	s3, (XLEN_BYTES*3)(sp)
+	SAVE_X	s0, (XLEN_BYTES*2)(sp)
+	SAVE_X	ra, (XLEN_BYTES*3)(sp)
 	mv		s1, a1						# save insn word
-	mv		s3, a2						# save origin address
+	mv		s0, a2						# save origin address
 	jal		get_numeric
 	# imm  value in a1
 	bnez	a2, ass_J_error
@@ -670,7 +670,7 @@ ass_J:
 	mv		a0, a1						# imm value
 	mv		a1, s1						# instruction word
 	# compute from origin address
-	sub		a0, a0, s3					# calc offset to target addr
+	sub		a0, a0, s0					# calc offset to target addr
 	li		t0, 1048574
 	bgt		a0, t0, ass_J_error
 	li		t0, -1048576
@@ -696,12 +696,7 @@ ass_J:
 ass_J_error:
 	mv		a1, zero
 ass_J_done:
-	LOAD_X	ra, 0(sp)
-	LOAD_X	s1, (XLEN_BYTES*1)(sp)
-	LOAD_X	s2, (XLEN_BYTES*2)(sp)
-	LOAD_X	s3, (XLEN_BYTES*3)(sp)
-	addi	sp, sp, (XLEN_BYTES*4)
-	ret
+	j		pop_s2_s1_s0_ra_ret
 .size ass_J, .-ass_J
 
 
