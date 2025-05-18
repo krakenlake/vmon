@@ -738,25 +738,20 @@ ass_U_imm_done:
 # out: a1 = insn word (0 on error)
 ass_aqrl:
 	addi	sp, sp, -(XLEN_BYTES*3)
-	SAVE_X	ra, 0(sp)
-	SAVE_X	s1, (XLEN_BYTES*1)(sp)
-	SAVE_X	s2, (XLEN_BYTES*2)(sp)
-	mv		s1, a1						# save insn word
+	SAVE_X	s0, 0(sp)
+	SAVE_X	ra, (XLEN_BYTES*1)(sp)
+	mv		s0, a1						# save insn word
 	li		t1, '.'						# consume '.'
 	lb		t0, 0(a0)
 	bne 	t0, t1, ass_aqrl_error
 	addi	a0, a0, 1
 	jal		parse_aqrl
-	or		a1 , s1, a1
+	or		a1 , s0, a1
 	j 		ass_aqrl_done
 ass_aqrl_error:
 	mv		a1, zero
 ass_aqrl_done:
-	LOAD_X	ra, 0(sp)
-	LOAD_X	s1, (XLEN_BYTES*1)(sp)
-	LOAD_X	s2, (XLEN_BYTES*2)(sp)
-	addi	sp, sp, (XLEN_BYTES*3)
-	ret
+	j		pop_s0_ra_ret
 .size ass_aqrl, .-ass_aqrl
 #endif /* ENABLE_RVA */
 
