@@ -4,11 +4,11 @@
 
 
 .global pop_ra_ret
-.global pop_s1_ra_ret
-.global pop_s2_s1_ra_ret
-.global pop_s3_s2_s1_ra_ret
-.global pop_s4_s3_s2_s1_ra_ret
-.global pop_s5_s4_s3_s2_s1_ra_ret
+.global pop_s0_ra_ret
+.global pop_s1_s0_ra_ret
+.global pop_s2_s1_s0_ra_ret
+.global pop_s3_s2_s1_s0_ra_ret
+.global pop_s4_s3_s2_s1_s0_ra_ret
 
 .global patch_int_registers
 .global patch_float_registers
@@ -20,20 +20,20 @@
 .text
 
 
-pop_s5_s4_s3_s2_s1_ra_ret:
-	LOAD_X	s5, 0(sp)
-	addi	sp, sp, (XLEN_BYTES*1)
-pop_s4_s3_s2_s1_ra_ret:
+pop_s4_s3_s2_s1_s0_ra_ret:
 	LOAD_X	s4, 0(sp)
 	addi	sp, sp, (XLEN_BYTES*1)
-pop_s3_s2_s1_ra_ret:
+pop_s3_s2_s1_s0_ra_ret:
 	LOAD_X	s3, 0(sp)
 	addi	sp, sp, (XLEN_BYTES*1)
-pop_s2_s1_ra_ret:
+pop_s2_s1_s0_ra_ret:
 	LOAD_X	s2, 0(sp)
 	addi	sp, sp, (XLEN_BYTES*1)
-pop_s1_ra_ret:
+pop_s1_s0_ra_ret:
 	LOAD_X	s1, 0(sp)
+	addi	sp, sp, (XLEN_BYTES*1)
+pop_s0_ra_ret:
+	LOAD_X	s0, 0(sp)
 	addi	sp, sp, (XLEN_BYTES*1)
 pop_ra_ret:
 	LOAD_X	ra, 0(sp)

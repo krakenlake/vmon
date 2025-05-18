@@ -42,11 +42,12 @@
 # out: a1 = assembled instruction to be written into memory
 assemble_instruction:
 	addi	sp, sp, -(XLEN_BYTES*5)
-	SAVE_X	ra, 0(sp)
-	SAVE_X	s0, (XLEN_BYTES*1)(sp)
+	SAVE_X	s3, 0(sp)
+	SAVE_X	s2, (XLEN_BYTES*1)(sp)
 	SAVE_X	s1, (XLEN_BYTES*2)(sp)
-	SAVE_X	s2, (XLEN_BYTES*3)(sp)
-	SAVE_X	s3, (XLEN_BYTES*4)(sp)
+	SAVE_X	s0, (XLEN_BYTES*3)(sp)
+	SAVE_X	ra, (XLEN_BYTES*4)(sp)
+
 	mv		s3, zero							# clear RVA aqrl bits
 	jal		skip_whitespace
 	mv		s0, a0								# insn string start
@@ -106,13 +107,7 @@ assemble_instruction_is_RVC:
 assemble_instruction_error:
 	mv		a0, zero
 assemble_instruction_done:
-	LOAD_X	ra, 0(sp)
-	LOAD_X	s0, (XLEN_BYTES*1)(sp)
-	LOAD_X	s1, (XLEN_BYTES*2)(sp)
-	LOAD_X	s2, (XLEN_BYTES*3)(sp)
-	LOAD_X	s3, (XLEN_BYTES*4)(sp)
-	addi	sp, sp, (XLEN_BYTES*5)
-	ret
+	j		pop_s3_s2_s1_s0_ra_ret
 .size assemble_instruction, .-assemble_instruction
 
 
@@ -188,12 +183,12 @@ assemble_I_imm_shift_done:
 # out: assembled instruction in a1
 assemble_GENERIC:
 	addi	sp, sp, -(XLEN_BYTES*6)
-	SAVE_X	ra, 0(sp)
-	SAVE_X	s0, (XLEN_BYTES*1)(sp)
-	SAVE_X	s1, (XLEN_BYTES*2)(sp)
-	SAVE_X	s2, (XLEN_BYTES*3)(sp)
-	SAVE_X	s3, (XLEN_BYTES*4)(sp)
-	SAVE_X	s4, (XLEN_BYTES*5)(sp)
+	SAVE_X	s4, 0(sp)
+	SAVE_X	s3, (XLEN_BYTES*1)(sp)
+	SAVE_X	s2, (XLEN_BYTES*2)(sp)
+	SAVE_X	s1, (XLEN_BYTES*3)(sp)
+	SAVE_X	s0, (XLEN_BYTES*4)(sp)
+	SAVE_X	ra, (XLEN_BYTES*5)(sp)
 	li		s4,	-4							# process max. 4 arguments
 	mv		s2, a2
 	# assemble instruction word in s1, starting with MATCH value from table
@@ -241,14 +236,7 @@ assemble_GENERIC_next_argument:
 assemble_GENERIC_error:
 	mv		a1, zero
 assemble_GENERIC_done:
-	LOAD_X	ra, 0(sp)
-	LOAD_X	s0, (XLEN_BYTES*1)(sp)
-	LOAD_X	s1, (XLEN_BYTES*2)(sp)
-	LOAD_X	s1, (XLEN_BYTES*3)(sp)
-	LOAD_X	s3, (XLEN_BYTES*4)(sp)
-	LOAD_X	s4, (XLEN_BYTES*5)(sp)
-	addi	sp, sp, (XLEN_BYTES*6)
-	ret
+	j		pop_s4_s3_s2_s1_s0_ra_ret
 .size assemble_GENERIC, .-assemble_GENERIC
 
 
@@ -413,10 +401,10 @@ ass_frs3:
 # out: a1 = insn word (0 on error)
 assemble_register:
 	addi	sp, sp, -(XLEN_BYTES*4)
-	SAVE_X	ra, 0(sp)
-	SAVE_X	s0, (XLEN_BYTES*1)(sp)
-	SAVE_X	s1, (XLEN_BYTES*2)(sp)
-	SAVE_X	s2, (XLEN_BYTES*3)(sp)
+	SAVE_X	s2, 0(sp)
+	SAVE_X	s1, (XLEN_BYTES*1)(sp)
+	SAVE_X	s0, (XLEN_BYTES*2)(sp)
+	SAVE_X	ra, (XLEN_BYTES*3)(sp)
 	mv		s1, a1								# save insn word
 	# parse register name
 	mv		s0, a0								# save string start
@@ -438,12 +426,7 @@ assemble_register_error:
 	mv		a1, zero
 assemble_register_done:
 	addi	a0, s2, 1							# return reg name end +1
-	LOAD_X	ra, 0(sp)
-	LOAD_X	s0, (XLEN_BYTES*1)(sp)
-	LOAD_X	s1, (XLEN_BYTES*2)(sp)
-	LOAD_X	s2, (XLEN_BYTES*3)(sp)
-	addi	sp, sp, (XLEN_BYTES*4)
-	ret
+	j		pop_s2_s1_s0_ra_ret
 .size assemble_register, .-assemble_register
 
 
