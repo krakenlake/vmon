@@ -707,30 +707,26 @@ ass_J_done:
 # out: a1 = insn word (0 on error)
 ass_U_imm:
 	addi	sp, sp, -(XLEN_BYTES*3)
-	SAVE_X	ra, 0(sp)
-	SAVE_X	s1, (XLEN_BYTES*1)(sp)
-	SAVE_X	s2, (XLEN_BYTES*2)(sp)
+	SAVE_X	s1, 0(sp)
+	SAVE_X	s0, (XLEN_BYTES*1)(sp)
+	SAVE_X	ra, (XLEN_BYTES*2)(sp)
 	mv		s1, a1						# save insn word
 	jal		get_numeric
 	# imm  value in a1
 	bnez	a2, ass_U_imm_error
 	li		t0, 1048576
 	bge		a1, t0, ass_U_imm_error
-	mv		s2, a0						# return string ptr later
+	mv		s0, a0						# return string ptr later
 	# add imm value to instruction word
 	slli	a1, a1, 12
 	or		a1, a1, s1					# return insn in a1
 	# return a1 and a0
-	addi	a0, s2, 1					# string ptr +1
+	addi	a0, s0, 1					# string ptr +1
 	j		ass_U_imm_done
 ass_U_imm_error:
 	mv		a1, zero
 ass_U_imm_done:
-	LOAD_X	ra, 0(sp)
-	LOAD_X	s1, (XLEN_BYTES*1)(sp)
-	LOAD_X	s2, (XLEN_BYTES*2)(sp)
-	addi	sp, sp, (XLEN_BYTES*3)
-	ret
+	j		pop_s1_s0_ra_ret
 .size ass_U_imm, .-ass_U_imm
 
 
