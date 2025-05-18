@@ -129,9 +129,9 @@ print_hex_byte_two_digits:
 # in: a2 = print 0x prefix? (0=no, otherwise yes)
 print_hex_fixed_width:
 	addi	sp, sp, -(XLEN_BYTES*3)
-	SAVE_X	ra, 0(sp)
+	SAVE_X	s1, 0(sp)
 	SAVE_X	s0, (XLEN_BYTES*1)(sp)
-	SAVE_X	s1, (XLEN_BYTES*2)(sp)
+	SAVE_X	ra, (XLEN_BYTES*2)(sp)
 	mv		s0, a0
 	mv		s1, a1
 	beqz	a2, print_hex_fixed_width_loop
@@ -146,11 +146,7 @@ print_hex_fixed_width_loop:
 	and		a0, a0, 0xff 	# mask low order byte and print
 	call	print_hex_byte
 	bnez	s1, print_hex_fixed_width_loop
-	LOAD_X	ra, 0(sp)
-	LOAD_X	s0, (XLEN_BYTES*1)(sp)
-	LOAD_X	s1, (XLEN_BYTES*2)(sp)
-	addi	sp, sp, (XLEN_BYTES*3)
-	ret
+	j		pop_s1_s0_ra_ret
 .size print_hex_fixed_width, .-print_hex_fixed_width
 
 
