@@ -437,12 +437,12 @@ assemble_register_done:
 # out: a1 = insn word (0 on error)
 ass_BRA:
 	addi	sp, sp, -(XLEN_BYTES*4)
-	SAVE_X	ra, 0(sp)
+	SAVE_X	s2, 0(sp)
 	SAVE_X	s1, (XLEN_BYTES*1)(sp)
-	SAVE_X	s2, (XLEN_BYTES*2)(sp)
-	SAVE_X	s3, (XLEN_BYTES*3)(sp)
+	SAVE_X	s0, (XLEN_BYTES*2)(sp)
+	SAVE_X	ra, (XLEN_BYTES*3)(sp)
 	mv		s1, a1						# save insn word
-	mv		s3, a2						# save for later
+	mv		s0, a2						# save for later
 	jal		get_numeric
 	# address in a1
 	bnez	a2, ass_BRA_error
@@ -450,7 +450,7 @@ ass_BRA:
 	# add branch target address to instruction word
 	mv		a0, a1						# absolute target address
 	mv		a1, s1						# instruction word
-	mv		a2, s3						# get saved origin addr back
+	mv		a2, s0						# get saved origin addr back
 	jal		assemble_branch_target
 	beqz 	a1, ass_BRA_error			# address too far away
 	# return a1 and a0
@@ -459,12 +459,7 @@ ass_BRA:
 ass_BRA_error:
 	mv		a1, zero
 ass_BRA_done:
-	LOAD_X	ra, 0(sp)
-	LOAD_X	s1, (XLEN_BYTES*1)(sp)
-	LOAD_X	s2, (XLEN_BYTES*2)(sp)
-	LOAD_X	s3, (XLEN_BYTES*3)(sp)
-	addi	sp, sp, (XLEN_BYTES*4)
-	ret
+	j		pop_s2_s1_s0_ra_ret
 .size ass_BRA, .-ass_BRA
 
 
