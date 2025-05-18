@@ -241,149 +241,87 @@ assemble_GENERIC_done:
 
 
 # facade for assemble_register:
-# - add parameter for sll in s3
-# - add parameter for lookup function in s4
-# - call assemble_register 
+# - add parameter for sll in t0
+# - add parameter for lookup function in t1
+# - jump to assemble_register 
 ass_rd:
-	addi	sp, sp, -(XLEN_BYTES*3)
-	SAVE_X	ra, 0(sp)
-	SAVE_X	s3, (XLEN_BYTES*1)(sp)
-	SAVE_X	s4, (XLEN_BYTES*2)(sp)
-	li		s3, 7						# number of left shifts for rd
-	la		s4, get_int_register_index_by_name
-	jal		assemble_register
-	LOAD_X	ra, 0(sp)
-	LOAD_X	s3, (XLEN_BYTES*1)(sp)
-	LOAD_X	s4, (XLEN_BYTES*2)(sp)
-	addi	sp, sp, (XLEN_BYTES*3)
-	ret
+	li		t0, 7
+	la		t1, get_int_register_index_by_name
+	j		assemble_register
 .size ass_rd, .-ass_rd
 
 
 # facade for assemble_register:
-# - add parameter for sll in s3
-# - add parameter for lookup function in s4
-# - call assemble_register 
+# - add parameter for sll in t0
+# - add parameter for lookup function in t1
+# - jump to assemble_register 
 ass_rs1:
-	addi	sp, sp, -(XLEN_BYTES*3)
-	SAVE_X	ra, 0(sp)
-	SAVE_X	s3, (XLEN_BYTES*1)(sp)
-	SAVE_X	s4, (XLEN_BYTES*2)(sp)
-	li		s3, 15						# number of left shifts for rs1
-	la		s4, get_int_register_index_by_name
-	jal		assemble_register
-	LOAD_X	ra, 0(sp)
-	LOAD_X	s3, (XLEN_BYTES*1)(sp)
-	LOAD_X	s4, (XLEN_BYTES*2)(sp)
-	addi	sp, sp, (XLEN_BYTES*3)
-	ret
+	li		t0, 15
+	la		t1, get_int_register_index_by_name
+	j		assemble_register
 .size ass_rs1, .-ass_rs1
 
 
 # facade for assemble_register:
-# - add parameter for sll in s3
-# - add parameter for lookup function in s4
-# - call assemble_register 
+# - add parameter for sll in t0
+# - add parameter for lookup function in t1
+# - jump to assemble_register 
 ass_rs2:
-	addi	sp, sp, -(XLEN_BYTES*3)
-	SAVE_X	ra, 0(sp)
-	SAVE_X	s3, (XLEN_BYTES*1)(sp)
-	SAVE_X	s4, (XLEN_BYTES*2)(sp)
-	li		s3, 20						# number of left shifts for rs2
-	la		s4, get_int_register_index_by_name
-	jal		assemble_register
-	LOAD_X	ra, 0(sp)
-	LOAD_X	s3, (XLEN_BYTES*1)(sp)
-	LOAD_X	s4, (XLEN_BYTES*2)(sp)
-	addi	sp, sp, (XLEN_BYTES*3)
-	ret
+
+	li		t0, 20
+	la		t1, get_int_register_index_by_name
+	j		assemble_register
 .size ass_rs2, .-ass_rs2
 
 
 #ifdef ENABLE_RVF
 # facade for assemble_register:
-# - add parameter for sll in s3
-# - add parameter for lookup function in s4
-# - call assemble_register 
+# - add parameter for sll in t0
+# - add parameter for lookup function in t1
+# - jump to assemble_register 
 ass_frd:
-	addi	sp, sp, -(XLEN_BYTES*3)
-	SAVE_X	ra, 0(sp)
-	SAVE_X	s3, (XLEN_BYTES*1)(sp)
-	SAVE_X	s4, (XLEN_BYTES*2)(sp)
-	li		s3, 7						# number of left shifts for rd
-	la		s4, get_float_register_index_by_name
-	jal		assemble_register
-	LOAD_X	ra, 0(sp)
-	LOAD_X	s3, (XLEN_BYTES*1)(sp)
-	LOAD_X	s4, (XLEN_BYTES*2)(sp)
-	addi	sp, sp, (XLEN_BYTES*3)
-	ret
+	li		t0, 7
+	la		t1, get_float_register_index_by_name
+	j		assemble_register
 .size ass_frd, .-ass_frd
 #endif /* ENABLE_RVF */
 
 
 #ifdef ENABLE_RVF
 # facade for assemble_register:
-# - add parameter for sll in s3
-# - add parameter for lookup function in s4
-# - call assemble_register 
+# - add parameter for sll in t0
+# - add parameter for lookup function in t1
+# - jump to assemble_register 
 ass_frs1:
-	addi	sp, sp, -(XLEN_BYTES*3)
-	SAVE_X	ra, 0(sp)
-	SAVE_X	s3, (XLEN_BYTES*1)(sp)
-	SAVE_X	s4, (XLEN_BYTES*2)(sp)
-	li		s3, 15						# number of left shifts for rs1
-	la		s4, get_float_register_index_by_name
-	jal		assemble_register
-	LOAD_X	ra, 0(sp)
-	LOAD_X	s3, (XLEN_BYTES*1)(sp)
-	LOAD_X	s4, (XLEN_BYTES*2)(sp)
-	addi	sp, sp, (XLEN_BYTES*3)
-	ret
+	li		t0, 15
+	la		t1, get_float_register_index_by_name
+	j		assemble_register
 .size ass_frs1, .-ass_frs1
 #endif /* ENABLE_RVF */
 
 
 #ifdef ENABLE_RVF
 # facade for assemble_register:
-# - add parameter for sll in s3
-# - add parameter for lookup function in s4
-# - call assemble_register 
+# - add parameter for sll in t0
+# - add parameter for lookup function in t1
+# - jump to assemble_register 
 ass_frs2:
-	addi	sp, sp, -(XLEN_BYTES*3)
-	SAVE_X	ra, 0(sp)
-	SAVE_X	s3, (XLEN_BYTES*1)(sp)
-	SAVE_X	s4, (XLEN_BYTES*2)(sp)
-	li		s3, 20						# number of left shifts for rs2
-	la		s4, get_float_register_index_by_name
-	jal		assemble_register
-	LOAD_X	ra, 0(sp)
-	LOAD_X	s3, (XLEN_BYTES*1)(sp)
-	LOAD_X	s4, (XLEN_BYTES*2)(sp)
-	addi	sp, sp, (XLEN_BYTES*3)
-	ret
+	li		t0, 20
+	la		t1, get_float_register_index_by_name
+	j		assemble_register
 .size ass_frs2, .-ass_frs2
 #endif /* ENABLE_RVF */
 
 
 #ifdef ENABLE_RVF
 # facade for assemble_register:
-# - add parameter for sll in s3
-# - add parameter for lookup function in s4
-# - call assemble_register 
+# - add parameter for sll in t0
+# - add parameter for lookup function in t1
+# - jump to assemble_register 
 ass_frs3:
-	addi	sp, sp, -(XLEN_BYTES*3)
-	SAVE_X	ra, 0(sp)
-	SAVE_X	s3, (XLEN_BYTES*1)(sp)
-	SAVE_X	s4, (XLEN_BYTES*2)(sp)
-	li		s3, 27						# number of left shifts for rs3
-	la		s4, get_float_register_index_by_name
-	jal		assemble_register
-	LOAD_X	ra, 0(sp)
-	LOAD_X	s3, (XLEN_BYTES*1)(sp)
-	LOAD_X	s4, (XLEN_BYTES*2)(sp)
-	addi	sp, sp, (XLEN_BYTES*3)
-	ret
+	li		t0, 27
+	la		t1, get_float_register_index_by_name
+	j		assemble_register
 .size ass_frs3, .-ass_frs3
 #endif /* ENABLE_RVF */
 
@@ -395,16 +333,20 @@ ass_frs3:
 # in: a0 = ptr to first char
 # in: a1 = insn word to be modifed
 # in: a2 = origin address
-# in: s3 = number of slli shifts required (7 for rd, 15 for rs1, 20 for rs2)
-# in: s4 = register lookup function ptr
+# in: t0 = number of slli shifts required (7 for rd, 15 for rs1, 20 for rs2)
+# in: t1 = register lookup function ptr
 # out: a0 = ptr to char after argument
 # out: a1 = insn word (0 on error)
 assemble_register:
-	addi	sp, sp, -(XLEN_BYTES*4)
-	SAVE_X	s2, 0(sp)
-	SAVE_X	s1, (XLEN_BYTES*1)(sp)
-	SAVE_X	s0, (XLEN_BYTES*2)(sp)
-	SAVE_X	ra, (XLEN_BYTES*3)(sp)
+	addi	sp, sp, -(XLEN_BYTES*6)
+	SAVE_X	s4, 0(sp)
+	SAVE_X	s3, (XLEN_BYTES*1)(sp)
+	SAVE_X	s2, (XLEN_BYTES*2)(sp)
+	SAVE_X	s1, (XLEN_BYTES*3)(sp)
+	SAVE_X	s0, (XLEN_BYTES*4)(sp)
+	SAVE_X	ra, (XLEN_BYTES*5)(sp)
+	mv		s3, t0
+	mv		s4, t1
 	mv		s1, a1								# save insn word
 	# parse register name
 	mv		s0, a0								# save string start
@@ -426,7 +368,7 @@ assemble_register_error:
 	mv		a1, zero
 assemble_register_done:
 	addi	a0, s2, 1							# return reg name end +1
-	j		pop_s2_s1_s0_ra_ret
+	j		pop_s4_s3_s2_s1_s0_ra_ret
 .size assemble_register, .-assemble_register
 
 
