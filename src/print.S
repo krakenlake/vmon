@@ -105,21 +105,18 @@ print_hex_new_decimal:
 # in: byte value in a0
 print_hex_byte:
 	addi	sp, sp, -(XLEN_BYTES*2)
-	SAVE_X	ra, 0(sp)
-	SAVE_X	s1, (XLEN_BYTES*1)(sp)
+	SAVE_X	s0, 0(sp)
+	SAVE_X	ra, (XLEN_BYTES*1)(sp)
 	li		t0, 15
 	bgt		a0, t0, print_hex_byte_two_digits
 	# print a leading zero if necessary
-	mv		s1, a0					# save a0 for later
+	mv		s0, a0					# save a0 for later
 	li		a0, '0'
 	jal		print_char
-	mv		a0, s1					# restore a0
+	mv		a0, s0					# restore a0
 print_hex_byte_two_digits:
 	jal		print_hex_raw
-	LOAD_X	ra, 0(sp)
-	LOAD_X	s1, (XLEN_BYTES*1)(sp)
-	addi	sp, sp, (XLEN_BYTES*2)
-	ret
+	j		pop_s0_ra_ret
 .size print_hex_byte, .-print_hex_byte
 
 
