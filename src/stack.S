@@ -9,6 +9,9 @@
 .global pop_s2_s1_s0_ra_ret
 .global pop_s3_s2_s1_s0_ra_ret
 .global pop_s4_s3_s2_s1_s0_ra_ret
+.global pop_s5_s4_s3_s2_s1_s0_ra_ret
+.global pop_s6_s5_s4_s3_s2_s1_s0_ra_ret
+.global pop_s7_s6_s5_s4_s3_s2_s1_s0_ra_ret
 
 .global patch_int_registers
 .global patch_float_registers
@@ -19,7 +22,17 @@
 
 .text
 
+# for function epilogue optimisation (shorter code in total)
 
+pop_s7_s6_s5_s4_s3_s2_s1_s0_ra_ret:
+	LOAD_X	s7, 0(sp)
+	addi	sp, sp, (XLEN_BYTES*1)
+pop_s6_s5_s4_s3_s2_s1_s0_ra_ret:
+	LOAD_X	s6, 0(sp)
+	addi	sp, sp, (XLEN_BYTES*1)
+pop_s5_s4_s3_s2_s1_s0_ra_ret:
+	LOAD_X	s5, 0(sp)
+	addi	sp, sp, (XLEN_BYTES*1)
 pop_s4_s3_s2_s1_s0_ra_ret:
 	LOAD_X	s4, 0(sp)
 	addi	sp, sp, (XLEN_BYTES*1)
@@ -104,15 +117,15 @@ print_int_registers:
 # in: a4 = size of one register in bytes
 print_saved_registers:
 	addi	sp, sp, -(XLEN_BYTES*9)
-	SAVE_X  ra, 0(sp)
-	SAVE_X  s0, (XLEN_BYTES*1)(sp)
-	SAVE_X  s1, (XLEN_BYTES*2)(sp)
-	SAVE_X	s2, (XLEN_BYTES*3)(sp)
+	SAVE_X  s7, 0(sp)
+	SAVE_X  s6, (XLEN_BYTES*1)(sp)
+	SAVE_X  s5, (XLEN_BYTES*2)(sp)
+	SAVE_X	s4, (XLEN_BYTES*3)(sp)
 	SAVE_X	s3, (XLEN_BYTES*4)(sp)
-	SAVE_X	s4, (XLEN_BYTES*5)(sp)
-	SAVE_X	s5, (XLEN_BYTES*6)(sp)
-	SAVE_X	s6, (XLEN_BYTES*7)(sp)
-	SAVE_X	s7, (XLEN_BYTES*8)(sp)
+	SAVE_X	s2, (XLEN_BYTES*5)(sp)
+	SAVE_X	s1, (XLEN_BYTES*6)(sp)
+	SAVE_X	s0, (XLEN_BYTES*7)(sp)
+	SAVE_X	ra, (XLEN_BYTES*8)(sp)
 	mv		s5, a0						# register name lookup func ptr
 	mv		s1, a1						# first register index
 	mv		s2, a2						# last register index
@@ -164,17 +177,7 @@ print_saved_registers_skip_space:
 	beqz	s3, print_saved_registers_next
 	j		print_saved_registers_skip_newline
 print_saved_registers_done:
-	LOAD_X  ra, 0(sp)
-	LOAD_X  s0, (XLEN_BYTES*1)(sp)
-	LOAD_X  s1, (XLEN_BYTES*2)(sp)
-	LOAD_X  s2, (XLEN_BYTES*3)(sp)
-	LOAD_X  s3, (XLEN_BYTES*4)(sp)
-	LOAD_X  s4, (XLEN_BYTES*5)(sp)
-	LOAD_X  s5, (XLEN_BYTES*6)(sp)
-	LOAD_X  s6, (XLEN_BYTES*7)(sp)
-	LOAD_X  s7, (XLEN_BYTES*8)(sp)
-	addi	sp, sp, (XLEN_BYTES*9)
-	ret
+	j		pop_s7_s6_s5_s4_s3_s2_s1_s0_ra_ret
 .size print_saved_registers, .-print_saved_registers
 
 #endif /* WITH_CMD_R */
