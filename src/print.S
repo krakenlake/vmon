@@ -182,15 +182,15 @@ print_string:
 # in: a0 = value to print
 print_decimal:
 	addi	sp, sp, -(XLEN_BYTES*2)
-	SAVE_X	ra, 0(sp)
-	SAVE_X	s2, (XLEN_BYTES*1)(sp)
+	SAVE_X	s0, 0(sp)
+	SAVE_X	ra, (XLEN_BYTES*1)(sp)
 	beqz	a0, print_decimal_zero
 	# save a0
 	mv		t6, a0
 	# terminate buffer at the end
-	la		s2, out_buf
-	addi	s2, s2, (OUT_BUFFER_SIZE-1)
-	sb		zero, 0(s2)
+	la		s0, out_buf
+	addi	s0, s0, (OUT_BUFFER_SIZE-1)
+	sb		zero, 0(s0)
 	# invert if negative
 	bgtz	t6, print_decimal_skip_invert
 	neg		a0, a0
@@ -198,13 +198,13 @@ print_decimal_skip_invert:
 	# write ASCII digits to buffer backward starting at the end
 print_decimal_loop:
 	# dec buffer ptr
-	addi	s2, s2, -1
+	addi	s0, s0, -1
 	li		a1, 10
 	# a0 = quotient, a1 = divisor
 	jal		divrem
 	# output digit as ASCII to buffer
 	addi	t0, a1, 48
-	sb		t0, 0(s2)
+	sb		t0, 0(s0)
 	# repeat
 	bnez	a0, print_decimal_loop
 	# print minus if negative
@@ -213,17 +213,14 @@ print_decimal_loop:
 	jal		print_char
 print_decimal_skip_minus:
 	# output buffer, starting at last written location
-	mv		a0, s2
+	mv		a0, s0
 	jal		print_string
 	j		print_decimal_done
 print_decimal_zero:
 	li		a0, '0'
 	jal		print_char
 print_decimal_done:
-	LOAD_X	ra, 0(sp)
-	LOAD_X	s2, (XLEN_BYTES*1)(sp)
-	addi	sp, sp, (XLEN_BYTES*2)
-	ret
+	j		pop_s0_ra_ret
 .size print_decimal, .-print_decimal
 #endif /* defined(WITH_CMD_D) || defined(WITH_CMD_SLASH) */
 
