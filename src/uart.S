@@ -117,9 +117,9 @@ uart_output_buffer_done:
 # out: buffer start in a0
 uart_getline:
 	addi	sp, sp, -(XLEN_BYTES*3)				
-	SAVE_X	ra, 0(sp)
+	SAVE_X	s1, 0(sp)
 	SAVE_X	s0, (XLEN_BYTES*1)(sp)
-	SAVE_X	s1, (XLEN_BYTES*2)(sp)
+	SAVE_X	ra, (XLEN_BYTES*2)(sp)
 
 	jal		uart_clear_buffer
 
@@ -170,11 +170,7 @@ uart_getline_done:
 	# return buffer address
 	mv		a0, s1
 
-	LOAD_X	ra, 0(sp)			  
-	LOAD_X	s0, (XLEN_BYTES*1)(sp)				 
-	LOAD_X	s1, (XLEN_BYTES*2)(sp)				 
-	addi	sp, sp, (XLEN_BYTES*3)
-	ret
+	j		pop_s1_s0_ra_ret
 .size uart_getline, .-uart_getline
 
 
