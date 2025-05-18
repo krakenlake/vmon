@@ -623,6 +623,38 @@ string_OP_EBREAK:	.string "ebreak";
 
 .align 4
 
+encoding_vectors:
+
+.word	ass_rd				# 0x01
+.word	ass_rs1				# 0x02
+.word	ass_rs2				# 0x03
+.word	ass_I_imm			# 0x04
+.word	ass_MEM				# 0x05
+.word	ass_BRA				# 0x06
+.word	ass_J				# 0x07
+.word	ass_U_imm			# 0x08
+#ifdef ENABLE_RVA
+	.word	ass_PRE			# 0x09
+	.word	ass_SUC			# 0x0a
+	.word	ass_AMEM		# 0x0b
+#else
+	.word	0				# 0x09	
+	.word	0				# 0x0a
+	.word	0				# 0x0b
+#endif /* ENABLE_RVA */
+#ifdef ENABLE_RVF
+	.word	ass_frd			# 0x0c
+	.word	ass_frs1		# 0x0d
+	.word	ass_frs2		# 0x0e
+	.word	ass_frs3		# 0x0f
+#else
+	.word	0				# 0x0c	
+	.word	0				# 0x0d
+	.word	0				# 0x0e
+	.word	0				# 0x0f
+#endif /* ENABLE_RVF */
+
+
 encoding_table:
 # This encoding table is used to lookup instructions during assembly 
 # and disassembly:

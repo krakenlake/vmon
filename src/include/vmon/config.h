@@ -41,6 +41,7 @@
 #define WITH_CMD_M			// memory dump
 #define WITH_CMD_P			// poke
 #define WITH_CMD_R			// register dump
+#define WITH_CMD_S			// set register
 #define WITH_CMD_X			// exit
 #define WITH_CMD_QMARK		// base conversion	
 
@@ -55,30 +56,32 @@
 
 // configure which parts of the test code will be present
 // in the executable
-#define WITH_TESTCODE_RV32I
-#define WITH_TESTCODE_RV64I
-#define WITH_TESTCODE_RVM
-#define WITH_TESTCODE_RVA
-#define WITH_TESTCODE_RVF
-#define WITH_TESTCODE_RVD
-#define WITH_TESTCODE_RVQ
-#define WITH_TESTCODE_RVC
-//#define WITH_TESTCODE_RVB
-//#define WITH_TESTCODE_RVP
-//#define WITH_TESTCODE_RVV
-//#define WITH_TESTCODE_RVH
-#define WITH_TESTCODE_RVZicsr
-#define WITH_TESTCODE_RVZifencei
-#define WITH_TESTCODE_RVPRIV
-#define WITH_TESTCODE_PSEUDO
+#ifdef WITH_TESTCODE
+	#define WITH_TESTCODE_RV32I
+	#define WITH_TESTCODE_RV64I
+	#define WITH_TESTCODE_RVM
+	#define WITH_TESTCODE_RVA
+	#define WITH_TESTCODE_RVF
+	//#define WITH_TESTCODE_RVD
+	//#define WITH_TESTCODE_RVQ
+	//#define WITH_TESTCODE_RVC
+	//#define WITH_TESTCODE_RVB
+	//#define WITH_TESTCODE_RVP
+	//#define WITH_TESTCODE_RVV
+	//#define WITH_TESTCODE_RVH
+	#define WITH_TESTCODE_RVZicsr
+	#define WITH_TESTCODE_RVZifencei
+	#define WITH_TESTCODE_RVPRIV
+	#define WITH_TESTCODE_PSEUDO
+#endif
 
 // configure which instructions and extensions the
 // executable will recognize 
 #define ENABLE_RVM
 #define ENABLE_RVA
 #define ENABLE_RVF
-#define ENABLE_RVD
-#define ENABLE_RVQ
+//#define ENABLE_RVD
+//#define ENABLE_RVQ
 //#define ENABLE_RVC
 //#define ENABLE_RVB
 //#define ENABLE_RVP

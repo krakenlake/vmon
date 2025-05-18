@@ -729,7 +729,7 @@ ass_J_done:
 	LOAD_X	ra, 0(sp)
 	LOAD_X	s1, (XLEN_BYTES*1)(sp)
 	LOAD_X	s2, (XLEN_BYTES*2)(sp)
-	LOAD_X	s3, (XLEN_BYTES*2)(sp)
+	LOAD_X	s3, (XLEN_BYTES*3)(sp)
 	addi	sp, sp, (XLEN_BYTES*4)
 	ret
 .size ass_J, .-ass_J
