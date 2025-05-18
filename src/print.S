@@ -53,21 +53,18 @@ print_newline:
 # in: a0 = value to print
 print_hex:
 	addi	sp, sp, -(XLEN_BYTES*2)
-	SAVE_X	ra, 0(sp)
-	SAVE_X	s1, (XLEN_BYTES*1)(sp)
+	SAVE_X	s0, 0(sp)
+	SAVE_X	ra, (XLEN_BYTES*1)(sp)
 	# print "0x"
-	mv		s1, a0						# save a0 for later
+	mv		s0, a0						# save a0 for later
 	li		a0, '0'
 	jal		print_char
 	li		a0, 'x'
 	jal		print_char
-	mv		a0, s1						# restore a0
+	mv		a0, s0						# restore a0
 	# print value
 	jal		print_hex_raw
-	LOAD_X	ra, 0(sp)
-	LOAD_X	s1, (XLEN_BYTES*1)(sp)
-	addi	sp, sp, (XLEN_BYTES*2)
-	ret
+	j		pop_s0_ra_ret
 .size print_hex, .-print_hex
 
 
