@@ -764,11 +764,11 @@ ass_aqrl_done:
 # out: a1 = insn word (0 on error)
 ass_AMEM:
 	addi	sp, sp, -(XLEN_BYTES*3)
-	SAVE_X	ra, 0(sp)
-	SAVE_X	s1, (XLEN_BYTES*1)(sp)
-	SAVE_X	s2, (XLEN_BYTES*2)(sp)
+	SAVE_X	s1, 0(sp)
+	SAVE_X	s0, (XLEN_BYTES*1)(sp)
+	SAVE_X	ra, (XLEN_BYTES*2)(sp)
 	mv		s1, a1						# save insn word
-	mv		s2, a0						# return string ptr later
+	mv		s0, a0						# return string ptr later
 	# expect (
 	jal		skip_whitespace
 	jal		consume_open_paren
@@ -786,16 +786,12 @@ ass_AMEM:
 	# assemble in a1
 	mv		a1, s1
 ass_AMEM_continue:
-	addi	a0, s2, 1					# string ptr +1
+	addi	a0, s0, 1					# string ptr +1
 	j		ass_AMEM_done
 ass_AMEM_error:
 	mv		a1, zero
 ass_AMEM_done:
-	LOAD_X	ra, 0(sp)
-	LOAD_X	s1, (XLEN_BYTES*1)(sp)
-	LOAD_X	s2, (XLEN_BYTES*2)(sp)
-	addi	sp, sp, (XLEN_BYTES*3)
-	ret
+	j		pop_s1_s0_ra_ret
 .size ass_AMEM, .-ass_AMEM
 #endif /* ENABLE_RVA */
 
