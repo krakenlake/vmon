@@ -3,11 +3,63 @@
 #include "vmon/stack.h"
 
 
+.global restore_ra_ret
+.global restore_s1_ret
+.global restore_s2_ret
+.global restore_s3_ret
+.global restore_s4_ret
+.global restore_s5_ret
+
+.global patch_int_registers
+.global patch_float_registers
+
 .global print_int_registers
 .global print_float_registers
 
 
 .text
+
+
+restore_s5_ret:
+	LOAD_X	s5, 0(sp)
+	addi	sp, sp, (XLEN_BYTES*1)
+restore_s4_ret:
+	LOAD_X	s4, 0(sp)
+	addi	sp, sp, (XLEN_BYTES*1)
+restore_s3_ret:
+	LOAD_X	s3, 0(sp)
+	addi	sp, sp, (XLEN_BYTES*1)
+restore_s2_ret:
+	LOAD_X	s2, 0(sp)
+	addi	sp, sp, (XLEN_BYTES*1)
+restore_s1_ret:
+	LOAD_X	s1, 0(sp)
+	addi	sp, sp, (XLEN_BYTES*1)
+restore_ra_ret:
+	LOAD_X	ra, 0(sp)
+	addi	sp, sp, (XLEN_BYTES*1)
+	ret
+
+
+#ifdef WITH_CMD_S
+
+# in: a0 = index of register
+# out:
+patch_int_register:
+	la		a1, stack + STACK_SIZE - STK_FRAME_SIZE_INT + STK_OFF_RA
+	addi	a1, a1, STK_OFF_RA
+	SAVE_X	a1, 0(a0)
+	ret
+
+	#ifdef ENABLE_RVF
+	patch_float_register:
+		la		a1, stack + STACK_SIZE - STK_FRAME_SIZE_INT - STK_FRAME_SIZE_FLOAT
+		addi	a1, a1, STK_OFF_RA
+		SAVE_X	a1, 0(a0)
+		ret
+	#endif /* ENABLE_RVF */
+
+#endif /* WITH_CMD_S */
 
 
 #ifdef WITH_CMD_R
@@ -32,19 +84,19 @@ print_int_registers:
 
 
 #ifdef ENABLE_RVF
-print_float_registers:
-	addi	sp, sp, -(XLEN_BYTES*1)
-	SAVE_X  ra, 0(sp)
-	la		a0, get_float_register_name_by_index
-	li		a1, 0
-	li		a2, 31 
-	la		a3, stack + (STACK_SIZE) - (STK_FRAME_SIZE_INT) - (STK_FRAME_SIZE_FLOAT)
-	li		a4, FLEN_BYTES
-	jal		print_saved_registers
-	LOAD_X  ra, 0(sp)
-	addi	sp, sp, (XLEN_BYTES*1)
-	ret
-.size print_float_registers, .-print_float_registers
+	print_float_registers:
+		addi	sp, sp, -(XLEN_BYTES*1)
+		SAVE_X  ra, 0(sp)
+		la		a0, get_float_register_name_by_index
+		li		a1, 0
+		li		a2, 31 
+		la		a3, stack + (STACK_SIZE) - (STK_FRAME_SIZE_INT) - (STK_FRAME_SIZE_FLOAT)
+		li		a4, FLEN_BYTES
+		jal		print_saved_registers
+		LOAD_X  ra, 0(sp)
+		addi	sp, sp, (XLEN_BYTES*1)
+		ret
+	.size print_float_registers, .-print_float_registers
 #endif /* ENABLE_RVF */
 
 

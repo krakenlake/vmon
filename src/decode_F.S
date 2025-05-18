@@ -26,9 +26,12 @@ print_frd:
 	jal		get_float_register_name_by_index
 	jal		print_string
 	jal		print_comma
+/*
 	LOAD_X	ra, 0(sp)				
 	addi	sp, sp, (XLEN_BYTES*1)
 	ret
+*/
+	j		restore_ra_ret
 .size print_frd, .-print_frd
 
 
@@ -39,9 +42,12 @@ print_float_register_name:
 	and		a0, a0, 0b11111
 	jal		get_float_register_name_by_index
 	jal		print_string
+/*
 	LOAD_X	ra, 0(sp)				
 	addi	sp, sp, (XLEN_BYTES*1)
 	ret
+*/
+	j		restore_ra_ret
 .size print_float_register_name, .-print_float_register_name
 
 

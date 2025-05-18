@@ -245,9 +245,12 @@ decode_S_type_imm:
 	and		t0, t0, t1
 	or		a0, a0, t0 
 	jal		print_decimal
+/*
 	LOAD_X	ra, 0(sp)				
 	addi	sp, sp, (XLEN_BYTES*1)
 	ret
+*/
+	j		restore_ra_ret
 .size decode_S_type_imm, .-decode_S_type_imm
 
 
@@ -430,9 +433,12 @@ decode_C_LWSP:
 	# TODO
 	li		a0, ')'
 	jal		print_char
+/*
 	LOAD_X	ra, 0(sp)				
 	addi	sp, sp, (XLEN_BYTES*1)
 	ret
+*/
+	j		restore_ra_ret
 .size decode_C_LWSP, .-decode_C_LWSP
 #endif /* ENABLE_RVC */
 
@@ -482,9 +488,12 @@ print_rd:
 	jal		get_int_register_name_by_index
 	jal		print_string
 	jal		print_comma
+/*
 	LOAD_X	ra, 0(sp)				
 	addi	sp, sp, (XLEN_BYTES*1)
 	ret
+*/
+	j		restore_ra_ret
 .size print_rd, .-print_rd
 
 
@@ -509,9 +518,12 @@ print_int_register_name:
 	and		a0, a0, 0b11111
 	jal		get_int_register_name_by_index
 	jal		print_string
+/*
 	LOAD_X	ra, 0(sp)				
 	addi	sp, sp, (XLEN_BYTES*1)
 	ret
+*/
+	j		restore_ra_ret
 .size print_int_register_name, .-print_int_register_name
 
 
@@ -541,9 +553,12 @@ print_csr:
 	and		a0, a0, t0
 	jal		print_hex
 	jal		print_comma
+/*
 	LOAD_X	ra, 0(sp)				
 	addi	sp, sp, (XLEN_BYTES*1)
 	ret
+*/
+	j		restore_ra_ret
 .size print_csr, .-print_csr
 
 
@@ -574,9 +589,12 @@ decode_opcode_continue:
 	addi	t0, t0, ENC_ENTRY_SIZE				# point to next table entry
 	j		decode_opcode_search_next	# repeat
 decode_opcode_done:
+/*
 	LOAD_X	ra, 0(sp)		   
 	addi	sp, sp, (XLEN_BYTES*1)
 	ret
+*/
+	j		restore_ra_ret
 .size decode_opcode, .-decode_opcode
 
 #ifdef ENABLE_RVC
@@ -667,9 +685,12 @@ print_AMO_postfix_case3:
 	la		a0, string_OP_POSTFIX_AQRL
 	jal		print_string
 print_AMO_postfix_done:	   
+/*
 	LOAD_X	ra, 0(sp)				
 	addi	sp, sp, (XLEN_BYTES*1)
 	ret
+*/
+	j		restore_ra_ret
 .size print_AMO_postfix, .-print_AMO_postfix
 #endif /* ENABLE_RVA */ 
 

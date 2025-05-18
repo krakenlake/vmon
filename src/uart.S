@@ -56,9 +56,12 @@ uart_output_char:
 	andi	a0, a0, 0xff				# make sure value is < 256		
 	sh		a0, 0(t0)					# write char and zero termination to buffer
 	jal		uart_output_buffer
+/*
 	LOAD_X	ra, 0(sp)			  
 	addi	sp, sp, (XLEN_BYTES*1)
 	ret
+*/
+	j		restore_ra_ret
 .size uart_output_char, .-uart_output_char
 
 
@@ -83,9 +86,12 @@ uart_output_string_char:
 	addi	a1, a1, 1
 	j		uart_output_string_loop
 uart_output_string_done:
+/*
 	LOAD_X	ra, 0(sp)			  
 	addi	sp, sp, (XLEN_BYTES*1)
 	ret
+*/
+	j		restore_ra_ret
 .size uart_output_string, .-uart_output_string
 
 
@@ -113,9 +119,12 @@ uart_output_buffer_wait_lsr:
 	addi	t1, t1, 1
 	j		uart_output_buffer_next_byte
 uart_output_buffer_done:
+/*
 	LOAD_X	ra, 0(sp)			  
 	addi	sp, sp, (XLEN_BYTES*1)
 	ret
+*/
+	j		restore_ra_ret
 .size uart_output_buffer, .-uart_output_buffer
 
 
