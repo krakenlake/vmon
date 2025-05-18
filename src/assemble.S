@@ -521,9 +521,9 @@ ass_I_imm_done:
 # out: a1 = insn word (0 on error)
 ass_MEM:
 	addi	sp, sp, -(XLEN_BYTES*3)
-	SAVE_X	ra, 0(sp)
-	SAVE_X	s1, (XLEN_BYTES*1)(sp)
-	SAVE_X	s2, (XLEN_BYTES*2)(sp)
+	SAVE_X	s1, 0(sp)
+	SAVE_X	s0, (XLEN_BYTES*1)(sp)
+	SAVE_X	ra, (XLEN_BYTES*2)(sp)
 	mv		s1, a1						# save insn word
 	jal		get_numeric
 	bnez	a2, ass_MEM_error
@@ -531,7 +531,7 @@ ass_MEM:
 	blt		a1, t0, ass_MEM_error		# numeric too small
 	li		t0, 2047
 	bgt		a1, t0, ass_MEM_error		# numeric too big
-	mv		s2, a0						# return string ptr later
+	mv		s0, a0						# return string ptr later
 	# check if we deal with load or store
 	mv		a3, s1
 	jal		insn_is_LOAD
@@ -574,16 +574,12 @@ ass_MEM_rs1:
 	mv		a1, s1
 ass_MEM_continue:
 	# return a1 and a0
-	addi	a0, s2, 1					# string ptr +1
+	addi	a0, s0, 1					# string ptr +1
 	j		ass_MEM_done
 ass_MEM_error:
 	mv		a1, zero
 ass_MEM_done:
-	LOAD_X	ra, 0(sp)
-	LOAD_X	s1, (XLEN_BYTES*1)(sp)
-	LOAD_X	s2, (XLEN_BYTES*2)(sp)
-	addi	sp, sp, (XLEN_BYTES*3)
-	ret
+	j		pop_s1_s0_ra_ret
 .size ass_MEM, .-ass_MEM
 
 
