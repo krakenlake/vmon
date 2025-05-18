@@ -586,31 +586,29 @@ ass_MEM_done:
 # in: a0 = ptr to first char of argument
 # in: a1 = insn word to be modifed
 # in: a2 = origin address
-# in: s3 = number of slli shifts (predecessor=24, sucessor=20)
+# in: t0 = number of slli shifts (predecessor=24, sucessor=20)
 # out: a0 = ptr to char after argument
 # out: a1 = insn word (0 on error)
 ass_iorw:
-	addi	sp, sp, -(XLEN_BYTES*3)
-	SAVE_X	ra, 0(sp)
+	addi	sp, sp, -(XLEN_BYTES*4)
+	SAVE_X	s2, 0(sp)
 	SAVE_X	s1, (XLEN_BYTES*1)(sp)
-	SAVE_X	s2, (XLEN_BYTES*2)(sp)
+	SAVE_X	s0, (XLEN_BYTES*2)(sp)
+	SAVE_X	ra, (XLEN_BYTES*3)(sp)
+	mv		s0, t0						# shift value from ass_PRE or ass_SUC
 	mv		s1, a1						# save insn word
 	jal		parse_iorw
 	# iorw bits in bits 0-3 of a1
 	bnez	a2, ass_iorw_error
 	mv		s2, a0						# return string ptr later
 	# add iorw bits to instruction word
-	sll		a1, a1, s3
+	sll		a1, a1, s0
 	or		a1, s1, a1						# instruction word
 	j		ass_iorw_done
 ass_iorw_error:
 	mv		a1, zero
 ass_iorw_done:
-	LOAD_X	ra, 0(sp)
-	LOAD_X	s1, (XLEN_BYTES*1)(sp)
-	LOAD_X	s2, (XLEN_BYTES*2)(sp)
-	addi	sp, sp, (XLEN_BYTES*3)
-	ret
+	j		pop_s2_s1_s0_ra_ret
 .size ass_iorw, .-ass_iorw
 
 
@@ -620,15 +618,8 @@ ass_iorw_done:
 # out: a0 = ptr to char after argument
 # out: a1 = insn word (0 on error)
 ass_PRE:
-	addi	sp, sp, -(XLEN_BYTES*2)
-	SAVE_X	ra, 0(sp)
-	SAVE_X	s3, (XLEN_BYTES*1)(sp)
-	li		s3, 24						# number of left shifts for predecessor
-	jal		ass_iorw
-	LOAD_X	ra, 0(sp)
-	LOAD_X	s3, (XLEN_BYTES*1)(sp)
-	addi	sp, sp, (XLEN_BYTES*2)
-	ret
+	li		t0, 24
+	j		ass_iorw
 .size ass_PRE, .-ass_PRE
 
 
@@ -638,15 +629,8 @@ ass_PRE:
 # out: a0 = ptr to char after argument
 # out: a1 = insn word (0 on error)
 ass_SUC:
-	addi	sp, sp, -(XLEN_BYTES*2)
-	SAVE_X	ra, 0(sp)
-	SAVE_X	s3, (XLEN_BYTES*1)(sp)
-	li		s3, 20						# number of left shifts for successor
-	jal		ass_iorw
-	LOAD_X	ra, 0(sp)
-	LOAD_X	s3, (XLEN_BYTES*1)(sp)
-	addi	sp, sp, (XLEN_BYTES*2)
-	ret
+	li		t0, 20
+	j		ass_iorw
 .size ass_SUC, .-ass_SUC
 
 
