@@ -31,12 +31,7 @@ print_comma:
 		li		a0, ' '
 		jal		print_char
 	#endif
-/*
-	LOAD_X	ra, 0(sp)
-	addi	sp, sp, (XLEN_BYTES*1)
-	ret
-*/
-	j		restore_ra_ret
+	j		pop_ra_ret
 .size print_comma, .-print_comma
 
 
@@ -49,12 +44,7 @@ print_newline:
 	#endif
 	li		a0, ASCII_NEWLINE
 	jal		print_char
-/*
-	LOAD_X	ra, 0(sp)
-	addi	sp, sp, (XLEN_BYTES*1)
-	ret
-*/
-	j		restore_ra_ret
+	j		pop_ra_ret
 .size print_newline, .-print_newline
 
 
@@ -106,12 +96,7 @@ print_hex_new_decimal:
 	# print buffer
 	mv		a0, t2
 	jal		print_string
-/*
-	LOAD_X	ra, 0(sp)
-	addi	sp, sp, (XLEN_BYTES*1)
-	ret
-*/
-	j		restore_ra_ret
+	j		pop_ra_ret
 .size print_hex_raw, .-print_hex_raw
 
 
@@ -183,12 +168,7 @@ print_ascii_substitute:
 	li		a0, '.'					# print dot if char is not printable
 print_ascii_out:
 	jal		print_char
-/*
-	LOAD_X	ra, 0(sp)
-	addi	sp, sp, (XLEN_BYTES*1)
-	ret
-*/
-	j		restore_ra_ret
+	j		pop_ra_ret
 .size print_ascii, .-print_ascii
 
 

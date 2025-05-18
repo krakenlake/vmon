@@ -3,12 +3,12 @@
 #include "vmon/stack.h"
 
 
-.global restore_ra_ret
-.global restore_s1_ret
-.global restore_s2_ret
-.global restore_s3_ret
-.global restore_s4_ret
-.global restore_s5_ret
+.global pop_ra_ret
+.global pop_s1_ra_ret
+.global pop_s2_s1_ra_ret
+.global pop_s3_s2_s1_ra_ret
+.global pop_s4_s3_s2_s1_ra_ret
+.global pop_s5_s4_s3_s2_s1_ra_ret
 
 .global patch_int_registers
 .global patch_float_registers
@@ -20,22 +20,22 @@
 .text
 
 
-restore_s5_ret:
+pop_s5_s4_s3_s2_s1_ra_ret:
 	LOAD_X	s5, 0(sp)
 	addi	sp, sp, (XLEN_BYTES*1)
-restore_s4_ret:
+pop_s4_s3_s2_s1_ra_ret:
 	LOAD_X	s4, 0(sp)
 	addi	sp, sp, (XLEN_BYTES*1)
-restore_s3_ret:
+pop_s3_s2_s1_ra_ret:
 	LOAD_X	s3, 0(sp)
 	addi	sp, sp, (XLEN_BYTES*1)
-restore_s2_ret:
+pop_s2_s1_ra_ret:
 	LOAD_X	s2, 0(sp)
 	addi	sp, sp, (XLEN_BYTES*1)
-restore_s1_ret:
+pop_s1_ra_ret:
 	LOAD_X	s1, 0(sp)
 	addi	sp, sp, (XLEN_BYTES*1)
-restore_ra_ret:
+pop_ra_ret:
 	LOAD_X	ra, 0(sp)
 	addi	sp, sp, (XLEN_BYTES*1)
 	ret
@@ -77,9 +77,7 @@ print_int_registers:
 	#endif
 	li		a4, XLEN_BYTES
 	jal		print_saved_registers
-	LOAD_X  ra, 0(sp)
-	addi	sp, sp, (XLEN_BYTES*1)
-	ret
+	j		pop_ra_ret
 .size print_int_registers, .-print_int_registers
 
 
@@ -93,9 +91,7 @@ print_int_registers:
 		la		a3, stack + (STACK_SIZE) - (STK_FRAME_SIZE_INT) - (STK_FRAME_SIZE_FLOAT)
 		li		a4, FLEN_BYTES
 		jal		print_saved_registers
-		LOAD_X  ra, 0(sp)
-		addi	sp, sp, (XLEN_BYTES*1)
-		ret
+		j		pop_ra_ret
 	.size print_float_registers, .-print_float_registers
 #endif /* ENABLE_RVF */
 
