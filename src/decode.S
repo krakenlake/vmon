@@ -70,7 +70,7 @@ insn_get_aqrl:
 
 
 # in: instruction word in a0
-# in: current instruction address in s5 (global)
+# in: current instruction address in s0 (global)
 decode_B_type:
 	addi	sp, sp, -(XLEN_BYTES*2)				 
 	SAVE_X	ra, 0(sp)
@@ -103,7 +103,7 @@ decode_B_type:
 	and		t0, t0, t1
 	or		a0, a0, t0 
 	# add relative immediate to instruction address
-	add		a0, s5, a0
+	add		a0, s0, a0
 	# print absolute target address
 	jal		print_hex  
 	LOAD_X	ra, 0(sp)				
@@ -269,7 +269,7 @@ decode_U_type:
 
 
 # in: instruction word in a0
-# in: current instruction address in s5 (global)
+# in: current instruction address in s0 (global)
 decode_JAL:
 	addi	sp, sp, -(XLEN_BYTES*2)				
 	SAVE_X	ra, 0(sp)
@@ -296,7 +296,7 @@ decode_JAL:
 	and		t0, t0, t1
 	or		a0, a0, t0
 decode_JAL_add_offset:
-	add		a0, s5, a0
+	add		a0, s0, a0
 	jal		print_hex
 	LOAD_X	ra, 0(sp)				
 	LOAD_X	s2, (XLEN_BYTES*1)(sp)				 
@@ -308,33 +308,27 @@ decode_JAL_add_offset:
 # in: a1: number of start bit (27 for pre, 23 for sucessor)
 decode_FENCE_bits:
 	addi	sp, sp, -(XLEN_BYTES*5)				
-	SAVE_X	ra, 0(sp)
+	SAVE_X	s3, 0(sp)
 	SAVE_X	s2, (XLEN_BYTES*1)(sp)
-	SAVE_X	s3, (XLEN_BYTES*2)(sp)
-	SAVE_X	s4, (XLEN_BYTES*3)(sp)
-	SAVE_X	s5, (XLEN_BYTES*4)(sp)
+	SAVE_X	s1, (XLEN_BYTES*2)(sp)
+	SAVE_X	s0, (XLEN_BYTES*3)(sp)
+	SAVE_X	ra, (XLEN_BYTES*4)(sp)
 	mv		s2, a0
 	li		s3, 1
 	sll		s3, s3, a1					# set up initial bit mask
-	la		s4, string_FENCE_bits
-	li		s5, 4						# 4 bits
+	la		s1, string_FENCE_bits
+	li		s0, 4						# 4 bits
 decode_FENCE_bits_loop:
 	and		t0, s2, s3
 	beqz	t0, decode_FENCE_bits_skip
-	lb		a0, 0(s4)
+	lb		a0, 0(s1)
 	jal		print_char
 decode_FENCE_bits_skip:
 	srli	s3, s3, 1
-	addi	s4, s4, 1
-	addi	s5, s5, -1
-	bnez	s5, decode_FENCE_bits_loop
-	LOAD_X	ra, 0(sp)				
-	LOAD_X	s2, (XLEN_BYTES*1)(sp)				 
-	LOAD_X	s3, (XLEN_BYTES*2)(sp)				 
-	LOAD_X	s4, (XLEN_BYTES*3)(sp)				 
-	LOAD_X	s5, (XLEN_BYTES*4)(sp)				 
-	addi	sp, sp, (XLEN_BYTES*5)
-	ret
+	addi	s1, s1, 1
+	addi	s0, s0, -1
+	bnez	s0, decode_FENCE_bits_loop
+	j		pop_s3_s2_s1_s0_ra_ret
 .size decode_FENCE_bits, .-decode_FENCE_bits
 
 
@@ -566,6 +560,7 @@ decode_opcode_continue:
 decode_opcode_done:
 	j		pop_ra_ret
 .size decode_opcode, .-decode_opcode
+
 
 #ifdef ENABLE_RVC
 # c.add, c.ebreak and c.jalr cannot be correctly identified by MATCH/MASK alone
