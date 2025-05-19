@@ -13,8 +13,8 @@
 .global pop_s6_s5_s4_s3_s2_s1_s0_ra_ret
 .global pop_s7_s6_s5_s4_s3_s2_s1_s0_ra_ret
 
-.global patch_int_registers
-.global patch_float_registers
+.global patch_int_register
+.global patch_float_register
 
 .global print_int_registers
 .global print_float_registers
@@ -57,20 +57,31 @@ pop_ra_ret:
 #ifdef WITH_CMD_S
 
 # in: a0 = index of register
-# out:
+# in: a1 = new value to write
 patch_int_register:
-	la		a1, stack + STACK_SIZE - STK_FRAME_SIZE_INT + STK_OFF_RA
-	addi	a1, a1, STK_OFF_RA
-	SAVE_X	a1, 0(a0)
+	la		t0, stack + STACK_SIZE - STK_FRAME_SIZE_INT
+patch_int_register_loop:
+	addi	t0, t0, (XLEN_BYTES*1)
+	addi 	a0, a0, -1
+	bnez	a0, patch_int_register_loop
+	SAVE_X	a1, 0(t0)
 	ret
 
-	#ifdef ENABLE_RVF
-	patch_float_register:
-		la		a1, stack + STACK_SIZE - STK_FRAME_SIZE_INT - STK_FRAME_SIZE_FLOAT
-		addi	a1, a1, STK_OFF_RA
-		SAVE_X	a1, 0(a0)
-		ret
-	#endif /* ENABLE_RVF */
+# in: a0 = index of register
+# in: f0 = new value to write
+#ifdef ENABLE_RVF
+/*
+patch_float_register:
+	la		t0, stack + STACK_SIZE - STK_FRAME_SIZE_INT - STK_FRAME_SIZE_FLOAT
+patch_float_register_loop:
+	addi	t0, t0, (FLEN_BYTES*1)
+	addi 	a0, a0, -1
+	bnez	a0, patch_float_register_loop
+	SAVE_F	f0, 0(t0)
+	ret
+*/
+#endif /* ENABLE_RVF */
+
 
 #endif /* WITH_CMD_S */
 

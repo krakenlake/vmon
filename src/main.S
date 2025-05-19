@@ -207,6 +207,11 @@ main_prompt_no_newline:
 		beq		t1, t0, cmd_R
 	#endif
 
+	#ifdef WITH_CMD_S
+		li		t0, 's'
+		beq		t1, t0, cmd_S
+	#endif
+
 	#ifdef WITH_CMD_X
 		li		t0, 'x'
 		beq		t1, t0, cmd_X
