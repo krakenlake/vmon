@@ -68,18 +68,24 @@ patch_int_register_loop:
 	ret
 
 # in: a0 = index of register
-# in: f0 = new value to write
+# in: a1 = new representation value to write
 #ifdef ENABLE_RVF
-/*
 patch_float_register:
+	# put int hex value on stack
+	addi	sp, sp, -(FLEN_BYTES)
+	SAVE_X	a1, 0(sp)
+	# read it into float register back
+	LOAD_F	f0, 0(sp)
+	addi 	sp, sp, (FLEN_BYTES)
 	la		t0, stack + STACK_SIZE - STK_FRAME_SIZE_INT - STK_FRAME_SIZE_FLOAT
 patch_float_register_loop:
+	beqz	a0, patch_float_register_do
 	addi	t0, t0, (FLEN_BYTES*1)
 	addi 	a0, a0, -1
-	bnez	a0, patch_float_register_loop
+	j		patch_float_register_loop
+patch_float_register_do:
 	SAVE_F	f0, 0(t0)
 	ret
-*/
 #endif /* ENABLE_RVF */
 
 

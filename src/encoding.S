@@ -212,7 +212,7 @@ get_register_name_by_index_found:
 
 # return index of int register given by name
 # in: a0 = string ptr to start of name
-# in: a1 = string ptr to end of name (after last char; no 0-termination expected)
+# in: a1 = string ptr to end of name (last char; no 0-termination expected)
 # out: a0 = index number of int register (-1 if error)
 get_int_register_index_by_name:
 	la		a2, int_register_names
@@ -223,7 +223,7 @@ get_int_register_index_by_name:
 #ifdef ENABLE_RVF
 # return index of float register given by name
 # in: a0 = string ptr to start of name
-# in: a1 = string ptr to end of name (after last char; no 0-termination expected)
+# in: a1 = string ptr to end of name (last char; no 0-termination expected)
 # out: a0 = index number of float register (-1 if error)
 get_float_register_index_by_name:
 	la		a2, float_register_names
