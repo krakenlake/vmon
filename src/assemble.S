@@ -193,19 +193,11 @@ assemble_GENERIC:
 	li		s4,	-4							# process max. 4 arguments
 	mv		s2, a2
 	# assemble instruction word in s1, starting with MATCH value from table
-	#if XLEN >= 64
-		lwu		s1, ENC_OFF_MATCH(a3)
-	#else
-		lw		s1, ENC_OFF_MATCH(a3)
-	#endif
+	LWU		s1, ENC_OFF_MATCH(a3)
 	# init offset to function pointers into encoding table entry
 	add		s3, a3, ENC_OFF_FUNC_ARG1
 	# get function ptr for argument
-	#if XLEN >= 64
-		lwu		s0, 0(s3)
-	#else
-		lw		s0, 0(s3)
-	#endif
+	LWU		s0, 0(s3)
 	# done if no arguments at all
 	beqz	s0, assemble_GENERIC_done
 assemble_GENERIC_next_argument:
@@ -224,11 +216,7 @@ assemble_GENERIC_next_argument:
 	# get next function ptr
 	addi	s3, s3, 4
 	# get function ptr for argument
-	#if XLEN >= 64
-		lwu		s0, 0(s3)
-	#else
-		lw		s0, 0(s3)
-	#endif
+	LWU		s0, 0(s3)
 	beqz	s0, assemble_GENERIC_done
 	jal		skip_whitespace
 	jal		consume_comma
