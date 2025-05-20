@@ -1,6 +1,7 @@
 #include "vmon/config.h"
 #include "riscv/riscv-opc.h"
 #include "vmon/encoding.h"
+#include "vmon/register.h"
 
 
 #if defined (WITH_CMD_D) || defined (WITH_CMD_A)

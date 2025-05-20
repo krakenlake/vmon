@@ -7,6 +7,8 @@ VMON - a RISC-V machine code monitor written in RISC-V assembly code
 #include "vmon/drivers/uart/ns16550.h"
 #include "vmon/ASCII.h"
 #include "vmon/stack.h"
+#include "vmon/register.h"
+
 
 
 .global start

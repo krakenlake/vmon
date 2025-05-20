@@ -1,4 +1,6 @@
 #include "vmon/config.h"
+#include "vmon/register.h"
+
 
 #ifdef M_MODE
 

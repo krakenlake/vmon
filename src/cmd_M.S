@@ -1,5 +1,6 @@
 #include "vmon/config.h"
 #include "vmon/ASCII.h"
+#include "vmon/register.h"
 
 
 #ifdef WITH_CMD_M

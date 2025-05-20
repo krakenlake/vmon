@@ -1,6 +1,7 @@
 #include "vmon/config.h"
 #include "vmon/drivers/uart/ns16550.h"
 #include "vmon/ASCII.h"
+#include "vmon/register.h"
 
 
 

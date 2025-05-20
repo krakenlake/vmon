@@ -1,6 +1,7 @@
 #include "vmon/config.h"
 #include "vmon/ASCII.h"
 #include "vmon/stack.h"
+#include "vmon/register.h"
 
 
 .global print_hex
