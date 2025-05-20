@@ -2,8 +2,8 @@ ENTRY (start);
 
 SECTIONS
 {
-  . = 0x80000000;
-  .text : { build/qemu-rv32i/main.o(.text) }
+  . = START_ADDR;
+  .text : { PATH_TO_MAIN_O(.text) }
   .text : { *(.text) }
   .data : { *(.data) }
   .bss  : { *(.bss) }

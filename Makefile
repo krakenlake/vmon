@@ -22,19 +22,17 @@ DEBUG ?= -DDEBUG
 
 
 ifeq ($(TARGET), qemu)
-	ARCH    	?= riscv$(XLEN)-unknown-elf
-	TOOLBIN 	?= /opt/riscv/rv$(XLEN)g/bin
-	ADDFLAGS	= -DHW_QEMU -DXLEN=$(XLEN) -DFLEN=$(FLEN) -march=rv$(XLEN)$(ISA_STRING) 
+	START_ADDR	= 0x80000000
+	METAL		= HW_QEMU
 	QEMU_FLAGS	= -machine virt -cpu rv$(XLEN),pmp=false -smp 2 -gdb tcp::1234 -bios none -serial stdio -display none -kernel $(BUILD)/$(NAME).img
 	RUN			= qemu-system-riscv$(XLEN) $(QEMU_FLAGS) 
 endif
 
 
 ifeq ($(TARGET), vf2)
-	ARCH    	?= riscv64-unknown-elf
+	START_ADDR	= 0x44000000
+	METAL		= HW_VF2
 	XLEN		= 64
-	TOOLBIN 	?= /opt/riscv/rv64g/bin
-	ADDFLAGS	= -DHW_VF2 -DXLEN=$(XLEN) -DFLEN=$(FLEN) -march=rv64gc
 	PLATFORM	= vf2
 define VF2_RUN_MSG
 
@@ -58,8 +56,11 @@ endif
 
 
 # tools
+ARCH    ?= riscv$(XLEN)-unknown-elf
+TOOLBIN ?= /opt/riscv/rv$(XLEN)g/bin
 CC      = $(TOOLBIN)/$(ARCH)-gcc
-CFLAGS	= $(DEBUG) $(ADDFLAGS) -nostartfiles -g -I"src/include"
+CPP     = $(TOOLBIN)/$(ARCH)-cpp
+CFLAGS	= $(DEBUG) -D$(METAL) -DXLEN=$(XLEN) -DFLEN=$(FLEN) -march=rv$(XLEN)$(ISA_STRING) -nostartfiles -g -I"src/include"
 LD		= $(TOOLBIN)/$(ARCH)-ld
 LDFLAGS = --no-warn-rwx-segments
 OBJCOPY = $(TOOLBIN)/$(ARCH)-objcopy
@@ -99,14 +100,17 @@ $(BUILD)/$(NAME).img: $(BUILD)/$(NAME).elf
 $(BUILD)/$(NAME)-stripped.elf: $(BUILD)/$(NAME).elf
 	$(STRIP) $< -o $@
 
-$(BUILD)/$(NAME).elf: linker/link.ld.$(PLATFORM) Makefile $(OBJ)
-	$(LD) -T linker/link.ld.$(PLATFORM) $(LDFLAGS) -o $@ $(OBJ)
+$(BUILD)/$(NAME).elf: $(BUILD)/link.ld Makefile $(OBJ)
+	$(LD) -T $(BUILD)/link.ld $(LDFLAGS) -o $@ $(OBJ)
+
+$(BUILD)/link.ld: linker/link.ld.in Makefile
+	$(CPP) $(CFLAGS) -DPATH_TO_MAIN_O=$(BUILD)/main.o -DSTART_ADDR=$(START_ADDR) -E -P -x c $< > $@ 
 
 $(BUILD)/%.o: $(SRCD)/%.S Makefile
 	$(CC) $(CFLAGS) -MMD -c $< -o $@
 
 clean:
-	rm -f $(BUILD)/*.o $(BUILD)/*.d $(BUILD)/*.elf $(BUILD)/*.img $(BUILD)/*.log $(BUILD)/*.objdump
+	rm -f $(BUILD)/*.o $(BUILD)/*.d $(BUILD)/*.elf $(BUILD)/*.img $(BUILD)/*.log $(BUILD)/*.objdump $(BUILD)/*.ld
 
 run: $(BUILD)/$(NAME).img
 	$(RUN)
