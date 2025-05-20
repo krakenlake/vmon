@@ -12,6 +12,7 @@ XLEN 		?= 64
 #FLEN 		?= 32
 FLEN 		?= 64
 
+#ISA_STRING	?= i, needs also -mabi=ilp32
 ISA_STRING	?= g
 #ISA_STRING	?= gc
 #ISA_STRING	?= gqc

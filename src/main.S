@@ -24,14 +24,19 @@ VMON - a RISC-V machine code monitor written in RISC-V assembly code
 
 # application entry point
 start:
+	
 	# do not add anything before this
+	
 	#ifdef M_MODE
-		# immediately save sp in mscratch
-		csrw	mscratch, sp
-		# run only on hart 0
-		# as sp is already saved, we can use it now
-		csrr	sp, mhartid
-		bnez	sp, end
+		#ifdef ENABLE_RVZicsr
+			# immediately save sp in mscratch
+			csrw	mscratch, sp
+			# run only on hart 0
+			# as sp is already saved, we can use it now
+			csrr	sp, mhartid
+			bnez	sp, end
+		#endif /* ENABLE_RVZicsr */
+
 		# set up a stack 
 		la		sp, stack + STACK_SIZE		# point to end of our new stack
 	#endif /* M_MODE */
@@ -71,25 +76,31 @@ start:
 	SAVE_X	x31, (STK_OFF_X31)(sp)
 	# now we can safely use t0 to get back and save sp in that same stack frame above
 	#ifdef M_MODE
-		csrr	t0, mscratch					# read original sp back
-		SAVE_X	t0, (STK_OFF_SP)(sp)			# and save it
+		#ifdef ENABLE_RVZicsr
+			csrr	t0, mscratch					# read original sp back
+			SAVE_X	t0, (STK_OFF_SP)(sp)			# and save it
+		#endif /* ENABLE_RVZicsr */
 	#else
 		SAVE_X	sp, (STK_OFF_SP)(sp)
 	#endif /* M_MODE */
 	# save mepc
 	#ifdef M_MODE
-		csrr	t0, mepc
-		SAVE_X	t0, (STK_OFF_PC)(sp)
+		#ifdef ENABLE_RVZicsr
+			csrr	t0, mepc
+			SAVE_X	t0, (STK_OFF_PC)(sp)
+		#endif
 	#endif /* M_MODE */
 
 
 	#ifdef ENABLE_RVF
 		# enable RVF in mstatus of cpu (this is disabled in QEMU per default)
-		li		t0, 0b11
-		slli	t0, t0, 13
-		csrr	t1, mstatus
-		or		t1, t0, t1
-		csrw	mstatus, t1
+		#ifdef ENABLE_RVZicsr
+			li		t0, 0b11
+			slli	t0, t0, 13
+			csrr	t1, mstatus
+			or		t1, t0, t1
+			csrw	mstatus, t1
+		#endif /*ENABLE_RVZicsr */
 	
 		# save f0-f31 registers on stack
 		addi	sp, sp, -(STK_FRAME_SIZE_FLOAT)

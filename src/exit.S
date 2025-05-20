@@ -52,8 +52,10 @@ vmon_exit:
 
 	# restore mepc
 	#ifdef M_MODE
-		LOAD_X	t0, STK_OFF_PC(sp)	
-		csrw	mepc, t0
+		#ifdef ENABLE_RVZicsr
+			LOAD_X	t0, STK_OFF_PC(sp)	
+			csrw	mepc, t0
+		#endif /* ENABLE_RVZicsr */
 	#endif /* M_MODE */ 
 	
 	# restore int registers
