@@ -164,6 +164,7 @@ get_numeric_done:
 .size get_numeric, .-get_numeric
 
 
+# parse hex value (without "0x" prefix)
 # in: buffer ptr in a0
 # out: buffer ptr in a0
 # out: parsed address value in a1
