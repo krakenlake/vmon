@@ -20,6 +20,7 @@
 .global ass_PRE							# expect iorw predecessor parameter for fence
 .global ass_SUC							# expect iorw sucessor parameter for fence
 .global ass_J							# expect J-type address
+.global ass_I_rel						# expect I-type offset for JALR
 .global ass_U_imm						# expect immediate for U-type (LUI/AUIPC)
 
 #ifdef ENABLE_RVA
@@ -178,6 +179,52 @@ assemble_I_imm_shift_done:
 .size assemble_I_imm_shift, .-assemble_I_imm_shift
 
 
+# process I-type register-relative parameter
+#
+# in: a0 = ptr to first char of argument
+# in: a1 = insn word to be modifed
+# in: a2 = origin address
+# out: a0 = ptr to char after argument
+# out: a1 = insn word (0 on error)
+ass_I_rel:
+	addi	sp, sp, -(XLEN_BYTES*3)
+	SAVE_X	s1, 0(sp)
+	SAVE_X	s0, (XLEN_BYTES*1)(sp)
+	SAVE_X	ra, (XLEN_BYTES*2)(sp)
+	mv		s1, a1						# save insn word
+	jal		ass_I_imm
+	beqz	a1, ass_I_rel_error
+	mv		s0, a0						# return string ptr later
+	mv		s1, a1						# insn word
+	# TODO put this into a separate function
+
+	# expect (
+	jal		skip_whitespace
+	jal		expect_open_paren
+	beqz	a0, ass_I_rel_error
+	jal		skip_whitespace
+	# process rs1
+	mv		a1, s1
+	jal		ass_rs1
+	beqz	a1, ass_I_rel_error
+	mv 		s1, a1
+	# expect )
+	jal		skip_whitespace
+	jal		expect_close_paren
+	beqz	a0, ass_I_rel_error
+	# assemble in a1
+	mv		a1, s1
+ass_I_rel_continue:
+	# return a1 and a0
+	addi	a0, s0, 1					# string ptr +1
+	j		ass_I_rel_done
+ass_I_rel_error:
+	mv		a1, zero
+ass_I_rel_done:
+	j		pop_s1_s0_ra_ret
+.size ass_I_rel, .-ass_I_rel
+
+
 # in: a0 = ptr to remaining input string
 # in: a2 = origin address
 # in: a3 = ptr to encoding table entry
@@ -219,7 +266,7 @@ assemble_GENERIC_next_argument:
 	LWU		s0, 0(s3)
 	beqz	s0, assemble_GENERIC_done
 	jal		skip_whitespace
-	jal		consume_comma
+	jal		expect_comma
 	beqz 	a0, assemble_GENERIC_error
 	j 		assemble_GENERIC_next_argument
 assemble_GENERIC_error:
@@ -433,7 +480,7 @@ ass_I_imm_its_shift:
 	beqz 	a1, ass_I_imm_error			# imm too big for shift
 ass_I_imm_continue:
 	# return a1 and a0
-	addi	a0, s0, 1					# string ptr +1
+	mv		a0, s0
 	j		ass_I_imm_done
 ass_I_imm_error:
 	mv		a1, zero
@@ -489,7 +536,7 @@ ass_MEM_rs1:
 	# TODO put this into a separate function
 	# expect (
 	jal		skip_whitespace
-	jal		consume_open_paren
+	jal		expect_open_paren
 	beqz	a0, ass_MEM_error
 	jal		skip_whitespace
 	# process rs1
@@ -499,7 +546,7 @@ ass_MEM_rs1:
 	mv 		s1, a1
 	# expect )
 	jal		skip_whitespace
-	jal		consume_close_paren
+	jal		expect_close_paren
 	beqz	a0, ass_MEM_error
 	# assemble in a1
 	mv		a1, s1
@@ -686,7 +733,7 @@ ass_AMEM:
 	mv		s0, a0						# return string ptr later
 	# expect (
 	jal		skip_whitespace
-	jal		consume_open_paren
+	jal		expect_open_paren
 	beqz	a0, ass_AMEM_error
 	jal		skip_whitespace
 	# process rs1
@@ -696,7 +743,7 @@ ass_AMEM:
 	mv 		s1, a1
 	# expect )
 	jal		skip_whitespace
-	jal		consume_close_paren
+	jal		expect_close_paren
 	beqz	a0, ass_AMEM_error
 	# assemble in a1
 	mv		a1, s1

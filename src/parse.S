@@ -4,9 +4,9 @@
 
 
 .global skip_whitespace
-.global consume_comma
-.global consume_open_paren
-.global consume_close_paren
+.global expect_comma
+.global expect_open_paren
+.global expect_close_paren
 #.global get_hex_addr
 .global parse_hex
 .global parse_insn_string
@@ -37,34 +37,36 @@ skip_whitespace_done:
 	ret
 .size skip_whitespace, .-skip_whitespace
 
-
-# in: buffer ptr in a0
-# out: a0 = buffer ptr after comma or a0 = 0 on error
-consume_char_in_t0:
+# advance buffer ptr one char if char matches the expected one
+#
+# in: a0 = buffer ptr
+# in: t0 = char to consume
+# out: a0 = buffer ptr after comma (0 on error)
+expect_char:
 	lb		t1, 0(a0)
-	beq		t1, t0, consume_comma_done
+	beq		t1, t0, expect_char_done
 	li		a0, -1						# to return 0 in the next step
-consume_comma_done:
+expect_char_done:
 	addi	a0, a0, 1
 	ret
 
 # in: buffer ptr in a0
 # out: a0 = buffer ptr after comma or a0 = 0 on error
-consume_comma:
+expect_comma:
 	li		t0, ','
-	j 		consume_char_in_t0
+	j 		expect_char
 
 # in: buffer ptr in a0
 # out: a0 = buffer ptr after comma or a0 = 0 on error
-consume_open_paren:
+expect_open_paren:
 	li		t0, '('
-	j 		consume_char_in_t0
+	j 		expect_char
 
 # in: buffer ptr in a0
 # out: a0 = buffer ptr after comma or a0 = 0 on error
-consume_close_paren:
+expect_close_paren:
 	li		t0, ')'
-	j 		consume_char_in_t0
+	j 		expect_char
 
 
 # in: buffer ptr in a0
