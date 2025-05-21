@@ -227,10 +227,7 @@ decode_S_type_imm:
 	and		t0, t0, t1
 	or		a0, a0, t0 
 	# inst[31] -> imm[63:12]
-	#if XLEN >=64
-		sext.w	t0, t2					# sign-extend to 64 bits
-	#endif
-	srai	t0, t0, 20
+	srai	t0, t2, 20
 	li		t1, 0xfffffffffffff800			
 	and		t0, t0, t1
 	or		a0, a0, t0 
