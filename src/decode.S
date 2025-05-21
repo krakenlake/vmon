@@ -133,14 +133,9 @@ decode_I_type_imm:
 	addi	sp, sp, -(XLEN_BYTES*1)				 
 	SAVE_X	ra, 0(sp)
 	# inst[31:20] -> imm[11:0]
-	#if XLEN >=64
-		sext.w	a0, a0					# sign-extend to 64 bits
-	#endif
 	srai	a0, a0, 20
 	jal		print_decimal
-	LOAD_X	ra, 0(sp)				
-	addi	sp, sp, (XLEN_BYTES*1)
-	ret
+	j		pop_ra_ret
 .size decode_I_type_imm, .-decode_I_type_imm
 
 
