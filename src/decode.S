@@ -70,8 +70,8 @@ insn_get_aqrl:
 #endif
 
 
-# in: instruction word in a0
-# in: current instruction address in s0 (global)
+# in: a0 = instruction word
+# in: s5 = current instruction address (global)
 decode_B_type:
 	addi	sp, sp, -(XLEN_BYTES*2)				 
 	SAVE_X	ra, 0(sp)
@@ -104,7 +104,7 @@ decode_B_type:
 	and		t0, t0, t1
 	or		a0, a0, t0 
 	# add relative immediate to instruction address
-	add		a0, s0, a0
+	add		a0, s5, a0
 	# print absolute target address
 	jal		print_hex  
 	LOAD_X	ra, 0(sp)				
@@ -269,8 +269,8 @@ decode_U_type:
 .size decode_U_type, .-decode_U_type
 
 
-# in: instruction word in a0
-# in: current instruction address in s0 (global)
+# in: a0 = instruction word
+# in: s5 = current instruction address (global)
 decode_JAL:
 	addi	sp, sp, -(XLEN_BYTES*2)				
 	SAVE_X	ra, 0(sp)
@@ -297,7 +297,7 @@ decode_JAL:
 	and		t0, t0, t1
 	or		a0, a0, t0
 decode_JAL_add_offset:
-	add		a0, s0, a0
+	add		a0, s5, a0
 	jal		print_hex
 	LOAD_X	ra, 0(sp)				
 	LOAD_X	s2, (XLEN_BYTES*1)(sp)				 
