@@ -60,11 +60,8 @@
 # out: instruction word in a0
 # out: aq/rl bits in bits 0 and 1 of a1
 insn_get_aqrl:
-	mv		a1, a0
-	li		t0, 0b11 
-	slli	t0, t0, 25
-	and		a1, t0, a1
-	srli	a1, a1, 25
+	srli	a1, a0, 25
+	andi	a1, a1, 0b11
 	ret
 .size insn_get_aqrl, .-insn_get_aqrl
 #endif
