@@ -124,9 +124,38 @@ Print <numeric_value> in hex, decimal and binary representation.
 and it will be interpreted as binary, if it starts with "0b".
 Otherwise, it will be interpreted as decimal.
 
-### Numeric values ###
+#### Numeric values ####
 
 **All addresses and values are accepted in hex ("0x..."), binary ("0b..."), or decimal (no prefix).**
+
+### Assembler input ###
+
+The `a` command switches to assembly input mode. The given memory address will be printed and an instruction
+can be entered at the prompt. If the instruction syntax is valid, the instruction word will be 
+assembled and stored at the indicated memory address, the current address will be incremented by the 
+size of the instruction and the next instruction can be entered.
+
+#### Register names ####
+
+VMON accepts the defined RISC-V syntax for instructions and registers. Registers can either be referred to
+by `x0`-`x31` or by their ABI names `zero`, `ra`, `sp`, ... `t6`. What flavour of register naming VMON accepts
+is configured at compile time by setting `ABI_REGISTER_NAMES`in `config.h`.
+
+#### Jump addresses ####
+
+Target addresses for branch instructions and `JAL` are encoded into the instructions as offsets, but
+for convenience expected to be entered here as absolute addresses, for example:
+
+...
+> beq t0, t1, 0x80010020
+> jal ra, 0x80010000
+...
+
+Offsets for `JALR` are expected as relative offsets:
+...
+> jalr ra, 0x80(t0)
+> jalr ra, -32(s1)
+...
 
 ### Exceptions ###
 
@@ -138,7 +167,7 @@ VMON installs a trap handler (if running in M-mode) in order to catch exceptions
 If VMON is running in M-mode, it will set up its own stack on startup.
 Otherwise, the incoming `sp` from the caller will be used.
 In any case, all integer and float registers will be saved on the stack on entry and restored on exit. 
-The saved registers can be printed using the `r`command.
+The saved registers can be printed using the `r`command and modified using the `s` command.
 
 ## Known Problems
 
