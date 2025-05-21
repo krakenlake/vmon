@@ -46,7 +46,7 @@
 .global decode_LRSC
 .global decode_EMPTY
 
-#ifdef ENABLE_RVC
+#ifdef DISASS_RVC
 .global decode_C_LWSP
 .global decode_C_ADD_JAL_EBREAK
 #endif
@@ -54,7 +54,7 @@
 .text
 
 
-#ifdef ENABLE_RVA
+#ifdef DISASS_RVA
 # for RVA
 # in: instruction word in a0
 # out: instruction word in a0
@@ -371,7 +371,7 @@ decode_EMPTY:
 	.size decode_EMPTY, .-decode_EMPTY
 
 
-#ifdef ENABLE_RVA
+#ifdef DISASS_RVA
 decode_LRSC:
 	addi	sp, sp, -(XLEN_BYTES*2)				 
 	SAVE_X	ra, 0(sp)
@@ -407,7 +407,7 @@ decode_AMO:
 #endif
 
 
-#ifdef ENABLE_RVC
+#ifdef DISASS_RVC
 # in: instruction word in a0
 decode_CR_type:
 	# TODO
@@ -427,7 +427,7 @@ decode_C_LWSP:
 	jal		print_char
 	j		pop_ra_ret
 .size decode_C_LWSP, .-decode_C_LWSP
-#endif /* ENABLE_RVC */
+#endif /* DISASS_RVC */
 
 
 # in: instruction word in a0
@@ -565,7 +565,7 @@ decode_opcode_done:
 .size decode_opcode, .-decode_opcode
 
 
-#ifdef ENABLE_RVC
+#ifdef DISASS_RVC
 # c.add, c.ebreak and c.jalr cannot be correctly identified by MATCH/MASK alone
 # so this routine fixes that after calling decode_opcode
 #
@@ -591,7 +591,7 @@ adjust_RVC_add_jal_ebreak_not_add:
 adjust_RVC_add_jal_ebreak_done:
 	ret
 .size adjust_RVC_add_jal_ebreak, .-adjust_RVC_add_jal_ebreak
-#endif /* ENABLE_RVC */
+#endif /* DISASS_RVC */
 
 
 # in: instruction word in a0
@@ -606,7 +606,7 @@ print_instruction:
 	mv		s3, a0						# save for later	
 	mv		a0, a2
 	jal		print_string				# print opcode
-	#ifdef ENABLE_RVA
+	#ifdef DISASS_RVA
 		mv		a0, s3
 		jal		print_AMO_postfix		# prints aq/lr postfix for RVA opcodes
 	#endif
@@ -625,7 +625,7 @@ print_instruction_done:
 .size print_instruction, .-print_instruction
 
 
-#ifdef ENABLE_RVA
+#ifdef DISASS_RVA
 # in: instruction word in a0
 print_AMO_postfix:
 	addi	sp, sp, -(XLEN_BYTES*1)				 
@@ -655,7 +655,7 @@ print_AMO_postfix_case3:
 print_AMO_postfix_done:	   
 	j		pop_ra_ret
 .size print_AMO_postfix, .-print_AMO_postfix
-#endif /* ENABLE_RVA */ 
+#endif /* DISASS_RVA */ 
 
 
 .data
@@ -664,14 +664,14 @@ print_AMO_postfix_done:
 
 string_FENCE_bits:		.string "iorw";
 
-#ifdef ENABLE_RVA
+#ifdef DISASS_RVA
 string_OP_POSTFIX_AQ:	.string ".aq";
 	.size string_OP_POSTFIX_AQ, .-string_OP_POSTFIX_AQ
 string_OP_POSTFIX_RL:	.string ".rl";
 	.size string_OP_POSTFIX_RL, .-string_OP_POSTFIX_RL
 string_OP_POSTFIX_AQRL:	.string ".aqrl";
 	.size string_OP_POSTFIX_AQRL, .-string_OP_POSTFIX_AQRL
-#endif /* ENABLE_RVA */
+#endif /* DISASS_RVA */
 
 
 #endif /* WITH_CMD_D */

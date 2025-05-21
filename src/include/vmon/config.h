@@ -52,23 +52,24 @@
 #endif
 
 // configure which instructions and extensions the
-// executable will recognize 
-#define ENABLE_RVM
-#define ENABLE_RVA
-#define ENABLE_RVF
-//#define ENABLE_RVD
-//#define ENABLE_RVQ
-//#define ENABLE_RVC
-//#define ENABLE_RVB
-//#define ENABLE_RVP
-//#define ENABLE_RVV
-//#define ENABLE_RVH
-#define ENABLE_RVZicsr
-#define ENABLE_RVZifencei
-#define ENABLE_RVPRIV
+// executable will be able to assemble/disassemble
+// (this is independent of the target platforms actual instruction set!)
+#define DISASS_RVM
+#define DISASS_RVA
+#define DISASS_RVF
+//#define DISASS_RVD
+//#define DISASS_RVQ
+//#define DISASS_RVC
+//#define DISASS_RVB
+//#define DISASS_RVP
+//#define DISASS_RVV
+//#define DISASS_RVH
+#define DISASS_RVZicsr
+#define DISASS_RVZifencei
+#define DISASS_RVPRIV
 
 // enable printing of pseudo opcodes in disassembly?
-#define ENABLE_PSEUDO
+#define DISASS_PSEUDO
 
 // include strings for MCAUSE verbose output?
 #define MCAUSE_VERBOSE

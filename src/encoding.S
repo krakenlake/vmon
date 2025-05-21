@@ -74,7 +74,7 @@ insn_is_LOAD:
 	beq		t0, t1, insn_is_LOAD_YES
 	li		t1, MATCH_LWU
 	beq		t0, t1, insn_is_LOAD_YES
-#ifdef ENABLE_RVF
+#ifdef DISASS_RVF
 	# float
 	li		t1, MATCH_FLW
 	beq		t0, t1, insn_is_LOAD_YES
@@ -83,7 +83,7 @@ insn_is_LOAD:
 	li		t1, MATCH_FLQ
 	beq		t0, t1, insn_is_LOAD_YES
 	j		insn_is_LOAD_NO
-#endif /* ENABLE_RVF */
+#endif /* DISASS_RVF */
 insn_is_LOAD_YES:
 	li		a4, 1
 insn_is_LOAD_NO:
@@ -106,7 +106,7 @@ insn_is_STORE:
 	beq		t0, t1, insn_is_STORE_YES
 	li		t1, MATCH_SD
 	beq		t0, t1, insn_is_STORE_YES
-#ifdef ENABLE_RVF
+#ifdef DISASS_RVF
 	# float
 	li		t1, MATCH_FSW
 	beq		t0, t1, insn_is_STORE_YES
@@ -115,7 +115,7 @@ insn_is_STORE:
 	li		t1, MATCH_FSQ
 	beq		t0, t1, insn_is_STORE_YES
 	j		insn_is_STORE_NO
-#endif /* ENABLE_RVF */
+#endif /* DISASS_RVF */
 insn_is_STORE_YES:
 	li		a4, 1
 insn_is_STORE_NO:
@@ -175,12 +175,12 @@ get_int_register_name_by_index:
 .size get_int_register_name_by_index, .-get_int_register_name_by_index
 
 
-#ifdef ENABLE_RVF
+#ifdef DISASS_RVF
 get_float_register_name_by_index:
 	la		a1, float_register_names
 	j 		get_register_name_by_index
 .size get_float_register_name_by_index, .-get_float_register_name_by_index
-#endif /* ENABLE_RVF */
+#endif /* DISASS_RVF */
 
 
 # return a string ptr to the name of the n-th register
@@ -221,7 +221,7 @@ get_int_register_index_by_name:
 .size get_int_register_index_by_name, .-get_int_register_index_by_name
 
 
-#ifdef ENABLE_RVF
+#ifdef DISASS_RVF
 # return index of float register given by name
 # in: a0 = string ptr to start of name
 # in: a1 = string ptr to end of name (last char; no 0-termination expected)
@@ -230,7 +230,7 @@ get_float_register_index_by_name:
 	la		a2, float_register_names
 	j 		get_register_index_by_name
 .size get_float_register_index_by_name, .-get_float_register_index_by_name
-#endif /* ENABLE_RVF */
+#endif /* DISASS_RVF */
 
 
 # return index of register given by name
@@ -312,7 +312,7 @@ int_register_names:
 .size int_register_names, .-int_register_names
 
 
-#ifdef ENABLE_RVF
+#ifdef DISASS_RVF
 	.align 4
 float_register_names:
 #ifndef ABI_REGISTER_NAMES
@@ -327,7 +327,7 @@ float_register_names:
 	.string "fs8", "fs9", "fs10", "fs11", "ft8", "ft9", "ft10", "ft11"
 #endif
 .size float_register_names, .-float_register_names
-#endif /* ENABLE_RVF */
+#endif /* DISASS_RVF */
 
 
 # ---------- opcode strings ----------
@@ -394,7 +394,7 @@ string_OP_EBREAK:	.string "ebreak";
 #endif
 
 # RVM
-#ifdef ENABLE_RVM
+#ifdef DISASS_RVM
 	# RV32M
 	string_OP_MUL:		.string "mul";
 	string_OP_MULH:		.string "mulh";
@@ -412,10 +412,10 @@ string_OP_EBREAK:	.string "ebreak";
 		string_OP_REMW:		.string "remw";
 		string_OP_REMUW:	.string "remuw";
 	#endif
-#endif /* ENABLE_RVM */
+#endif /* DISASS_RVM */
 
 # RVA
-#ifdef ENABLE_RVA
+#ifdef DISASS_RVA
 	# RV32A
 	string_OP_LRW:		.string "lr.w";
 	string_OP_SCW:		.string "sc.w";
@@ -442,10 +442,10 @@ string_OP_EBREAK:	.string "ebreak";
 		string_OP_AMOMAXUD:	.string "amomaxu.d";
 		string_OP_AMOMINUD:	.string "amominu.d";
 	#endif
-#endif /* ENABLE_RVA */
+#endif /* DISASS_RVA */
 
 # RVF / RVD / RVQ
-#ifdef ENABLE_RVF
+#ifdef DISASS_RVF
 	string_OP_FLW:			.string "flw";
 	string_OP_FSW:			.string "fsw";
 	string_OP_FMADD_S:		.string "fmadd.s";
@@ -472,7 +472,7 @@ string_OP_EBREAK:	.string "ebreak";
 	string_OP_FLT_S:		.string "flt.s";
 	string_OP_FLE_S:		.string "fle.s";
 	string_OP_FCLASS_S:		.string "fclass.s";
-	#ifdef ENABLE_RVD
+	#ifdef DISASS_RVD
 		string_OP_FLD:			.string "fld";
 		string_OP_FSD:			.string "fsd";
 		string_OP_FMADD_D:		.string "fmadd.d";
@@ -499,7 +499,7 @@ string_OP_EBREAK:	.string "ebreak";
 		string_OP_FLT_D:		.string "flt.d";
 		string_OP_FLE_D:		.string "fle.d";
 		string_OP_FCLASS_D:		.string "fclass.d";
-		#ifdef ENABLE_RVQ
+		#ifdef DISASS_RVQ
 			string_OP_FLQ:			.string "flq";
 			string_OP_FSQ:			.string "fsq";
 			string_OP_FMADD_Q:		.string "fmadd.q";
@@ -528,27 +528,27 @@ string_OP_EBREAK:	.string "ebreak";
 			string_OP_FLT_Q:		.string "flt.q";
 			string_OP_FLE_Q:		.string "fle.q";
 			string_OP_FCLASS_Q:		.string "fclass.q";
-		#endif /* ENABLE_RVQ */
-	#endif /* ENABLE_RVD */
-#endif /* ENABLE_RVF */
+		#endif /* DISASS_RVQ */
+	#endif /* DISASS_RVD */
+#endif /* DISASS_RVF */
 
 # Zifencei
-#ifdef ENABLE_RVZifencei
+#ifdef DISASS_RVZifencei
 	string_OP_FENCE_I:	.string "fence.i";
-#endif /* ENABLE_RVZifencei */
+#endif /* DISASS_RVZifencei */
 
 # Zicsr
-	#ifdef ENABLE_RVZicsr
+	#ifdef DISASS_RVZicsr
 	string_OP_CSRRW:	.string "csrrw";
 	string_OP_CSRRS:	.string "csrrs";
 	string_OP_CSRRC:	.string "csrrc";
 	string_OP_CSRRWI:	.string "csrrwi";
 	string_OP_CSRRSI:	.string "csrrsi";
 	string_OP_CSRRCI:	.string "csrrci";
-#endif /* ENABLE_RVZicsr */
+#endif /* DISASS_RVZicsr */
 
 # RVC
-#ifdef ENABLE_RVC
+#ifdef DISASS_RVC
 	string_OP_C_LW:			.string "c.lw";
 	string_OP_C_SW:			.string "c.sw";
 	string_OP_C_ADDI:		.string "c.addi";
@@ -585,7 +585,7 @@ string_OP_EBREAK:	.string "ebreak";
 	string_OP_C_ADDIW:		.string "c.addiw";
 	string_OP_C_LDSP:		.string "c.ldsp";
 	string_OP_C_SDSP:		.string "c.sdsp";
-	#ifdef ENABLE_RVF
+	#ifdef DISASS_RVF
 		string_OP_C_FLD:		.string "c.fld";
 		string_OP_C_FSD:		.string "c.fsd";
 		string_OP_C_FLW:		.string "c.flw";
@@ -594,27 +594,27 @@ string_OP_EBREAK:	.string "ebreak";
 		string_OP_C_FLWSP:		.string "c.flwsp";
 		string_OP_C_FSDSP:		.string "c.fsdsp";
 		string_OP_C_FSWSP:		.string "c.fswsp";
-	#endif /* ENABLE_RVF */
-#endif /* ENABLE_RVC */
+	#endif /* DISASS_RVF */
+#endif /* DISASS_RVC */
 
 # Pseudo
-#ifdef ENABLE_PSEUDO
+#ifdef DISASS_PSEUDO
 	string_OP_RET:		.string "ret";	
 	string_OP_NOP:		.string "nop";	
 	string_OP_UNIMP:	.string "unimp";	
-	#ifdef ENABLE_RVC
+	#ifdef DISASS_RVC
 		string_OP_C_UNIMP:	.string "c.unimp";	
 	#endif
-#endif /* ENABLE_PSEUDO */
+#endif /* DISASS_PSEUDO */
 
 # Privileged
-#ifdef ENABLE_RVPRIV
+#ifdef DISASS_RVPRIV
 	string_OP_WFI:			.string "wfi";	
 	string_OP_MRET:			.string "mret";	
 	string_OP_SRET:			.string "sret";	
 	string_OP_SFENCE_VM:	.string "sfence.vm";	
 	string_OP_SFENCE_VMA:	.string "sfence.vma";	
-#endif /* ENABLE_PSEUDO */
+#endif /* DISASS_PSEUDO */
 
 .size string_opcodes, .-string_opcodes
 
@@ -634,7 +634,7 @@ encoding_vectors:
 .word	ass_BRA				# 0x06
 .word	ass_J				# 0x07
 .word	ass_U_imm			# 0x08
-#ifdef ENABLE_RVA
+#ifdef DISASS_RVA
 	.word	ass_PRE			# 0x09
 	.word	ass_SUC			# 0x0a
 	.word	ass_AMEM		# 0x0b
@@ -642,8 +642,8 @@ encoding_vectors:
 	.word	0				# 0x09	
 	.word	0				# 0x0a
 	.word	0				# 0x0b
-#endif /* ENABLE_RVA */
-#ifdef ENABLE_RVF
+#endif /* DISASS_RVA */
+#ifdef DISASS_RVF
 	.word	ass_frd			# 0x0c
 	.word	ass_frs1		# 0x0d
 	.word	ass_frs2		# 0x0e
@@ -653,7 +653,7 @@ encoding_vectors:
 	.word	0				# 0x0d
 	.word	0				# 0x0e
 	.word	0				# 0x0f
-#endif /* ENABLE_RVF */
+#endif /* DISASS_RVF */
 
 
 encoding_table:
@@ -669,15 +669,15 @@ encoding_table:
 
 # pseudo opcodes
 # order is important, these have to be at the beginning of the table
-#ifdef ENABLE_PSEUDO
-	#ifdef ENABLE_RVC
+#ifdef DISASS_PSEUDO
+	#ifdef DISASS_RVC
 		.word 0x0000ffff, 0x0000,	decode_EMPTY,	string_OP_C_UNIMP,	0,	0,	0,	0
 		.word 0x0000ffff, 0x0001,	decode_EMPTY,	string_OP_C_NOP,	0,	0,	0,	0
-	#endif /* ENABLE_RVC */
+	#endif /* DISASS_RVC */
 	.word 0xffffffff, 0x00000000,	decode_EMPTY,	string_OP_UNIMP,	0,	0,	0,	0
 	.word 0xffffffff, 0x00008067,	decode_EMPTY,	string_OP_RET,		0,	0,	0,	0
 	.word 0xffffffff, 0x00000013,	decode_EMPTY,	string_OP_NOP,		0,	0,	0,	0
-#endif /* ENABLE_PSEUDO */
+#endif /* DISASS_PSEUDO */
 
 # RV32I
 # offset in bytes from start of each entry:
@@ -741,7 +741,7 @@ encoding_table:
 #endif
 
 # RVM
-#ifdef ENABLE_RVM
+#ifdef DISASS_RVM
 	# RV32M
 	.word MASK_MUL,		MATCH_MUL,		decode_R_type,	string_OP_MUL,		ass_rd,		ass_rs1,	ass_rs2,	0
 	.word MASK_MULH,	MATCH_MULH,		decode_R_type,	string_OP_MULH,		ass_rd,		ass_rs1,	ass_rs2,	0
@@ -759,10 +759,10 @@ encoding_table:
 		.word MASK_REMW,	MATCH_REMW,		decode_R_type,	string_OP_REMW,		ass_rd,		ass_rs1,	ass_rs2,	0
 		.word MASK_REMUW,	MATCH_REMUW,	decode_R_type,	string_OP_REMUW,	ass_rd,		ass_rs1,	ass_rs2,	0
 	#endif
-#endif /* ENABLE_RVM */
+#endif /* DISASS_RVM */
 
 # RVA
-#ifdef ENABLE_RVA
+#ifdef DISASS_RVA
 	# RV32A
 	.word MASK_LR_W,		MATCH_LR_W,			decode_LRSC,	string_OP_LRW, 		ass_rd,	ass_AMEM,	0,			0
 	.word MASK_SC_W,		MATCH_SC_W,			decode_LRSC,	string_OP_SCW,		ass_rd,	ass_rs2, 	ass_AMEM,	0
@@ -789,10 +789,10 @@ encoding_table:
 		.word MASK_AMOMAXU_D,	MATCH_AMOMAXU_D,	decode_AMO,		string_OP_AMOMAXUD,	ass_rd,	ass_rs2, 	ass_AMEM,	0
 		.word MASK_AMOMINU_D,	MATCH_AMOMINU_D,	decode_AMO,		string_OP_AMOMINUD,	ass_rd,	ass_rs2, 	ass_AMEM,	0
 	#endif
-#endif /* ENABLE_RVA */
+#endif /* DISASS_RVA */
 
 # RVF / RVD / RVQ
-#ifdef ENABLE_RVF
+#ifdef DISASS_RVF
 	.word MASK_FLW,			MATCH_FLW,			decode_FL,			string_OP_FLW,			ass_frd,	ass_MEM,	0,			0
 	.word MASK_FSW,			MATCH_FSW,			decode_FS,			string_OP_FSW,			ass_frs2,	ass_MEM,	0,			0
 	.word MASK_FMADD_S,		MATCH_FMADD_S,		decode_FMA,			string_OP_FMADD_S,		ass_frd,	ass_frs1,	ass_frs2,	ass_frs3
@@ -819,7 +819,7 @@ encoding_table:
 	.word MASK_FEQ_S,		MATCH_FEQ_S,		decode_FCMP,		string_OP_FEQ_S,		ass_frd,	ass_frs1,	ass_frs2,	0
 	.word MASK_FLE_S,		MATCH_FLE_S,		decode_FCMP,		string_OP_FLE_S,		ass_frd,	ass_frs1,	ass_frs2,	0
 	.word MASK_FCLASS_S,	MATCH_FCLASS_S,		decode_FCLASS,		string_OP_FCLASS_S,		ass_frd,	0,			0,			0
-	#ifdef ENABLE_RVD
+	#ifdef DISASS_RVD
 		.word MASK_FLD,			MATCH_FLD,			decode_FL,		string_OP_FLD,			ass_frd,	ass_MEM,	0,			0
 		.word MASK_FSD,			MATCH_FSD,			decode_FS,		string_OP_FSD,			ass_frs2,	ass_MEM,	0,			0
 		.word MASK_FMADD_D,		MATCH_FMADD_D,		decode_FMA,		string_OP_FMADD_D,		ass_frd,	ass_frs1,	ass_frs2,	ass_frs3
@@ -846,7 +846,7 @@ encoding_table:
 		.word MASK_FLT_D,		MATCH_FLT_D,		decode_FCMP,	string_OP_FLT_D,		ass_frd,	ass_frs1,	ass_frs2,	0
 		.word MASK_FLE_D,		MATCH_FLE_D,		decode_FCMP,	string_OP_FLE_D,		ass_frd,	ass_frs1,	ass_frs2,	0
 		.word MASK_FCLASS_D,	MATCH_FCLASS_D,		decode_FCLASS,	string_OP_FCLASS_D,		ass_frd,	0,			0,			0
-		#ifdef ENABLE_RVQ
+		#ifdef DISASS_RVQ
 			.word MASK_FLQ,			MATCH_FLQ,			decode_FL,		string_OP_FLQ,			ass_frd,	ass_MEM,	0,			0
 			.word MASK_FSQ,			MATCH_FSQ,			decode_FS,		string_OP_FSQ,			ass_frs2,	ass_MEM,	0,			0
 			.word MASK_FMADD_Q,		MATCH_FMADD_Q,		decode_FMA,		string_OP_FMADD_Q,		ass_frd,	ass_frs1,	ass_frs2,	ass_frs3
@@ -875,12 +875,12 @@ encoding_table:
 			.word MASK_FLT_Q,		MATCH_FLT_Q,		decode_FCMP,	string_OP_FLT_Q,		ass_frd,	ass_frs1,	ass_frs2,	0
 			.word MASK_FLE_Q,		MATCH_FLE_Q,		decode_FCMP,	string_OP_FLE_Q,		ass_frd,	ass_frs1,	ass_frs2,	0
 			.word MASK_FCLASS_Q,	MATCH_FCLASS_Q,		decode_FCLASS,	string_OP_FCLASS_Q,		ass_frd,	0,			0,			0
-		#endif /* ENABLE_RVQ */
-	#endif /* ENABLE_RVD */
-#endif /* ENABLE_RVF */
+		#endif /* DISASS_RVQ */
+	#endif /* DISASS_RVD */
+#endif /* DISASS_RVF */
 
 # RVC
-#ifdef ENABLE_RVC
+#ifdef DISASS_RVC
 	.word MASK_C_LW,		MATCH_C_LW,			decode_EMPTY,				string_OP_C_LW,			0,			0,			0,			0
 	.word MASK_C_SW,		MATCH_C_SW,			decode_EMPTY,				string_OP_C_SW,			0,			0,			0,			0
 	.word MASK_C_ADDI,		MATCH_C_ADDI,		decode_EMPTY,				string_OP_C_ADDI,		0,			0,			0,			0
@@ -917,7 +917,7 @@ encoding_table:
 	.word MASK_C_ADDIW,		MATCH_C_ADDIW,		decode_EMPTY,				string_OP_C_ADDIW,		0,			0,			0,			0
 	.word MASK_C_LDSP,		MATCH_C_LDSP,		decode_EMPTY,				string_OP_C_LDSP,		0,			0,			0,			0
 	.word MASK_C_SDSP,		MATCH_C_SDSP,		decode_EMPTY,				string_OP_C_SDSP,		0,			0,			0,			0
-	#ifdef ENABLE_RVF
+	#ifdef DISASS_RVF
 		.word MASK_C_FLD,	MATCH_C_FLD,	decode_EMPTY,	string_OP_C_FLD,		0,			0,			0,			0
 		.word MASK_C_FSD,	MATCH_C_FSD,	decode_EMPTY,	string_OP_C_FSD,		0,			0,			0,			0
 		.word MASK_C_FLW,	MATCH_C_FLW,	decode_EMPTY,	string_OP_C_FLW,		0,			0,			0,			0
@@ -926,32 +926,32 @@ encoding_table:
 		.word MASK_C_FSWSP,	MATCH_C_FSWSP,	decode_EMPTY,	string_OP_C_FSWSP,		0,			0,			0,			0
 		.word MASK_C_FLDSP,	MATCH_C_FLDSP,	decode_EMPTY,	string_OP_C_FLDSP,		0,			0,			0,			0
 		.word MASK_C_FSDSP,	MATCH_C_FSDSP,	decode_EMPTY,	string_OP_C_FSDSP,		0,			0,			0,			0
-	#endif /* ENABLE_RVF */
-#endif /* ENABLE_RVC */
+	#endif /* DISASS_RVF */
+#endif /* DISASS_RVC */
 
 # Zifencei
-#ifdef ENABLE_RVZifencei
+#ifdef DISASS_RVZifencei
 	.word MASK_FENCE_I,		MATCH_FENCE_I,	decode_FENCE_I,	string_OP_FENCE_I,	0,	0,	0,	0
-#endif /* ENABLE_RVZifencei */
+#endif /* DISASS_RVZifencei */
 
 # Zicsr
-#ifdef ENABLE_RVZicsr
+#ifdef DISASS_RVZicsr
 	.word MASK_CSRRW,	MATCH_CSRRW,	decode_CSR,		string_OP_CSRRW,	0,			0,			0,			0
 	.word MASK_CSRRS,	MATCH_CSRRS,	decode_CSR,		string_OP_CSRRS,	0,			0,			0,			0
 	.word MASK_CSRRC,	MATCH_CSRRC,	decode_CSR,		string_OP_CSRRC,	0,			0,			0,			0
 	.word MASK_CSRRWI,	MATCH_CSRRWI,	decode_CSRI,	string_OP_CSRRWI,	0,			0,			0,			0
 	.word MASK_CSRRCI,	MATCH_CSRRCI,	decode_CSRI,	string_OP_CSRRCI,	0,			0,			0,			0
 	.word MASK_CSRRSI,	MATCH_CSRRSI,	decode_CSRI,	string_OP_CSRRSI,	0,			0,			0,			0
-#endif /* ENABLE_RVZicsr */
+#endif /* DISASS_RVZicsr */
 
 # Privileged
-#ifdef ENABLE_RVPRIV
+#ifdef DISASS_RVPRIV
 	.word MASK_WFI,			MATCH_WFI,			decode_WFI,			string_OP_WFI,			0,	0,	0,	0
 	.word MASK_MRET,		MATCH_MRET,			decode_MRET,		string_OP_MRET,			0,	0,	0,	0
 	.word MASK_SRET,		MATCH_SRET,			decode_SRET,		string_OP_SRET,			0,	0,	0,	0
 	.word MASK_SFENCE_VM,	MATCH_SFENCE_VM,	decode_SFENCE_VM,	string_OP_SFENCE_VM,	0,	0,	0,	0
 	.word MASK_SFENCE_VMA,	MATCH_SFENCE_VMA,	decode_SFENCE_VMA,	string_OP_SFENCE_VMA,	0,	0,	0,	0
-#endif /* ENABLE_RVPRIV */
+#endif /* DISASS_RVPRIV */
 
 # table end marker
 .word 0, 0, 0, 0, 0, 0, 0, 0

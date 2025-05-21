@@ -669,7 +669,7 @@ testcode_RVQ:
 #endif /* WITH_TESTCODE_RVQ */
 
 
-#if defined (WITH_TESTCODE_RVC) && defined (ENABLE_RVC)
+#if defined (WITH_TESTCODE_RVC) && defined (DISASS_RVC)
 testcode_RVC:
 	# CL_type
 	c.lw		x8, 0(x8)
@@ -735,7 +735,7 @@ testcode_RVC_CB_type_start:
 	c.andi		x8, 0
 	c.andi		x15, 31
 testcode_RVC_CB_type_end:	
-	#ifdef ENABLE_RVF
+	#ifdef DISASS_RVF
 		#c.flw		 f8, 0(f8)
 		#c.fsw
 		#c.flwsp
@@ -750,7 +750,7 @@ testcode_RVC_CB_type_end:
 			c.fsdsp		f8, 0(sp)
 			c.fsdsp		f15, 504(sp)
 		#endif
-	#endif /* ENABLE_RVF */
+	#endif /* DISASS_RVF */
 	# RV32C only
 	#if XLEN == 32
 		c.jal		testcode_RVC

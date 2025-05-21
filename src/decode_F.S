@@ -3,7 +3,7 @@
 
 #ifdef WITH_CMD_D
 
-#ifdef ENABLE_RVF
+#ifdef DISASS_RVF
 
 .global decode_FL
 .global decode_FS
@@ -199,6 +199,6 @@ decode_FCMP:
 
 .data
 
-#endif /* ENABLE_RVF */
+#endif /* DISASS_RVF */
 
 #endif /* WITH_CMD_D */

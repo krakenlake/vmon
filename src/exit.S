@@ -14,7 +14,7 @@ vmon_exit:
 	
 	# TODO: disable trap handler now?
 
-	#ifdef ENABLE_RVF
+	#ifdef DISASS_RVF
 		# restore float registers
 		LOAD_F	f0, (STK_OFF_F0)(sp)
 		LOAD_F	f1, (STK_OFF_F1)(sp)
@@ -49,14 +49,14 @@ vmon_exit:
 		LOAD_F	f30, (STK_OFF_F30)(sp)
 		LOAD_F	f31, (STK_OFF_F31)(sp)
 		addi	sp, sp, (STK_FRAME_SIZE_FLOAT)
-	#endif /* ENABLE_RVF */
+	#endif /* DISASS_RVF */
 
 	# restore mepc
 	#ifdef M_MODE
-		#ifdef ENABLE_RVZicsr
+		#ifdef DISASS_RVZicsr
 			LOAD_X	t0, STK_OFF_PC(sp)	
 			csrw	mepc, t0
-		#endif /* ENABLE_RVZicsr */
+		#endif /* DISASS_RVZicsr */
 	#endif /* M_MODE */ 
 	
 	# restore int registers

@@ -70,7 +70,7 @@ patch_int_register_loop:
 
 # in: a0 = index of register
 # in: a1 = new representation value to write
-#ifdef ENABLE_RVF
+#ifdef DISASS_RVF
 patch_float_register:
 	# put int hex value on stack
 	addi	sp, sp, -(FLEN_BYTES)
@@ -87,7 +87,7 @@ patch_float_register_loop:
 patch_float_register_do:
 	SAVE_F	f0, 0(t0)
 	ret
-#endif /* ENABLE_RVF */
+#endif /* DISASS_RVF */
 
 
 #endif /* WITH_CMD_S */
@@ -112,7 +112,7 @@ print_int_registers:
 .size print_int_registers, .-print_int_registers
 
 
-#ifdef ENABLE_RVF
+#ifdef DISASS_RVF
 	print_float_registers:
 		addi	sp, sp, -(XLEN_BYTES*1)
 		SAVE_X  ra, 0(sp)
@@ -124,7 +124,7 @@ print_int_registers:
 		jal		print_saved_registers
 		j		pop_ra_ret
 	.size print_float_registers, .-print_float_registers
-#endif /* ENABLE_RVF */
+#endif /* DISASS_RVF */
 
 
 # dump registers saved on stack

@@ -38,7 +38,7 @@ cmd_S:
 cmd_S_try_float:
 	# fall through to cmd_S_error if RVF not enabled
 
-	#ifdef ENABLE_RVF
+	#ifdef DISASS_RVF
 		# now try if the name is a float register
 		mv		a0, s0
 		mv		a1, s1

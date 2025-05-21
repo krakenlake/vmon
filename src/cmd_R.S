@@ -11,9 +11,9 @@
 cmd_R:
 	# dump registers as they were on entry
 	jal		print_int_registers
-	#ifdef ENABLE_RVF
+	#ifdef DISASS_RVF
 		jal		print_float_registers
-	#endif /* ENABLE_RVF */
+	#endif /* DISASS_RVF */
 	j		main_prompt
 .size cmd_R, .-cmd_R
 

@@ -38,7 +38,7 @@ cmd_D_next_instruction:
 	# print word at this memory address
 	lw		a0, 0(s5)					# load instruction word
 	mv		s6, a0						# save for later
-	#ifdef ENABLE_RVC
+	#ifdef DISASS_RVC
 		jal		insn_is_compressed
 		bnez	a0, cmd_D_word_is_RVC
 	#endif
@@ -47,7 +47,7 @@ cmd_D_word_not_RVC:
 	li		a1, 4						# 4 bytes
 	li		a2, 0						# no "0x" prefix
 	jal		print_hex_fixed_width
-	#ifdef ENABLE_RVC
+	#ifdef DISASS_RVC
 		j		cmd_D_disass	
 	cmd_D_word_is_RVC:					 
 		lbu		a0, 1(s5)					# print 2 bytes only
@@ -67,7 +67,7 @@ cmd_D_disass:
 	mv		a0, s6						# get instruction word again
 	jal		decode_opcode
 	beqz	a1, cmd_D_opcode_unknown
-	#ifdef ENABLE_RVC
+	#ifdef DISASS_RVC
 		jal		adjust_RVC_add_jal_ebreak
 	#endif	  
 	jal		print_instruction

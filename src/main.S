@@ -30,14 +30,14 @@ start:
 	# do not add anything before this
 	
 	#ifdef M_MODE
-		#ifdef ENABLE_RVZicsr
+		#ifdef DISASS_RVZicsr
 			# immediately save sp in mscratch
 			csrw	mscratch, sp
 			# run only on hart 0
 			# as sp is already saved, we can use it now
 			csrr	sp, mhartid
 			bnez	sp, end
-		#endif /* ENABLE_RVZicsr */
+		#endif /* DISASS_RVZicsr */
 
 		# set up a stack 
 		la		sp, stack + STACK_SIZE		# point to end of our new stack
@@ -78,31 +78,31 @@ start:
 	SAVE_X	x31, (STK_OFF_X31)(sp)
 	# now we can safely use t0 to get back and save sp in that same stack frame above
 	#ifdef M_MODE
-		#ifdef ENABLE_RVZicsr
+		#ifdef DISASS_RVZicsr
 			csrr	t0, mscratch					# read original sp back
 			SAVE_X	t0, (STK_OFF_SP)(sp)			# and save it
-		#endif /* ENABLE_RVZicsr */
+		#endif /* DISASS_RVZicsr */
 	#else
 		SAVE_X	sp, (STK_OFF_SP)(sp)
 	#endif /* M_MODE */
 	# save mepc
 	#ifdef M_MODE
-		#ifdef ENABLE_RVZicsr
+		#ifdef DISASS_RVZicsr
 			csrr	t0, mepc
 			SAVE_X	t0, (STK_OFF_PC)(sp)
 		#endif
 	#endif /* M_MODE */
 
 
-	#ifdef ENABLE_RVF
+	#ifdef DISASS_RVF
 		# enable RVF in mstatus of cpu (this is disabled in QEMU per default)
-		#ifdef ENABLE_RVZicsr
+		#ifdef DISASS_RVZicsr
 			li		t0, 0b11
 			slli	t0, t0, 13
 			csrr	t1, mstatus
 			or		t1, t0, t1
 			csrw	mstatus, t1
-		#endif /*ENABLE_RVZicsr */
+		#endif /*DISASS_RVZicsr */
 	
 		# save f0-f31 registers on stack
 		addi	sp, sp, -(STK_FRAME_SIZE_FLOAT)
@@ -138,7 +138,7 @@ start:
 		SAVE_F	f29, (STK_OFF_F29)(sp)
 		SAVE_F	f30, (STK_OFF_F30)(sp)
 		SAVE_F	f31, (STK_OFF_F31)(sp)
-	#endif /* ENABLE_RVF */
+	#endif /* DISASS_RVF */
 
 	#ifdef M_MODE
 		jal		setup_trap_handler

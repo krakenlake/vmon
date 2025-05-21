@@ -16,47 +16,47 @@ cmd_I:
 	li		a0, 'i'
 	jal		print_char
 
-#ifdef ENABLE_RVM
+#ifdef DISASS_RVM
 	li		a0, 'm'
 	jal		print_char
 #endif
 
-#ifdef ENABLE_RVA
+#ifdef DISASS_RVA
 	li		a0, 'a'
 	jal		print_char
 #endif
 
-#ifdef ENABLE_RVF
+#ifdef DISASS_RVF
 	li		a0, 'f'
 	jal		print_char
 #endif
 
-#ifdef ENABLE_RVD
+#ifdef DISASS_RVD
 	li		a0, 'd'
 	jal		print_char
 #endif
 
-#ifdef ENABLE_RVQ
+#ifdef DISASS_RVQ
 	li		a0, 'q'
 	jal		print_char
 #endif
 
-#ifdef ENABLE_RVC
+#ifdef DISASS_RVC
 	li		a0, 'c'
 	jal		print_char
 #endif
 
-#ifdef ENABLE_RVV
+#ifdef DISASS_RVV
 	li		a0, 'v'
 	jal		print_char
 #endif
 
-#ifdef ENABLE_RVZicsr
+#ifdef DISASS_RVZicsr
 	la		a0, string_info_Zicsr 
 	jal		print_string
 #endif
 
-#ifdef ENABLE_RVZifencei
+#ifdef DISASS_RVZifencei
 	la		a0, string_info_Zifencei
 	jal		print_string
 #endif
@@ -149,7 +149,7 @@ cmd_I:
 		jal		print_hex
 	#endif /* WITH_TESTCODE_RVQ */
 
-	#if defined (WITH_TESTCODE_RVC) && defined (ENABLE_RVC)
+	#if defined (WITH_TESTCODE_RVC) && defined (DISASS_RVC)
 		la		a0, string_info_testcode_RVC
 		jal		print_string
 		la		a0, testcode_RVC

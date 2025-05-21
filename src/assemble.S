@@ -23,17 +23,17 @@
 .global ass_I_rel						# expect I-type offset for JALR
 .global ass_U_imm						# expect immediate for U-type (LUI/AUIPC)
 
-#ifdef ENABLE_RVA
+#ifdef DISASS_RVA
 	.global ass_aqrl						# expect ".aqrl" extension for RVA
 	.global ass_AMEM						# expect (reg) parameter for RVA
-#endif /* ENABLE_RVA */
+#endif /* DISASS_RVA */
 
-#ifdef ENABLE_RVF
+#ifdef DISASS_RVF
 	.global ass_frd							# expect int register name and use it for frd
 	.global ass_frs1						# expect int register name and use it for RVF frs1
 	.global ass_frs2						# expect int register name and use it for RVF frs2
 	.global ass_frs3						# expect int register name and use it for RVF frs3
-#endif /* ENABLE_RVF */
+#endif /* DISASS_RVF */
 
 .text
 
@@ -56,7 +56,7 @@ assemble_instruction:
 	jal		parse_insn_string
 	mv		s1, a0								# insn string end
 
-#ifdef ENABLE_RVA
+#ifdef DISASS_RVA
 	mv		s2, a1								# ptr to second '.' in string (if present)
 	beqz	a1, assemble_instruction_not_aqrl
 	# RVA insns may end with ".aq", ".rl", or ".aqrl".
@@ -73,7 +73,7 @@ assemble_instruction:
 	jal		skip_whitespace
 	mv		s1, a0
 assemble_instruction_not_aqrl:
-#endif /* ENABLE_RVA */
+#endif /* DISASS_RVA */
 
 	# find string between s0 and s1 in encoding table
 	jal		get_data_by_insn_name
@@ -88,13 +88,13 @@ assemble_instruction_not_aqrl:
 	# in case insn == 0, 
 	beqz	a1, assemble_instruction_error		# error while assembling insn parameters
 
-#ifdef ENABLE_RVA
+#ifdef DISASS_RVA
 	# add RVA aqrl bits if there were any from above
 	or		a1, a1, s3
-#endif /* ENABLE_RVA */
+#endif /* DISASS_RVA */
 
 	# now return insn size in a0
-#ifdef ENABLE_RVC
+#ifdef DISASS_RVC
 	mv		a0, a1
 	jal		insn_is_compressed
 	bnez	a0, assemble_instruction_is_RVC
@@ -302,7 +302,7 @@ ass_rs2:
 .size ass_rs2, .-ass_rs2
 
 
-#ifdef ENABLE_RVF
+#ifdef DISASS_RVF
 # facade for assemble_register:
 # - add parameter for sll in t0
 # - add parameter for lookup function in t1
@@ -312,10 +312,10 @@ ass_frd:
 	la		t1, get_float_register_index_by_name
 	j		assemble_register
 .size ass_frd, .-ass_frd
-#endif /* ENABLE_RVF */
+#endif /* DISASS_RVF */
 
 
-#ifdef ENABLE_RVF
+#ifdef DISASS_RVF
 # facade for assemble_register:
 # - add parameter for sll in t0
 # - add parameter for lookup function in t1
@@ -325,10 +325,10 @@ ass_frs1:
 	la		t1, get_float_register_index_by_name
 	j		assemble_register
 .size ass_frs1, .-ass_frs1
-#endif /* ENABLE_RVF */
+#endif /* DISASS_RVF */
 
 
-#ifdef ENABLE_RVF
+#ifdef DISASS_RVF
 # facade for assemble_register:
 # - add parameter for sll in t0
 # - add parameter for lookup function in t1
@@ -338,10 +338,10 @@ ass_frs2:
 	la		t1, get_float_register_index_by_name
 	j		assemble_register
 .size ass_frs2, .-ass_frs2
-#endif /* ENABLE_RVF */
+#endif /* DISASS_RVF */
 
 
-#ifdef ENABLE_RVF
+#ifdef DISASS_RVF
 # facade for assemble_register:
 # - add parameter for sll in t0
 # - add parameter for lookup function in t1
@@ -351,7 +351,7 @@ ass_frs3:
 	la		t1, get_float_register_index_by_name
 	j		assemble_register
 .size ass_frs3, .-ass_frs3
-#endif /* ENABLE_RVF */
+#endif /* DISASS_RVF */
 
 
 # We use this for int and float registers, as they are the
@@ -678,7 +678,7 @@ ass_U_imm_done:
 .size ass_U_imm, .-ass_U_imm
 
 
-#ifdef ENABLE_RVA
+#ifdef DISASS_RVA
 # in: a0 = ptr to first char of argument
 # in: a1 = insn word to be modifed
 # in: a2 = origin address
@@ -701,10 +701,10 @@ ass_aqrl_error:
 ass_aqrl_done:
 	j		pop_s0_ra_ret
 .size ass_aqrl, .-ass_aqrl
-#endif /* ENABLE_RVA */
+#endif /* DISASS_RVA */
 
 
-#ifdef ENABLE_RVA
+#ifdef DISASS_RVA
 # in: a0 = ptr to first char of argument
 # in: a1 = insn word to be modifed
 # in: a2 = origin address
@@ -736,7 +736,7 @@ ass_AMEM_error:
 ass_AMEM_done:
 	j		pop_s1_s0_ra_ret
 .size ass_AMEM, .-ass_AMEM
-#endif /* ENABLE_RVA */
+#endif /* DISASS_RVA */
 
 
 #endif /* WITH_CMD_A */
