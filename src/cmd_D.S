@@ -43,21 +43,17 @@ cmd_D_next_instruction:
 	bnez	a0, cmd_D_word_is_RVC
 #endif
 cmd_D_word_not_RVC:
-	lbu		a0, 3(s5)					# print 4 bytes if not compressed
-	jal		print_hex_byte
-	lbu		a0, 2(s5)
-	jal		print_hex_byte
-	lbu		a0, 1(s5)
-	jal		print_hex_byte
-	lbu		a0, 0(s5)
-	jal		print_hex_byte
+	LWU		a0, 0(s5)
+	li		a1, 4						# 4 bytes
+	li		a2, 0						# no "0x" prefix
+	jal		print_hex_fixed_width
 #ifdef ENABLE_RVC
 	j		cmd_D_disass	
 cmd_D_word_is_RVC:					 
 	lbu		a0, 1(s5)					# print 2 bytes only
 	jal		print_hex_byte
 	lbu		a0, 0(s5)
-	jal		print_hex_byte
+	jal		print_hex_byte	
 	li		a0, ' '
 	jal		print_char					# print 4 spaces for alignment
 	jal		print_char
