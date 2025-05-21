@@ -7,8 +7,6 @@
 .global expect_comma
 .global expect_open_paren
 .global expect_close_paren
-#.global get_hex_addr
-.global parse_hex
 .global parse_insn_string
 .global find_register_name_end
 .global is_ascii
@@ -37,36 +35,61 @@ skip_whitespace_done:
 	ret
 .size skip_whitespace, .-skip_whitespace
 
-# advance buffer ptr one char if char matches the expected one
-#
+
+# expect a specific char and advance buffer ptr to next non-whitespace char after that char
 # in: a0 = buffer ptr
-# in: t0 = char to consume
+# in: t0 = char to expect
 # out: a0 = buffer ptr after comma (0 on error)
 expect_char:
+	li		t2, ' '
+	li		t3, '\t'
+	mv		t4, zero					# found flag
+expect_char_loop:
 	lb		t1, 0(a0)
-	beq		t1, t0, expect_char_done
-	li		a0, -1						# to return 0 in the next step
+	beq		t1, t0, expect_char_match	# found match
+	beqz	t1, expect_char_check_flag	# string ended
+	beq		t1, t2, expect_char_ws
+	beq		t1, t3, expect_char_ws
+	# anything else
+expect_char_check_flag:
+	bnez	t4, expect_char_ret
+	li		a0, 0
+	ret
+expect_char_match:
+	bnez	t4, expect_char_ret
+	li		t4, 1						# set found flag
+expect_char_ws:
+	addi	a0, a0, 1
+	j		expect_char_loop
 expect_char_done:
 	addi	a0, a0, 1
+expect_char_ret:
 	ret
+.size expect_char, .-expect_char
+
 
 # in: buffer ptr in a0
 # out: a0 = buffer ptr after comma or a0 = 0 on error
 expect_comma:
 	li		t0, ','
 	j 		expect_char
+.size expect_comma, .-expect_comma
+
 
 # in: buffer ptr in a0
 # out: a0 = buffer ptr after comma or a0 = 0 on error
 expect_open_paren:
 	li		t0, '('
 	j 		expect_char
+.size expect_open_paren, .-expect_open_paren
+
 
 # in: buffer ptr in a0
 # out: a0 = buffer ptr after comma or a0 = 0 on error
 expect_close_paren:
 	li		t0, ')'
 	j 		expect_char
+.size expect_close_paren, .-expect_close_paren
 
 
 # in: buffer ptr in a0
@@ -146,7 +169,6 @@ get_numeric_hex_bin:						# first char is '0'
 	j		get_numeric_dec
 get_numeric_hex:
 	addi	a0, a0, 2
-#	jal		get_hex_addr
 	jal		parse_hex
 	j		get_numeric_done
 get_numeric_bin:
@@ -243,7 +265,6 @@ parse_decimal:
 	li		a1, 0  # result
 	li		t3, 0  # digit found flag
 	li		t6, 0  # negative flag
-
 	# check for negative number
 	lb		t0, 0(a0)
 	li		t1, '-'
@@ -251,18 +272,15 @@ parse_decimal:
 	li		t6, 1  # number is negative
 	addi	a0, a0, 1
 	j		parse_decimal_loop
-
 parse_decimal_plus:
 	li		t1, '+'
 	bne		t0, t1, parse_decimal_loop # no leading +, assume positive
 	addi	a0, a0, 1
-
 parse_decimal_loop:
 	lb		t0, 0(a0)
 	addi	t1, t0, -'0'  # potential digit value
 	sltiu	t2, t1, 10	  # is potential digit 0-9? (t2=1 if yes)
-	beqz	t2, parse_decimal_check_term # if not 0-9
-
+	beqz	t2, parse_decimal_check_flag # if not 0-9
 	# have a valid decimal digit, multiply accumulator by 10
 	# and add in the new digit value.
 	li		t3, 1
@@ -274,19 +292,6 @@ parse_decimal_loop:
 	add		a1, a1, t1
 	addi	a0, a0, 1	   # ptr++
 	j		parse_decimal_loop
-
-parse_decimal_check_term:
-/*
-	# Check terminators (' ' or ASCII_RETURN)
-	li		t1, ' '
-	beq		t0, t1, parse_decimal_check_flag
-	li		t1, ASCII_RETURN
-	beq		t0, t1, parse_decimal_check_flag
-	# Invalid char: Jump to return (a2 is already -1)
-	j		parse_decimal_final_return
-*/
-	j		parse_decimal_check_flag
-
 parse_decimal_check_flag:
 	beqz	t3, parse_decimal_final_return # If t3=0, error (a2 is -1)
 	# apply sign, if necessary

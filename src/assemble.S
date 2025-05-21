@@ -196,20 +196,13 @@ ass_I_rel:
 	beqz	a1, ass_I_rel_error
 	mv		s0, a0						# return string ptr later
 	mv		s1, a1						# insn word
-	# TODO put this into a separate function
-
-	# expect (
-	jal		skip_whitespace
 	jal		expect_open_paren
 	beqz	a0, ass_I_rel_error
-	jal		skip_whitespace
 	# process rs1
 	mv		a1, s1
 	jal		ass_rs1
 	beqz	a1, ass_I_rel_error
 	mv 		s1, a1
-	# expect )
-	jal		skip_whitespace
 	jal		expect_close_paren
 	beqz	a0, ass_I_rel_error
 	# assemble in a1
@@ -265,7 +258,6 @@ assemble_GENERIC_next_argument:
 	# get function ptr for argument
 	LWU		s0, 0(s3)
 	beqz	s0, assemble_GENERIC_done
-	jal		skip_whitespace
 	jal		expect_comma
 	beqz 	a0, assemble_GENERIC_error
 	j 		assemble_GENERIC_next_argument
@@ -533,19 +525,13 @@ ass_MEM_load:
 	slli	t0, a1, 20
 	or		s1, s1, t0
 ass_MEM_rs1:
-	# TODO put this into a separate function
-	# expect (
-	jal		skip_whitespace
 	jal		expect_open_paren
 	beqz	a0, ass_MEM_error
-	jal		skip_whitespace
 	# process rs1
 	mv		a1, s1
 	jal		ass_rs1
 	beqz	a1, ass_MEM_error
 	mv 		s1, a1
-	# expect )
-	jal		skip_whitespace
 	jal		expect_close_paren
 	beqz	a0, ass_MEM_error
 	# assemble in a1
@@ -731,18 +717,13 @@ ass_AMEM:
 	SAVE_X	ra, (XLEN_BYTES*2)(sp)
 	mv		s1, a1						# save insn word
 	mv		s0, a0						# return string ptr later
-	# expect (
-	jal		skip_whitespace
 	jal		expect_open_paren
 	beqz	a0, ass_AMEM_error
-	jal		skip_whitespace
 	# process rs1
 	mv		a1, s1
 	jal		ass_rs1
 	beqz	a1, ass_AMEM_error
 	mv 		s1, a1
-	# expect )
-	jal		skip_whitespace
 	jal		expect_close_paren
 	beqz	a0, ass_AMEM_error
 	# assemble in a1
