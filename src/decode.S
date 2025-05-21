@@ -305,6 +305,25 @@ decode_JAL_add_offset:
 	ret
 .size decode_JAL, .-decode_JAL
 
+
+# in: a0 = instruction word
+decode_JALR:
+	addi	sp, sp, -(XLEN_BYTES*2)				
+	SAVE_X	ra, 0(sp)
+	SAVE_X	s2, (XLEN_BYTES*1)(sp)
+	mv		s2, a0
+	jal		print_rd  
+	mv		a0, s2
+	jal		decode_I_type_imm
+	mv		a0, s2
+	jal		print_rs1_as_base
+	LOAD_X	ra, 0(sp)				
+	LOAD_X	s2, (XLEN_BYTES*1)(sp)				 
+	addi	sp, sp, (XLEN_BYTES*2)
+	ret
+.size decode_JALR, .-decode_JALR
+
+
 # in: a0: instruction word
 # in: a1: number of start bit (27 for pre, 23 for sucessor)
 decode_FENCE_bits:

@@ -158,6 +158,10 @@ testcode_jal_backward:
 	jalr	x0, -2048
 	jalr	x31, 2047
 	jalr	x31, -2048
+	jalr	x0, 2047(x0)
+	jalr	x0, -2048(x0)
+	jalr	x31, 2047(x31)
+	jalr	x31, -2048(x31)
 testcode_jal_forward:
 	lui		x0, 0
 	lui		x0, 31
