@@ -195,6 +195,7 @@ print_saved_registers_skip_space:
 	beqz	s3, print_saved_registers_next
 	j		print_saved_registers_skip_newline
 print_saved_registers_done:
+	jal		print_newline
 	j		pop_s7_s6_s5_s4_s3_s2_s1_s0_ra_ret
 .size print_saved_registers, .-print_saved_registers
 
