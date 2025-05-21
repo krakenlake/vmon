@@ -275,9 +275,6 @@ decode_JAL:
 	li		t1, 0b11111111000000000000
 	and		t0, s2, t1
 	or		a0, a0, t0
-	#if XLEN >=64
-		sext.w	s2, s2					# sign-extend to 64 bits
-	#endif
 	srai	t0, s2, 11
 	li		t1, 0xfffffffffff80000
 	and		t0, t0, t1
