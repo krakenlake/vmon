@@ -94,7 +94,7 @@ start:
 	#endif /* M_MODE */
 
 
-	#ifdef DISASS_RVF
+	#ifdef TARGET_HAS_RVF
 		# enable RVF in mstatus of cpu (this is disabled in QEMU per default)
 		#ifdef TARGET_HAS_Zicsr
 			li		t0, 0b11
@@ -138,7 +138,7 @@ start:
 		SAVE_F	f29, (STK_OFF_F29)(sp)
 		SAVE_F	f30, (STK_OFF_F30)(sp)
 		SAVE_F	f31, (STK_OFF_F31)(sp)
-	#endif /* DISASS_RVF */
+	#endif /* TARGET_HAS_RVF */
 
 	#ifdef M_MODE
 		jal		setup_trap_handler

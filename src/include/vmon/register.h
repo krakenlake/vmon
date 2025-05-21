@@ -15,13 +15,15 @@
 #define XLEN_BYTES			(XLEN/8)
 
 // float register width
-#if FLEN == 32
-	#define SAVE_F	fsw
-	#define LOAD_F	flw
-#endif
-#if FLEN == 64
-	#define	SAVE_F	fsd
-	#define LOAD_F	fld
+#ifdef TARGET_HAS_RVF
+	#if FLEN == 32
+		#define SAVE_F	fsw
+		#define LOAD_F	flw
+	#endif
+	#if FLEN == 64
+		#define	SAVE_F	fsd
+		#define LOAD_F	fld
+	#endif
 #endif
 #define FLEN_BYTES			(FLEN/8)
 

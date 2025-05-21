@@ -14,7 +14,7 @@ vmon_exit:
 	
 	# TODO: disable trap handler now?
 
-	#ifdef DISASS_RVF
+	#ifdef TARGET_HAS_RVF
 		# restore float registers
 		LOAD_F	f0, (STK_OFF_F0)(sp)
 		LOAD_F	f1, (STK_OFF_F1)(sp)
@@ -49,7 +49,7 @@ vmon_exit:
 		LOAD_F	f30, (STK_OFF_F30)(sp)
 		LOAD_F	f31, (STK_OFF_F31)(sp)
 		addi	sp, sp, (STK_FRAME_SIZE_FLOAT)
-	#endif /* DISASS_RVF */
+	#endif /* TARGET_HAS_RVF */
 
 	# restore mepc
 	#ifdef M_MODE

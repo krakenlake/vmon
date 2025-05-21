@@ -70,7 +70,7 @@ patch_int_register_loop:
 
 # in: a0 = index of register
 # in: a1 = new representation value to write
-#ifdef DISASS_RVF
+#ifdef TARGET_HAS_RVF
 patch_float_register:
 	# put int hex value on stack
 	addi	sp, sp, -(FLEN_BYTES)
@@ -87,7 +87,7 @@ patch_float_register_loop:
 patch_float_register_do:
 	SAVE_F	f0, 0(t0)
 	ret
-#endif /* DISASS_RVF */
+#endif /* TARGET_HAS_RVF */
 
 
 #endif /* WITH_CMD_S */
