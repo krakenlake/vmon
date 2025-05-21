@@ -147,9 +147,6 @@ decode_I_type_LOAD:
 	mv		s2, a0
 	jal		print_rd
 	# inst[24:20] -> imm[5:0]
-	#if XLEN >=64
-		sext.w	s2, s2					# sign-extend to 64 bits
-	#endif
 	srai	a0, s2, 20
 	jal		print_decimal
 	mv		a0, s2
