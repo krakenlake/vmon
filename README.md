@@ -146,16 +146,13 @@ is configured at compile time by setting `ABI_REGISTER_NAMES`in `config.h`.
 Target addresses for branch instructions and `JAL` are encoded into the instructions as offsets, but
 for convenience expected to be entered here as absolute addresses, for example:
 
-...
-> beq t0, t1, 0x80010020
-> jal ra, 0x80010000
-...
+<img width="643" alt="Screenshot 2025-05-21 at 16 36 56" src="https://github.com/user-attachments/assets/7966a45b-c659-4bd5-a676-54ce9b049976" />
+
 
 Offsets for `JALR` are expected as relative offsets:
-...
-> jalr ra, 0x80(t0)
-> jalr ra, -32(s1)
-...
+
+<img width="644" alt="Screenshot 2025-05-21 at 16 39 00" src="https://github.com/user-attachments/assets/44188f23-1482-4d14-af6c-3de6edad31b9" />
+
 
 ### Exceptions ###
 
