@@ -21,6 +21,7 @@ ifeq ($(TARGET), qemu)
 	ISA_STRING	?= g
 #	ISA_STRING	?= gc
 #	ISA_STRING	?= gqc
+	TARGET_HAS_Zicsr = 1
 	QEMU_FLAGS	= -machine virt -cpu rv$(XLEN),pmp=false -smp 2 -gdb tcp::1234 -bios none -serial stdio -display none -kernel $(BUILD)/$(NAME).img
 	RUN			= qemu-system-riscv$(XLEN) $(QEMU_FLAGS) 
 endif
@@ -33,6 +34,7 @@ ifeq ($(TARGET), vf2)
 	FLEN		= 64
 	ISA_STRING	?= g
 #	ISA_STRING	?= gc
+	TARGET_HAS_Zicsr = 1
 define VF2_RUN_MSG
 
 	running on VF2:

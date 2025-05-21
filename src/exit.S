@@ -53,10 +53,10 @@ vmon_exit:
 
 	# restore mepc
 	#ifdef M_MODE
-		#ifdef DISASS_RVZicsr
+		#ifdef TARGET_HAS_Zicsr
 			LOAD_X	t0, STK_OFF_PC(sp)	
 			csrw	mepc, t0
-		#endif /* DISASS_RVZicsr */
+		#endif /* TARGET_HAS_Zicsr */
 	#endif /* M_MODE */ 
 	
 	# restore int registers
