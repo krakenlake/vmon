@@ -36,7 +36,7 @@ string_help:
 	p <dst_addr> <byte_value0> [...] - write byte_value(s) starting at dst_addr\n\
 	pw <dst_addr> <32bit_value0> [...] - write 32bit_value(s) starting at dst_addr\n\
 	r - dump registers as saved on entry \n\
-	s - <register_name> <numeric_value>\n\
+	s <register_name> <numeric_value> - set saved register value \n\
 	x - exit to caller\n\
 	? <numeric_value> - print value in hex, decimal and binary\n\
 	All addresses and values are accepted in hex (0x...), bin (0b...) or decimal (no prefix).\n"
