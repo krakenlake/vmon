@@ -3,7 +3,7 @@
 
 #define HW_QEMU
 #define XLEN	32
-#define FLEN	32
+#define FLEN	0
 
 // always use only one of these
 #define M_MODE
