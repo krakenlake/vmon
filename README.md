@@ -156,7 +156,8 @@ Offsets for `JALR` are expected as relative offsets:
 
 ### Exceptions ###
 
-VMON installs a trap handler (if running in M-mode) in order to catch exceptions. Exceptions are printed:
+VMON installs a trap handler (if running in M-mode and Zicsr is available) in order to catch exceptions.
+Exceptions are printed:
 
 ![Screenshot 2025-05-16 at 09 36 18](https://github.com/user-attachments/assets/f344bbd6-ae28-46a1-8e33-ba65f898c903)
 
