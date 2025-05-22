@@ -16,14 +16,14 @@
 #define WITH_CMD_D			// disassemble	
 #define WITH_CMD_F			// find
 #define WITH_CMD_G			// go
-#define WITH_CMD_H			// help
-#define WITH_CMD_I			// info	
+//#define WITH_CMD_H			// help
+//#define WITH_CMD_I			// info	
 #define WITH_CMD_M			// memory dump
 #define WITH_CMD_P			// poke
 #define WITH_CMD_R			// register dump
 #define WITH_CMD_S			// set register
 #define WITH_CMD_X			// exit
-#define WITH_CMD_QMARK		// base conversion	
+//#define WITH_CMD_QMARK		// base conversion	
 
 // if undefined, simply "x0...x31" will be used instead
 #define ABI_REGISTER_NAMES
@@ -73,10 +73,10 @@
 //#define DISASS_RVPRIV
 
 // enable printing of pseudo opcodes in disassembly?
-#define DISASS_PSEUDO
+//#define DISASS_PSEUDO
 
 // include strings for MCAUSE verbose output?
-#define MCAUSE_VERBOSE
+//#define MCAUSE_VERBOSE
 
 // default number of lines for the "d" command if no end address is given
 #define	DEFAULT_D_LINES		16
