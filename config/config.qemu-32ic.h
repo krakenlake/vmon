@@ -58,9 +58,9 @@
 // configure which instructions and extensions the
 // executable will be able to assemble/disassemble
 // (this is independent of the target platforms actual instruction set!)
-#define DISASS_RVM
-#define DISASS_RVA
-#define DISASS_RVF
+//#define DISASS_RVM
+//#define DISASS_RVA
+//#define DISASS_RVF
 //#define DISASS_RVD
 //#define DISASS_RVQ
 //#define DISASS_RVC
@@ -68,9 +68,9 @@
 //#define DISASS_RVP
 //#define DISASS_RVV
 //#define DISASS_RVH
-#define DISASS_RVZicsr
-#define DISASS_RVZifencei
-#define DISASS_RVPRIV
+//#define DISASS_RVZicsr
+//#define DISASS_RVZifencei
+//#define DISASS_RVPRIV
 
 // enable printing of pseudo opcodes in disassembly?
 #define DISASS_PSEUDO

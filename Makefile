@@ -111,6 +111,7 @@ NAME = vmon
 CONFIG = config
 BUILDROOT = build
 BUILD = $(BUILDROOT)/$(TARGET)
+RELEASE = release
 SRC = $(wildcard $(SRCD)/*.S)
 OBJ = $(SRC:$(SRCD)/%.S=$(BUILD)/%.o)
 DEP = $(OBJ:%.o=%.d)
@@ -145,11 +146,18 @@ $(BUILD)/%.o: $(SRCD)/%.S Makefile $(BUILD)/config.h
 $(BUILD)/$(NAME)-stripped.elf: $(BUILD)/$(NAME).elf
 	$(STRIP) $< -o $@
 
+$(RELEASE)/vmon-$(TARGET).img: $(BUILD)/$(NAME).img
+	mkdir -p $(RELEASE)
+	cp $< $@
+	ls -al $(RELEASE)/*.img
+
+release: $(RELEASE)/vmon-$(TARGET).img
+
 clean:
 	rm -fr $(BUILD)
 
 veryclean:
-	rm -fr $(BUILDROOT)
+	rm -fr $(BUILDROOT) $(RELEASE)
 
 run: $(BUILD)/$(NAME).img
 	$(RUN)
@@ -163,12 +171,12 @@ device-tree:
 	less $(BUILD)/qemu-device-tree.dts
 
 all: 
-	make TARGET=qemu-32i
-	make TARGET=qemu-32ic
-	make TARGET=qemu-32i-mini
-	make TARGET=qemu-32ic-mini
-	make TARGET=qemu-64g
-	make TARGET=qemu-64gc
-	make TARGET=vf2
+	make TARGET=qemu-32i release
+	make TARGET=qemu-32ic release
+	make TARGET=qemu-32i-mini release
+	make TARGET=qemu-32ic-mini release
+	make TARGET=qemu-64g release
+	make TARGET=qemu-64gc release
+	make TARGET=vf2 release
 
 
