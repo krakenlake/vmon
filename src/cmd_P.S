@@ -1,4 +1,4 @@
-#include "vmon/config.h"
+#include "config.h"
 
 
 #ifdef WITH_CMD_P

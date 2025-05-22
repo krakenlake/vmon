@@ -1,8 +1,9 @@
-#include "vmon/config.h"
+#include "config.h"
 #include "vmon/register.h"
 
 
-#ifdef M_MODE
+#if defined(M_MODE) && defined(TARGET_HAS_Zicsr)
+
 
 .global setup_trap_handler
 
@@ -182,4 +183,4 @@ mcause_verbose_table:
 .comm stackptr_reset, XLEN_BYTES
 
 
-#endif /* M_MODE */
+#endif /* defined(M_MODE) && defined(TARGET_HAS_Zicsr) */

@@ -1,4 +1,4 @@
-#include "vmon/config.h"
+#include "config.h"
 #include "vmon/ASCII.h"
 #include "vmon/stack.h"
 #include "vmon/register.h"

@@ -1,6 +1,12 @@
 #ifndef VMON_CONFIG_H
 #define VMON_CONFIG_H
 
+#define HW_QEMU
+#define TARGET_HAS_Zicsr
+#define TARGET_HAS_RVF
+#define XLEN	64
+#define FLEN	64
+
 // always use only one of these
 #define M_MODE
 //#define S_MODE

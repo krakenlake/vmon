@@ -1,4 +1,4 @@
-#include "vmon/config.h"
+#include "config.h"
 #include "vmon/register.h"
 
 #ifdef WITH_CMD_D

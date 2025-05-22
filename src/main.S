@@ -3,7 +3,7 @@ VMON - a RISC-V machine code monitor written in RISC-V assembly code
 */
 
 
-#include "vmon/config.h"
+#include "config.h"
 #include "vmon/drivers/uart/ns16550.h"
 #include "vmon/ASCII.h"
 #include "vmon/stack.h"
@@ -141,7 +141,9 @@ start:
 	#endif /* TARGET_HAS_RVF */
 
 	#ifdef M_MODE
-		jal		setup_trap_handler
+		#ifdef TARGET_HAS_Zicsr
+			jal		setup_trap_handler
+		#endif /* TARGET_HAS_Zicsr */
 	#endif /* M_MODE */
 
 	# init UART 

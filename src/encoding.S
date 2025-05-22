@@ -1,4 +1,4 @@
-#include "vmon/config.h"
+#include "config.h"
 #include "riscv/riscv-opc.h"
 #include "vmon/encoding.h"
 #include "vmon/register.h"
