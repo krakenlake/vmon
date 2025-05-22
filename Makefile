@@ -4,6 +4,7 @@ default: this
 
 
 #TARGET ?= qemu-32i
+#TARGET ?= qemu-32ic
 TARGET ?= qemu-64g
 #TARGET ?= qemu-64gc
 #TARGET ?= vf2
@@ -15,6 +16,14 @@ ifeq ($(TARGET), qemu-32i)
 	TARGET_START_ADDR	= 0x80000000
 	TARGET_XLEN			= 32
 	CFLAGS				+= -march=rv$(TARGET_XLEN)i -mabi=ilp32
+	QEMU_FLAGS	= -machine virt -cpu rv$(TARGET_XLEN),pmp=false -smp 2 -gdb tcp::1234 -bios none -serial stdio -display none -kernel $(BUILD)/$(NAME).img
+	RUN			= qemu-system-riscv$(TARGET_XLEN) $(QEMU_FLAGS) 
+endif 
+
+ifeq ($(TARGET), qemu-32ic)
+	TARGET_START_ADDR	= 0x80000000
+	TARGET_XLEN			= 32
+	CFLAGS				+= -march=rv$(TARGET_XLEN)ic -mabi=ilp32
 	QEMU_FLAGS	= -machine virt -cpu rv$(TARGET_XLEN),pmp=false -smp 2 -gdb tcp::1234 -bios none -serial stdio -display none -kernel $(BUILD)/$(NAME).img
 	RUN			= qemu-system-riscv$(TARGET_XLEN) $(QEMU_FLAGS) 
 endif 
@@ -136,9 +145,10 @@ device-tree:
 	less $(BUILD)/qemu-device-tree.dts
 
 all: 
-	make TARGET=vf2
 	make TARGET=qemu-32i
+	make TARGET=qemu-32ic
 	make TARGET=qemu-64g
 	make TARGET=qemu-64gc
+	make TARGET=vf2
 
 
