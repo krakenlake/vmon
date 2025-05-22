@@ -223,48 +223,60 @@ ass_I_rel_done:
 # in: a3 = ptr to encoding table entry
 # out: assembled instruction in a1
 assemble_GENERIC:
-	addi	sp, sp, -(XLEN_BYTES*6)
-	SAVE_X	s4, 0(sp)
-	SAVE_X	s3, (XLEN_BYTES*1)(sp)
-	SAVE_X	s2, (XLEN_BYTES*2)(sp)
-	SAVE_X	s1, (XLEN_BYTES*3)(sp)
-	SAVE_X	s0, (XLEN_BYTES*4)(sp)
-	SAVE_X	ra, (XLEN_BYTES*5)(sp)
-	li		s4,	-4							# process max. 4 arguments
+	addi	sp, sp, -(XLEN_BYTES*8)
+	SAVE_X	s6, 0(sp)
+	SAVE_X	s5, (XLEN_BYTES*1)(sp)
+	SAVE_X	s4, (XLEN_BYTES*2)(sp)
+	SAVE_X	s3, (XLEN_BYTES*3)(sp)
+	SAVE_X	s2, (XLEN_BYTES*4)(sp)
+	SAVE_X	s1, (XLEN_BYTES*5)(sp)
+	SAVE_X	s0, (XLEN_BYTES*6)(sp)
+	SAVE_X	ra, (XLEN_BYTES*7)(sp)
+	li		s4,	4							# process max. 4 arguments
 	mv		s2, a2
 	# assemble instruction word in s1, starting with MATCH value from table
 	LWU		s1, ENC_OFF_MATCH(a3)
-	# init offset to function pointers into encoding table entry
-	add		s3, a3, ENC_OFF_FUNC_ARG1
-	# get function ptr for argument
-	LWU		s0, 0(s3)
-	# done if no arguments at all
-	beqz	s0, assemble_GENERIC_done
+	# get control word for this insn
+	LWU		s0, ENC_OFF_CTRL(a3)
+	li		s5, 0xff						# init control word mask
+	li		s6, 0							# init control word shift
 assemble_GENERIC_next_argument:
 	# advance string ptr to arg
 	jal		skip_whitespace
+	# get function ptr 
+	and		s3, s0, s5						# mask next control word byte
+	# done if no more arguments to process
+	beqz	s3, assemble_GENERIC_done
+	# check for comma if not first argument
+	beqz	s6, assemble_GENERIC_skip_comma
+	jal		expect_comma
+	beqz 	a0, assemble_GENERIC_error
+assemble_GENERIC_skip_comma:
+	sra		s3, s3, s6						# shift result to lsb
+	slli	s3, s3, 2						# *4
+	la		t1, encoding_vectors
+	add		s3, s3, t1
+	LWU		s3, 0(s3)
+	# now func ptr in s3
+
 	# assemble argument
 											# ptr to parameter start in a0
 	mv		a1, s1							# insn word in a1
 	mv		a2, s2							# origin address in a2
-	jalr 	s0	
+	jalr 	s3	
 	beqz	a1, assemble_GENERIC_error		# assembling argument failed
 	mv		s1, a1							# save insn word
 	# check if we have processed 4 arguments already
-	addi	s4, s4, 1
+	addi	s4, s4, -1
 	beqz	s4, assemble_GENERIC_done
-	# get next function ptr
-	addi	s3, s3, 4
-	# get function ptr for argument
-	LWU		s0, 0(s3)
-	beqz	s0, assemble_GENERIC_done
-	jal		expect_comma
-	beqz 	a0, assemble_GENERIC_error
+	# advance our tools
+	slli	s5, s5, 8						# shift mask to next control word byte
+	addi	s6, s6, 8						# adjust lsb shifting parameter
 	j 		assemble_GENERIC_next_argument
 assemble_GENERIC_error:
 	mv		a1, zero
 assemble_GENERIC_done:
-	j		pop_s4_s3_s2_s1_s0_ra_ret
+	j		pop_s6_s5_s4_s3_s2_s1_s0_ra_ret
 .size assemble_GENERIC, .-assemble_GENERIC
 
 
@@ -295,7 +307,6 @@ ass_rs1:
 # - add parameter for lookup function in t1
 # - jump to assemble_register 
 ass_rs2:
-
 	li		t0, 20
 	la		t1, get_int_register_index_by_name
 	j		assemble_register
