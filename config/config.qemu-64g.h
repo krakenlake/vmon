@@ -97,7 +97,4 @@
 // size of character input buffer in bytes
 #define BUFFER_SIZE			128
 
-// size of runtime stack in bytes
-#define STACK_SIZE			1024
-
 #endif /* VMON_CONFIG_H */

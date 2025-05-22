@@ -1,5 +1,6 @@
 #include "config.h"
 #include "vmon/register.h"
+#include "vmon/stack.h"
 
 
 #ifdef WITH_CMD_X

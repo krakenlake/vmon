@@ -1,5 +1,5 @@
 #include "config.h"
-
+#include "vmon/stack.h"
 
 #ifdef WITH_CMD_I
 

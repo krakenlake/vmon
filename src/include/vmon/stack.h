@@ -1,6 +1,13 @@
 #ifndef STACK_H
 #define STACK_H
 
+#include "config.h"
+#include "vmon/register.h"
+
+
+// size of runtime stack in bytes
+#define STACK_SIZE			(512 + XLEN_BYTES*32 + FLEN_BYTES*32)
+
 # int register offsets from start of int stack frame
 # store pc here; x0 is always 0 and will not be saved on stack
 #define STK_OFF_PC		(0)

@@ -3,7 +3,7 @@
 
 #define HW_QEMU
 #define XLEN	32
-#define FLEN	32
+#define FLEN	0
 
 // always use only one of these
 #define M_MODE
@@ -94,8 +94,5 @@
 
 // size of character input buffer in bytes
 #define BUFFER_SIZE			128
-
-// size of runtime stack in bytes
-#define STACK_SIZE			1024
 
 #endif /* VMON_CONFIG_H */
