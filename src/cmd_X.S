@@ -13,7 +13,7 @@
 cmd_X:
 	la		a0, string_exit
 	jal		print_string
-	la		a1, stack + STACK_SIZE - (XLEN_BYTES*31)
+	la		a1, stack + STACK_SIZE - STK_FRAME_SIZE_INT + STK_OFF_RA
 	LOAD_X	a0, 0(a1)
 	jal		print_hex
 	jal		print_newline
