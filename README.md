@@ -161,6 +161,9 @@ Exceptions are printed:
 
 ![Screenshot 2025-05-16 at 09 36 18](https://github.com/user-attachments/assets/f344bbd6-ae28-46a1-8e33-ba65f898c903)
 
+The trap handler can only be enabled at runtime if the executable contains the trap handler (default if possible),
+the target platform implements the Zicsr extension and the executable runs in M-mode.
+
 ### Stack handling ###
 If VMON is running in M-mode, it will set up its own stack on startup.
 Otherwise, the incoming `sp` from the caller will be used.
