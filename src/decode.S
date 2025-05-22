@@ -43,7 +43,8 @@
 .global decode_FENCE_I
 .global decode_FENCE_TSO
 .global decode_AMO
-.global decode_LRSC
+.global decode_LR
+.global decode_SC
 .global decode_EMPTY
 
 #ifdef DISASS_RVC
@@ -372,7 +373,20 @@ decode_EMPTY:
 
 
 #ifdef DISASS_RVA
-decode_LRSC:
+decode_LR:
+	addi	sp, sp, -(XLEN_BYTES*2)				 
+	SAVE_X	ra, 0(sp)
+	SAVE_X	a0, (XLEN_BYTES*1)(sp)	
+	jal		print_rd
+	LOAD_X	a0, (XLEN_BYTES*1)(sp)				 
+	jal		print_rs1_as_base
+	LOAD_X	ra, 0(sp)				
+	addi	sp, sp, (XLEN_BYTES*2)
+	ret
+.size decode_LR, .-decode_LR
+
+
+decode_SC:
 	addi	sp, sp, -(XLEN_BYTES*2)				 
 	SAVE_X	ra, 0(sp)
 	SAVE_X	a0, (XLEN_BYTES*1)(sp)	
@@ -385,7 +399,7 @@ decode_LRSC:
 	LOAD_X	ra, 0(sp)				
 	addi	sp, sp, (XLEN_BYTES*2)
 	ret
-.size decode_LRSC, .-decode_LRSC
+.size decode_SC, .-decode_SC
 
 
 	# in: instruction word in a0

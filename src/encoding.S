@@ -764,30 +764,30 @@ encoding_table:
 # RVA
 #ifdef DISASS_RVA
 	# RV32A
-	.word MASK_LR_W,		MATCH_LR_W,			decode_LRSC,	string_OP_LRW, 		ass_rd,	ass_AMEM,	0,			0
-	.word MASK_SC_W,		MATCH_SC_W,			decode_LRSC,	string_OP_SCW,		ass_rd,	ass_rs2, 	ass_AMEM,	0
-	.word MASK_AMOSWAP_W,	MATCH_AMOSWAP_W,	decode_AMO,		string_OP_AMOSWAPW,	ass_rd,	ass_rs2, 	ass_AMEM,	0
-	.word MASK_AMOADD_W,	MATCH_AMOADD_W,		decode_AMO,		string_OP_AMOADDW,	ass_rd,	ass_rs2, 	ass_AMEM,	0
-	.word MASK_AMOAND_W,	MATCH_AMOAND_W,		decode_AMO,		string_OP_AMOANDW,	ass_rd,	ass_rs2, 	ass_AMEM,	0
-	.word MASK_AMOOR_W,		MATCH_AMOOR_W,		decode_AMO,		string_OP_AMOORW,	ass_rd,	ass_rs2, 	ass_AMEM,	0
-	.word MASK_AMOXOR_W,	MATCH_AMOXOR_W,		decode_AMO,		string_OP_AMOXORW,	ass_rd,	ass_rs2, 	ass_AMEM,	0
-	.word MASK_AMOMAX_W,	MATCH_AMOMAX_W,		decode_AMO,		string_OP_AMOMAXW,	ass_rd,	ass_rs2, 	ass_AMEM,	0
-	.word MASK_AMOMIN_W,	MATCH_AMOMIN_W,		decode_AMO,		string_OP_AMOMINW,	ass_rd,	ass_rs2, 	ass_AMEM,	0
-	.word MASK_AMOMAXU_W,	MATCH_AMOMAXU_W,	decode_AMO,		string_OP_AMOMAXUW,	ass_rd,	ass_rs2, 	ass_AMEM,	0
-	.word MASK_AMOMINU_W,	MATCH_AMOMINU_W,	decode_AMO,		string_OP_AMOMINUW,	ass_rd,	ass_rs2, 	ass_AMEM,	0
+	.word MASK_LR_W,		MATCH_LR_W,			decode_LR,	string_OP_LRW, 		ass_rd,	ass_AMEM,	0,			0
+	.word MASK_SC_W,		MATCH_SC_W,			decode_SC,	string_OP_SCW,		ass_rd,	ass_rs2, 	ass_AMEM,	0
+	.word MASK_AMOSWAP_W,	MATCH_AMOSWAP_W,	decode_AMO,	string_OP_AMOSWAPW,	ass_rd,	ass_rs2, 	ass_AMEM,	0
+	.word MASK_AMOADD_W,	MATCH_AMOADD_W,		decode_AMO,	string_OP_AMOADDW,	ass_rd,	ass_rs2, 	ass_AMEM,	0
+	.word MASK_AMOAND_W,	MATCH_AMOAND_W,		decode_AMO,	string_OP_AMOANDW,	ass_rd,	ass_rs2, 	ass_AMEM,	0
+	.word MASK_AMOOR_W,		MATCH_AMOOR_W,		decode_AMO,	string_OP_AMOORW,	ass_rd,	ass_rs2, 	ass_AMEM,	0
+	.word MASK_AMOXOR_W,	MATCH_AMOXOR_W,		decode_AMO,	string_OP_AMOXORW,	ass_rd,	ass_rs2, 	ass_AMEM,	0
+	.word MASK_AMOMAX_W,	MATCH_AMOMAX_W,		decode_AMO,	string_OP_AMOMAXW,	ass_rd,	ass_rs2, 	ass_AMEM,	0
+	.word MASK_AMOMIN_W,	MATCH_AMOMIN_W,		decode_AMO,	string_OP_AMOMINW,	ass_rd,	ass_rs2, 	ass_AMEM,	0
+	.word MASK_AMOMAXU_W,	MATCH_AMOMAXU_W,	decode_AMO,	string_OP_AMOMAXUW,	ass_rd,	ass_rs2, 	ass_AMEM,	0
+	.word MASK_AMOMINU_W,	MATCH_AMOMINU_W,	decode_AMO,	string_OP_AMOMINUW,	ass_rd,	ass_rs2, 	ass_AMEM,	0
 		# RV64A
 	#if XLEN >= 64
-		.word MASK_LR_D, 		MATCH_LR_D,			decode_LRSC,	string_OP_LRD,		ass_rd,	ass_AMEM,	0,			0
-		.word MASK_SC_D, 		MATCH_SC_D, 		decode_LRSC,	string_OP_SCD,		ass_rd,	ass_rs2, 	ass_AMEM,	0
-		.word MASK_AMOSWAP_D,	MATCH_AMOSWAP_D,	decode_AMO,		string_OP_AMOSWAPD,	ass_rd,	ass_rs2, 	ass_AMEM,	0
-		.word MASK_AMOADD_D,	MATCH_AMOADD_D,		decode_AMO,		string_OP_AMOADDD,	ass_rd,	ass_rs2, 	ass_AMEM,	0
-		.word MASK_AMOAND_D,	MATCH_AMOAND_D,		decode_AMO,		string_OP_AMOANDD,	ass_rd,	ass_rs2, 	ass_AMEM,	0
-		.word MASK_AMOOR_D,		MATCH_AMOOR_D,		decode_AMO,		string_OP_AMOORD,	ass_rd,	ass_rs2, 	ass_AMEM,	0
-		.word MASK_AMOXOR_D,	MATCH_AMOXOR_D,		decode_AMO,		string_OP_AMOXORD,	ass_rd,	ass_rs2, 	ass_AMEM,	0
-		.word MASK_AMOMAX_D,	MATCH_AMOMAX_D,		decode_AMO,		string_OP_AMOMAXD,	ass_rd,	ass_rs2, 	ass_AMEM,	0
-		.word MASK_AMOMIN_D,	MATCH_AMOMIN_D,		decode_AMO,		string_OP_AMOMIND,	ass_rd,	ass_rs2, 	ass_AMEM,	0
-		.word MASK_AMOMAXU_D,	MATCH_AMOMAXU_D,	decode_AMO,		string_OP_AMOMAXUD,	ass_rd,	ass_rs2, 	ass_AMEM,	0
-		.word MASK_AMOMINU_D,	MATCH_AMOMINU_D,	decode_AMO,		string_OP_AMOMINUD,	ass_rd,	ass_rs2, 	ass_AMEM,	0
+		.word MASK_LR_D, 		MATCH_LR_D,			decode_LR,	string_OP_LRD,		ass_rd,	ass_AMEM,	0,			0
+		.word MASK_SC_D, 		MATCH_SC_D, 		decode_SC,	string_OP_SCD,		ass_rd,	ass_rs2, 	ass_AMEM,	0
+		.word MASK_AMOSWAP_D,	MATCH_AMOSWAP_D,	decode_AMO,	string_OP_AMOSWAPD,	ass_rd,	ass_rs2, 	ass_AMEM,	0
+		.word MASK_AMOADD_D,	MATCH_AMOADD_D,		decode_AMO,	string_OP_AMOADDD,	ass_rd,	ass_rs2, 	ass_AMEM,	0
+		.word MASK_AMOAND_D,	MATCH_AMOAND_D,		decode_AMO,	string_OP_AMOANDD,	ass_rd,	ass_rs2, 	ass_AMEM,	0
+		.word MASK_AMOOR_D,		MATCH_AMOOR_D,		decode_AMO,	string_OP_AMOORD,	ass_rd,	ass_rs2, 	ass_AMEM,	0
+		.word MASK_AMOXOR_D,	MATCH_AMOXOR_D,		decode_AMO,	string_OP_AMOXORD,	ass_rd,	ass_rs2, 	ass_AMEM,	0
+		.word MASK_AMOMAX_D,	MATCH_AMOMAX_D,		decode_AMO,	string_OP_AMOMAXD,	ass_rd,	ass_rs2, 	ass_AMEM,	0
+		.word MASK_AMOMIN_D,	MATCH_AMOMIN_D,		decode_AMO,	string_OP_AMOMIND,	ass_rd,	ass_rs2, 	ass_AMEM,	0
+		.word MASK_AMOMAXU_D,	MATCH_AMOMAXU_D,	decode_AMO,	string_OP_AMOMAXUD,	ass_rd,	ass_rs2, 	ass_AMEM,	0
+		.word MASK_AMOMINU_D,	MATCH_AMOMINU_D,	decode_AMO,	string_OP_AMOMINUD,	ass_rd,	ass_rs2, 	ass_AMEM,	0
 	#endif
 #endif /* DISASS_RVA */
 
