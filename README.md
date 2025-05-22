@@ -33,8 +33,8 @@ communication written entirely in RISC-V assembly language.
 
 ## Building
 
-- set up `TARGET` in Makefile
-- review `config.h` and define/undefine to taste
+- choose one of the `TARGET`s in Makefile (or set up a new one)
+- review `config/config.<TARGET>.h` and define/undefine to taste
 - review `src/include/vmon/UART.h` for target UART settings
 - `make`
 
