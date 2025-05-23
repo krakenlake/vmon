@@ -65,7 +65,7 @@ cmd_D_disass:
 	jal		print_string
 	# disassemble this word
 	mv		a0, s6						# get instruction word again
-	jal		decode_opcode
+	jal		get_data_by_insn_word
 	beqz	a1, cmd_D_opcode_unknown
 	#ifdef DISASS_RVC
 		jal		adjust_RVC_add_jal_ebreak

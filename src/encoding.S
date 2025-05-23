@@ -11,14 +11,16 @@
 
 # table with MASK, MATCH, decode_func_ptr, opcode_string, assemble_func_ptr, parameter function ptrs
 .global encoding_table
-# table access functions
+# "public" table access functions
 .global get_data_by_insn_name
+.global get_data_by_insn_word
+
 
 
 # tables with register names
 .global int_register_names
 .global float_register_names
-# table access functions
+# "public" table access functions
 .global get_int_register_name_by_index
 .global get_float_register_name_by_index
 .global get_int_register_index_by_name
@@ -169,6 +171,37 @@ get_data_by_insn_name_done:
 	mv		a3, t0										# return also current table entry
 	ret
 .size get_data_by_insn_name, .-get_data_by_insn_name
+
+
+# in: instruction word in a0
+# out: instruction word in a0
+# out: type-depending decode function ptr in a1
+# out: opcode string in a2
+get_data_by_insn_word:
+	addi	sp, sp, -(XLEN_BYTES*1)
+	SAVE_X	ra, 0(sp)
+	# search for a match in encoding table
+	la		t0, encoding_table
+	# clear return values
+	mv		a1, zero
+	mv		a2, zero
+get_data_by_insn_word_search_next:
+	LWU		t2, ENC_OFF_MASK(t0)				# get mask word from table
+	beqz	t2, get_data_by_insn_word_done				# table end, no match found	  
+	and		t2, a0, t2							# apply mask
+	LWU		t3, ENC_OFF_MATCH(t0)				# get match word from table
+	bne		t2, t3, get_data_by_insn_word_continue
+	# found a match
+	LWU		a1, ENC_OFF_FUNC_DECODE(t0)			# get function ptr from table
+	LWU		a2, ENC_OFF_OP_STRING(t0)			# get string ptr from table
+	# last table entry is all zeros, so a1 = 0 if insn was not found
+	j		get_data_by_insn_word_done
+get_data_by_insn_word_continue:
+	addi	t0, t0, ENC_ENTRY_SIZE				# point to next table entry
+	j		get_data_by_insn_word_search_next			# repeat
+get_data_by_insn_word_done:
+	j		pop_ra_ret
+.size get_data_by_insn_word, .-get_data_by_insn_word
 
 
 get_int_register_name_by_index:

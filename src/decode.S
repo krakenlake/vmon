@@ -15,7 +15,6 @@
 .global print_rs2
 .global print_rd
 
-.global decode_opcode
 .global adjust_RVC_add_jal_ebreak
 
 .global decode_B_type
@@ -548,40 +547,71 @@ print_csr:
 .size print_csr, .-print_csr
 
 
-# in: instruction word in a0
-# out: instruction word in a0
-# out: type-depending decode function ptr in a1
-# out: opcode string in a2
-decode_opcode:
-	addi	sp, sp, -(XLEN_BYTES*1)
-	SAVE_X	ra, 0(sp)
-	# search for a match in encoding table
-	la		t0, encoding_table
-	# clear return values
+# in: a0 = ptr to remaining input string
+# in: s5 = origin address (global)
+# in: a3 = ptr to encoding table entry
+# out: assembled instruction in a1
+decode_GENERIC:
+	addi	sp, sp, -(XLEN_BYTES*8)
+	SAVE_X	s6, 0(sp)
+	SAVE_X	s5, (XLEN_BYTES*1)(sp)
+	SAVE_X	s4, (XLEN_BYTES*2)(sp)
+	SAVE_X	s3, (XLEN_BYTES*3)(sp)
+	SAVE_X	s2, (XLEN_BYTES*4)(sp)
+	SAVE_X	s1, (XLEN_BYTES*5)(sp)
+	SAVE_X	s0, (XLEN_BYTES*6)(sp)
+	SAVE_X	ra, (XLEN_BYTES*7)(sp)
+	li		s4,	4							# process max. 4 arguments
+	mv		s2, a2
+	# assemble instruction word in s1, starting with MATCH value from table
+	LWU		s1, ENC_OFF_MATCH(a3)
+	# get control word for this insn
+	LWU		s0, ENC_OFF_CTRL(a3)
+	li		s5, 0xff						# init control word mask
+	li		s6, 0							# init control word shift
+decode_GENERIC_next_argument:
+	# advance string ptr to arg
+	jal		skip_whitespace
+	# get function ptr 
+	and		s3, s0, s5						# mask next control word byte
+	# done if no more arguments to process
+	beqz	s3, decode_GENERIC_done
+	# check for comma if not first argument
+	beqz	s6, decode_GENERIC_skip_comma
+	jal		expect_comma
+	beqz 	a0, decode_GENERIC_error
+decode_GENERIC_skip_comma:
+	sra		s3, s3, s6						# shift result to lsb
+	slli	s3, s3, 2						# *4
+	la		t1, encoding_vectors
+	add		s3, s3, t1
+	LWU		s3, 0(s3)
+	# now func ptr in s3
+
+	# assemble argument
+											# ptr to parameter start in a0
+	mv		a1, s1							# insn word in a1
+	mv		a2, s2							# origin address in a2
+	jalr 	s3	
+	beqz	a1, decode_GENERIC_error		# assembling argument failed
+	mv		s1, a1							# save insn word
+	# check if we have processed 4 arguments already
+	addi	s4, s4, -1
+	beqz	s4, decode_GENERIC_done
+	# advance our tools
+	slli	s5, s5, 8						# shift mask to next control word byte
+	addi	s6, s6, 8						# adjust lsb shifting parameter
+	j 		decode_GENERIC_next_argument
+decode_GENERIC_error:
 	mv		a1, zero
-	mv		a2, zero
-decode_opcode_search_next:
-	LWU		t2, ENC_OFF_MASK(t0)				# get mask word from table
-	beqz	t2, decode_opcode_done				# table end, no match found	  
-	and		t2, a0, t2							# apply mask
-	LWU		t3, ENC_OFF_MATCH(t0)				# get match word from table
-	bne		t2, t3, decode_opcode_continue
-	# found a match
-	LWU		a1, ENC_OFF_FUNC_DECODE(t0)			# get function ptr from table
-	LWU		a2, ENC_OFF_OP_STRING(t0)			# get string ptr from table
-	# last table entry is all zeros, so a1 = 0 if insn was not found
-	j		decode_opcode_done
-decode_opcode_continue:
-	addi	t0, t0, ENC_ENTRY_SIZE				# point to next table entry
-	j		decode_opcode_search_next			# repeat
-decode_opcode_done:
-	j		pop_ra_ret
-.size decode_opcode, .-decode_opcode
+decode_GENERIC_done:
+	j		pop_s6_s5_s4_s3_s2_s1_s0_ra_ret
+.size decode_GENERIC, .-decode_GENERIC
 
 
 #ifdef DISASS_RVC
 # c.add, c.ebreak and c.jalr cannot be correctly identified by MATCH/MASK alone
-# so this routine fixes that after calling decode_opcode
+# so this routine fixes that after calling get_data_by_insn_word
 #
 # in: instruction word in a0
 # in: type-depending decoder routine to call in a1
