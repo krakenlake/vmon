@@ -136,18 +136,18 @@ testcode_RV32I:
 	sw		x0, 2047(x0)
 	sw		x0, -2048(x0)
 testcode_branch_backward:
-	beq		zero, zero, testcode_branch_backward
-	beq		zero, zero, testcode_branch_forward
-	bne		zero, zero, testcode_branch_backward
-	bne		zero, zero, testcode_branch_forward
-	blt		zero, zero, testcode_branch_backward
-	blt		zero, zero, testcode_branch_forward
-	bge		zero, zero, testcode_branch_backward
-	bge		zero, zero, testcode_branch_forward
-	bltu	zero, zero, testcode_branch_backward
-	bltu	zero, zero, testcode_branch_forward
-	bgeu	zero, zero, testcode_branch_backward
-	bgeu	zero, zero, testcode_branch_forward
+	beq		t0, t1, testcode_branch_backward
+	beq		t2, t3, testcode_branch_forward
+	bne		t4, t5, testcode_branch_backward
+	bne		t6, t6, testcode_branch_forward
+	blt		a0, a1, testcode_branch_backward
+	blt		a2, a3, testcode_branch_forward
+	bge		a4, a5, testcode_branch_backward
+	bge		a6, a6, testcode_branch_forward
+	bltu	s0, s1, testcode_branch_backward
+	bltu	s2, s3, testcode_branch_forward
+	bgeu	s4, s5, testcode_branch_backward
+	bgeu	s6, s7, testcode_branch_forward
 testcode_branch_forward: 
 testcode_jal_backward:
 	jal		x0, testcode_jal_backward
