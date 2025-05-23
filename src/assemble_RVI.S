@@ -6,7 +6,6 @@
 
 #ifdef WITH_CMD_A
 
-
 .global assemble_register
 
 # these are called via assemble_GENERIC
@@ -22,7 +21,6 @@
 .global ass_J							# expect J-type address
 .global ass_I_rel						# expect I-type offset for JALR
 .global ass_U_imm						# expect immediate for U-type (LUI/AUIPC)
-
 
 .text
 

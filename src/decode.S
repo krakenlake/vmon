@@ -5,9 +5,7 @@
 
 #ifdef WITH_CMD_D
 
-
 .global print_instruction
-
 
 .text
 

@@ -5,7 +5,6 @@
 
 #ifdef WITH_CMD_D
 
-
 .global insn_is_compressed
 
 .global print_register_name

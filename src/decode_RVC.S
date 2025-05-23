@@ -5,7 +5,6 @@
 
 #if defined (WITH_CMD_D) && defined (DISASS_RVC)
 
-
 .text
 
 

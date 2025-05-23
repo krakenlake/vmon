@@ -10,6 +10,7 @@
 
 .text
 
+
 # in: instruction word in a0
 dis_frd:
 	srli	a0, a0, 7

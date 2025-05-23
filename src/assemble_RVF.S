@@ -6,12 +6,10 @@
 
 #if defined (WITH_CMD_A) && defined (DISASS_RVF)
 
-
 .global ass_frd						# expect int register name and use it for frd
 .global ass_frs1					# expect int register name and use it for RVF frs1
 .global ass_frs2					# expect int register name and use it for RVF frs2
 .global ass_frs3					# expect int register name and use it for RVF frs3
-
 
 .text
 

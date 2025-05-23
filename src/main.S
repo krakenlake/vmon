@@ -1,15 +1,11 @@
 /*
 VMON - a RISC-V machine code monitor written in RISC-V assembly code
 */
-
-
 #include "config.h"
 #include "vmon/drivers/uart/ns16550.h"
 #include "vmon/ASCII.h"
 #include "vmon/stack.h"
 #include "vmon/register.h"
-
-
 
 .global start
 .global main_prompt
@@ -19,7 +15,6 @@ VMON - a RISC-V machine code monitor written in RISC-V assembly code
 .global string_OP_UNKNOWN
 .global start_data
 .global start_bss
-
 
 .text
 

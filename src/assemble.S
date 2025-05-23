@@ -6,10 +6,8 @@
 
 #ifdef WITH_CMD_A
 
-
 .global assemble_instruction
 .global assemble_GENERIC
-
 
 .text
 

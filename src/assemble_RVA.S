@@ -6,10 +6,8 @@
 
 #if defined (WITH_CMD_A) && defined (DISASS_RVA)
 
-
 .global ass_aqrl					# expect ".aqrl" extension for RVA
 .global ass_AMEM					# expect (reg) parameter for RVA
-
 
 .text
 

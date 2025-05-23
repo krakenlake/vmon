@@ -6,10 +6,8 @@
 
 #if defined (WITH_CMD_A) && defined (DISASS_RVZicsr)
 
-
 .global ass_csr						# expect CSR specifier
 .global ass_csri					# expect CSR immediate value
-
 
 .text
 
