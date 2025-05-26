@@ -26,6 +26,10 @@
 
 
 # in: instruction word in a0
+#ifdef DISASS_RVC
+dis_C_rd:
+dis_C_rs1:
+#endif
 dis_rd:
 	srli	a0, a0, 7
 	j		print_int_register_name
