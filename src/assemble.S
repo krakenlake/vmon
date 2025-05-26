@@ -112,7 +112,7 @@ assemble_GENERIC_next_argument:
 	jal		skip_whitespace
 	# compute func ptr
 	slli	t2, s3, 3						# *8
-	la		t1, encoding_vectors
+	la		t1, disass_vectors
 	add		t0, t2, t1
 	LWU		t0, 0(t0)
 	beqz	t0, assemble_GENERIC_done

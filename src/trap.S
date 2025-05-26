@@ -62,7 +62,6 @@ trap_handler:
 	# was exception
 
 	# check if exception was caused by ebreak
-	# TODO: save/restore  all registers on trap entry/exit?
 	csrr	t0, mcause
 	li		t1, 3						# breakpoint exception?
 	bne		t0, t1, trap_handler_exception
@@ -74,7 +73,7 @@ trap_handler:
 	addi	sp, sp, (XLEN_BYTES*5)
 	csrr	ra, mepc
 	addi	ra, ra, 4
-	jal		ra, start
+	jal		zero, start					# do not again put pc into ra
 
 trap_handler_exception:
 	# in case of an exception:

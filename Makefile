@@ -7,8 +7,8 @@ default: this
 #TARGET ?= qemu-32ic
 #TARGET ?= qemu-32i-mini
 #TARGET ?= qemu-32ic-mini
-#TARGET ?= qemu-64g
-TARGET ?= qemu-64-full
+TARGET ?= qemu-64g
+#TARGET ?= qemu-64-full
 #TARGET ?= qemu-64gc
 #TARGET ?= vf2
 
@@ -186,7 +186,7 @@ all:
 	make TARGET=qemu-32ic-mini release
 	make TARGET=qemu-64g release
 	make TARGET=qemu-64gc release
-	make TARGET=qemu-64g-full release
+	make TARGET=qemu-64-full release
 	make TARGET=vf2 release
 
 

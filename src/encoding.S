@@ -7,7 +7,7 @@
 #if defined (WITH_CMD_D) || defined (WITH_CMD_A)
 
 # jump table for disass functions
-.global encoding_vectors
+.global disass_vectors
 
 # table with MASK, MATCH, opcode_string, control word
 .global encoding_table
@@ -655,7 +655,7 @@ string_OP_EBREAK:	.string "ebreak";
 
 .align 4
 
-encoding_vectors:
+disass_vectors:
 .word	0, 0					# 0x00
 .word	ass_rd, dis_rd			# 0x01
 .word	ass_rs1, dis_rs1		# 0x02
@@ -696,7 +696,7 @@ encoding_table:
 # - control word specifies what arguments to expect during assembly
 #   and what to print during disassembly
 #
-# The control word contains indexes into the encoding_vectors,
+# The control word contains indexes into the disass_vectors,
 # for arg1 - arg4 BACKWARDS from *right* to *left*, so
 # "0x00030201" means look for rd, rs1, rs2 and then stop.
 #

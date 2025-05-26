@@ -29,7 +29,7 @@ decode_GENERIC_next_argument:
 	andi	s3, s0, 0xff
 	beqz	s3, decode_GENERIC_done
 	slli	t2, s3, 3						# *8
-	la		t1, encoding_vectors
+	la		t1, disass_vectors
 	add		t0, t2, t1
 	LWU		t0, 4(t0)
 	beqz	t0, decode_GENERIC_done
