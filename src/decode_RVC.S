@@ -8,27 +8,7 @@
 .text
 
 
-# in: instruction word in a0
-decode_CR_type:
-	# TODO
-	ret
-.size decode_CR_type, .-decode_CR_type
-
-
-# in: instruction word in a0
-decode_C_LWSP:
-	addi	sp, sp, -(XLEN_BYTES*1)
-	SAVE_X	ra, 0(sp)
-	jal		dis_rd
-	li		a0, '('
-	jal		print_char
-	# TODO
-	li		a0, ')'
-	jal		print_char
-	j		pop_ra_ret
-.size decode_C_LWSP, .-decode_C_LWSP
-
-
+/*
 # c.add, c.ebreak and c.jalr cannot be correctly identified by MATCH/MASK alone
 # so this routine fixes that after calling get_data_by_insn_word
 #
@@ -38,7 +18,7 @@ decode_C_LWSP:
 # out: instruction word in a0
 # out: type-depending decoder routine to call in a1
 # out: opcode string in a2
-/*
+
 adjust_RVC_add_jal_ebreak:
 	li		t0, 0x9002
 	bne		a0, t0, adjust_RVC_add_jal_ebreak_not_ebreak
