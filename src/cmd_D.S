@@ -68,7 +68,7 @@ cmd_D_disass:
 	jal		get_data_by_insn_word
 	beqz	a3, cmd_D_opcode_unknown
 	#ifdef DISASS_RVC
-		jal		adjust_RVC_add_jal_ebreak
+#		jal		adjust_RVC_add_jal_ebreak
 	#endif	  
 	jal		print_instruction
 	j		cmd_D_advance

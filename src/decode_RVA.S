@@ -25,15 +25,6 @@ insn_get_aqrl:
 
 
 # in: instruction word in a0
-dis_AMEM:
-	addi	sp, sp, -(XLEN_BYTES*1)
-	SAVE_X	ra, 0(sp)
-	jal		print_rs1_as_base
-	j		pop_ra_ret
-.size dis_AMEM, .-dis_AMEM
-
-
-# in: instruction word in a0
 print_AMO_postfix:
 	addi	sp, sp, -(XLEN_BYTES*1)
 	SAVE_X	ra, 0(sp)

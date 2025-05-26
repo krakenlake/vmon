@@ -19,7 +19,7 @@ decode_CR_type:
 decode_C_LWSP:
 	addi	sp, sp, -(XLEN_BYTES*1)
 	SAVE_X	ra, 0(sp)
-	jal		print_rd
+	jal		dis_rd
 	li		a0, '('
 	jal		print_char
 	# TODO
@@ -38,6 +38,7 @@ decode_C_LWSP:
 # out: instruction word in a0
 # out: type-depending decoder routine to call in a1
 # out: opcode string in a2
+/*
 adjust_RVC_add_jal_ebreak:
 	li		t0, 0x9002
 	bne		a0, t0, adjust_RVC_add_jal_ebreak_not_ebreak
@@ -54,6 +55,6 @@ adjust_RVC_add_jal_ebreak_not_add:
 adjust_RVC_add_jal_ebreak_done:
 	ret
 .size adjust_RVC_add_jal_ebreak, .-adjust_RVC_add_jal_ebreak
-
+*/
 
 #endif /* (WITH_CMD_D) && defined (DISASS_RVC) */

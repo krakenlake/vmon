@@ -15,11 +15,11 @@
 .global ass_BRA							# expect branch target address in hex
 .global ass_I_imm						# expect immediate for I-type AND/ADD/OR/XOR in dec
 .global ass_I_shift						# expect immediate for I-type shifts in dec
-.global ass_MEM							# expect imm(reg) parameter for load/store
 .global ass_PRE							# expect iorw predecessor parameter for fence
 .global ass_SUC							# expect iorw sucessor parameter for fence
 .global ass_J							# expect J-type address
 .global ass_I_rel						# expect I-type offset for JALR
+.global ass_S_imm						# expect S-type offset for store
 .global ass_U_imm						# expect immediate for U-type (LUI/AUIPC)
 
 .text
@@ -104,8 +104,6 @@ ass_I_rel:
 	SAVE_X	s0, (XLEN_BYTES*1)(sp)
 	SAVE_X	ra, (XLEN_BYTES*2)(sp)
 	mv		s1, a1						# save insn word
-	jal		ass_I_imm
-	beqz	a1, ass_I_rel_error
 	mv		s0, a0						# return string ptr later
 	mv		s1, a1						# insn word
 	jal		expect_open_paren
@@ -128,7 +126,6 @@ ass_I_rel_error:
 ass_I_rel_done:
 	j		pop_s1_s0_ra_ret
 .size ass_I_rel, .-ass_I_rel
-
 
 
 # facade for assemble_register:
@@ -291,70 +288,43 @@ ass_I_imm_done:
 .size ass_I_imm, .-ass_I_imm
 
 
-# process I-type and S-type memory-relative parameter
-# in the same function
+# process S-type offset parameter
 #
 # in: a0 = ptr to first char of argument
 # in: a1 = insn word to be modifed
 # in: a2 = origin address
 # out: a0 = ptr to char after argument
 # out: a1 = insn word (0 on error)
-ass_MEM:
-	addi	sp, sp, -(XLEN_BYTES*3)
-	SAVE_X	s1, 0(sp)
-	SAVE_X	s0, (XLEN_BYTES*1)(sp)
-	SAVE_X	ra, (XLEN_BYTES*2)(sp)
-	mv		s1, a1						# save insn word
+ass_S_imm:
+	addi	sp, sp, -(XLEN_BYTES*2)
+	SAVE_X	s0, 0(sp)
+	SAVE_X	ra, (XLEN_BYTES*1)(sp)
+	mv		s0, a1						# save insn word
 	jal		get_numeric
-	bnez	a2, ass_MEM_error
+	bnez	a2, ass_S_rel_error
 	li		t0, -2048
-	blt		a1, t0, ass_MEM_error		# numeric too small
+	blt		a1, t0, ass_S_rel_error		# numeric too small
 	li		t0, 2047
-	bgt		a1, t0, ass_MEM_error		# numeric too big
-	mv		s0, a0						# return string ptr later
-	# check if we deal with load or store
-	mv		a3, s1
-	jal		insn_is_LOAD
-	bnez	a4, ass_MEM_load
-	jal		insn_is_STORE
-	bnez	a4, ass_MEM_store
-	j		ass_MEM_rs1
-ass_MEM_store:
+	bgt		a1, t0, ass_S_rel_error		# numeric too big
 	# add S-type imm value to instruction word
 	slli	t0, a1, 7					# imm4:0 -> bit 7-11
 	li		t1, 0b111110000000
 	and		t0, t0, t1
-	or		s1, s1, t0
+	or		s0, s0, t0
 	slli	t0,	a1, 20					# imm11:5 -> bit 25-31
 	li		t1, 0b11111110000000000000000000000000
 	and		t0, t0, t1
-	or		s1, s1, t0
-	j 		ass_MEM_rs1
-ass_MEM_load:
-	# add I-type imm value to instruction word
-	slli	t0, a1, 20
-	or		s1, s1, t0
-ass_MEM_rs1:
-	jal		expect_open_paren
-	beqz	a0, ass_MEM_error
-	# process rs1
-	mv		a1, s1
-	jal		ass_rs1
-	beqz	a1, ass_MEM_error
-	mv 		s1, a1
-	jal		expect_close_paren
-	beqz	a0, ass_MEM_error
+	or		s0, s0, t0
 	# assemble in a1
-	mv		a1, s1
-ass_MEM_continue:
+	mv		a1, s0
+ass_S_rel_continue:
 	# return a1 and a0
-	addi	a0, s0, 1					# string ptr +1
-	j		ass_MEM_done
-ass_MEM_error:
+	j		ass_S_rel_done
+ass_S_rel_error:
 	mv		a1, zero
-ass_MEM_done:
-	j		pop_s1_s0_ra_ret
-.size ass_MEM, .-ass_MEM
+ass_S_rel_done:
+	j		pop_s0_ra_ret
+.size ass_S_imm, .-ass_S_imm
 
 
 # in: a0 = ptr to first char of argument

@@ -661,18 +661,14 @@ encoding_vectors:
 .word	ass_rs1, dis_rs1		# 0x02
 .word	ass_rs2, dis_rs2		# 0x03
 .word	ass_I_imm, dis_I_imm	# 0x04
-.word	ass_MEM, dis_MEM		# 0x05
+.word	ass_S_imm, dis_S_imm	# 0x05
 .word	ass_BRA, dis_BRA		# 0x06
 .word	ass_J, dis_J			# 0x07
 .word	ass_U_imm, dis_U_imm	# 0x08
 .word	ass_I_rel, dis_I_rel	# 0x09
 .word	ass_PRE, dis_PRE		# 0x0a
 .word	ass_SUC, dis_SUC		# 0x0b
-#ifdef DISASS_RVA
-	.word	ass_AMEM, dis_AMEM	# 0x0c
-#else
-	.word	0, 0				# 0x0c
-#endif /* DISASS_RVA */
+.word	0, 0					# 0x0c
 #ifdef DISASS_RVF
 	.word	ass_frd, dis_frd	# 0x0d
 	.word	ass_frs1, dis_frs1	# 0x0e
@@ -741,14 +737,14 @@ encoding_table:
 .word MASK_SRAI,		MATCH_SRAI,		string_OP_SRAI,		0x00040201
 .word MASK_SLTI,		MATCH_SLTI,		string_OP_SLTI,		0x00040201
 .word MASK_SLTIU,		MATCH_SLTIU,	string_OP_SLTIU,	0x00040201
-.word MASK_LB,			MATCH_LB,		string_OP_LB,		0x00000501
-.word MASK_LH,			MATCH_LH,		string_OP_LH,		0x00000501
-.word MASK_LW,			MATCH_LW,		string_OP_LW,		0x00000501
-.word MASK_LBU,			MATCH_LBU, 		string_OP_LBU,		0x00000501
-.word MASK_LHU,			MATCH_LHU,		string_OP_LHU, 		0x00000501
-.word MASK_SB,			MATCH_SB,		string_OP_SB,		0x00000503
-.word MASK_SH,			MATCH_SH,		string_OP_SH,		0x00000503
-.word MASK_SW,			MATCH_SW,		string_OP_SW,		0x00000503
+.word MASK_LB,			MATCH_LB,		string_OP_LB,		0x00090401
+.word MASK_LH,			MATCH_LH,		string_OP_LH,		0x00090401
+.word MASK_LW,			MATCH_LW,		string_OP_LW,		0x00090401
+.word MASK_LBU,			MATCH_LBU, 		string_OP_LBU,		0x00090401
+.word MASK_LHU,			MATCH_LHU,		string_OP_LHU, 		0x00090401
+.word MASK_SB,			MATCH_SB,		string_OP_SB,		0x00090503
+.word MASK_SH,			MATCH_SH,		string_OP_SH,		0x00090503
+.word MASK_SW,			MATCH_SW,		string_OP_SW,		0x00090503
 .word MASK_BEQ,			MATCH_BEQ,		string_OP_BEQ,		0x00060302
 .word MASK_BNE,			MATCH_BNE,		string_OP_BNE,		0x00060302
 .word MASK_BLT,			MATCH_BLT,		string_OP_BLT,		0x00060302
@@ -756,7 +752,7 @@ encoding_table:
 .word MASK_BLTU,		MATCH_BLTU,		string_OP_BLTU,		0x00060302
 .word MASK_BGEU,		MATCH_BGEU,		string_OP_BGEU,		0x00060302
 .word MASK_JAL,			MATCH_JAL,		string_OP_JAL,		0x00000701
-.word MASK_JALR,		MATCH_JALR,		string_OP_JALR,		0x00000901
+.word MASK_JALR,		MATCH_JALR,		string_OP_JALR,		0x00090401
 .word MASK_LUI,			MATCH_LUI,		string_OP_LUI,		0x00000801
 .word MASK_AUIPC,		MATCH_AUIPC,	string_OP_AUIPC,	0x00000801
 .word MASK_ECALL,		MATCH_ECALL,	string_OP_ECALL,	0x00000000
@@ -775,9 +771,10 @@ encoding_table:
 	.word MASK_SLLW,	MATCH_SLLW,		string_OP_SLLW,		0x00030201
 	.word MASK_SRLW,	MATCH_SRLW,		string_OP_SRLW,		0x00030201
 	.word MASK_SRAW,	MATCH_SRAW,		string_OP_SRAW,		0x00030201
-	.word MASK_LD,		MATCH_LD,		string_OP_LD,		0x00000501
-	.word MASK_LWU,		MATCH_LWU,		string_OP_LWU,		0x00000501
-	.word MASK_SD,		MATCH_SD,		string_OP_SD,		0x00000503
+	.word MASK_LD,		MATCH_LD,		string_OP_LD,		0x00090401
+
+	.word MASK_LWU,		MATCH_LWU,		string_OP_LWU,		0x00090401
+	.word MASK_SD,		MATCH_SD,		string_OP_SD,		0x00090503
 #endif
 
 # RVM
@@ -804,37 +801,37 @@ encoding_table:
 # RVA
 #ifdef DISASS_RVA
 	# RV32A
-	.word MASK_LR_W,		MATCH_LR_W,			string_OP_LRW, 		0x00000c01
-	.word MASK_SC_W,		MATCH_SC_W,			string_OP_SCW,		0x000c0301
-	.word MASK_AMOSWAP_W,	MATCH_AMOSWAP_W,	string_OP_AMOSWAPW,	0x000c0301
-	.word MASK_AMOADD_W,	MATCH_AMOADD_W,		string_OP_AMOADDW,	0x000c0301
-	.word MASK_AMOAND_W,	MATCH_AMOAND_W,		string_OP_AMOANDW,	0x000c0301
-	.word MASK_AMOOR_W,		MATCH_AMOOR_W,		string_OP_AMOORW,	0x000c0301
-	.word MASK_AMOXOR_W,	MATCH_AMOXOR_W,		string_OP_AMOXORW,	0x000c0301
-	.word MASK_AMOMAX_W,	MATCH_AMOMAX_W,		string_OP_AMOMAXW,	0x000c0301
-	.word MASK_AMOMIN_W,	MATCH_AMOMIN_W,		string_OP_AMOMINW,	0x000c0301
-	.word MASK_AMOMAXU_W,	MATCH_AMOMAXU_W,	string_OP_AMOMAXUW,	0x000c0301
-	.word MASK_AMOMINU_W,	MATCH_AMOMINU_W,	string_OP_AMOMINUW,	0x000c0301
+	.word MASK_LR_W,		MATCH_LR_W,			string_OP_LRW, 		0x00000901
+	.word MASK_SC_W,		MATCH_SC_W,			string_OP_SCW,		0x00090301
+	.word MASK_AMOSWAP_W,	MATCH_AMOSWAP_W,	string_OP_AMOSWAPW,	0x00090301
+	.word MASK_AMOADD_W,	MATCH_AMOADD_W,		string_OP_AMOADDW,	0x00090301
+	.word MASK_AMOAND_W,	MATCH_AMOAND_W,		string_OP_AMOANDW,	0x00090301
+	.word MASK_AMOOR_W,		MATCH_AMOOR_W,		string_OP_AMOORW,	0x00090301
+	.word MASK_AMOXOR_W,	MATCH_AMOXOR_W,		string_OP_AMOXORW,	0x00090301
+	.word MASK_AMOMAX_W,	MATCH_AMOMAX_W,		string_OP_AMOMAXW,	0x00090301
+	.word MASK_AMOMIN_W,	MATCH_AMOMIN_W,		string_OP_AMOMINW,	0x00090301
+	.word MASK_AMOMAXU_W,	MATCH_AMOMAXU_W,	string_OP_AMOMAXUW,	0x00090301
+	.word MASK_AMOMINU_W,	MATCH_AMOMINU_W,	string_OP_AMOMINUW,	0x00090301
 		# RV64A
 	#if XLEN >= 64
-		.word MASK_LR_D, 		MATCH_LR_D,			string_OP_LRD,		0x00000c01
-		.word MASK_SC_D, 		MATCH_SC_D, 		string_OP_SCD,		0x000c0301
-		.word MASK_AMOSWAP_D,	MATCH_AMOSWAP_D,	string_OP_AMOSWAPD,	0x000c0301
-		.word MASK_AMOADD_D,	MATCH_AMOADD_D,		string_OP_AMOADDD,	0x000c0301
-		.word MASK_AMOAND_D,	MATCH_AMOAND_D,		string_OP_AMOANDD,	0x000c0301
-		.word MASK_AMOOR_D,		MATCH_AMOOR_D,		string_OP_AMOORD,	0x000c0301
-		.word MASK_AMOXOR_D,	MATCH_AMOXOR_D,		string_OP_AMOXORD,	0x000c0301
-		.word MASK_AMOMAX_D,	MATCH_AMOMAX_D,		string_OP_AMOMAXD,	0x000c0301
-		.word MASK_AMOMIN_D,	MATCH_AMOMIN_D,		string_OP_AMOMIND,	0x000c0301
-		.word MASK_AMOMAXU_D,	MATCH_AMOMAXU_D,	string_OP_AMOMAXUD,	0x000c0301
-		.word MASK_AMOMINU_D,	MATCH_AMOMINU_D,	string_OP_AMOMINUD,	0x000c0301
+		.word MASK_LR_D, 		MATCH_LR_D,			string_OP_LRD,		0x00000901
+		.word MASK_SC_D, 		MATCH_SC_D, 		string_OP_SCD,		0x00090301
+		.word MASK_AMOSWAP_D,	MATCH_AMOSWAP_D,	string_OP_AMOSWAPD,	0x00090301
+		.word MASK_AMOADD_D,	MATCH_AMOADD_D,		string_OP_AMOADDD,	0x00090301
+		.word MASK_AMOAND_D,	MATCH_AMOAND_D,		string_OP_AMOANDD,	0x00090301
+		.word MASK_AMOOR_D,		MATCH_AMOOR_D,		string_OP_AMOORD,	0x00090301
+		.word MASK_AMOXOR_D,	MATCH_AMOXOR_D,		string_OP_AMOXORD,	0x00090301
+		.word MASK_AMOMAX_D,	MATCH_AMOMAX_D,		string_OP_AMOMAXD,	0x00090301
+		.word MASK_AMOMIN_D,	MATCH_AMOMIN_D,		string_OP_AMOMIND,	0x00090301
+		.word MASK_AMOMAXU_D,	MATCH_AMOMAXU_D,	string_OP_AMOMAXUD,	0x00090301
+		.word MASK_AMOMINU_D,	MATCH_AMOMINU_D,	string_OP_AMOMINUD,	0x00090301
 	#endif
 #endif /* DISASS_RVA */
 
 # RVF / RVD / RVQ
 #ifdef DISASS_RVF
-	.word MASK_FLW,			MATCH_FLW,			string_OP_FLW,			0x0000050d
-	.word MASK_FSW,			MATCH_FSW,			string_OP_FSW,			0x0000050f
+	.word MASK_FLW,			MATCH_FLW,			string_OP_FLW,			0x0009040d
+	.word MASK_FSW,			MATCH_FSW,			string_OP_FSW,			0x0009050f
 	.word MASK_FMADD_S,		MATCH_FMADD_S,		string_OP_FMADD_S,		0x100f0e0d
 	.word MASK_FMSUB_S,		MATCH_FMSUB_S,		string_OP_FMSUB_S,		0x100f0e0d
 	.word MASK_FNMADD_S,	MATCH_FNMADD_S,		string_OP_FNMADD_S,		0x100f0e0d
@@ -860,8 +857,8 @@ encoding_table:
 	.word MASK_FLE_S,		MATCH_FLE_S,		string_OP_FLE_S,		0x000f0e0d
 	.word MASK_FCLASS_S,	MATCH_FCLASS_S,		string_OP_FCLASS_S,		0x0000000d
 	#ifdef DISASS_RVD
-		.word MASK_FLD,			MATCH_FLD,			string_OP_FLD,			0x0000050d
-		.word MASK_FSD,			MATCH_FSD,			string_OP_FSD,			0x0000050f
+		.word MASK_FLD,			MATCH_FLD,			string_OP_FLD,			0x0009040d
+		.word MASK_FSD,			MATCH_FSD,			string_OP_FSD,			0x0009050f
 		.word MASK_FMADD_D,		MATCH_FMADD_D,		string_OP_FMADD_D,		0x100f0e0d
 		.word MASK_FMSUB_D,		MATCH_FMSUB_D,		string_OP_FMSUB_D,		0x100f0e0d
 		.word MASK_FNMADD_D,	MATCH_FNMADD_D,		string_OP_FNMADD_D,		0x100f0e0d
@@ -887,8 +884,8 @@ encoding_table:
 		.word MASK_FLE_D,		MATCH_FLE_D,		string_OP_FLE_D,		0x000f0e0d
 		.word MASK_FCLASS_D,	MATCH_FCLASS_D,		string_OP_FCLASS_D,		0x0000000d
 		#ifdef DISASS_RVQ
-			.word MASK_FLQ,			MATCH_FLQ,			string_OP_FLQ,			0x0000050d
-			.word MASK_FSQ,			MATCH_FSQ,			string_OP_FSQ,			0x0000050f
+			.word MASK_FLQ,			MATCH_FLQ,			string_OP_FLQ,			0x0009040d
+			.word MASK_FSQ,			MATCH_FSQ,			string_OP_FSQ,			0x0009050f
 			.word MASK_FMADD_Q,		MATCH_FMADD_Q,		string_OP_FMADD_Q,		0x100f0e0d
 			.word MASK_FMSUB_Q,		MATCH_FMSUB_Q,		string_OP_FMSUB_Q,		0x100f0e0d
 			.word MASK_FNMADD_Q,	MATCH_FNMADD_Q,		string_OP_FNMADD_Q,		0x100f0e0d

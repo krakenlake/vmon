@@ -14,7 +14,7 @@
 .global dis_rs1
 .global dis_rs2
 .global dis_I_imm
-.global dis_MEM
+.global dis_S_imm
 .global dis_BRA
 .global dis_J
 .global dis_U_imm
@@ -108,19 +108,18 @@ dis_I_imm:
 
 
 # in: instruction word in a0
-dis_MEM:
-	addi	sp, sp, -(XLEN_BYTES*2)
-	SAVE_X	s0, 0(sp)
-	SAVE_X	ra, (XLEN_BYTES*1)(sp)
-	mv		s0, a0
-	# inst[24:20] -> imm[5:0]
-	srai	a0, s0, 20
+dis_S_imm:
+	addi	sp, sp, -(XLEN_BYTES*1)
+	SAVE_X	ra, 0(sp)
+	# inst[31:25] -> imm[11:5]
+	srai	t0, a0, 25					# shift the 5 lower bits out to clear them
+	slli	t0, t0, 5					# shift 5 back
+	srai	t1, a0, 7
+	andi	t1, t1, 0b11111
+	or		a0, t0, t1
 	jal		print_decimal
-	mv		a0, s0
-	jal		print_rs1_as_base
-	j		pop_s0_ra_ret
-.size dis_MEM, .-dis_MEM
-
+	j		pop_ra_ret
+.size dis_S_imm, .-dis_S_imm
 
 # in: instruction word in a0
 dis_U_imm:
@@ -165,22 +164,6 @@ dis_J:
 	addi	sp, sp, (XLEN_BYTES*2)
 	ret
 .size dis_J, .-dis_J
-
-
-# in: a0 = instruction word
-dis_I_rel:
-	addi	sp, sp, -(XLEN_BYTES*2)
-	SAVE_X	ra, 0(sp)
-	SAVE_X	s2, (XLEN_BYTES*1)(sp)
-	mv		s2, a0
-	jal		dis_I_imm
-	mv		a0, s2
-	jal		print_rs1_as_base
-	LOAD_X	ra, 0(sp)
-	LOAD_X	s2, (XLEN_BYTES*1)(sp)
-	addi	sp, sp, (XLEN_BYTES*2)
-	ret
-.size dis_I_rel, .-dis_I_rel
 
 
 # in: a0: instruction word
@@ -232,7 +215,7 @@ dis_SUC:
 
 
 # in: instruction word in a0
-print_rs1_as_base:
+dis_I_rel:
 	addi	sp, sp, -(XLEN_BYTES*2)
 	SAVE_X	ra, 0(sp)
 	SAVE_X	a0, (XLEN_BYTES*1)(sp)
@@ -245,7 +228,7 @@ print_rs1_as_base:
 	LOAD_X	ra, 0(sp)
 	addi	sp, sp, (XLEN_BYTES*2)
 	ret
-.size print_rs1_as_base, .-print_rs1_as_base
+.size dis_I_rel, .-dis_I_rel
 
 
 

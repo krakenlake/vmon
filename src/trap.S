@@ -65,7 +65,16 @@ trap_handler:
 	# TODO: save/restore  all registers on trap entry/exit?
 	csrr	t0, mcause
 	li		t1, 3						# breakpoint exception?
-	beq		t0, t1, start
+	bne		t0, t1, trap_handler_exception
+	# restore registers used in trap handler
+	LOAD_X	a0, (XLEN_BYTES*1)(sp)
+	LOAD_X	t0, (XLEN_BYTES*2)(sp)
+	LOAD_X	t1, (XLEN_BYTES*3)(sp)
+	LOAD_X	s0, (XLEN_BYTES*4)(sp)
+	addi	sp, sp, (XLEN_BYTES*5)
+	csrr	ra, mepc
+	addi	ra, ra, 4
+	jal		ra, start
 
 trap_handler_exception:
 	# in case of an exception:
