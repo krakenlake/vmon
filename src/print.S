@@ -15,6 +15,7 @@
 .global print_binary
 .global print_comma
 .global print_newline
+.global print_space
 
 .global out_buf
 
@@ -30,8 +31,7 @@ print_comma:
 	li		a0, ','
 	jal		print_char
 	#ifdef SPACE_AFTER_COMMA
-		li		a0, ' '
-		jal		print_char
+		jal		print_space
 	#endif
 	j		pop_ra_ret
 .size print_comma, .-print_comma
@@ -48,6 +48,12 @@ print_newline:
 	jal		print_char
 	j		pop_ra_ret
 .size print_newline, .-print_newline
+
+
+print_space:
+	li		a0, ' '
+	j		print_char
+.size print_space, .-print_space
 
 
 # print hex value with "0x" prefix
@@ -248,8 +254,7 @@ print_binary_loop:
 	beqz	s1, print_binary_skip_space # If loop counter is 0, we are finished
 	andi	t3, s1, 7		    # t3 = s1 & 0b111 (s1 mod 8).
 	bnez	t3, print_binary_skip_space # If loop counter is not a multiple of 8, skip space.
-	li		a0, ' '	       # Load ASCII space character into a0
-	call	print_char
+	call	print_space
 print_binary_skip_space:
 	j		print_binary_loop
 print_binary_end:

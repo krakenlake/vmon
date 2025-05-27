@@ -41,8 +41,7 @@ cmd_M_next_line:
 	addi	s6, s5, M_BYTES_PER_LINE# set end addr for output line
 cmd_M_next_byte:
 	beq		s5, s6, cmd_M_print_ascii  
-	li		a0, ' '
-	jal		print_char
+	jal		print_space
 	lbu		a0, 0(s5)				# get byte from memory address
 	jal		print_hex_byte
 	addi	s5, s5, 1
@@ -50,8 +49,7 @@ cmd_M_next_byte:
 	# output the same hex bytes again, this time as ASCII chars
 cmd_M_print_ascii:
 	addi	s5, s5, -M_BYTES_PER_LINE
-	li		a0, ' '
-	jal		print_char
+	jal		print_space
 cmd_M_next_char:
 	beq		s5, s6, cmd_M_ascii_done
 	lbu		a0, 0(s5)			   # get byte from memory address

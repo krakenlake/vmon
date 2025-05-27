@@ -171,8 +171,7 @@ print_saved_registers_len_done:
 	sub 	s6, t2, t1
 print_saved_registers_space_loop:
 	beqz	s6, print_saved_registers_skip_space
-	li		a0, ' '
-	jal		print_char
+	jal		print_space
 	addi	s6, s6, -1
 	j 		print_saved_registers_space_loop
 print_saved_registers_skip_space:

@@ -104,8 +104,7 @@ trap_handler_exception:
 	# print MCAUSE verbose
 
 #ifdef MCAUSE_VERBOSE
-	li		a0, ' '
-	jal		print_char
+	jal		print_space
 	li		a0, '('
 	jal		print_char
 	# each entry in MCAUSE string table is 4 bytes
