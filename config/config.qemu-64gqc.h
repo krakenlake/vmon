@@ -81,6 +81,7 @@
 #define MCAUSE_VERBOSE
 
 // default number of lines for the "d" command if no end address is given
+#define M_BYTES_PER_LINE	16
 #define	DEFAULT_D_LINES		16
 
 // default number of lines for the "m" command if no end address is given

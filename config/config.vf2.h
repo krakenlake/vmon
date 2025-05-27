@@ -84,6 +84,7 @@
 #define	DEFAULT_D_LINES		16
 
 // default number of lines for the "m" command if no end address is given
+#define M_BYTES_PER_LINE	16
 #define DEFAULT_M_LINES		16
 
 // print a space after commas in disassembler output

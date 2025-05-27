@@ -9,6 +9,9 @@
 
 .text
 
+#ifndef M_BYTES_PER_LINE
+	#define M_BYTES_PER_LINE 8
+#endif
 
 cmd_M:
 	jal		skip_whitespace
@@ -35,7 +38,7 @@ cmd_M_next_line:
 	li		a0, ':'
 	jal		print_char
 	# output hex bytes 
-	addi	s6, s5, 8				# set end addr for output line
+	addi	s6, s5, M_BYTES_PER_LINE# set end addr for output line
 cmd_M_next_byte:
 	beq		s5, s6, cmd_M_print_ascii  
 	li		a0, ' '
@@ -46,7 +49,7 @@ cmd_M_next_byte:
 	j		cmd_M_next_byte
 	# output the same hex bytes again, this time as ASCII chars
 cmd_M_print_ascii:
-	addi	s5, s5, -8
+	addi	s5, s5, -M_BYTES_PER_LINE
 	li		a0, ' '
 	jal		print_char
 cmd_M_next_char:
