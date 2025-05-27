@@ -12,8 +12,8 @@
 
 cmd_G:
 	jal		skip_whitespace
-	jal		get_numeric			# read start addr from text buffer
-	bnez	a2, cmd_G_error			# abort command if not found
+	jal		get_numeric					# read start addr from text buffer
+	bnez	a2, cmd_G_error				# abort command if not found
 	mv		s1, a1
 	la		a0, string_go
 	jal		print_string
@@ -23,6 +23,10 @@ cmd_G:
 	# patch ra that was saved on the stack on entry, exit routine will load it later
 	la		a0, stack + STACK_SIZE - STK_FRAME_SIZE_INT + STK_OFF_RA
 	SAVE_X	s1, 0(a0)
+
+	#ifdef WITH_CMD_B
+		jal		break_activate			# activate all breakpoints
+	#endif /* WITH_CMD_B */
 
 	j		vmon_exit
 cmd_G_error:

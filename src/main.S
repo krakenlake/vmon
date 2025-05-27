@@ -149,8 +149,8 @@ start:
 	jal		print_string
 
 	#ifdef WITH_CMD_B
-		# init breakpoints table
-		jal		break_init
+		# init breakpoints table all empty
+		jal		break_reset
 	#endif /* WITH_CMD_B */
 
 	# main loop
@@ -158,6 +158,11 @@ main_prompt:
 	jal		print_newline
 
 main_prompt_no_newline:
+	
+	#ifdef WITH_CMD_B
+		jal		break_deactivate
+	#endif /* WITH_CMD_B */
+
 	la		a0, string_prompt
 	jal		print_string
 

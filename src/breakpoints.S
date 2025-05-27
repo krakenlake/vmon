@@ -2,11 +2,12 @@
 #include "vmon/ASCII.h"
 #include "vmon/breakpoints.h"
 
-.global break_init
+.global break_reset
 .global break_list
 .global break_set
 .global break_clear
-.global break_restore_all
+.global break_activate
+.global break_deactivate
 
 
 .text
@@ -14,10 +15,10 @@
 
 #ifdef WITH_CMD_B
 
-break_init:
+break_reset:
 	la		t0, bp_table
 	li		t2, 0
-break_init_all_loop:
+break_reset_loop:
 	# clear table entry
 	SAVE_X	zero, 0(t0)
 	SWU		zero, XLEN_BYTES(t0)
@@ -25,10 +26,10 @@ break_init_all_loop:
 	addi	t0, t0, BP_ENTRY_SIZE
 	addi	t2, t2, 1
 	li		t3, BP_NUM
-	bne		t2, t3, break_restore_all_loop
+	bne		t2, t3, break_reset_loop
 break_init_all_done:
 	ret
-.size break_init, .-break_init
+.size break_reset, .-break_reset
 
 
 break_list:
@@ -44,13 +45,6 @@ break_list_loop:
 	li		a1, XLEN_BYTES
 	li		a2, 1
 	jal		print_hex_fixed_width
-	#ifdef DEBUG
-		jal		print_space
-		LOAD_X	a0, XLEN_BYTES(s0)
-		li		a1, 4						# insn size in bytes
-		li		a2, 1
-		jal		print_hex_fixed_width
-	#endif
 	jal		print_newline
 break_list_skip_empty:
 	addi	s0, s0, BP_ENTRY_SIZE
@@ -66,13 +60,13 @@ break_list_done:
 break_set:
 	la		t0, bp_table
 	li		t2, 0
+	li		t3, BP_NUM
 	# first check if this breakpoint is already in the list
 break_set_check_loop:
 	LOAD_X	t1, 0(t0)
 	beq		t1, a0, break_set_done
 	addi	t0, t0, BP_ENTRY_SIZE
 	addi	t2, t2, 1
-	li		t3, BP_NUM
 	bne		t2, t3, break_set_check_loop
 	# breakpoint does not yet exist, so store it
 	la		t0, bp_table
@@ -82,22 +76,16 @@ break_set_find_loop:
 	beqz	t1, break_set_free_slot
 	addi	t0, t0, BP_ENTRY_SIZE
 	addi	t2, t2, 1
-	li		t3, BP_NUM
 	bne		t2, t3, break_set_find_loop
 	j		break_set_done				# no free slot in table, stop
 break_set_free_slot:
 	# store breakpoint data
 	SAVE_X	a0, 0(t0)					# save address in table
-	LWU		t1, 0(a0)					# load insn at breakpoint
-	SWU		t1, XLEN_BYTES(t0)			# save insn in table
-	# modify code
-	li		t2, 0x100073				# ebreak
-	SWU		t2, 0(a0)
 break_set_done:
 	ret
 .size break_set, .-break_set
 
-
+# in: a0 = address
 break_clear:
 	la		t0, bp_table
 	li		t2, 0
@@ -121,28 +109,48 @@ break_clear_done:
 	ret
 .size break_clear, .-break_clear
 
-
-break_restore_all:
+# activate all breakpoints by inserting ebreaks
+break_activate:
 	la		t0, bp_table
 	li		t2, 0
-break_restore_all_loop:
-	# restore original insn
-	LOAD_X	a0, 0(t0)
-	beqz	a0, break_restore_all_skip	# skip this slot if empty
-	LWU		t1, XLEN_BYTES(t0)
+	li		t3, BP_NUM
+break_activate_loop:
+	LOAD_X	a0, 0(t0)					# get bp address from table
+	beqz	a0, break_activate_skip		# skip this slot if empty
+	LWU		t1, 0(a0)					# load insn at breakpoint
+	SWU		t1, XLEN_BYTES(t0)			# save insn in table
+	# overwrite insn with ebreak
+	li		t1, 0x100073				# ebreak
 	SWU		t1, 0(a0)
-	# clear table entry
-	SAVE_X	zero, 0(t0)
-	SWU		zero, XLEN_BYTES(t0)
-break_restore_all_skip:
+break_activate_skip:
 	# next
 	addi	t0, t0, BP_ENTRY_SIZE
 	addi	t2, t2, 1
-	li		t3, BP_NUM
-	bne		t2, t3, break_restore_all_loop
-break_restore_all_done:
+	bne		t2, t3, break_activate_loop
+break_activate_done:
 	ret
-.size break_clear, .-break_clear
+.size break_activate, .-break_activate
+
+
+# deactivate all breakpoints by putting back original insns
+break_deactivate:
+	la		t0, bp_table
+	li		t2, 0
+	li		t3, BP_NUM
+break_deactivate_loop:
+	# restore original insns at all breakpoints
+	LOAD_X	a0, 0(t0)
+	beqz	a0, break_deactivate_skip	# skip this slot if empty
+	LWU		t1, XLEN_BYTES(t0)			# original insn from table
+	SWU		t1, 0(a0)					# to original address
+break_deactivate_skip:
+	# next
+	addi	t0, t0, BP_ENTRY_SIZE
+	addi	t2, t2, 1
+	bne		t2, t3, break_deactivate_loop
+break_deactivate_done:
+	ret
+.size break_deactivate, .-break_deactivate
 
 
 .bss

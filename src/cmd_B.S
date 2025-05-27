@@ -23,6 +23,7 @@ cmd_B_list:
 	jal		break_list
 	j		cmd_B_done
 cmd_B_set:
+	# add one breakpoint to bp_table
 	jal		skip_whitespace
 	jal		get_numeric					# read addr from text buffer
 	bnez	a2, cmd_B_error				# abort command if not found
@@ -30,6 +31,7 @@ cmd_B_set:
 	jal		break_set
 	j		cmd_B_done
 cmd_B_clear:
+	# remove one breakpoint from bp_table
 	jal		skip_whitespace
 	jal		get_numeric					# read addr from text buffer
 	bnez	a2, cmd_B_error				# abort command if not found
@@ -37,7 +39,8 @@ cmd_B_clear:
 	jal		break_clear
 	j		cmd_B_done
 cmd_B_reset:
-	jal		break_restore_all
+	# remove all breakpoints from bp_table
+	jal		break_reset
 	j		cmd_B_done
 cmd_B_error:
 	la		a0, error_param
