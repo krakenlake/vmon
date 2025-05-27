@@ -6,6 +6,7 @@
 
 
 // size of runtime stack in bytes
+// runtime space + 32 int register + 32 float register
 #define STACK_SIZE			(512 + XLEN_BYTES*32 + FLEN_BYTES*32)
 
 # int register offsets from start of int stack frame
