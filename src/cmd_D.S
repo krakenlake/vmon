@@ -54,11 +54,8 @@ cmd_D_word_not_RVC:
 		jal		print_hex_byte
 		lbu		a0, 0(s5)
 		jal		print_hex_byte	
-		li		a0, ' '
-		jal		print_char					# print 4 spaces for alignment
-		jal		print_char
-		jal		print_char
-		jal		print_char
+		la		a0, string_WORD_ALIGN
+		jal		print_string				# print 4 spaces for alignment
 	#endif
 cmd_D_disass:
 	la		a0, string_asm_sep2		
@@ -101,5 +98,9 @@ cmd_D_done:
 string_OP_UNKNOWN:		.string "???";
 .size string_OP_UNKNOWN, .-string_OP_UNKNOWN
 
+#ifdef DISASS_RVC
+	string_WORD_ALIGN:		.string "    ";
+	.size string_WORD_ALIGN, .-string_WORD_ALIGN
+#endif /* DISASS_RVC */
 
 #endif /* WITH_CMD_D */

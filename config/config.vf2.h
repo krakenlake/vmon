@@ -65,7 +65,7 @@
 #define DISASS_RVF
 //#define DISASS_RVD
 //#define DISASS_RVQ
-//#define DISASS_RVC
+#define DISASS_RVC
 //#define DISASS_RVB
 //#define DISASS_RVP
 //#define DISASS_RVV
