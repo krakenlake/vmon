@@ -11,6 +11,10 @@
 
 
 cmd_X:
+	#ifdef WITH_CMD_B
+		jal		break_restore_all
+	#endif /* WITH_CMD_B */
+
 	la		a0, string_exit
 	jal		print_string
 	la		a1, stack + STACK_SIZE - STK_FRAME_SIZE_INT + STK_OFF_RA
