@@ -48,9 +48,26 @@ communication written entirely in RISC-V assembly language.
 
 VMON understands the following commands:  
 
-#### `a <start_addr>` ###
+#### `a <start_addr>` ####
 
 Assembly input (press ENTER to stop) [alpha testing, currently RV64G instructions supported].
+
+#### `b` ####
+
+List all breakpoints (fixed number of max. 8 breakpoints available).
+
+#### `bc <addr>` ####
+
+Clear breakpoint at given address.
+
+#### `br <addr>` ####
+
+Reset (clear) all breakpoints.
+
+#### `bs <addr>` ####
+
+Set a breakpoint at given address. If the max. number of breakpoints has already been
+reached, the breakpoint will not be set.
 
 #### `c <src_start> <src_end> <dst_addr>` ####
 

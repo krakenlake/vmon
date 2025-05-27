@@ -19,6 +19,10 @@ cmd_H:
 string_help:
 	.string "\nCommands:\n\
 	a <start_addr> - assembly input (ENTER to stop)\n\
+	b - list breakpoints\n\
+	bc <addr> - clear breakpoint\n\
+	br <addr> - reset (clear) all breakpoints\n\
+	bs <addr> - set breakpoint\n\
 	c <src_start> <src_end> <dst_start> - copy memory\n\
 	d <start_addr> - disassemble 16 instructions starting at start_addr\n\
 	d <start_addr> <end_addr> - disassemble from start_addr to end_addr\n\

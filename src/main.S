@@ -148,6 +148,11 @@ start:
 	la		a0, string_startup
 	jal		print_string
 
+	#ifdef WITH_CMD_B
+		# init breakpoints table
+		jal		break_init
+	#endif /* WITH_CMD_B */
+
 	# main loop
 main_prompt:
 	jal		print_newline
@@ -165,6 +170,11 @@ main_prompt_no_newline:
 	#ifdef WITH_CMD_A
 		li		t0, 'a'
 		beq		t1, t0, cmd_A
+	#endif
+
+	#ifdef WITH_CMD_B
+		li		t0, 'b'
+		beq		t1, t0, cmd_B
 	#endif
 
 	#ifdef WITH_CMD_QMARK

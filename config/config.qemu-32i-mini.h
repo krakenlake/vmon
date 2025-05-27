@@ -12,6 +12,7 @@
 
 // which user commands shall be in the binary?
 #define WITH_CMD_A			// assemble	
+//#define WITH_CMD_B			// breakpoints
 #define WITH_CMD_C			// copy memory	
 #define WITH_CMD_D			// disassemble	
 #define WITH_CMD_F			// find
