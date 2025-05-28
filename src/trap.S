@@ -35,12 +35,12 @@ setup_trap_handler:
 	csrs	mie, t1
 	*/
 	ret
-	.size setup_trap_handler, .-setup_trap_handler
+.size setup_trap_handler, .-setup_trap_handler
 
 
-	# trap handler needs to be aligned manually 
-	# as that is not automatically guaranteed with RVC enabled
-	.align 4
+# trap handler needs to be aligned manually 
+# as that is not automatically guaranteed with RVC enabled
+.align 4
 
 trap_handler:
 	# push stack
@@ -154,6 +154,15 @@ string_mtval_msg:			.string "\n\tmtval\t= ";
 string_mcause_msg:			.string "\n\tmcause\t= ";
 
 #ifdef MCAUSE_VERBOSE
+	#undef DECLARE_CAUSE
+	#define DECLARE_CAUSE(text, id) string_##id: .string #id
+	#include "riscv/riscv-opc.h"
+
+	# The above #define defines DECLARE_CLAUSE, which is called in riscv-opc.h.
+	# Including that file afterwards will generate us lines like the following,
+	# directly from the RISC-V spec instead of having to do it manually:
+
+/*
 	string_CAUSE_MISALIGNED_FETCH:		.string "CAUSE_MISALIGNED_FETCH";
 	string_CAUSE_FAULT_FETCH:			.string "CAUSE_FAULT_FETCH";
 	string_CAUSE_ILLEGAL_INSTRUCTION:	.string "CAUSE_ILLEGAL_INSTRUCTION";
@@ -166,6 +175,11 @@ string_mcause_msg:			.string "\n\tmcause\t= ";
 	string_CAUSE_SUPERVISOR_ECALL:		.string "CAUSE_SUPERVISOR_ECALL";
 	string_CAUSE_HYPERVISOR_ECALL:		.string "CAUSE_HYPERVISOR_ECALL";
 	string_CAUSE_MACHINE_ECALL:			.string "CAUSE_MACHINE_ECALL";
+*/
+
+	# todo: rewrite this so that we don't depend on the order in the include file
+	# todo: imlement a "id, string" table instead
+
 .align 4
 mcause_verbose_table:
 	.word string_CAUSE_MISALIGNED_FETCH
@@ -185,7 +199,7 @@ mcause_verbose_table:
 
 .bss
 
-
+# todo: do we still need this with sp being saved on stack now?
 .align 8
 .comm stackptr_reset, XLEN_BYTES
 
