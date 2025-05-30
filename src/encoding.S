@@ -27,6 +27,7 @@
 
 
 # encoding helper functions
+.global is_valid_insn_addr
 .global insn_is_compressed
 .global insn_is_LOAD
 .global insn_is_STORE
@@ -37,6 +38,21 @@
 .global string_OP_C_ADD
 .global string_OP_C_JALR
 .global string_OP_C_EBREAK
+
+
+# in: a0 = addr
+# out: a0 = addr
+# out: a1 = 0 if OK, nonzero if not OK
+is_valid_insn_addr:
+	li		a1, 0
+	#ifdef DISASS_RVC
+		andi	a1, a0, 0b1
+	#else
+		andi	a1, a0, 0b11
+	#endif
+break_check_addr_done:
+	ret
+.size is_valid_insn_addr, .-is_valid_insn_addr
 
 
 # evaluate if an instruction is an RVC instruction

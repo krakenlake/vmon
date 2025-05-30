@@ -17,19 +17,6 @@
 
 #ifdef WITH_CMD_B
 
-# in: a0 = addr
-# out: a0 = addr
-# out: a1 = 0 if OK, nonzero if not OK
-is_valid_insn_addr:
-	li		a1, 0
-	#ifdef DISASS_RVC
-		andi	a1, a0, 0b1
-	#else
-		andi	a1, a0, 0b11
-	#endif
-break_check_addr_done:
-	ret
-
 
 break_reset:
 	la		t0, bp_table
