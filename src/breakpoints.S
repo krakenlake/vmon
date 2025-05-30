@@ -149,6 +149,7 @@ break_activate_loop:
 	LWU		t1, 0(a0)					# load insn at breakpoint
 	SWU		t1, XLEN_BYTES(t0)			# save insn in table
 	# overwrite insn with ebreak
+	# todo: check if insn at addr is RVC and use c.ebreak if so
 	li		t1, 0x100073				# ebreak
 	SWU		t1, 0(a0)
 break_activate_skip:
@@ -168,6 +169,7 @@ break_deactivate:
 	li		t3, BP_NUM
 break_deactivate_loop:
 	# restore original insns at all breakpoints
+	# todo: check if insn at addr was RVC and write only 2 bytes if so
 	LOAD_X	a0, 0(t0)
 	beqz	a0, break_deactivate_skip	# skip this slot if empty
 	LWU		t1, XLEN_BYTES(t0)			# original insn from table
