@@ -67,7 +67,8 @@ Reset (clear) all breakpoints.
 #### `bs <addr>` ####
 
 Set a breakpoint at given address. If the max. number of breakpoints has already been
-reached, the breakpoint will not be set.
+reached, the breakpoint will not be set. Only valid instruction adresses are accepted
+(4 byte alignment, or 2 byte alignment if RVC is enabled).
 
 #### `c <src_start> <src_end> <dst_addr>` ####
 
