@@ -1,5 +1,6 @@
 #include "config.h"
 #include "vmon/ASCII.h"
+#include "vmon/error.h"
 
 
 #ifdef WITH_CMD_A
@@ -62,8 +63,8 @@ cmd_A_continue:
 	j		cmd_A_input_loop
 
 cmd_A_error:
-	la		a0, error_param
-	jal		print_string
+	li		a0, ERR_CMD_PARAMS
+	jal		print_error
 cmd_A_done:
 	j		main_prompt
 .size cmd_A, .-cmd_A

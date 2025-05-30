@@ -1,6 +1,6 @@
 #include "config.h"
 #include "vmon/register.h"
-
+#include "vmon/error.h"
 
 #ifdef WITH_CMD_QMARK
 
@@ -33,8 +33,8 @@ cmd_QMARK_display:
 	j		cmd_QMARK_end
 
 cmd_QMARK_error:
-	la		a0, error_param
-	jal		print_string
+	li		a0, ERR_CMD_PARAMS
+	jal		print_error
 
 cmd_QMARK_end:
 	j		main_prompt

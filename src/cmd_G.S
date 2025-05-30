@@ -1,6 +1,7 @@
 #include "config.h"
 #include "vmon/stack.h"
 #include "vmon/register.h"
+#include "vmon/error.h"
 
 
 #ifdef WITH_CMD_G
@@ -30,8 +31,8 @@ cmd_G:
 
 	j		vmon_exit
 cmd_G_error:
-	la		a0, error_param
-	jal		print_string
+	li		a0, ERR_CMD_PARAMS
+	jal		print_error
 	j		main_prompt
 .size cmd_G, .-cmd_G
 

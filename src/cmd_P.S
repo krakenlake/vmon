@@ -1,4 +1,5 @@
 #include "config.h"
+#include "vmon/error.h"
 
 
 #ifdef WITH_CMD_P
@@ -46,8 +47,8 @@ cmd_P_write4:
 	j		cmd_P_next_value
 
 cmd_P_error:
-	la		a0, error_param
-	jal		print_string
+	li		a0, ERR_CMD_PARAMS
+	jal		print_error
 
 cmd_P_done:
 	j		main_prompt

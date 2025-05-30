@@ -1,5 +1,6 @@
 #include "config.h"
 #include "vmon/register.h"
+#include "vmon/error.h"
 
 
 #ifdef WITH_CMD_F
@@ -72,8 +73,8 @@ cmd_F_found:
 	jal		print_hex
 	j		cmd_F_done
 cmd_F_error:
-	la		a0, error_param
-	jal		print_string
+	li		a0, ERR_CMD_PARAMS
+	jal		print_error
 cmd_F_done:
 	j		main_prompt
 .size cmd_F, .-cmd_F

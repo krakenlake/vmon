@@ -1,6 +1,8 @@
 #include "config.h"
 #include "vmon/ASCII.h"
 #include "vmon/breakpoints.h"
+#include "vmon/error.h"
+
 
 .global break_reset
 .global break_list
@@ -14,6 +16,20 @@
 
 
 #ifdef WITH_CMD_B
+
+# in: a0 = addr
+# out: a0 = addr
+# out: a1 = error code
+break_check_addr:
+	#ifdef DISASS_RVC
+		andi	t0, a1, 0b1
+	#else
+		andi	t0, a1, 0b11
+	#endif
+	beqz	t0, break_check_addr_done
+	li		a1, -2						# error
+break_check_addr_done:
+	ret
 
 break_reset:
 	la		t0, bp_table
@@ -57,8 +73,11 @@ break_list_done:
 
 
 # in: a0 = address
-# out: a0 = address if breakpoint set, else 0
+# out: a0 = address if breakpoint set, else error code
+# errors: a0 = -1 if no free slots, -2 if addr invalid
 break_set:
+	addi	sp, sp, -(XLEN_BYTES*1)
+	SAVE_X	ra, 0(sp)
 	la		t0, bp_table
 	li		t2, 0
 	li		t3, BP_NUM
@@ -79,13 +98,14 @@ break_set_find_loop:
 	addi	t0, t0, BP_ENTRY_SIZE
 	addi	t2, t2, 1
 	bne		t2, t3, break_set_find_loop
-	li		a0, -1						# no free slot in table, stop
+	li		a0, ERR_BREAK_FULL
+	jal		print_error
 	j		break_set_done
 break_set_free_slot:
 	# store breakpoint data
 	SAVE_X	a0, 0(t0)					# save address in table
 break_set_done:
-	ret
+	j		pop_ra_ret
 .size break_set, .-break_set
 
 # in: a0 = address

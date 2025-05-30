@@ -1,5 +1,6 @@
 #include "config.h"
 #include "vmon/stack.h"
+#include "vmon/error.h"
 
 
 #ifdef WITH_CMD_S
@@ -66,8 +67,8 @@ cmd_S_try_float:
 	#endif
 
 cmd_S_error:
-	la		a0, error_param
-	jal		print_string
+	li		a0, ERR_CMD_PARAMS
+	jal		print_error
 	j		main_prompt
 .size cmd_S, .-cmd_S
 

@@ -1,4 +1,5 @@
 #include "config.h"
+#include "vmon/error.h"
 
 
 #ifdef WITH_CMD_C
@@ -52,8 +53,8 @@ cmd_C_loop_backwards:
 	j		cmd_C_loop_backwards
 
 cmd_C_error:
-	la		a0, error_param
-	jal		print_string
+	li		a0, ERR_CMD_PARAMS
+	jal		print_error
 
 cmd_C_done:
 	j		main_prompt

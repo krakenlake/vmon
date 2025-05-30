@@ -1,6 +1,7 @@
 #include "config.h"
 #include "vmon/register.h"
 #include "vmon/breakpoints.h"
+#include "vmon/error.h"
 
 
 #ifdef WITH_CMD_B
@@ -29,11 +30,6 @@ cmd_B_set:
 	bnez	a2, cmd_B_error				# abort command if not found
 	mv		a0, a1
 	jal		break_set
-	li		t0, -1
-	bne		a0, t0, cmd_B_done
-	# breakpoint not set, table was full
-	la		a0, error_break_table_full
-	jal		print_string
 	j		cmd_B_done
 cmd_B_clear:
 	# remove one breakpoint from bp_table
@@ -48,8 +44,8 @@ cmd_B_reset:
 	jal		break_reset
 	j		cmd_B_done
 cmd_B_error:
-	la		a0, error_param
-	jal		print_string
+	li		a0, ERR_CMD_PARAMS
+	jal		print_error
 cmd_B_done:
 	j		main_prompt
 .size cmd_B, .-cmd_B

@@ -6,6 +6,8 @@ VMON - a RISC-V machine code monitor written in RISC-V assembly code
 #include "vmon/ASCII.h"
 #include "vmon/stack.h"
 #include "vmon/register.h"
+#include "vmon/error.h"
+
 
 .global start
 .global main_prompt
@@ -247,8 +249,8 @@ main_prompt_no_newline:
 	beq		t1, t0, main_prompt_no_newline
 
 unknown_command:
-	la		a0, error_unknown_command
-	jal		print_string
+	la		a0, ERR_CMD_UNKNOWN
+	jal		print_error
 	j		main_prompt
 	# end of main loop
 
