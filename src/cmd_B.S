@@ -29,6 +29,11 @@ cmd_B_set:
 	bnez	a2, cmd_B_error				# abort command if not found
 	mv		a0, a1
 	jal		break_set
+	li		t0, -1
+	bne		a0, t0, cmd_B_done
+	# breakpoint not set, table was full
+	la		a0, error_break_table_full
+	jal		print_string
 	j		cmd_B_done
 cmd_B_clear:
 	# remove one breakpoint from bp_table

@@ -57,6 +57,7 @@ break_list_done:
 
 
 # in: a0 = address
+# out: a0 = address if breakpoint set, else 0
 break_set:
 	la		t0, bp_table
 	li		t2, 0
@@ -70,6 +71,7 @@ break_set_check_loop:
 	bne		t2, t3, break_set_check_loop
 	# breakpoint does not yet exist, so store it
 	la		t0, bp_table
+	li		t2, 0
 	# find free slot in table to store the breakpoint
 break_set_find_loop:
 	LOAD_X	t1, 0(t0)
@@ -77,7 +79,8 @@ break_set_find_loop:
 	addi	t0, t0, BP_ENTRY_SIZE
 	addi	t2, t2, 1
 	bne		t2, t3, break_set_find_loop
-	j		break_set_done				# no free slot in table, stop
+	li		a0, -1						# no free slot in table, stop
+	j		break_set_done
 break_set_free_slot:
 	# store breakpoint data
 	SAVE_X	a0, 0(t0)					# save address in table
