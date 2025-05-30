@@ -8,36 +8,51 @@
 
 .text
 
-
-# in: a0 = error code (0=none)
-print_error:
-	addi	sp, sp, -(XLEN_BYTES*2)
-	SAVE_X	s0, 0(sp)
-	SAVE_X	ra, (XLEN_BYTES*1)(sp)
-	beqz	a0, print_error_done		# done when errorcode == 0
-	la		t0, error_table
-	li		t2, 0xff					# table end marker
-print_error_next_entry:
-	lbu		t1, 0(t0)					# load error code byte from table
-	beq		t1, a0, print_error_do	
-	beq		t1, t2, print_error_do		# last table entry?
-print_error_skip:
-	# go to beginning of next enty
-	addi	t0, t0, 1
-	lbu		t1, 0(t0)
-	bnez	t1, print_error_skip		# goto next zero
-	addi	t0, t0, 1
-	j		print_error_next_entry
-print_error_do:
-	addi	s0, t0, 1
-	la		a0, string_error_prefix
-	jal		print_string
-	mv		a0, s0
-	jal		print_string
-	jal		print_newline
-print_error_done:
-	j		pop_s0_ra_ret
-
+#ifdef ERROR_VERBOSE
+	# in: a0 = error code (0=none)
+	print_error:
+		addi	sp, sp, -(XLEN_BYTES*2)
+		SAVE_X	s0, 0(sp)
+		SAVE_X	ra, (XLEN_BYTES*1)(sp)
+		beqz	a0, print_error_done		# done when errorcode == 0
+		la		t0, error_table
+		li		t2, 0xff					# table end marker
+	print_error_next_entry:
+		lbu		t1, 0(t0)					# load error code byte from table
+		beq		t1, a0, print_error_do	
+		beq		t1, t2, print_error_do		# last table entry?
+	print_error_skip:
+		# go to beginning of next enty
+		addi	t0, t0, 1
+		lbu		t1, 0(t0)
+		bnez	t1, print_error_skip		# goto next zero
+		addi	t0, t0, 1
+		j		print_error_next_entry
+	print_error_do:
+		addi	s0, t0, 1
+		la		a0, string_error_prefix
+		jal		print_string
+		mv		a0, s0
+		jal		print_string
+		jal		print_newline
+	print_error_done:
+		j		pop_s0_ra_ret
+#else
+	print_error:
+		addi	sp, sp, -(XLEN_BYTES*2)
+		SAVE_X	s0, 0(sp)
+		SAVE_X	ra, (XLEN_BYTES*1)(sp)
+		mv		s0, a0
+		la		a0, string_error_prefix		
+		jal		print_string
+		mv		a0, s0
+		li		a1, 1						# one byte
+		li		a2, 1						# with prefix
+		jal		print_hex_fixed_width
+		jal		print_newline
+	print_error_done:
+		j		pop_s0_ra_ret
+#endif /* ERROR_VERBOSE */
 
 .data
 
@@ -57,6 +72,7 @@ error_unknown_command:	.string "ERROR: unknown command";
 string_error_prefix:
 .string "ERROR: "
 
+#ifdef ERROR_VERBOSE
 error_table:
 # errorcode, string
 .byte ERR_CMD_PARAMS;	.string "parameter missing or invalid"
@@ -66,3 +82,4 @@ error_table:
 .byte ERR_BREAK_ADDR;	.string "not a valid breakpoint address"
 
 .byte ERR_UNDEFINED;	.string "undefined error"
+#endif /* ERROR_VERBOSE */

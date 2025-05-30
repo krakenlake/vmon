@@ -81,6 +81,9 @@
 // include strings for MCAUSE verbose output?
 #define MCAUSE_VERBOSE
 
+// include strings for verbose error messages?
+#define ERROR_VERBOSE
+
 // default number of lines for the "d" command if no end address is given
 #define M_BYTES_PER_LINE	16
 #define	DEFAULT_D_LINES		16
