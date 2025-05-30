@@ -9,8 +9,8 @@
 // runtime space + 32 int register + 32 float register
 #define STACK_SIZE			(512 + XLEN_BYTES*32 + FLEN_BYTES*32)
 
-# int register offsets from start of int stack frame
-# store pc here; x0 is always 0 and will not be saved on stack
+// int register offsets from start of int stack frame
+// store pc here; x0 is always 0 and will not be saved on stack
 #define STK_OFF_PC		(0)
 #define STK_OFF_X1		(XLEN_BYTES*1)
 #define STK_OFF_X2		(XLEN_BYTES*2)
