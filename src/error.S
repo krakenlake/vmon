@@ -77,9 +77,8 @@ error_table:
 # errorcode, string
 .byte ERR_CMD_PARAMS;	.string "parameter missing or invalid"
 .byte ERR_CMD_UNKNOWN;	.string "unknown command"
-
 .byte ERR_BREAK_FULL;	.string "out of breakpoints"
-.byte ERR_BREAK_ADDR;	.string "not a valid breakpoint address"
+.byte ERR_INSN_ADDR;	.string "not a valid instruction address"
 
 .byte ERR_UNDEFINED;	.string "undefined error"
 #endif /* ERROR_VERBOSE */

@@ -80,7 +80,7 @@ break_set:
 	SAVE_X	ra, 0(sp)
 	jal		is_valid_insn_addr
 	beqz	a1, break_set_valid_addr
-	li		a0, ERR_BREAK_ADDR
+	li		a0, ERR_INSN_ADDR
 	j		break_set_error
 break_set_valid_addr:
 	la		t0, bp_table
