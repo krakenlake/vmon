@@ -19,17 +19,17 @@
 
 # in: a0 = addr
 # out: a0 = addr
-# out: a1 = error code
-break_check_addr:
+# out: a1 = 0 if OK, nonzero if not OK
+is_valid_insn_addr:
+	li		a1, 0
 	#ifdef DISASS_RVC
-		andi	t0, a1, 0b1
+		andi	a1, a0, 0b1
 	#else
-		andi	t0, a1, 0b11
+		andi	a1, a0, 0b11
 	#endif
-	beqz	t0, break_check_addr_done
-	li		a1, -2						# error
 break_check_addr_done:
 	ret
+
 
 break_reset:
 	la		t0, bp_table
@@ -78,6 +78,11 @@ break_list_done:
 break_set:
 	addi	sp, sp, -(XLEN_BYTES*1)
 	SAVE_X	ra, 0(sp)
+	jal		is_valid_insn_addr
+	beqz	a1, break_set_valid_addr
+	li		a0, ERR_BREAK_ADDR
+	j		break_set_error
+break_set_valid_addr:
 	la		t0, bp_table
 	li		t2, 0
 	li		t3, BP_NUM
@@ -99,6 +104,7 @@ break_set_find_loop:
 	addi	t2, t2, 1
 	bne		t2, t3, break_set_find_loop
 	li		a0, ERR_BREAK_FULL
+break_set_error:
 	jal		print_error
 	j		break_set_done
 break_set_free_slot:
