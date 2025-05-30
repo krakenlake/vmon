@@ -14,8 +14,14 @@ cmd_A:
 	# read dst_start from text buffer	
 	jal		skip_whitespace
 	jal		get_numeric				# read dst_start from text buffer
-	bnez	a2, cmd_A_error				# abort command if not found
+	bnez	a2, cmd_A_error_params				# abort command if not found
 	mv		s0, a1
+
+	mv		a0, a1
+	jal		is_valid_insn_addr
+	beqz	a1, cmd_A_input_loop
+	li		a0, ERR_INSN_ADDR
+	j		cmd_A_error
 
 cmd_A_input_loop:
 	# print line prefix
@@ -62,8 +68,9 @@ cmd_A_continue:
 	add		s0, s0, a0
 	j		cmd_A_input_loop
 
-cmd_A_error:
+cmd_A_error_params:
 	li		a0, ERR_CMD_PARAMS
+cmd_A_error:
 	jal		print_error
 cmd_A_done:
 	j		main_prompt
