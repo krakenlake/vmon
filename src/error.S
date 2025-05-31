@@ -34,7 +34,6 @@
 		jal		print_string
 		mv		a0, s0
 		jal		print_string
-		jal		print_newline
 	print_error_done:
 		j		pop_s0_ra_ret
 #else
@@ -49,7 +48,6 @@
 		li		a1, 1						# one byte
 		li		a2, 1						# with prefix
 		jal		print_hex_fixed_width
-		jal		print_newline
 	print_error_done:
 		j		pop_s0_ra_ret
 #endif /* ERROR_VERBOSE */
