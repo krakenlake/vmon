@@ -754,7 +754,7 @@ encoding_table:
 #ifdef DISASS_PSEUDO
 	#ifdef DISASS_RVC
 		.word 0x0000ffff, 0x0000,	string_OP_C_UNIMP,	0x00000000
-#		.word 0x0000ffff, 0x0001,	string_OP_C_NOP,	0x00000000
+		.word 0x0000ffff, 0x0001,	string_OP_C_NOP,	0x00000000
 	#endif /* DISASS_RVC */
 	.word 0xffffffff, 0x00000000,	string_OP_UNIMP,	0x00000000
 	.word 0xffffffff, 0x00008067,	string_OP_RET,		0x00000000
@@ -968,8 +968,8 @@ encoding_table:
 	.word MASK_C_SW,		MATCH_C_SW,			string_OP_C_SW,			0x00171c16
 	.word MASK_C_ADDI,		MATCH_C_ADDI,		string_OP_C_ADDI,		0x00001813
 	.word MASK_C_JAL,		MATCH_C_JAL,		string_OP_C_JAL,		0x00000000
-	.word MASK_C_LI,		MATCH_C_LI,			string_OP_C_LI,			0x00000000
-	.word MASK_C_LUI,		MATCH_C_LUI,		string_OP_C_LUI,		0x00000000
+	.word MASK_C_LI,		MATCH_C_LI,			string_OP_C_LI,			0x00001813
+	.word MASK_C_LUI,		MATCH_C_LUI,		string_OP_C_LUI,		0x00001813
 	.word MASK_C_SRLI,		MATCH_C_SRLI,		string_OP_C_SRLI,		0x00000000
 	.word MASK_C_SRLI64,	MATCH_C_SRLI64,		string_OP_C_SRLI64,		0x00000000
 	.word MASK_C_SRAI,		MATCH_C_SRAI,		string_OP_C_SRAI,		0x00000000
