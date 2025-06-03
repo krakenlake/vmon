@@ -76,14 +76,21 @@ dis_C_rs2a:
 
 # in: a0 = instruction word
 dis_CI_imm:
-	# todo: negatives
 	addi	sp, sp, -(XLEN_BYTES*1)
 	SAVE_X	ra, 0(sp)
-	srli	t0, a0, 2
-	srli	a0, a0, 12
-	slli	a0, a0, 5
-	or		a0, t0, a0
-	andi	a0, a0, 0b111111
+	# inst[12] is sign bit
+	slli	t0, a0, 19					# shift to bit 31
+	#if XLEN >=64
+		sext.w	t0, t0					# sign-extend to 64 bits
+	#endif	
+	# clear all bits to the right of sign bit
+	srai	t0, t0, 31					# shift to bit 0
+	slli	t0, t0, 5					# shift to final destination
+	# inst[6:2] -> imm[4:0]
+	srli	t1, a0, 2
+	andi	t1, t1, 0b11111
+	# join everything
+	or		a0, t0, t1
 	jal		print_decimal
 	j		pop_ra_ret
 	ret
