@@ -10,6 +10,9 @@
 .global print_register_name
 .global print_rs1_as_base
 
+.global print_int_register_name
+.global print_float_register_name
+
 .global dis_rd
 .global dis_rs1
 .global dis_rs2

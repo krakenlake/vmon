@@ -52,7 +52,8 @@ adjust_RVC_add_jal_ebreak_done:
 
 # in: a0 = instruction word
 dis_C_rs2:
-	ret
+	srli	a0, a0, 2
+	j		print_int_register_name
 .size dis_C_rs2, .-dis_C_rs2
 
 
