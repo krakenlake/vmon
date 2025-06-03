@@ -68,7 +68,33 @@ ass_C_rs2a:
 # out: a0 = ptr to char after argument
 # out: a1 = insn word (0 on error)
 ass_CI_imm:
-	ret
+	addi	sp, sp, -(XLEN_BYTES*2)
+	SAVE_X	s0, 0(sp)
+	SAVE_X	ra, (XLEN_BYTES*1)(sp)
+	mv		s0, a1						# save insn word
+	jal		get_numeric
+	# imm  value in a1
+	bnez	a2, ass_CI_imm_error
+	li		t0, -32
+	blt		a1, t0, ass_CI_imm_error	# numeric too small
+	li		t0, 31
+	bgt		a1, t0, ass_CI_imm_error	# numeric too big	
+	# assemble imm from numeric
+	slli	t0, a1, 2
+	andi	t0, t0, 0b1111100	
+	li		t1, 1
+	slli	t1, t1, 12
+	and		t1, t1, a1
+	# add imm to insn
+	or		a1, s0, t0
+	or		a1, a1, t1
+ass_CI_imm_continue:
+	# return a1 and a0
+	j		ass_CI_imm_done
+ass_CI_imm_error:
+	mv		a1, zero
+ass_CI_imm_done:
+	j		pop_s0_ra_ret
 .size ass_CI_imm, .-ass_CI_imm
 
 
