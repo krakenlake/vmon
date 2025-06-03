@@ -76,6 +76,16 @@ dis_C_rs2a:
 
 # in: a0 = instruction word
 dis_CI_imm:
+	# todo: negatives
+	addi	sp, sp, -(XLEN_BYTES*1)
+	SAVE_X	ra, 0(sp)
+	srli	t0, a0, 2
+	srli	a0, a0, 12
+	slli	a0, a0, 5
+	or		a0, t0, a0
+	andi	a0, a0, 0b111111
+	jal		print_decimal
+	j		pop_ra_ret
 	ret
 .size dis_CI_imm, .-dis_CI_imm
 
