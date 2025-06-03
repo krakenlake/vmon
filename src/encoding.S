@@ -149,9 +149,9 @@ insn_is_STORE_NO:
 # out: a3 = ptr to table entry (undefined if string was not found)
 get_data_by_insn_name:
 	la		t0, encoding_table
-	li		t5, -2										# count dots for RVA insns
 	li		t6, '.'
 get_data_by_insn_name_next:								# check string in next table entry
+	li		t5, -2										# count dots for RVA insns
 	# load values from current table entry
 	LWU		a1, ENC_OFF_MATCH(t0)						# store MATCH value from table entry in a1
 	LWU		t1, ENC_OFF_OP_STRING(t0)					# get string ptr from table
@@ -707,7 +707,7 @@ disass_vectors:
 #endif /* DISASS_RVZicsr */
 
 #ifdef DISASS_RVC
-	.word	ass_C_rd, dis_C_rd			# 0x13
+	.word	ass_C_rd, dis_C_rd			# 0x13	( C_rd == C_rs1 )
 	.word	ass_C_rs2, dis_C_rs2		# 0x14
 	.word	ass_C_rda, dis_C_rda		# 0x15
 	.word	ass_C_rs1a, dis_C_rs1a		# 0x16
@@ -754,7 +754,7 @@ encoding_table:
 #ifdef DISASS_PSEUDO
 	#ifdef DISASS_RVC
 		.word 0x0000ffff, 0x0000,	string_OP_C_UNIMP,	0x00000000
-		.word 0x0000ffff, 0x0001,	string_OP_C_NOP,	0x00000000
+#		.word 0x0000ffff, 0x0001,	string_OP_C_NOP,	0x00000000
 	#endif /* DISASS_RVC */
 	.word 0xffffffff, 0x00000000,	string_OP_UNIMP,	0x00000000
 	.word 0xffffffff, 0x00008067,	string_OP_RET,		0x00000000
@@ -964,9 +964,9 @@ encoding_table:
 
 # RVC
 #ifdef DISASS_RVC
-	.word MASK_C_LW,		MATCH_C_LW,			string_OP_C_LW,			0x00000000
-	.word MASK_C_SW,		MATCH_C_SW,			string_OP_C_SW,			0x00000000
-	.word MASK_C_ADDI,		MATCH_C_ADDI,		string_OP_C_ADDI,		0x00000000
+	.word MASK_C_LW,		MATCH_C_LW,			string_OP_C_LW,			0x00161b15
+	.word MASK_C_SW,		MATCH_C_SW,			string_OP_C_SW,			0x00171c16
+	.word MASK_C_ADDI,		MATCH_C_ADDI,		string_OP_C_ADDI,		0x00001813
 	.word MASK_C_JAL,		MATCH_C_JAL,		string_OP_C_JAL,		0x00000000
 	.word MASK_C_LI,		MATCH_C_LI,			string_OP_C_LI,			0x00000000
 	.word MASK_C_LUI,		MATCH_C_LUI,		string_OP_C_LUI,		0x00000000
