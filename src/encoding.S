@@ -672,37 +672,67 @@ string_OP_EBREAK:	.string "ebreak";
 .align 4
 
 disass_vectors:
-.word	0, 0					# 0x00
-.word	ass_rd, dis_rd			# 0x01
-.word	ass_rs1, dis_rs1		# 0x02
-.word	ass_rs2, dis_rs2		# 0x03
-.word	ass_I_imm, dis_I_imm	# 0x04
-.word	ass_S_imm, dis_S_imm	# 0x05
-.word	ass_BRA, dis_BRA		# 0x06
-.word	ass_J, dis_J			# 0x07
-.word	ass_U_imm, dis_U_imm	# 0x08
-.word	ass_I_rel, dis_I_rel	# 0x09
-.word	ass_PRE, dis_PRE		# 0x0a
-.word	ass_SUC, dis_SUC		# 0x0b
-.word	0, 0					# 0x0c
+.word	0, 0							# 0x00
+.word	ass_rd, dis_rd					# 0x01
+.word	ass_rs1, dis_rs1				# 0x02
+.word	ass_rs2, dis_rs2				# 0x03
+.word	ass_I_imm, dis_I_imm			# 0x04
+.word	ass_S_imm, dis_S_imm			# 0x05
+.word	ass_BRA, dis_BRA				# 0x06
+.word	ass_J, dis_J					# 0x07
+.word	ass_U_imm, dis_U_imm			# 0x08
+.word	ass_I_rel, dis_I_rel			# 0x09
+.word	ass_PRE, dis_PRE				# 0x0a
+.word	ass_SUC, dis_SUC				# 0x0b
+.word	0, 0							# 0x0c
+
 #ifdef DISASS_RVF
-	.word	ass_frd, dis_frd	# 0x0d
-	.word	ass_frs1, dis_frs1	# 0x0e
-	.word	ass_frs2, dis_frs2	# 0x0f
-	.word	ass_frs3, dis_frs3	# 0x10
+	.word	ass_frd, dis_frd			# 0x0d
+	.word	ass_frs1, dis_frs1			# 0x0e
+	.word	ass_frs2, dis_frs2			# 0x0f
+	.word	ass_frs3, dis_frs3			# 0x10
 #else
-	.word	0, 0				# 0x0d	
-	.word	0, 0				# 0x0e
-	.word	0, 0				# 0x0f
-	.word	0, 0				# 0x10
+	.word	0, 0						# 0x0d	
+	.word	0, 0						# 0x0e
+	.word	0, 0						# 0x0f
+	.word	0, 0						# 0x10
 #endif /* DISASS_RVF */
+
 #ifdef DISASS_RVZicsr
-	.word	ass_csr, dis_csr	# 0x11
-	.word	ass_csri, dis_csri	# 0x12
+	.word	ass_csr, dis_csr			# 0x11
+	.word	ass_csri, dis_csri			# 0x12
 #else
-	.word	0, 0				# 0x11
-	.word	0, 0				# 0x12
+	.word	0, 0						# 0x11
+	.word	0, 0						# 0x12
 #endif /* DISASS_RVZicsr */
+
+#ifdef DISASS_RVC
+	.word	ass_C_rd, dis_C_rd			# 0x13
+	.word	ass_C_rs2, dis_C_rs2		# 0x14
+	.word	ass_C_rda, dis_C_rda		# 0x15
+	.word	ass_C_rs1a, dis_C_rs1a		# 0x16
+	.word	ass_C_rs2a, dis_C_rs2a		# 0x17
+	.word	ass_CI_imm, dis_CI_imm		# 0x18
+	.word	ass_CSS_imm, dis_CSS_imm	# 0x19
+	.word	ass_CIW_imm, dis_CIW_imm	# 0x1a
+	.word	ass_CL_imm, dis_CL_imm		# 0x1b
+	.word	ass_CS_imm, dis_CS_imm		# 0x1c
+	.word	ass_CB_imm, dis_CB_imm		# 0x1d
+	.word	ass_CJ_off, dis_CJ_off		# 0x1e
+#else
+	.word	0, 0						# 0x13	
+	.word	0, 0						# 0x14
+	.word	0, 0						# 0x15
+	.word	0, 0						# 0x16
+	.word	0, 0						# 0x17
+	.word	0, 0						# 0x18
+	.word	0, 0						# 0x19
+	.word	0, 0						# 0x1a
+	.word	0, 0						# 0x1b
+	.word	0, 0						# 0x1c
+	.word	0, 0						# 0x1d
+	.word	0, 0						# 0x1e
+#endif /* DISASS_RVC */
 
 
 encoding_table:

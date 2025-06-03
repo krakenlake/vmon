@@ -5,6 +5,18 @@
 
 #if defined (WITH_CMD_D) && defined (DISASS_RVC)
 
+.global dis_C_rs2
+.global dis_C_rda
+.global dis_C_rs1a
+.global dis_C_rs2a
+.global dis_CI_imm
+.global dis_CSS_imm
+.global dis_CIW_imm
+.global dis_CL_imm
+.global dis_CS_imm
+.global dis_CB_imm
+.global dis_CJ_off
+
 .text
 
 
@@ -36,5 +48,72 @@ adjust_RVC_add_jal_ebreak_done:
 	ret
 .size adjust_RVC_add_jal_ebreak, .-adjust_RVC_add_jal_ebreak
 */
+
+
+# in: a0 = instruction word
+dis_C_rs2:
+	ret
+.size dis_C_rs2, .-dis_C_rs2
+
+
+# in: a0 = instruction word
+dis_C_rda:
+	ret
+.size dis_C_rda, .-dis_C_rda
+
+
+# in: a0 = instruction word
+dis_C_rs1a:
+	ret
+.size dis_C_rs1a, .-dis_C_rs1a
+
+
+# in: a0 = instruction word
+dis_C_rs2a:
+	ret
+.size dis_C_rs2a, .-dis_C_rs2a
+
+
+# in: a0 = instruction word
+dis_CI_imm:
+	ret
+.size dis_CI_imm, .-dis_CI_imm
+
+
+# in: a0 = instruction word
+dis_CSS_imm:
+	ret
+.size dis_CSS_imm, .-dis_CSS_imm
+
+
+# in: a0 = instruction word
+dis_CIW_imm:
+	ret
+.size dis_CIW_imm, .-dis_CIW_imm
+
+
+# in: a0 = instruction word
+dis_CL_imm:
+	ret
+.size dis_CL_imm, .-dis_CL_imm
+
+
+# in: a0 = instruction word
+dis_CS_imm:
+	ret
+.size dis_CS_imm, .-dis_CS_imm
+
+
+# in: a0 = instruction word
+dis_CB_imm:
+	ret
+.size dis_CB_imm, .-dis_CB_imm
+
+
+# in: a0 = instruction word
+dis_CJ_off:
+	ret
+.size dis_CJ_off, .-dis_CJ_off
+
 
 #endif /* (WITH_CMD_D) && defined (DISASS_RVC) */

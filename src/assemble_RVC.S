@@ -6,26 +6,121 @@
 
 #if defined (WITH_CMD_A) && defined (DISASS_RVC)
 
-
+.global ass_C_rs2
+.global ass_C_rda
+.global ass_C_rs1a
+.global ass_C_rs2a
+.global ass_CI_imm
+.global ass_CSS_imm
+.global ass_CIW_imm
+.global ass_CL_imm
+.global ass_CS_imm
+.global ass_CB_imm
+.global ass_CJ_off
 .text
 
-# facade for assemble_register:
-# - add parameter for sll in t0
-# - add parameter for lookup function in t1
-# - jump to assemble_register 
-ass_RVC_rd:
-ass_RVC_rs1:
-	li		t0, 7
-	la		t1, get_int_register_index_by_name
-	j		assemble_register
-.size ass_RVC_rs1, .-ass_RVC_rs1
 
-
-ass_RVC_rs2:
+# in: a0 = ptr to first char of argument
+# in: a1 = insn word to be modifed
+# in: a2 = origin address
+# out: a0 = ptr to char after argument
+# out: a1 = insn word (0 on error)
+ass_C_rs2:
 	li		t0, 2
 	la		t1, get_int_register_index_by_name
 	j		assemble_register
-.size ass_RVC_rs1, .-ass_RVC_rs1
+.size ass_C_rs2, .-ass_C_rs2
+
+
+# in: a0 = ptr to first char of argument
+# in: a1 = insn word to be modifed
+# in: a2 = origin address
+# out: a0 = ptr to char after argument
+# out: a1 = insn word (0 on error)
+ass_C_rda:
+	ret
+.size ass_C_rda, .-ass_C_rda
+
+
+# in: a0 = ptr to first char of argument
+# in: a1 = insn word to be modifed
+# in: a2 = origin address
+# out: a0 = ptr to char after argument
+# out: a1 = insn word (0 on error)
+ass_C_rs1a:
+	ret
+.size ass_C_rs1a, .-ass_C_rs1a
+
+
+# in: a0 = ptr to first char of argument
+# in: a1 = insn word to be modifed
+# in: a2 = origin address
+# out: a0 = ptr to char after argument
+# out: a1 = insn word (0 on error)
+ass_C_rs2a:
+	ret
+.size ass_C_rs2a, .-ass_C_rs2a
+
+
+# in: a0 = ptr to first char of argument
+# in: a1 = insn word to be modifed
+# in: a2 = origin address
+# out: a0 = ptr to char after argument
+# out: a1 = insn word (0 on error)
+ass_CI_imm:
+	ret
+.size ass_CI_imm, .-ass_CI_imm
+
+
+# in: a0 = ptr to first char of argument
+# in: a1 = insn word to be modifed
+# in: a2 = origin address
+# out: a0 = ptr to char after argument
+# out: a1 = insn word (0 on error)
+ass_CSS_imm:
+	ret
+.size ass_CSS_imm, .-ass_CSS_imm
+
+
+# in: a0 = ptr to first char of argument
+# in: a1 = insn word to be modifed
+# in: a2 = origin address
+# out: a0 = ptr to char after argument
+# out: a1 = insn word (0 on error)
+ass_CIW_imm:
+	ret
+.size ass_CIW_imm, .-ass_CIW_imm
+
+
+# in: a0 = ptr to first char of argument
+# in: a1 = insn word to be modifed
+# in: a2 = origin address
+# out: a0 = ptr to char after argument
+# out: a1 = insn word (0 on error)
+ass_CL_imm:
+ass_CS_imm:
+	ret
+.size ass_CL_imm, .-ass_CL_imm
+
+
+# in: a0 = ptr to first char of argument
+# in: a1 = insn word to be modifed
+# in: a2 = origin address
+# out: a0 = ptr to char after argument
+# out: a1 = insn word (0 on error)
+ass_CB_imm:
+	ret
+.size ass_CB_imm, .-ass_CB_imm
+
+
+# in: a0 = ptr to first char of argument
+# in: a1 = insn word to be modifed
+# in: a2 = origin address
+# out: a0 = ptr to char after argument
+# out: a1 = insn word (0 on error)
+ass_CJ_off:
+	ret
+.size ass_CJ_off, .-ass_CJ_off
 
 
 #endif /* defined (WITH_CMD_A) && defined (DISASS_RVD) */

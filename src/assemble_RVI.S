@@ -22,6 +22,8 @@
 .global ass_S_imm						# expect S-type offset for store
 .global ass_U_imm						# expect immediate for U-type (LUI/AUIPC)
 
+
+.global ass_C_rd
 .text
 
 
@@ -133,6 +135,7 @@ ass_I_rel_done:
 # - add parameter for lookup function in t1
 # - jump to assemble_register 
 ass_rd:
+ass_C_rd:
 	li		t0, 7
 	la		t1, get_int_register_index_by_name
 	j		assemble_register
