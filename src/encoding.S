@@ -715,6 +715,7 @@ disass_vectors:
 	.word	ass_CB_imm, dis_CB_imm		# 0x1d
 	.word	ass_CJ_off, dis_CJ_off		# 0x1e
 	.word	ass_CI_4imm, dis_CI_4imm	# 0x1f
+	.word	ass_CSS_imm, dis_CSS_imm	# 0x20
 #else
 	.word	0, 0						# 0x13	
 	.word	0, 0						# 0x14
@@ -729,6 +730,7 @@ disass_vectors:
 	.word	0, 0						# 0x1d
 	.word	0, 0						# 0x1e
 	.word	0, 0						# 0x1f
+	.word	0, 0						# 0x20
 #endif /* DISASS_RVC */
 
 
@@ -987,7 +989,7 @@ encoding_table:
 	.word MASK_C_EBREAK,	MATCH_C_EBREAK,		string_OP_C_EBREAK,		0x00000000	# before c.jalr, c.add
 	.word MASK_C_JALR,		MATCH_C_JALR,		string_OP_C_JALR,		0x00000013	# before c.add
 	.word MASK_C_ADD,		MATCH_C_ADD,		string_OP_C_ADD,		0x00001413
-	.word MASK_C_SWSP,		MATCH_C_SWSP,		string_OP_C_SWSP,		0x00000000
+	.word MASK_C_SWSP,		MATCH_C_SWSP,		string_OP_C_SWSP,		0x00002014
 	.word MASK_C_NOP,		MATCH_C_NOP,		string_OP_C_NOP,		0x00000000
 	.word MASK_C_ADDI16SP,	MATCH_C_ADDI16SP,	string_OP_C_ADDI16SP,	0x00000000
 	.word MASK_C_JR,		MATCH_C_JR,			string_OP_C_JR,			0x00000013	# before c.mv

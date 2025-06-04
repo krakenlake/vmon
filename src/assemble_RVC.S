@@ -18,6 +18,7 @@
 .global ass_CB_imm
 .global ass_CJ_off
 .global ass_CI_4imm
+.global ass_CSS_imm
 
 
 .text
@@ -144,7 +145,29 @@ ass_CI_4imm_done:
 # out: a0 = ptr to char after argument
 # out: a1 = insn word (0 on error)
 ass_CSS_imm:
-	ret
+	addi	sp, sp, -(XLEN_BYTES*2)
+	SAVE_X	s0, 0(sp)
+	SAVE_X	ra, (XLEN_BYTES*1)(sp)
+	mv		s0, a1						# save insn word
+	jal		get_numeric
+	# imm  value in a1
+	bnez	a2, ass_CSS_imm_error
+	bltz	a1, ass_CSS_imm_error		# numeric too small
+	li		t0, 252
+	bgt		a1, t0, ass_CSS_imm_error	# numeric too big	
+	andi	t0, a1, 0b11
+	bnez	t0, ass_CSS_imm_error		# numeric not 4-byte aligned	
+	# assemble imm from numeric
+	slli	t0, a1, 5
+	# add imm to insn
+	or		a1, s0, t0
+ass_CSS_imm_continue:
+	# return a1 and a0
+	j		ass_CSS_imm_done
+ass_CSS_imm_error:
+	mv		a1, zero
+ass_CSS_imm_done:
+	j		pop_s0_ra_ret
 .size ass_CSS_imm, .-ass_CSS_imm
 
 

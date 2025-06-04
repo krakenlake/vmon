@@ -17,6 +17,7 @@
 .global dis_CB_imm
 .global dis_CJ_off
 .global dis_CI_4imm
+.global dis_CSS_imm
 
 .text
 
@@ -89,7 +90,12 @@ dis_CI_4imm:
 
 # in: a0 = instruction word
 dis_CSS_imm:
-	ret
+	addi	sp, sp, -(XLEN_BYTES*1)
+	SAVE_X	ra, 0(sp)
+	srli	a0, a0, 5
+	andi	a0, a0, 0b111111100
+	jal		print_decimal
+	j		pop_ra_ret
 .size dis_CSS_imm, .-dis_CSS_imm
 
 
