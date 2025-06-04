@@ -707,6 +707,10 @@ testcode_RVC:
 	c.slli		x0, 31
 	c.slli		x31, 31
 	c.nop
+	c.lwsp		x1, 0(sp)
+	c.lwsp		x1, 252(sp)
+	c.lwsp		x1, 252(sp)
+
 	# CSS_type
 	c.swsp		x8, 0(sp)
 	c.swsp		x15, 252(sp)

@@ -47,6 +47,12 @@ decode_GENERIC_next_argument:
 	beq		s3, t1, decode_GENERIC_skip_comma
 	li		t1, 0x05						# skip comma after S-type offset
 	beq		s3, t1, decode_GENERIC_skip_comma
+	#ifdef DISASS_RVC
+		li		t1, 0x1f					# skip comma after I_4imm offset
+		beq		s3, t1, decode_GENERIC_skip_comma
+	#endif
+	li		t1, 0x05						# skip comma after S-type offset
+	beq		s3, t1, decode_GENERIC_skip_comma
 	srai	t0, s0, 8
 	beqz	t0, decode_GENERIC_done
 	jal		print_comma

@@ -16,6 +16,7 @@
 .global dis_CS_imm
 .global dis_CB_imm
 .global dis_CJ_off
+.global dis_CI_4imm
 
 .text
 
@@ -64,8 +65,26 @@ dis_CI_imm:
 	or		a0, t0, t1
 	jal		print_decimal
 	j		pop_ra_ret
-	ret
 .size dis_CI_imm, .-dis_CI_imm
+
+
+# in: a0 = instruction word
+dis_CI_4imm:
+	addi	sp, sp, -(XLEN_BYTES*1)
+	SAVE_X	ra, 0(sp)
+	# inst[12] -> imm[5]
+	srli	t0, a0, 12
+	slli	t0, t0, 5
+	andi	t0, t0, 0b100000
+	# inst[6:2] -> imm[4:0]
+	srli	t1, a0, 2
+	andi	t1, t1, 0b11111
+	# join everything
+	or		a0, t0, t1
+	slli	a0, a0, 2					# imm *4
+	jal		print_decimal
+	j		pop_ra_ret
+.size dis_CI_4imm, .-dis_CI_4imm
 
 
 # in: a0 = instruction word
@@ -102,6 +121,12 @@ dis_CB_imm:
 dis_CJ_off:
 	ret
 .size dis_CJ_off, .-dis_CJ_off
+
+
+# in: a0 = instruction word
+dis_CA_imm:
+	ret
+.size dis_CA_imm, .-dis_CA_imm
 
 
 #endif /* (WITH_CMD_D) && defined (DISASS_RVC) */

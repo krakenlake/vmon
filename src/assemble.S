@@ -131,9 +131,14 @@ assemble_GENERIC_next_argument:
 	beq		s3, t1, assemble_GENERIC_skip_comma
 	li		t1, 0x05						# no comma after S-type offset
 	beq		s3, t1, assemble_GENERIC_skip_comma
+	#ifdef DISASS_RVC
+		li		t1, 0x1f					# no comma after I_4imm offset
+		beq		s3, t1, assemble_GENERIC_skip_comma
+	#endif
 	srai	t0, s0, 8
 	beqz	t0, assemble_GENERIC_done
 	jal		expect_comma
+	beqz	a0, assemble_GENERIC_error		# missing comma
 assemble_GENERIC_skip_comma:
 	srai	s0, s0, 8						# shift mask to next control word byte
 	j 		assemble_GENERIC_next_argument
