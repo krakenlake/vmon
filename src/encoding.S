@@ -857,7 +857,7 @@ encoding_table:
 	.word MASK_AMOMIN_W,	MATCH_AMOMIN_W,		string_OP_AMOMINW,	0x00090301
 	.word MASK_AMOMAXU_W,	MATCH_AMOMAXU_W,	string_OP_AMOMAXUW,	0x00090301
 	.word MASK_AMOMINU_W,	MATCH_AMOMINU_W,	string_OP_AMOMINUW,	0x00090301
-		# RV64A
+	# RV64A
 	#if XLEN >= 64
 		.word MASK_LR_D, 		MATCH_LR_D,			string_OP_LRD,		0x00000901
 		.word MASK_SC_D, 		MATCH_SC_D, 		string_OP_SCD,		0x00090301
@@ -963,6 +963,7 @@ encoding_table:
 
 # RVC
 #ifdef DISASS_RVC
+	# RV32C
 	.word MASK_C_LW,		MATCH_C_LW,			string_OP_C_LW,			0x00151b17	# todo: check
 	.word MASK_C_SW,		MATCH_C_SW,			string_OP_C_SW,			0x00171b16	# todo: check
 	.word MASK_C_ADDI,		MATCH_C_ADDI,		string_OP_C_ADDI,		0x00001813	# todo: check
@@ -1002,6 +1003,7 @@ encoding_table:
 		.word MASK_C_FSWSP,	MATCH_C_FSWSP,	string_OP_C_FSWSP,		0x00000000	# todo
 	#endif /* DISASS_RVF */
 
+	# RV64C
 	#if XLEN >= 64
 		.word MASK_C_LD,		MATCH_C_LD,		string_OP_C_LD,		0x00000000	# todo
 		.word MASK_C_SD,		MATCH_C_SD,		string_OP_C_SD,		0x00000000	# todo
@@ -1014,6 +1016,15 @@ encoding_table:
 			.word MASK_C_FSDSP,	MATCH_C_FSDSP,	string_OP_C_FSDSP,	0x00000000	# todo
 		#endif /* DISASS_RVF */
 	#endif /* XLEN >= 64 */
+
+	# RV128C
+	#if XLEN >= 128
+		.word MASK_C_LQ,		MATCH_C_LD,		string_OP_C_LD,		0x00000000	# todo
+		.word MASK_C_SQ,		MATCH_C_SD,		string_OP_C_SD,		0x00000000	# todo
+		.word MASK_C_LQSP,		MATCH_C_LDSP,	string_OP_C_LDSP,	0x00000000	# todo
+		.word MASK_C_SQSP,		MATCH_C_SDSP,	string_OP_C_SDSP,	0x00000000	# todo
+	#endif /* XLEN >= 128 */
+
 #endif /* DISASS_RVC */
 
 # Zifencei
