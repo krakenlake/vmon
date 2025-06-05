@@ -6,6 +6,7 @@
 
 #if defined (WITH_CMD_A) && defined (DISASS_RVC)
 
+.global ass_C_rd_nonzero
 .global ass_C_rs2
 .global ass_C_rda
 .global ass_C_rs1a
@@ -25,11 +26,45 @@
 .text
 
 
-# in: a0 = ptr to first char of argument
+# in: a0 = ptr to first char
 # in: a1 = insn word to be modifed
 # in: a2 = origin address
 # out: a0 = ptr to char after argument
 # out: a1 = insn word (0 on error)
+ass_C_rd_nonzero:
+	addi	sp, sp, -(XLEN_BYTES*4)
+	SAVE_X	s2, 0(sp)
+	SAVE_X	s1, (XLEN_BYTES*1)(sp)
+	SAVE_X	s0, (XLEN_BYTES*2)(sp)
+	SAVE_X	ra, (XLEN_BYTES*3)(sp)
+	mv		s1, a1								# save insn word
+	# parse register name
+	mv		s0, a0								# save string start
+	jal		find_register_name_end
+	# end in a0
+	mv		s2, a0								# save string end
+	mv		a1, a0								# reg name end
+	mv		a0, s0								# reg name start
+	# now look into either int register table or float register table
+	# and get the index of the register back (a0 < 0 on error)
+	jal		get_int_register_index_by_name
+	blez	a0, ass_C_rd_nonzero_error			# register zero also not allowed
+	# register number now in a0
+	# assemble into a1
+	sll		a0, a0, 7
+	or		a1, s1, a0
+	j		ass_C_rd_nonzero_done
+ass_C_rd_nonzero_error:
+	mv		a1, zero
+ass_C_rd_nonzero_done:
+	addi	a0, s2, 1							# return reg name end +1
+	j		pop_s2_s1_s0_ra_ret
+.size ass_C_rd_nonzero, .-ass_C_rd_nonzero
+
+
+# facade for assemble_register:
+# - add parameter for sll in t0
+# - add parameter for lookup function in t1
 ass_C_rs2:
 	li		t0, 2
 	la		t1, get_int_register_index_by_name
@@ -37,11 +72,9 @@ ass_C_rs2:
 .size ass_C_rs2, .-ass_C_rs2
 
 
-# in: a0 = ptr to first char of argument
-# in: a1 = insn word to be modifed
-# in: a2 = origin address
-# out: a0 = ptr to char after argument
-# out: a1 = insn word (0 on error)
+# facade for assemble_register:
+# - add parameter for sll in t0
+# - add parameter for lookup function in t1
 ass_C_rs1a:
 	li		t0, 7
 	la		t1, get_int_register_index_by_name
@@ -49,11 +82,9 @@ ass_C_rs1a:
 .size ass_C_rs1a, .-ass_C_rs1a
 
 
-# in: a0 = ptr to first char of argument
-# in: a1 = insn word to be modifed
-# in: a2 = origin address
-# out: a0 = ptr to char after argument
-# out: a1 = insn word (0 on error)
+# facade for assemble_register:
+# - add parameter for sll in t0
+# - add parameter for lookup function in t1
 ass_C_rs2a:
 	li		t0, 2
 	la		t1, get_int_register_index_by_name
