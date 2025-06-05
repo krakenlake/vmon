@@ -989,7 +989,7 @@ encoding_table:
 	.word MASK_C_EBREAK,	MATCH_C_EBREAK,		string_OP_C_EBREAK,		0x00000000	# todo: check / before c.jalr, c.add
 	.word MASK_C_JALR,		MATCH_C_JALR,		string_OP_C_JALR,		0x00000013	# todo: check / before c.add
 	.word MASK_C_ADD,		MATCH_C_ADD,		string_OP_C_ADD,		0x00001413	# todo: check
-	.word MASK_C_SWSP,		MATCH_C_SWSP,		string_OP_C_SWSP,		0x00002014	# todo: check
+	.word MASK_C_SWSP,		MATCH_C_SWSP,		string_OP_C_SWSP,		0x00002014
 	.word MASK_C_NOP,		MATCH_C_NOP,		string_OP_C_NOP,		0x00000000	# todo
 	.word MASK_C_ADDI16SP,	MATCH_C_ADDI16SP,	string_OP_C_ADDI16SP,	0x00000000	# todo
 	.word MASK_C_JR,		MATCH_C_JR,			string_OP_C_JR,			0x00000013	# todo: check / before c.mv

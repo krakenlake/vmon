@@ -684,8 +684,6 @@ testcode_RVC:
 	c.xor		x14, x15
 	c.sub		x14, x15
 	# CI_type
-	c.lwsp		x8, 0(sp)
-	c.lwsp		x15, 252(sp)
 	c.li		x1, 0
 	c.li		x1, 1
 	c.li		x31, 31
@@ -707,6 +705,8 @@ testcode_RVC:
 	c.slli		x0, 31
 	c.slli		x31, 31
 	c.nop
+	
+	# CI_4imm
 	c.lwsp		x8, 0(sp)
 	c.lwsp		x9, 4(sp)
 	c.lwsp		x10, 8(sp)

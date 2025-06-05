@@ -166,14 +166,19 @@ ass_CI_4imm:
 	andi	t0, a1, 0b11
 	bnez	t0, ass_CI_4imm_error		# numeric not 4-byte aligned	
 	# assemble imm from numeric
-	andi	t0, a1, 0b1111100	
-	slli	t1, a1, 5
-	li		t2, 1
-	slli	t2, t2, 12
-	and		t1, t1, t2
-	# add imm to insn
+	# offset[7:6] -> insn[3:2]
+	andi	t0, a1, 0b11000000
+	srli	t0, t0, 4
+	# offset[5] -> insn[12]
+	andi	t1, a1, 0b100000
+	slli	t1, t1, 7
+	# offset[4:2] -> insn[6:4]
+	andi	t2, a1, 0b111100
+	slli	t2, t2, 2
+	# put everything together
 	or		a1, s0, t0
 	or		a1, a1, t1
+	or		a1, a1, t2
 ass_CI_4imm_continue:
 	# return a1 and a0
 	j		ass_CI_4imm_done

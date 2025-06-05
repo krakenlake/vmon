@@ -76,16 +76,18 @@ dis_CI_imm:
 dis_CI_4imm:
 	addi	sp, sp, -(XLEN_BYTES*1)
 	SAVE_X	ra, 0(sp)
-	# inst[12] -> imm[5]
-	srli	t0, a0, 12
-	slli	t0, t0, 5
-	andi	t0, t0, 0b100000
-	# inst[6:2] -> imm[4:0]
-	srli	t1, a0, 2
-	andi	t1, t1, 0b11111
-	# join everything
+	# insn[6:4] -> offset[4:2]
+	srli	t0, a0, 2
+	andi	t0, t0, 0b11100
+	# insn[12] -> offset[5]
+	srli	t1, a0, 7
+	andi	t1, t1, 0b100000
+	# insn[3:2] -> offset[7:6]
+	slli	t2, a0, 4
+	andi	t2, t2, 0b11000000
+	# put everything together
 	or		a0, t0, t1
-	slli	a0, a0, 2					# imm *4
+	or		a0, a0, t2
 	jal		print_decimal
 	j		pop_ra_ret
 .size dis_CI_4imm, .-dis_CI_4imm
