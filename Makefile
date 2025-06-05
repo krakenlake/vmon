@@ -8,8 +8,8 @@ default: this
 #TARGET ?= qemu-32i-mini
 #TARGET ?= qemu-32ic-mini
 #TARGET ?= qemu-64g
-#TARGET ?= qemu-64gqc
-TARGET ?= qemu-64gc
+TARGET ?= qemu-64gqc
+#TARGET ?= qemu-64gc
 #TARGET ?= vf2
 
 

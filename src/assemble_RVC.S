@@ -19,6 +19,8 @@
 .global ass_CB_imm
 .global ass_CJ_off
 .global ass_CI_4imm
+.global ass_CI_8imm
+.global ass_CI_16imm
 .global ass_CSS_imm
 .global ass_CL_rel
 
@@ -178,25 +180,50 @@ ass_CI_imm_done:
 .size ass_CI_imm, .-ass_CI_imm
 
 
+# c.lwsp facade for ass_CI_lXsp
+ass_CI_4imm:
+	li		t0, 0
+	li		t1, 0b11
+	j		ass_CI_lXsp
+.size ass_CI_4imm, .-ass_CI_4imm
+ass_CI_8imm:
+	li		t0, 1
+	li		t1, 0b111
+	j		ass_CI_lXsp
+.size ass_CI_8imm, .-ass_CI_8imm
+ass_CI_16imm:
+	li		t0, 2
+	li		t1, 0b1111
+	j		ass_CI_lXsp
+.size ass_CI_16imm, .-ass_CI_16imm
 # in: a0 = ptr to first char of argument
 # in: a1 = insn word to be modifed
 # in: a2 = origin address
+# in: t0 = shift value (0 for LWSP, 1 for LDSP, 2 for LQSP)
+# in: t1 = alignment bitmask (0b11 for LWSP, 0b111 for LDSP, 0b1111 for LQSP)
 # out: a0 = ptr to char after argument
 # out: a1 = insn word (0 on error)
-ass_CI_4imm:
-	addi	sp, sp, -(XLEN_BYTES*2)
-	SAVE_X	s0, 0(sp)
-	SAVE_X	ra, (XLEN_BYTES*1)(sp)
+ass_CI_lXsp:
+	addi	sp, sp, -(XLEN_BYTES*4)
+	SAVE_X	s2, 0(sp)
+	SAVE_X	s1, (XLEN_BYTES*1)(sp)
+	SAVE_X	s0, (XLEN_BYTES*2)(sp)
+	SAVE_X	ra, (XLEN_BYTES*3)(sp)
+	mv		s2, t1						# save shift value
+	mv		s1, t0						# save shift value
 	mv		s0, a1						# save insn word
 	jal		get_numeric
 	# imm  value in a1
-	bnez	a2, ass_CI_4imm_error
-	bltz	a1, ass_CI_4imm_error		# numeric too small
+	bnez	a2, ass_CI_lXsp_error
+	bltz	a1, ass_CI_lXsp_error		# numeric too small
 	li		t0, 252
-	bgt		a1, t0, ass_CI_4imm_error	# numeric too big	
-	andi	t0, a1, 0b11
-	bnez	t0, ass_CI_4imm_error		# numeric not 4-byte aligned	
+	sll		t0, t0, s1					# c.lwsp/c.ldsp/c.lqsp adjustment shift
+	bgt		a1, t0, ass_CI_lXsp_error	# numeric too big	
+	# check for numberic for proper alignment
+	and		t0, a1, s2					# bitmask for 16imm alignment
+	bnez	t0, ass_CI_lXsp_error		# numeric not 4/8/16 byte aligned, depending on s1
 	# assemble imm from numeric
+	srl		a1, a1, s1					# c.lwsp/c.ldsp/c.lqsp adjustment shift
 	# offset[7:6] -> insn[3:2]
 	andi	t0, a1, 0b11000000
 	srli	t0, t0, 4
@@ -204,20 +231,21 @@ ass_CI_4imm:
 	andi	t1, a1, 0b100000
 	slli	t1, t1, 7
 	# offset[4:2] -> insn[6:4]
-	andi	t2, a1, 0b111100
+	andi	t2, a1, 0b11100
 	slli	t2, t2, 2
 	# put everything together
 	or		a1, s0, t0
 	or		a1, a1, t1
 	or		a1, a1, t2
-ass_CI_4imm_continue:
+ass_CI_lXsp_continue:
 	# return a1 and a0
-	j		ass_CI_4imm_done
-ass_CI_4imm_error:
+	j		ass_CI_lXsp_done
+ass_CI_lXsp_error:
 	mv		a1, zero
-ass_CI_4imm_done:
-	j		pop_s0_ra_ret
-.size ass_CI_4imm, .-ass_CI_4imm
+ass_CI_lXsp_done:
+	j		pop_s2_s1_s0_ra_ret
+.size ass_CI_lXsp, .-ass_CI_lXsp
+
 
 
 # in: a0 = ptr to first char of argument

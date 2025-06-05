@@ -17,6 +17,8 @@
 .global dis_CB_imm
 .global dis_CJ_off
 .global dis_CI_4imm
+.global dis_CI_8imm
+.global dis_CI_16imm
 .global dis_CSS_imm
 .global dis_CL_rel
 
@@ -73,7 +75,20 @@ dis_CI_imm:
 
 
 # in: a0 = instruction word
+# in: t3 = shift value (0 for LWSP, 1 for LDSP, 2 for LQSP)
 dis_CI_4imm:
+	li		t3, 0
+	j		dis_CI_lXsp
+.size dis_CI_lXsp, .-dis_CI_lXsp
+dis_CI_8imm:
+	li		t3, 1
+	j		dis_CI_lXsp
+.size dis_CI_8imm, .-dis_CI_8imm
+dis_CI_16imm:
+	li		t3, 2
+	j		dis_CI_lXsp
+.size dis_CI_16imm, .-dis_CI_16imm
+dis_CI_lXsp:
 	addi	sp, sp, -(XLEN_BYTES*1)
 	SAVE_X	ra, 0(sp)
 	# insn[6:4] -> offset[4:2]
@@ -88,9 +103,10 @@ dis_CI_4imm:
 	# put everything together
 	or		a0, t0, t1
 	or		a0, a0, t2
+	sll		a0, a0, t3					# c.lwsp/c.ldsp/c.lqsp adjustment shift
 	jal		print_decimal
 	j		pop_ra_ret
-.size dis_CI_4imm, .-dis_CI_4imm
+.size dis_CI_lXsp, .-dis_CI_lXsp
 
 
 # in: a0 = instruction word

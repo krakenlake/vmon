@@ -772,8 +772,17 @@ testcode_RVC_CB_type_end:
 	#endif
 	# RV64C
 	#if XLEN >= 64
+
+		# CI_8imm
 		c.ldsp		x8, 0(sp)
-		c.ldsp		x15, 496(sp)
+		c.ldsp		x9, 8(sp)
+		c.ldsp		x10, 16(sp)
+		c.ldsp		x11, 32(sp)
+		c.ldsp		x12, 64(sp)
+		c.ldsp		x13, 128(sp)
+		c.ldsp		x14, 256(sp)
+		c.ldsp		x15, 504(sp)
+
 		c.sdsp		x8, 0(sp)
 		c.sdsp		x15, 496(sp)
 		c.ld		x8, 0(x8)
