@@ -18,6 +18,7 @@
 .global dis_CJ_off
 .global dis_CI_4imm
 .global dis_CSS_imm
+.global dis_CL_rel
 
 .text
 
@@ -37,12 +38,14 @@ dis_C_rda:
 
 # in: a0 = instruction word
 dis_C_rs1a:
+	# todo
 	ret
 .size dis_C_rs1a, .-dis_C_rs1a
 
 
 # in: a0 = instruction word
 dis_C_rs2a:
+	# todo
 	ret
 .size dis_C_rs2a, .-dis_C_rs2a
 
@@ -92,8 +95,11 @@ dis_CI_4imm:
 dis_CSS_imm:
 	addi	sp, sp, -(XLEN_BYTES*1)
 	SAVE_X	ra, 0(sp)
-	srli	a0, a0, 5
-	andi	a0, a0, 0b111111100
+	srli	t0, a0, 7
+	andi	t0, t0, 0b111100
+	srli	t1, a0, 1
+	andi	t1, t1, 0b11000000
+	or		a0, t0, t1
 	jal		print_decimal
 	j		pop_ra_ret
 .size dis_CSS_imm, .-dis_CSS_imm
@@ -107,14 +113,27 @@ dis_CIW_imm:
 
 # in: a0 = instruction word
 dis_CL_imm:
-	ret
+	addi	sp, sp, -(XLEN_BYTES*1)
+	SAVE_X	ra, 0(sp)
+
+	srli	t0, a0, 3
+	andi	t0, a0, 0b1100
+
+	srli	t1, a0, 6
+	andi	t1, t1, 0b1110000
+
+
+
+
+	#if XLEN >=64
+		sext.w	t0, t0					# sign-extend to 64 bits
+	#endif	
+
+	# join everything
+	or		a0, t0, t1
+	jal		print_decimal
+	j		pop_ra_ret
 .size dis_CL_imm, .-dis_CL_imm
-
-
-# in: a0 = instruction word
-dis_CS_imm:
-	ret
-.size dis_CS_imm, .-dis_CS_imm
 
 
 # in: a0 = instruction word
@@ -133,6 +152,23 @@ dis_CJ_off:
 dis_CA_imm:
 	ret
 .size dis_CA_imm, .-dis_CA_imm
+
+
+# in: instruction word in a0
+dis_CL_rel:
+	addi	sp, sp, -(XLEN_BYTES*2)
+	SAVE_X	ra, 0(sp)
+	SAVE_X	a0, (XLEN_BYTES*1)(sp)
+	li		a0, '('
+	jal		print_char
+	LOAD_X	a0, (XLEN_BYTES*1)(sp)
+	jal		dis_C_rs1a
+	li		a0, ')'
+	jal		print_char
+	LOAD_X	ra, 0(sp)
+	addi	sp, sp, (XLEN_BYTES*2)
+	ret
+.size dis_CL_rel, .-dis_CL_rel
 
 
 #endif /* (WITH_CMD_D) && defined (DISASS_RVC) */

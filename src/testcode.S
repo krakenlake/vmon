@@ -707,12 +707,23 @@ testcode_RVC:
 	c.slli		x0, 31
 	c.slli		x31, 31
 	c.nop
-	c.lwsp		x1, 0(sp)
-	c.lwsp		x1, 252(sp)
-	c.lwsp		x1, 252(sp)
+	c.lwsp		x8, 0(sp)
+	c.lwsp		x9, 4(sp)
+	c.lwsp		x10, 8(sp)
+	c.lwsp		x11, 16(sp)
+	c.lwsp		x12, 32(sp)
+	c.lwsp		x13, 64(sp)
+	c.lwsp		x14, 128(sp)
+	c.lwsp		x15, 252(sp)
 
 	# CSS_type
 	c.swsp		x8, 0(sp)
+	c.swsp		x9, 4(sp)
+	c.swsp		x10, 8(sp)
+	c.swsp		x11, 16(sp)
+	c.swsp		x12, 32(sp)
+	c.swsp		x13, 64(sp)
+	c.swsp		x14, 128(sp)
 	c.swsp		x15, 252(sp)
 	# CJ_type
 	c.j			testcode_RVC

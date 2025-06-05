@@ -134,6 +134,8 @@ assemble_GENERIC_next_argument:
 	#ifdef DISASS_RVC
 		li		t1, 0x1f					# no comma after I_4imm offset
 		beq		s3, t1, assemble_GENERIC_skip_comma
+		li		t1, 0x1b					# no comma after c.lw/c.sw offset
+		beq		s3, t1, assemble_GENERIC_skip_comma
 	#endif
 	srai	t0, s0, 8
 	beqz	t0, assemble_GENERIC_done
