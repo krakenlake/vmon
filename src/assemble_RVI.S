@@ -2,6 +2,7 @@
 #include "vmon/ASCII.h"
 #include "vmon/encoding.h"
 #include "vmon/register.h"
+#include "vmon/stack.h"
 
 
 #ifdef WITH_CMD_A
@@ -101,10 +102,7 @@ assemble_I_imm_shift_done:
 # out: a0 = ptr to char after argument
 # out: a1 = insn word (0 on error)
 ass_I_rel:
-	addi	sp, sp, -(XLEN_BYTES*3)
-	SAVE_X	s1, 0(sp)
-	SAVE_X	s0, (XLEN_BYTES*1)(sp)
-	SAVE_X	ra, (XLEN_BYTES*2)(sp)
+	PUSH_S1_S0_RA
 	mv		s1, a1						# save insn word
 	mv		s0, a0						# return string ptr later
 	mv		s1, a1						# insn word
@@ -126,7 +124,7 @@ ass_I_rel_continue:
 ass_I_rel_error:
 	mv		a1, zero
 ass_I_rel_done:
-	j		pop_s1_s0_ra_ret
+	POP_S1_S0_RA_RET
 .size ass_I_rel, .-ass_I_rel
 
 
@@ -176,13 +174,7 @@ ass_rs2:
 # out: a0 = ptr to char after argument
 # out: a1 = insn word (0 on error)
 assemble_register:
-	addi	sp, sp, -(XLEN_BYTES*6)
-	SAVE_X	s4, 0(sp)
-	SAVE_X	s3, (XLEN_BYTES*1)(sp)
-	SAVE_X	s2, (XLEN_BYTES*2)(sp)
-	SAVE_X	s1, (XLEN_BYTES*3)(sp)
-	SAVE_X	s0, (XLEN_BYTES*4)(sp)
-	SAVE_X	ra, (XLEN_BYTES*5)(sp)
+	PUSH_S4_S3_S2_S1_S0_RA
 	mv		s3, t0
 	mv		s4, t1
 	mv		s1, a1								# save insn word
@@ -206,7 +198,7 @@ assemble_register_error:
 	mv		a1, zero
 assemble_register_done:
 	addi	a0, s2, 1							# return reg name end +1
-	j		pop_s4_s3_s2_s1_s0_ra_ret
+	POP_S4_S3_S2_S1_S0_RA_RET
 .size assemble_register, .-assemble_register
 
 
@@ -216,11 +208,7 @@ assemble_register_done:
 # out: a0 = ptr to char after argument
 # out: a1 = insn word (0 on error)
 ass_BRA:
-	addi	sp, sp, -(XLEN_BYTES*4)
-	SAVE_X	s2, 0(sp)
-	SAVE_X	s1, (XLEN_BYTES*1)(sp)
-	SAVE_X	s0, (XLEN_BYTES*2)(sp)
-	SAVE_X	ra, (XLEN_BYTES*3)(sp)
+	PUSH_S2_S1_S0_RA
 	mv		s1, a1						# save insn word
 	mv		s0, a2						# save for later
 	jal		get_numeric
@@ -239,7 +227,7 @@ ass_BRA:
 ass_BRA_error:
 	mv		a1, zero
 ass_BRA_done:
-	j		pop_s2_s1_s0_ra_ret
+	POP_S2_S1_S0_RA_RET
 .size ass_BRA, .-ass_BRA
 
 
@@ -249,10 +237,7 @@ ass_BRA_done:
 # out: a0 = ptr to char after argument
 # out: a1 = insn word (0 on error)
 ass_I_imm:
-	addi	sp, sp, -(XLEN_BYTES*3)
-	SAVE_X	s1, 0(sp)
-	SAVE_X	s0, (XLEN_BYTES*1)(sp)
-	SAVE_X	ra, (XLEN_BYTES*2)(sp)
+	PUSH_S1_S0_RA
 	mv		s1, a1						# save insn word
 	jal		get_numeric
 	# imm  value in a1
@@ -287,7 +272,7 @@ ass_I_imm_continue:
 ass_I_imm_error:
 	mv		a1, zero
 ass_I_imm_done:
-	j		pop_s1_s0_ra_ret
+	POP_S1_S0_RA_RET
 .size ass_I_imm, .-ass_I_imm
 
 
@@ -299,9 +284,7 @@ ass_I_imm_done:
 # out: a0 = ptr to char after argument
 # out: a1 = insn word (0 on error)
 ass_S_imm:
-	addi	sp, sp, -(XLEN_BYTES*2)
-	SAVE_X	s0, 0(sp)
-	SAVE_X	ra, (XLEN_BYTES*1)(sp)
+	PUSH_S0_RA
 	mv		s0, a1						# save insn word
 	jal		get_numeric
 	bnez	a2, ass_S_rel_error
@@ -326,7 +309,7 @@ ass_S_rel_continue:
 ass_S_rel_error:
 	mv		a1, zero
 ass_S_rel_done:
-	j		pop_s0_ra_ret
+	POP_S0_RA_RET
 .size ass_S_imm, .-ass_S_imm
 
 
@@ -337,11 +320,7 @@ ass_S_rel_done:
 # out: a0 = ptr to char after argument
 # out: a1 = insn word (0 on error)
 ass_iorw:
-	addi	sp, sp, -(XLEN_BYTES*4)
-	SAVE_X	s2, 0(sp)
-	SAVE_X	s1, (XLEN_BYTES*1)(sp)
-	SAVE_X	s0, (XLEN_BYTES*2)(sp)
-	SAVE_X	ra, (XLEN_BYTES*3)(sp)
+	PUSH_S2_S1_S0_RA
 	mv		s0, t0						# shift value from ass_PRE or ass_SUC
 	mv		s1, a1						# save insn word
 	jal		parse_iorw
@@ -355,7 +334,7 @@ ass_iorw:
 ass_iorw_error:
 	mv		a1, zero
 ass_iorw_done:
-	j		pop_s2_s1_s0_ra_ret
+	POP_S2_S1_S0_RA_RET
 .size ass_iorw, .-ass_iorw
 
 
@@ -387,11 +366,7 @@ ass_SUC:
 # out: a0 = ptr to char after argument
 # out: a1 = insn word (0 on error)
 ass_J:
-	addi	sp, sp, -(XLEN_BYTES*4)
-	SAVE_X	s2, 0(sp)
-	SAVE_X	s1, (XLEN_BYTES*1)(sp)
-	SAVE_X	s0, (XLEN_BYTES*2)(sp)
-	SAVE_X	ra, (XLEN_BYTES*3)(sp)
+	PUSH_S2_S1_S0_RA
 	mv		s1, a1						# save insn word
 	mv		s0, a2						# save origin address
 	jal		get_numeric
@@ -427,7 +402,7 @@ ass_J:
 ass_J_error:
 	mv		a1, zero
 ass_J_done:
-	j		pop_s2_s1_s0_ra_ret
+	POP_S2_S1_S0_RA_RET
 .size ass_J, .-ass_J
 
 
@@ -437,10 +412,7 @@ ass_J_done:
 # out: a0 = ptr to char after argument
 # out: a1 = insn word (0 on error)
 ass_U_imm:
-	addi	sp, sp, -(XLEN_BYTES*3)
-	SAVE_X	s1, 0(sp)
-	SAVE_X	s0, (XLEN_BYTES*1)(sp)
-	SAVE_X	ra, (XLEN_BYTES*2)(sp)
+	PUSH_S1_S0_RA
 	mv		s1, a1						# save insn word
 	jal		get_numeric
 	# imm  value in a1
@@ -457,7 +429,7 @@ ass_U_imm:
 ass_U_imm_error:
 	mv		a1, zero
 ass_U_imm_done:
-	j		pop_s1_s0_ra_ret
+	POP_S1_S0_RA_RET
 .size ass_U_imm, .-ass_U_imm
 
 

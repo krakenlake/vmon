@@ -26,27 +26,25 @@
 
 
 print_comma:
-	addi	sp, sp, -(XLEN_BYTES*1)	
-	SAVE_X	ra, 0(sp)
+	PUSH_RA
 	li		a0, ','
 	jal		print_char
 	#ifdef SPACE_AFTER_COMMA
 		jal		print_space
 	#endif
-	j		pop_ra_ret
+	POP_RA_RET
 .size print_comma, .-print_comma
 
 
 print_newline:
-	addi	sp, sp, -(XLEN_BYTES*1)
-	SAVE_X	ra, 0(sp)
+	PUSH_RA
 	#ifdef USE_CRLF
 		li		a0, ASCII_RETURN
 		jal		print_char
 	#endif
 	li		a0, ASCII_NEWLINE
 	jal		print_char
-	j		pop_ra_ret
+	POP_RA_RET
 .size print_newline, .-print_newline
 
 
@@ -59,9 +57,7 @@ print_space:
 # print hex value with "0x" prefix
 # in: a0 = value to print
 print_hex:
-	addi	sp, sp, -(XLEN_BYTES*2)
-	SAVE_X	s0, 0(sp)
-	SAVE_X	ra, (XLEN_BYTES*1)(sp)
+	PUSH_S0_RA
 	# print "0x"
 	mv		s0, a0						# save a0 for later
 	li		a0, '0'
@@ -71,15 +67,14 @@ print_hex:
 	mv		a0, s0						# restore a0
 	# print value
 	jal		print_hex_raw
-	j		pop_s0_ra_ret
+	POP_S0_RA_RET
 .size print_hex, .-print_hex
 
 
 # print hex value (no trailing zeroes, no prefix)
 # in: a0 = value to print
 print_hex_raw:
-	addi	sp, sp, -(XLEN_BYTES*1)
-	SAVE_X	ra, 0(sp)
+	PUSH_RA
 	# terminate buffer at the end
 	# TODO: do buffer termination only once
 	la		t2, out_buf
@@ -101,16 +96,14 @@ print_hex_new_decimal:
 	# print buffer
 	mv		a0, t2
 	jal		print_string
-	j		pop_ra_ret
+	POP_RA_RET
 .size print_hex_raw, .-print_hex_raw
 
 
 # print a 2-digit hex value (with leading zero for 1-digit values)
 # in: byte value in a0
 print_hex_byte:
-	addi	sp, sp, -(XLEN_BYTES*2)
-	SAVE_X	s0, 0(sp)
-	SAVE_X	ra, (XLEN_BYTES*1)(sp)
+	PUSH_S0_RA
 	li		t0, 15
 	bgt		a0, t0, print_hex_byte_two_digits
 	# print a leading zero if necessary
@@ -120,7 +113,7 @@ print_hex_byte:
 	mv		a0, s0					# restore a0
 print_hex_byte_two_digits:
 	jal		print_hex_raw
-	j		pop_s0_ra_ret
+	POP_S0_RA_RET
 .size print_hex_byte, .-print_hex_byte
 
 
@@ -129,10 +122,7 @@ print_hex_byte_two_digits:
 # in: a1 = width (in bytes) to print	
 # in: a2 = print 0x prefix? (0=no, otherwise yes)
 print_hex_fixed_width:
-	addi	sp, sp, -(XLEN_BYTES*3)
-	SAVE_X	s1, 0(sp)
-	SAVE_X	s0, (XLEN_BYTES*1)(sp)
-	SAVE_X	ra, (XLEN_BYTES*2)(sp)
+	PUSH_S1_S0_RA
 	mv		s0, a0
 	mv		s1, a1
 	beqz	a2, print_hex_fixed_width_loop
@@ -147,15 +137,14 @@ print_hex_fixed_width_loop:
 	and		a0, a0, 0xff 	# mask low order byte and print
 	call	print_hex_byte
 	bnez	s1, print_hex_fixed_width_loop
-	j		pop_s1_s0_ra_ret
+	POP_S1_S0_RA_RET
 .size print_hex_fixed_width, .-print_hex_fixed_width
 
 
 # print char to terminal (if printable, else '.')
 # in: a0 = char to print
 print_ascii:
-	addi	sp, sp, -(XLEN_BYTES*1)
-	SAVE_X	ra, 0(sp)
+	PUSH_RA
 	# consider only chars from 0x20-0x7e as printable
 	li		t0, 0x20
 	blt		a0, t0, print_ascii_substitute
@@ -166,7 +155,7 @@ print_ascii_substitute:
 	li		a0, '.'					# print dot if char is not printable
 print_ascii_out:
 	jal		print_char
-	j		pop_ra_ret
+	POP_RA_RET
 .size print_ascii, .-print_ascii
 
 
@@ -188,9 +177,7 @@ print_string:
 # print 32/64-bit signed decimal to terminal
 # in: a0 = value to print
 print_decimal:
-	addi	sp, sp, -(XLEN_BYTES*2)
-	SAVE_X	s0, 0(sp)
-	SAVE_X	ra, (XLEN_BYTES*1)(sp)
+	PUSH_S0_RA
 	beqz	a0, print_decimal_zero
 	# save a0
 	mv		t6, a0
@@ -227,7 +214,7 @@ print_decimal_zero:
 	li		a0, '0'
 	jal		print_char
 print_decimal_done:
-	j		pop_s0_ra_ret
+	POP_S0_RA_RET
 .size print_decimal, .-print_decimal
 #endif /* defined(WITH_CMD_D) || defined(WITH_CMD_SLASH) */
 
@@ -236,10 +223,7 @@ print_decimal_done:
 # print binary value (64 or 32 bits) to terminal
 # in: a0 = value to print
 print_binary:
-	addi	sp, sp, -(XLEN_BYTES*3)
-	SAVE_X  s1, 0(sp)
-	SAVE_X  s0, (XLEN_BYTES*1)(sp)
-	SAVE_X  ra, (XLEN_BYTES*2)(sp)
+	PUSH_S1_S0_RA
 	mv		s0, a0	       # Use s0 to store the number being processed
 	li		s1, XLEN       # Use s1 for the loop counter (32/64 down to 0)
 print_binary_loop:
@@ -258,7 +242,7 @@ print_binary_loop:
 print_binary_skip_space:
 	j		print_binary_loop
 print_binary_end:
-	j		pop_s1_s0_ra_ret
+	POP_S1_S0_RA_RET
 .size print_binary, .-print_binary
 #endif /* WITH_CMD_QMARK */
 

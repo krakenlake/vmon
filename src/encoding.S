@@ -2,6 +2,7 @@
 #include "riscv/riscv-opc.h"
 #include "vmon/encoding.h"
 #include "vmon/register.h"
+#include "vmon/stack.h"
 
 
 #if defined (WITH_CMD_D) || defined (WITH_CMD_A)
@@ -29,8 +30,6 @@
 # encoding helper functions
 .global is_valid_insn_addr
 .global insn_is_compressed
-.global insn_is_LOAD
-.global insn_is_STORE
 
 .global string_OP_UNKNOWN
 
@@ -65,76 +64,6 @@ insn_is_compressed_yes:
 	li		a0, 1
 	ret
 .size insn_is_compressed, .-insn_is_compressed
-
-
-# in: a3 = insn word
-# out: a4 = 0 if not, nonzero if yes
-insn_is_LOAD:
-	mv		a4, zero
-	li		t1, 0x707f			# MASK for load insns
-	and 	t0, a3, t1			# look at insn opcode bits
-	# int
-	li		t1, MATCH_LB
-	beq		t0, t1, insn_is_LOAD_YES
-	li		t1, MATCH_LH
-	beq		t0, t1, insn_is_LOAD_YES
-	li		t1, MATCH_LW
-	beq		t0, t1, insn_is_LOAD_YES
-	li		t1, MATCH_LD
-	beq		t0, t1, insn_is_LOAD_YES
-	li		t1, MATCH_LBU
-	beq		t0, t1, insn_is_LOAD_YES
-	li		t1, MATCH_LHU
-	beq		t0, t1, insn_is_LOAD_YES
-	li		t1, MATCH_LWU
-	beq		t0, t1, insn_is_LOAD_YES
-#ifdef DISASS_RVF
-	# float
-	li		t1, MATCH_FLW
-	beq		t0, t1, insn_is_LOAD_YES
-	li		t1, MATCH_FLD
-	beq		t0, t1, insn_is_LOAD_YES
-	li		t1, MATCH_FLQ
-	beq		t0, t1, insn_is_LOAD_YES
-	j		insn_is_LOAD_NO
-#endif /* DISASS_RVF */
-insn_is_LOAD_YES:
-	li		a4, 1
-insn_is_LOAD_NO:
-	ret
-.size insn_is_LOAD, .-insn_is_LOAD
-
-
-# in: a3 = insn word
-# out: a4 = 0 if not, nonzero if yes
-insn_is_STORE:
-	mv		a4, zero
-	li		t1, 0x707f			# MASK for store insns
-	and 	t0, a3, t1			# look at insn opcode bits
-	# int
-	li		t1, MATCH_SB
-	beq		t0, t1, insn_is_STORE_YES
-	li		t1, MATCH_SH
-	beq		t0, t1, insn_is_STORE_YES
-	li		t1, MATCH_SW
-	beq		t0, t1, insn_is_STORE_YES
-	li		t1, MATCH_SD
-	beq		t0, t1, insn_is_STORE_YES
-#ifdef DISASS_RVF
-	# float
-	li		t1, MATCH_FSW
-	beq		t0, t1, insn_is_STORE_YES
-	li		t1, MATCH_FSD
-	beq		t0, t1, insn_is_STORE_YES
-	li		t1, MATCH_FSQ
-	beq		t0, t1, insn_is_STORE_YES
-	j		insn_is_STORE_NO
-#endif /* DISASS_RVF */
-insn_is_STORE_YES:
-	li		a4, 1
-insn_is_STORE_NO:
-	ret
-.size insn_is_STORE, .-insn_is_STORE
 
 
 # in: s0 = ptr to search string start
@@ -186,8 +115,7 @@ get_data_by_insn_name_done:
 # in: instruction word in a0
 # out: a3 = ptr to table entry
 get_data_by_insn_word:
-	addi	sp, sp, -(XLEN_BYTES*1)
-	SAVE_X	ra, 0(sp)
+	PUSH_RA
 	# search for a match in encoding table
 	la		t0, encoding_table
 	# clear return values
@@ -206,7 +134,7 @@ get_data_by_insn_word_continue:
 	addi	t0, t0, ENC_ENTRY_SIZE				# point to next table entry
 	j		get_data_by_insn_word_search_next	# repeat
 get_data_by_insn_word_done:
-	j		pop_ra_ret
+	POP_RA_RET
 .size get_data_by_insn_word, .-get_data_by_insn_word
 
 
@@ -229,8 +157,7 @@ get_float_register_name_by_index:
 # in:	a1 = ptr to table (int_register_names or float_register_names)
 # out:	a0 = string ptr
 get_register_name_by_index:
-	addi	sp, sp, -(XLEN_BYTES*1)
-	SAVE_X	ra, 0(sp)
+	PUSH_RA
 get_register_name_by_index_search:
 	beqz	a0, get_register_name_by_index_found
 	addi	a1, a1, 1
@@ -246,9 +173,7 @@ get_register_name_by_index_next_zero:
 	j		get_register_name_by_index_search
 get_register_name_by_index_found:
 	mv		a0, a1
-	LOAD_X	ra, 0(sp)
-	addi	sp, sp, (XLEN_BYTES*1)
-	ret
+	POP_RA_RET
 .size get_register_name_by_index, .-get_register_name_by_index
 
 
@@ -280,8 +205,7 @@ get_float_register_index_by_name:
 # in: a2 = ptr to table (int_register_names or float_register_names)
 # out: a0 = index number of register (-1 if error)
 get_register_index_by_name:
-	addi	sp, sp, -(XLEN_BYTES*1)
-	SAVE_X	ra, 0(sp)
+	PUSH_RA
 	li		a3, 0											# init index counter
 	mv		a4, a0											# save a0 for reuse
 	li		t0, 32											# max entries in table
@@ -322,9 +246,7 @@ get_register_index_by_name_found:
 get_register_index_by_name_not_found:
 	li		a0, -1											# return error
 get_register_index_by_name_done:
-	LOAD_X	ra, 0(sp)
-	addi	sp, sp, (XLEN_BYTES*1)
-	ret
+	POP_RA_RET
 .size get_register_index_by_name, .-get_register_index_by_name
 
 
@@ -1019,7 +941,7 @@ encoding_table:
 	#if XLEN >= 128
 		.word MASK_C_LQ,		MATCH_C_LQ,		string_OP_C_LQ,		0x00000000	# todo
 		.word MASK_C_SQ,		MATCH_C_SQ,		string_OP_C_SQ,		0x00000000	# todo
-		.word MASK_C_LQSP,		MATCH_C_LQSP,	string_OP_C_LQSP,	0x00000000	# todo
+		.word MASK_C_LQSP,		MATCH_C_LQSP,	string_OP_C_LQSP,	0x0000221c	# todo check
 		.word MASK_C_SQSP,		MATCH_C_SQSP,	string_OP_C_SQSP,	0x00000000	# todo
 		#ifdef DISASS_RVQ
 			.word MASK_C_FLQ,	MATCH_C_FLQ,	string_OP_C_FLQ,	0x00000000	# todo

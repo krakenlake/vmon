@@ -2,6 +2,7 @@
 #include "vmon/ASCII.h"
 #include "vmon/encoding.h"
 #include "vmon/register.h"
+#include "vmon/stack.h"
 
 
 #ifdef WITH_CMD_A
@@ -17,12 +18,7 @@
 # out: a0 = insn size (normal 4, 2 for RVC, 0 if error)
 # out: a1 = assembled instruction to be written into memory
 assemble_instruction:
-	addi	sp, sp, -(XLEN_BYTES*5)
-	SAVE_X	s3, 0(sp)
-	SAVE_X	s2, (XLEN_BYTES*1)(sp)
-	SAVE_X	s1, (XLEN_BYTES*2)(sp)
-	SAVE_X	s0, (XLEN_BYTES*3)(sp)
-	SAVE_X	ra, (XLEN_BYTES*4)(sp)
+	PUSH_S4_S3_S2_S1_S0_RA
 
 	mv		s3, zero							# clear RVA aqrl bits
 	jal		skip_whitespace
@@ -83,7 +79,7 @@ assemble_instruction_is_RVC:
 assemble_instruction_error:
 	mv		a0, zero
 assemble_instruction_done:
-	j		pop_s3_s2_s1_s0_ra_ret
+	POP_S4_S3_S2_S1_S0_RA_RET
 .size assemble_instruction, .-assemble_instruction
 
 
@@ -92,13 +88,8 @@ assemble_instruction_done:
 # in: a3 = ptr to encoding table entry
 # out: assembled instruction in a1
 assemble_GENERIC:
-	addi	sp, sp, -(XLEN_BYTES*6)
-	SAVE_X	s4, 0(sp)
-	SAVE_X	s3, (XLEN_BYTES*1)(sp)
-	SAVE_X	s2, (XLEN_BYTES*2)(sp)
-	SAVE_X	s1, (XLEN_BYTES*3)(sp)
-	SAVE_X	s0, (XLEN_BYTES*4)(sp)
-	SAVE_X	ra, (XLEN_BYTES*5)(sp)
+	PUSH_S4_S3_S2_S1_S0_RA
+
 	mv		s2, a2
 	li		s4,	4							# process max. 4 arguments
 	# assemble instruction word in s1, starting with MATCH value from table
@@ -147,7 +138,7 @@ assemble_GENERIC_skip_comma:
 assemble_GENERIC_error:
 	mv		a1, zero
 assemble_GENERIC_done:
-	j		pop_s4_s3_s2_s1_s0_ra_ret
+	POP_S4_S3_S2_S1_S0_RA_RET
 .size assemble_GENERIC, .-assemble_GENERIC
 
 

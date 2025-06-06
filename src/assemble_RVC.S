@@ -2,6 +2,7 @@
 #include "vmon/ASCII.h"
 #include "vmon/encoding.h"
 #include "vmon/register.h"
+#include "vmon/stack.h"
 
 
 #if defined (WITH_CMD_A) && defined (DISASS_RVC)
@@ -34,11 +35,7 @@
 # out: a0 = ptr to char after argument
 # out: a1 = insn word (0 on error)
 ass_C_rd_nonzero:
-	addi	sp, sp, -(XLEN_BYTES*4)
-	SAVE_X	s2, 0(sp)
-	SAVE_X	s1, (XLEN_BYTES*1)(sp)
-	SAVE_X	s0, (XLEN_BYTES*2)(sp)
-	SAVE_X	ra, (XLEN_BYTES*3)(sp)
+	PUSH_S2_S1_S0_RA
 	mv		s1, a1								# save insn word
 	# parse register name
 	mv		s0, a0								# save string start
@@ -60,7 +57,7 @@ ass_C_rd_nonzero_error:
 	mv		a1, zero
 ass_C_rd_nonzero_done:
 	addi	a0, s2, 1							# return reg name end +1
-	j		pop_s2_s1_s0_ra_ret
+	POP_S2_S1_S0_RA_RET
 .size ass_C_rd_nonzero, .-ass_C_rd_nonzero
 
 
@@ -105,13 +102,7 @@ ass_C_rs2a:
 # out: a0 = ptr to char after argument
 # out: a1 = insn word (0 on error)
 assemble_C_register:
-	addi	sp, sp, -(XLEN_BYTES*6)
-	SAVE_X	s4, 0(sp)
-	SAVE_X	s3, (XLEN_BYTES*1)(sp)
-	SAVE_X	s2, (XLEN_BYTES*2)(sp)
-	SAVE_X	s1, (XLEN_BYTES*3)(sp)
-	SAVE_X	s0, (XLEN_BYTES*4)(sp)
-	SAVE_X	ra, (XLEN_BYTES*5)(sp)
+	PUSH_S4_S3_S2_S1_S0_RA
 	mv		s3, t0
 	mv		s4, t1
 	mv		s1, a1								# save insn word
@@ -140,7 +131,7 @@ assemble_C_register_error:
 	mv		a1, zero
 assemble_C_register_done:
 	addi	a0, s2, 1							# return reg name end +1
-	j		pop_s4_s3_s2_s1_s0_ra_ret
+	POP_S4_S3_S2_S1_S0_RA_RET
 .size assemble_C_register, .-assemble_C_register
 
 
@@ -150,9 +141,7 @@ assemble_C_register_done:
 # out: a0 = ptr to char after argument
 # out: a1 = insn word (0 on error)
 ass_CI_imm:
-	addi	sp, sp, -(XLEN_BYTES*2)
-	SAVE_X	s0, 0(sp)
-	SAVE_X	ra, (XLEN_BYTES*1)(sp)
+	PUSH_S0_RA
 	mv		s0, a1						# save insn word
 	jal		get_numeric
 	# imm  value in a1
@@ -176,7 +165,7 @@ ass_CI_imm_continue:
 ass_CI_imm_error:
 	mv		a1, zero
 ass_CI_imm_done:
-	j		pop_s0_ra_ret
+	POP_S0_RA_RET
 .size ass_CI_imm, .-ass_CI_imm
 
 
@@ -204,11 +193,7 @@ ass_CI_16imm:
 # out: a0 = ptr to char after argument
 # out: a1 = insn word (0 on error)
 ass_CI_lXsp:
-	addi	sp, sp, -(XLEN_BYTES*4)
-	SAVE_X	s2, 0(sp)
-	SAVE_X	s1, (XLEN_BYTES*1)(sp)
-	SAVE_X	s0, (XLEN_BYTES*2)(sp)
-	SAVE_X	ra, (XLEN_BYTES*3)(sp)
+	PUSH_S2_S1_S0_RA
 	mv		s2, t1						# save shift value
 	mv		s1, t0						# save shift value
 	mv		s0, a1						# save insn word
@@ -243,7 +228,7 @@ ass_CI_lXsp_continue:
 ass_CI_lXsp_error:
 	mv		a1, zero
 ass_CI_lXsp_done:
-	j		pop_s2_s1_s0_ra_ret
+	POP_S2_S1_S0_RA_RET
 .size ass_CI_lXsp, .-ass_CI_lXsp
 
 
@@ -254,9 +239,7 @@ ass_CI_lXsp_done:
 # out: a0 = ptr to char after argument
 # out: a1 = insn word (0 on error)
 ass_CSS_imm:
-	addi	sp, sp, -(XLEN_BYTES*2)
-	SAVE_X	s0, 0(sp)
-	SAVE_X	ra, (XLEN_BYTES*1)(sp)
+	PUSH_S0_RA
 	mv		s0, a1						# save insn word
 	jal		get_numeric
 	# imm  value in a1
@@ -279,7 +262,7 @@ ass_CSS_imm_continue:
 ass_CSS_imm_error:
 	mv		a1, zero
 ass_CSS_imm_done:
-	j		pop_s0_ra_ret
+	POP_S0_RA_RET
 .size ass_CSS_imm, .-ass_CSS_imm
 
 
@@ -300,9 +283,7 @@ ass_CIW_imm:
 # out: a0 = ptr to char after argument
 # out: a1 = insn word (0 on error)
 ass_CL_imm:
-	addi	sp, sp, -(XLEN_BYTES*2)
-	SAVE_X	s0, 0(sp)
-	SAVE_X	ra, (XLEN_BYTES*1)(sp)
+	PUSH_S0_RA
 	mv		s0, a1						# save insn word
 	jal		get_numeric
 	# imm  value in a1
@@ -324,7 +305,7 @@ ass_CL_imm_continue:
 ass_CL_imm_error:
 	mv		a1, zero
 ass_CL_imm_done:
-	j		pop_s0_ra_ret
+	POP_S0_RA_RET
 .size ass_CL_imm, .-ass_CL_imm
 
 
@@ -336,10 +317,7 @@ ass_CL_imm_done:
 # out: a0 = ptr to char after argument
 # out: a1 = insn word (0 on error)
 ass_CL_rel:
-	addi	sp, sp, -(XLEN_BYTES*3)
-	SAVE_X	s1, 0(sp)
-	SAVE_X	s0, (XLEN_BYTES*1)(sp)
-	SAVE_X	ra, (XLEN_BYTES*2)(sp)
+	PUSH_S1_S0_RA
 	mv		s1, a1						# save insn word
 	mv		s0, a0						# return string ptr later
 	mv		s1, a1						# insn word
@@ -361,7 +339,7 @@ ass_CL_rel_continue:
 ass_CL_rel_error:
 	mv		a1, zero
 ass_CL_rel_done:
-	j		pop_s1_s0_ra_ret
+	POP_S1_S0_RA_RET
 .size ass_CL_rel, .-ass_CL_rel
 
 

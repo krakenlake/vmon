@@ -2,6 +2,7 @@
 #include "vmon/drivers/uart/ns16550.h"
 #include "vmon/ASCII.h"
 #include "vmon/register.h"
+#include "vmon/stack.h"
 
 
 
@@ -51,21 +52,19 @@ uart_get_char_wait:
 # output one char 
 # in: char (ASCII) in a0
 uart_output_char:
-	addi	sp, sp, -(XLEN_BYTES*1)				
-	SAVE_X	ra, 0(sp)
+	PUSH_RA
 	la		t0, out_buf	 
 	andi	a0, a0, 0xff				# make sure value is < 256		
 	sh		a0, 0(t0)					# write char and zero termination to buffer
 	jal		uart_output_buffer
-	j		pop_ra_ret
+	POP_RA_RET
 .size uart_output_char, .-uart_output_char
 
 
 # output zero-terminated string	 
 # in: string ptr in a0
 uart_output_string:
-	addi	sp, sp, -(XLEN_BYTES*1)				
-	SAVE_X	ra, 0(sp)
+	PUSH_RA
 	mv		a1, a0
 uart_output_string_loop:
 	lb		a0, 0(a1)
@@ -82,15 +81,14 @@ uart_output_string_char:
 	addi	a1, a1, 1
 	j		uart_output_string_loop
 uart_output_string_done:
-	j		pop_ra_ret
+	POP_RA_RET
 .size uart_output_string, .-uart_output_string
 
 
 # print zero-terminated string in output buffer out_buf to UART
 # buffer will be filled with zeros on return
 uart_output_buffer:
-	addi	sp, sp, -(XLEN_BYTES*1)				
-	SAVE_X	ra, 0(sp)
+	PUSH_RA
 	la		t1, out_buf	 
 	li		t4, UART_BASE
 uart_output_buffer_next_byte:
@@ -110,20 +108,16 @@ uart_output_buffer_wait_lsr:
 	addi	t1, t1, 1
 	j		uart_output_buffer_next_byte
 uart_output_buffer_done:
-	j		pop_ra_ret
+	POP_RA_RET
 .size uart_output_buffer, .-uart_output_buffer
 
 
 # get a line of input from UART until RETURN is hit
 # out: buffer start in a0
 uart_getline:
-	addi	sp, sp, -(XLEN_BYTES*3)				
-	SAVE_X	s1, 0(sp)
-	SAVE_X	s0, (XLEN_BYTES*1)(sp)
-	SAVE_X	ra, (XLEN_BYTES*2)(sp)
-
+	PUSH_S1_S0_RA
+	
 	jal		uart_clear_buffer
-
 	la		s0, uart_input_buffer
 	mv		s1, s0					# save a copy in s1 for later
 uart_get_char:
@@ -171,7 +165,7 @@ uart_getline_done:
 	# return buffer address
 	mv		a0, s1
 
-	j		pop_s1_s0_ra_ret
+	POP_S1_S0_RA_RET
 .size uart_getline, .-uart_getline
 
 

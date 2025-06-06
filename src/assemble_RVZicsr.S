@@ -2,6 +2,7 @@
 #include "vmon/ASCII.h"
 #include "vmon/encoding.h"
 #include "vmon/register.h"
+#include "vmon/stack.h"
 
 
 #if defined (WITH_CMD_A) && defined (DISASS_RVZicsr)
@@ -20,9 +21,7 @@
 # out: a0 = ptr to char after argument
 # out: a1 = insn word (0 on error)
 ass_csr:
-	addi	sp, sp, -(XLEN_BYTES*2)
-	SAVE_X	s0, 0(sp)
-	SAVE_X	ra, (XLEN_BYTES*1)(sp)
+	PUSH_S0_RA
 	mv		s0, a1						# save insn word
 	jal		get_numeric
 	# imm  value in a1
@@ -38,7 +37,7 @@ ass_csr:
 ass_csr_error:
 	mv		a1, zero
 ass_csr_done:
-	j		pop_s0_ra_ret
+	POP_S0_RA_RET
 .size ass_csr, .-ass_csr
 
 
@@ -50,9 +49,7 @@ ass_csr_done:
 # out: a0 = ptr to char after argument
 # out: a1 = insn word (0 on error)
 ass_csri:
-	addi	sp, sp, -(XLEN_BYTES*2)
-	SAVE_X	s0, 0(sp)
-	SAVE_X	ra, (XLEN_BYTES*1)(sp)
+	PUSH_S0_RA
 	mv		s0, a1						# save insn word
 	jal		get_numeric
 	# imm  value in a1
@@ -67,7 +64,7 @@ ass_csri:
 ass_csri_error:
 	mv		a1, zero
 ass_csri_done:
-	j		pop_s0_ra_ret
+	POP_S0_RA_RET
 .size ass_csri, .-ass_csri
 
 

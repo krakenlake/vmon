@@ -46,12 +46,12 @@
 
 #define STK_FRAME_SIZE_INT		(XLEN_BYTES*32)
 
-# aliases
+// aliases
 #define STK_OFF_RA		(STK_OFF_X1)
 #define STK_OFF_SP		(STK_OFF_X2)
 
 
-# float register offsets from start of float stack frame
+// float register offsets from start of float stack frame
 #define STK_OFF_F0		(0)
 #define STK_OFF_F1		(FLEN_BYTES*1)
 #define STK_OFF_F2		(FLEN_BYTES*2)
@@ -87,5 +87,21 @@
 
 #define STK_FRAME_SIZE_FLOAT	(FLEN_BYTES*32)
 
+// function prologue/epilogue optimisation
+
+#define PUSH_RA						jal		t6, push_ra
+#define POP_RA_RET					j		pop_ra_ret
+
+#define PUSH_S0_RA					jal		t6, push_s0_ra
+#define POP_S0_RA_RET				j		pop_s0_ra_ret
+
+#define PUSH_S1_S0_RA				jal		t6, push_s1_s0_ra
+#define POP_S1_S0_RA_RET			j		pop_s1_s0_ra_ret
+
+#define PUSH_S2_S1_S0_RA			jal		t6, push_s2_s1_s0_ra
+#define POP_S2_S1_S0_RA_RET			j		pop_s2_s1_s0_ra_ret
+
+#define PUSH_S4_S3_S2_S1_S0_RA		jal		t6, push_s4_s3_s2_s1_s0_ra
+#define POP_S4_S3_S2_S1_S0_RA_RET	j		pop_s4_s3_s2_s1_s0_ra_ret
 
 #endif /* STACK_H */

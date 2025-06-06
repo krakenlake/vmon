@@ -1,6 +1,7 @@
 #include "config.h"
 #include "vmon/encoding.h"
 #include "vmon/register.h"
+#include "vmon/stack.h"
 
 
 #if defined (WITH_CMD_D) && defined (DISASS_RVC)
@@ -54,8 +55,7 @@ dis_C_rs2a:
 
 # in: a0 = instruction word
 dis_CI_imm:
-	addi	sp, sp, -(XLEN_BYTES*1)
-	SAVE_X	ra, 0(sp)
+	PUSH_RA
 	# inst[12] is sign bit
 	slli	t0, a0, 19					# shift to bit 31
 	#if XLEN >=64
@@ -70,7 +70,7 @@ dis_CI_imm:
 	# join everything
 	or		a0, t0, t1
 	jal		print_decimal
-	j		pop_ra_ret
+	POP_RA_RET
 .size dis_CI_imm, .-dis_CI_imm
 
 
@@ -89,8 +89,7 @@ dis_CI_16imm:
 	j		dis_CI_lXsp
 .size dis_CI_16imm, .-dis_CI_16imm
 dis_CI_lXsp:
-	addi	sp, sp, -(XLEN_BYTES*1)
-	SAVE_X	ra, 0(sp)
+	PUSH_RA
 	# insn[6:4] -> offset[4:2]
 	srli	t0, a0, 2
 	andi	t0, t0, 0b11100
@@ -105,21 +104,20 @@ dis_CI_lXsp:
 	or		a0, a0, t2
 	sll		a0, a0, t3					# c.lwsp/c.ldsp/c.lqsp adjustment shift
 	jal		print_decimal
-	j		pop_ra_ret
+	POP_RA_RET
 .size dis_CI_lXsp, .-dis_CI_lXsp
 
 
 # in: a0 = instruction word
 dis_CSS_imm:
-	addi	sp, sp, -(XLEN_BYTES*1)
-	SAVE_X	ra, 0(sp)
+	PUSH_RA
 	srli	t0, a0, 7
 	andi	t0, t0, 0b111100
 	srli	t1, a0, 1
 	andi	t1, t1, 0b11000000
 	or		a0, t0, t1
 	jal		print_decimal
-	j		pop_ra_ret
+	POP_RA_RET
 .size dis_CSS_imm, .-dis_CSS_imm
 
 
@@ -131,8 +129,7 @@ dis_CIW_imm:
 
 # in: a0 = instruction word
 dis_CL_imm:
-	addi	sp, sp, -(XLEN_BYTES*1)
-	SAVE_X	ra, 0(sp)
+	PUSH_RA
 
 	srli	t0, a0, 3
 	andi	t0, a0, 0b1100
@@ -150,7 +147,7 @@ dis_CL_imm:
 	# join everything
 	or		a0, t0, t1
 	jal		print_decimal
-	j		pop_ra_ret
+	POP_RA_RET
 .size dis_CL_imm, .-dis_CL_imm
 
 

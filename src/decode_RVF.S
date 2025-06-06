@@ -1,5 +1,6 @@
 #include "config.h"
 #include "vmon/register.h"
+#include "vmon/stack.h"
 
 #if defined (WITH_CMD_D) && defined (DISASS_RVF)
 
@@ -41,12 +42,11 @@ dis_frs3:
 
 # in: instruction word in a0
 print_float_register_name:
-	addi	sp, sp, -(XLEN_BYTES*1)				 
-	SAVE_X	ra, 0(sp) 
+	PUSH_RA
 	and		a0, a0, 0b11111
 	jal		get_float_register_name_by_index
 	jal		print_string
-	j		pop_ra_ret
+	POP_RA_RET
 .size print_float_register_name, .-print_float_register_name
 
 

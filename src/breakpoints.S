@@ -2,6 +2,7 @@
 #include "vmon/ASCII.h"
 #include "vmon/breakpoints.h"
 #include "vmon/error.h"
+#include "vmon/stack.h"
 
 
 .global break_reset
@@ -36,10 +37,7 @@ break_init_all_done:
 
 
 break_list:
-	addi	sp, sp, -(XLEN_BYTES*3)
-	SAVE_X	s1, 0(sp)
-	SAVE_X	s0, (XLEN_BYTES*1)(sp)
-	SAVE_X	ra, (XLEN_BYTES*2)(sp)
+	PUSH_S1_S0_RA
 	la		s0, bp_table
 	mv		s1, zero
 break_list_loop:
@@ -55,7 +53,7 @@ break_list_skip_empty:
 	li		t0, BP_NUM
 	bne		s1, t0, break_list_loop
 break_list_done:
-	j		pop_s1_s0_ra_ret
+	POP_S1_S0_RA_RET
 .size break_list, .-break_list
 
 
@@ -63,8 +61,7 @@ break_list_done:
 # out: a0 = address if breakpoint set, else error code
 # errors: a0 = -1 if no free slots, -2 if addr invalid
 break_set:
-	addi	sp, sp, -(XLEN_BYTES*1)
-	SAVE_X	ra, 0(sp)
+	PUSH_RA
 	jal		is_valid_insn_addr
 	beqz	a1, break_set_valid_addr
 	li		a0, ERR_INSN_ADDR
@@ -98,8 +95,9 @@ break_set_free_slot:
 	# store breakpoint data
 	SAVE_X	a0, 0(t0)					# save address in table
 break_set_done:
-	j		pop_ra_ret
+	POP_RA_RET
 .size break_set, .-break_set
+
 
 # in: a0 = address
 break_clear:
@@ -124,6 +122,7 @@ break_clear_do:
 break_clear_done:
 	ret
 .size break_clear, .-break_clear
+
 
 # activate all breakpoints by inserting ebreaks
 break_activate:

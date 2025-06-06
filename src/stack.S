@@ -4,6 +4,13 @@
 #include "vmon/register.h"
 
 
+.global push_ra
+.global push_s0_ra
+.global push_s1_s0_ra
+.global push_s2_s1_s0_ra
+# push_s3_s2_s1_s0_ra left out on purpose, just use push/pop_s4_s3_s1_s0_ra instead
+.global push_s4_s3_s2_s1_s0_ra
+
 .global pop_ra_ret
 .global pop_s0_ra_ret
 .global pop_s1_s0_ra_ret
@@ -22,6 +29,47 @@
 
 
 .text
+
+# for function prologue optimisation (shorter code in total)
+
+push_ra:
+	addi	sp, sp, -(XLEN_BYTES*1)	
+	SAVE_X	ra, 0(sp)
+	jr		t6
+
+push_s0_ra:
+	addi	sp, sp, -(XLEN_BYTES*2)
+	SAVE_X	s0, 0(sp)
+	SAVE_X	ra, (XLEN_BYTES*1)(sp)
+	jr		t6
+
+push_s1_s0_ra:
+	addi	sp, sp, -(XLEN_BYTES*3)
+	SAVE_X	s1, 0(sp)
+	SAVE_X	s0, (XLEN_BYTES*1)(sp)
+	SAVE_X	ra, (XLEN_BYTES*2)(sp)
+	jr		t6
+
+push_s2_s1_s0_ra:
+	addi	sp, sp, -(XLEN_BYTES*4)
+	SAVE_X	s2, 0(sp)
+	SAVE_X	s1, (XLEN_BYTES*1)(sp)
+	SAVE_X	s0, (XLEN_BYTES*2)(sp)
+	SAVE_X	ra, (XLEN_BYTES*3)(sp)
+	jr		t6
+
+# push_s3_s2_s1_s0_ra left out on purpose, just use push/pop_s4_s3_s1_s0_ra instead
+
+push_s4_s3_s2_s1_s0_ra:
+	addi	sp, sp, -(XLEN_BYTES*6)
+	SAVE_X	s4, 0(sp)
+	SAVE_X	s3, (XLEN_BYTES*1)(sp)
+	SAVE_X	s2, (XLEN_BYTES*2)(sp)
+	SAVE_X	s1, (XLEN_BYTES*3)(sp)
+	SAVE_X	s0, (XLEN_BYTES*4)(sp)
+	SAVE_X	ra, (XLEN_BYTES*5)(sp)
+	jr		t6
+
 
 # for function epilogue optimisation (shorter code in total)
 
@@ -96,8 +144,7 @@ patch_float_register_do:
 #ifdef WITH_CMD_R
 
 print_int_registers:
-	addi	sp, sp, -(XLEN_BYTES*1)
-	SAVE_X  ra, 0(sp)
+	PUSH_RA
 	la		a0, get_int_register_name_by_index
 	li		a1, 1
 	li		a2, 31
@@ -108,21 +155,20 @@ print_int_registers:
 	#endif
 	li		a4, XLEN_BYTES
 	jal		print_saved_registers
-	j		pop_ra_ret
+	POP_RA_RET
 .size print_int_registers, .-print_int_registers
 
 
 #ifdef DISASS_RVF
 	print_float_registers:
-		addi	sp, sp, -(XLEN_BYTES*1)
-		SAVE_X  ra, 0(sp)
+		PUSH_RA
 		la		a0, get_float_register_name_by_index
 		li		a1, 0
 		li		a2, 31 
 		la		a3, stack + (STACK_SIZE) - (STK_FRAME_SIZE_INT) - (STK_FRAME_SIZE_FLOAT)
 		li		a4, FLEN_BYTES
 		jal		print_saved_registers
-		j		pop_ra_ret
+		POP_RA_RET
 	.size print_float_registers, .-print_float_registers
 #endif /* DISASS_RVF */
 

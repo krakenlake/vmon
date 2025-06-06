@@ -1,6 +1,7 @@
 #include "config.h"
 #include "vmon/encoding.h"
 #include "vmon/register.h"
+#include "vmon/stack.h"
 
 
 #if defined (WITH_CMD_D) && defined (DISASS_RVA)
@@ -26,8 +27,7 @@ insn_get_aqrl:
 
 # in: instruction word in a0
 print_AMO_postfix:
-	addi	sp, sp, -(XLEN_BYTES*1)
-	SAVE_X	ra, 0(sp)
+	PUSH_RA
 	# check if bits 0-6 are an AMO opcode, return if not
 	li		t0, 0x7f			# MASK
 	and		t1, a0, t0
@@ -51,7 +51,7 @@ print_AMO_postfix_case3:
 	la		a0, string_OP_POSTFIX_AQRL
 	jal		print_string
 print_AMO_postfix_done:
-	j		pop_ra_ret
+	POP_RA_RET
 .size print_AMO_postfix, .-print_AMO_postfix
 
 

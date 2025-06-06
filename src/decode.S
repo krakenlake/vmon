@@ -1,6 +1,7 @@
 #include "config.h"
 #include "vmon/encoding.h"
 #include "vmon/register.h"
+#include "vmon/stack.h"
 
 
 #ifdef WITH_CMD_D
@@ -14,13 +15,7 @@
 # in: s5 = origin address (global)
 # in: a3 = ptr to encoding table entry
 decode_GENERIC:
-	addi	sp, sp, -(XLEN_BYTES*6)
-	SAVE_X	s4, 0(sp)
-	SAVE_X	s3, (XLEN_BYTES*1)(sp)
-	SAVE_X	s2, (XLEN_BYTES*2)(sp)
-	SAVE_X	s1, (XLEN_BYTES*3)(sp)			# ex-ass dst word
-	SAVE_X	s0, (XLEN_BYTES*4)(sp)
-	SAVE_X	ra, (XLEN_BYTES*5)(sp)
+	PUSH_S4_S3_S2_S1_S0_RA
 	mv		s1, a0							# save insn word
 	li		s4,	4							# process max. 4 arguments
 	# get control word for this insn
@@ -37,8 +32,6 @@ decode_GENERIC_next_argument:
 	mv		a1, s5
 	mv		a0, s1
 	jalr	t0								# call decode function for this argument
-
-
 	# check if we have processed 4 arguments already
 	addi	s4, s4, -1
 	beqz	s4, decode_GENERIC_done
@@ -56,23 +49,20 @@ decode_GENERIC_next_argument:
 	srai	t0, s0, 8
 	beqz	t0, decode_GENERIC_done
 	jal		print_comma
-	
 decode_GENERIC_skip_comma:
 	srai	s0, s0, 8						# next byte of control word
 	j 		decode_GENERIC_next_argument
 decode_GENERIC_error:
 	mv		a1, zero
 decode_GENERIC_done:
-	j		pop_s4_s3_s2_s1_s0_ra_ret
+	POP_S4_S3_S2_S1_S0_RA_RET
 .size decode_GENERIC, .-decode_GENERIC
 
 
 # in: a0 = insn word
 # in: a3 = ptr to table entry
 print_instruction:
-	addi	sp, sp, -(XLEN_BYTES*2)
-	SAVE_X	s0, 0(sp)
-	SAVE_X	ra, (XLEN_BYTES*1)(sp)
+	PUSH_S0_RA
 	mv		s0, a0
 	LWU		a0, ENC_OFF_OP_STRING(a3)
 	jal		print_string				# print opcode
@@ -85,7 +75,7 @@ print_instruction:
 	mv		a0, s0
 	jal 	decode_GENERIC
 print_instruction_done:
-	j		pop_s0_ra_ret
+	POP_S0_RA_RET
 .size print_instruction, .-print_instruction
 
 

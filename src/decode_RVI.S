@@ -1,6 +1,7 @@
 #include "config.h"
 #include "vmon/encoding.h"
 #include "vmon/register.h"
+#include "vmon/stack.h"
 
 
 #ifdef WITH_CMD_D
@@ -54,12 +55,11 @@ dis_rs2:
 
 # in: a0 = register index number n
 print_int_register_name:
-	addi	sp, sp, -(XLEN_BYTES*1)
-	SAVE_X	ra, 0(sp) 
+	PUSH_RA
 	and		a0, a0, 0b11111
 	jal		get_int_register_name_by_index
 	jal		print_string
-	j		pop_ra_ret
+	POP_RA_RET
 .size print_int_register_name, .-print_int_register_name
 
 
@@ -104,19 +104,17 @@ dis_BRA:
 
 # in: instruction word in a0
 dis_I_imm:
-	addi	sp, sp, -(XLEN_BYTES*1)
-	SAVE_X	ra, 0(sp)
+	PUSH_RA
 	# inst[31:20] -> imm[11:0]
 	srai	a0, a0, 20
 	jal		print_decimal
-	j		pop_ra_ret
+	POP_RA_RET
 .size dis_I_imm, .-dis_I_imm
 
 
 # in: instruction word in a0
 dis_S_imm:
-	addi	sp, sp, -(XLEN_BYTES*1)
-	SAVE_X	ra, 0(sp)
+	PUSH_RA
 	# inst[31:25] -> imm[11:5]
 	srai	t0, a0, 25					# shift the 5 lower bits out to clear them
 	slli	t0, t0, 5					# shift 5 back
@@ -124,19 +122,18 @@ dis_S_imm:
 	andi	t1, t1, 0b11111
 	or		a0, t0, t1
 	jal		print_decimal
-	j		pop_ra_ret
+	POP_RA_RET
 .size dis_S_imm, .-dis_S_imm
 
 # in: instruction word in a0
 dis_U_imm:
-	addi	sp, sp, -(XLEN_BYTES*1)
-	SAVE_X	ra, 0(sp)
+	PUSH_RA
 	# extract imm
 	li		t0, 0xffffffff
 	and		a0, a0, t0
 	srli	a0, a0, 12 
 	jal		print_hex
-	j		pop_ra_ret
+	POP_RA_RET
 .size dis_U_imm, .-dis_U_imm
 
 
@@ -175,12 +172,7 @@ dis_J:
 # in: a0: instruction word
 # in: a1: number of start bit (27 for pre, 23 for sucessor)
 decode_FENCE_bits:
-	addi	sp, sp, -(XLEN_BYTES*5)
-	SAVE_X	s3, 0(sp)
-	SAVE_X	s2, (XLEN_BYTES*1)(sp)
-	SAVE_X	s1, (XLEN_BYTES*2)(sp)
-	SAVE_X	s0, (XLEN_BYTES*3)(sp)
-	SAVE_X	ra, (XLEN_BYTES*4)(sp)
+	PUSH_S4_S3_S2_S1_S0_RA
 	mv		s2, a0
 	li		s3, 1
 	sll		s3, s3, a1					# set up initial bit mask
@@ -196,34 +188,31 @@ decode_FENCE_bits_skip:
 	addi	s1, s1, 1
 	addi	s0, s0, -1
 	bnez	s0, decode_FENCE_bits_loop
-	j		pop_s3_s2_s1_s0_ra_ret
+	POP_S4_S3_S2_S1_S0_RA_RET
 .size decode_FENCE_bits, .-decode_FENCE_bits
 
 
 # in: a0 = instruction word
 dis_PRE:
-	addi	sp, sp, -(XLEN_BYTES*1)
-	SAVE_X	ra, 0(sp)
+	PUSH_RA
 	li		a1, 27
 	jal		decode_FENCE_bits
-	j		pop_ra_ret
+	POP_RA_RET
 .size dis_PRE, .-dis_PRE
 
 
 # in: a0 = instruction word
 dis_SUC:
-	addi	sp, sp, -(XLEN_BYTES*1)
-	SAVE_X	ra, 0(sp)
+	PUSH_RA
 	li		a1, 23
 	jal		decode_FENCE_bits
-	j		pop_ra_ret
+	POP_RA_RET
 .size dis_SUC, .-dis_SUC
 
 
 # in: instruction word in a0
 dis_I_rel:
-	addi	sp, sp, -(XLEN_BYTES*2)
-	SAVE_X	ra, 0(sp)
+	PUSH_RA
 	SAVE_X	a0, (XLEN_BYTES*1)(sp)
 	li		a0, '('
 	jal		print_char
@@ -231,9 +220,7 @@ dis_I_rel:
 	jal		dis_rs1
 	li		a0, ')'
 	jal		print_char
-	LOAD_X	ra, 0(sp)
-	addi	sp, sp, (XLEN_BYTES*2)
-	ret
+	POP_RA_RET
 .size dis_I_rel, .-dis_I_rel
 
 

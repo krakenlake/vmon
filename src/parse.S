@@ -1,6 +1,7 @@
 #include "config.h"
 #include "vmon/ASCII.h"
 #include "vmon/register.h"
+#include "vmon/stack.h"
 
 
 .global skip_whitespace
@@ -150,10 +151,7 @@ find_register_name_end_done:
 # out: parsed value in a1
 # out: error code in a2 (OK=0)
 get_numeric:
-	addi	sp, sp, -(XLEN_BYTES*3)
-	SAVE_X	ra, 0(sp)
-	SAVE_X	s0, (XLEN_BYTES*1)(sp)
-	SAVE_X	s1, (XLEN_BYTES*2)(sp)
+	PUSH_S1_S0_RA
 	mv		a2, zero						# clear error
 	lb		t0, 0(a0)
 	li		t1, '0'
@@ -181,11 +179,7 @@ get_numeric_dec:
 get_numeric_error:
 	li		a2, -1
 get_numeric_done:
-	LOAD_X	ra, 0(sp)
-	LOAD_X	s0, (XLEN_BYTES*1)(sp)
-	LOAD_X	s1, (XLEN_BYTES*2)(sp)
-	addi	sp, sp, (XLEN_BYTES*3)
-	ret
+	POP_S1_S0_RA_RET
 .size get_numeric, .-get_numeric
 
 

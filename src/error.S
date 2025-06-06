@@ -1,6 +1,7 @@
 #include "config.h"
 #include "vmon/register.h"
 #include "vmon/error.h"
+#include "vmon/stack.h"
 
 
 .global print_error
@@ -11,9 +12,7 @@
 #ifdef ERROR_VERBOSE
 	# in: a0 = error code (0=none)
 	print_error:
-		addi	sp, sp, -(XLEN_BYTES*2)
-		SAVE_X	s0, 0(sp)
-		SAVE_X	ra, (XLEN_BYTES*1)(sp)
+		PUSH_S0_RA
 		beqz	a0, print_error_done		# done when errorcode == 0
 		la		t0, error_table
 		li		t2, 0xff					# table end marker
@@ -49,7 +48,7 @@
 		li		a2, 1						# with prefix
 		jal		print_hex_fixed_width
 	print_error_done:
-		j		pop_s0_ra_ret
+	POP_S0_RA_RET
 #endif /* ERROR_VERBOSE */
 
 .data
