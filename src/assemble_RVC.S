@@ -15,7 +15,7 @@
 .global ass_CI_imm
 .global ass_CSS_imm
 .global ass_CIW_imm
-.global ass_CL_imm
+.global ass_CL_LW_imm
 .global ass_CS_imm
 .global ass_CB_imm
 .global ass_CJ_off
@@ -282,31 +282,35 @@ ass_CIW_imm:
 # in: a2 = origin address
 # out: a0 = ptr to char after argument
 # out: a1 = insn word (0 on error)
-ass_CL_imm:
+ass_CL_LW_imm:
 	PUSH_S0_RA
 	mv		s0, a1						# save insn word
 	jal		get_numeric
 	# imm  value in a1
-	bnez	a2, ass_CL_imm_error
-	li		t0, -64
-	blt		a1, t0, ass_CL_imm_error	# numeric too small
-	li		t0, 60
-	bgt		a1, t0, ass_CL_imm_error	# numeric too big	
-	# assemble imm from numeric
+	bnez	a2, ass_CL_LW_imm_error
+	bltz	a1, ass_CL_LW_imm_error		# numeric too small
+	li		t0, 124
+	bgt		a1, t0, ass_CL_LW_imm_error	# numeric too big	
 	andi	t0, a1, 0b11
-	slli	t0, t0, 5
-	or		s0, s0, t0
-	andi	t0, a1, 0b11100
-	slli	t0,t0, 7
-	or		a1, s0, t0
-ass_CL_imm_continue:
+	bnez	t0, ass_CL_LW_imm_error		# numeric not 4-byte aligned	
+	# assemble imm from numeric
+	andi	t0, a1,0b111000
+	slli	t0, t0, 7
+	andi	t1, a1, 0b1000000
+	srli	t1, t1, 1
+	andi	t2, a1, 0b100
+	slli	t2, t2, 4
+	or		a1, s0, t0					# from saved insn
+	or		a1, a1, t1
+	or		a1, a1, t2
+ass_CL_LW_imm_continue:
 	# return a1 and a0
-	j		ass_CL_imm_done
-ass_CL_imm_error:
+	j		ass_CL_LW_imm_done
+ass_CL_LW_imm_error:
 	mv		a1, zero
-ass_CL_imm_done:
+ass_CL_LW_imm_done:
 	POP_S0_RA_RET
-.size ass_CL_imm, .-ass_CL_imm
+.size ass_CL_LW_imm, .-ass_CL_LW_imm
 
 
 # process I-type register-relative parameter

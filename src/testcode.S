@@ -673,6 +673,13 @@ testcode_RVQ:
 testcode_RVC:
 	# CL_type
 	c.lw		x8, 0(x8)
+	c.lw		x9, 4(x9)
+	c.lw		x10, 8(x10)
+	c.lw		x11, 16(x11)
+	c.lw		x12, 32(x12)
+	c.lw		x13, 64(x13)
+	c.lw		x14, 124(x14)
+	c.lw		x15, 124(x15)
 	c.lw		x8, 124(x8)
 	c.lw		x15, 124(x15)
 	# CS_type

@@ -13,7 +13,7 @@
 .global dis_CI_imm
 .global dis_CSS_imm
 .global dis_CIW_imm
-.global dis_CL_imm
+.global dis_CL_LW_imm
 .global dis_CS_imm
 .global dis_CB_imm
 .global dis_CJ_off
@@ -27,6 +27,14 @@
 
 
 # in: a0 = instruction word
+dis_C_rs1a:
+dis_C_rda:
+	srli	a0, a0, 7
+	j		dis_C_rega
+.size dis_C_rs1a, .-dis_C_rs1a
+
+
+# in: a0 = instruction word
 dis_C_rs2:
 	srli	a0, a0, 2
 	j		print_int_register_name
@@ -34,23 +42,18 @@ dis_C_rs2:
 
 
 # in: a0 = instruction word
-dis_C_rda:
-	ret
-.size dis_C_rda, .-dis_C_rda
-
-
-# in: a0 = instruction word
-dis_C_rs1a:
-	# todo
-	ret
-.size dis_C_rs1a, .-dis_C_rs1a
-
-
-# in: a0 = instruction word
 dis_C_rs2a:
-	# todo
-	ret
+	srli	a0, a0, 2
+	j		dis_C_rega
 .size dis_C_rs2a, .-dis_C_rs2a
+
+
+# in: a0 = instruction word
+dis_C_rega:
+	andi	a0, a0, 0b111				# reg' bits
+	addi	a0, a0, 8					# reg' registers start from x8
+	j		print_int_register_name
+.size dis_C_rega, .-dis_C_rega
 
 
 # in: a0 = instruction word
@@ -128,27 +131,20 @@ dis_CIW_imm:
 
 
 # in: a0 = instruction word
-dis_CL_imm:
+dis_CL_LW_imm:
 	PUSH_RA
-
-	srli	t0, a0, 3
-	andi	t0, a0, 0b1100
-
-	srli	t1, a0, 6
-	andi	t1, t1, 0b1110000
-
-
-
-
-	#if XLEN >=64
-		sext.w	t0, t0					# sign-extend to 64 bits
-	#endif	
-
+	srli	t0, a0, 7
+	andi	t0, t0, 0b111000
+	slli	t1, a0, 1
+	andi	t1, t1, 0b1000000
+	srli	t2, a0, 4
+	andi	t2, t2, 0b100
 	# join everything
 	or		a0, t0, t1
+	or		a0, a0, t2
 	jal		print_decimal
 	POP_RA_RET
-.size dis_CL_imm, .-dis_CL_imm
+.size dis_CL_LW_imm, .-dis_CL_LW_imm
 
 
 # in: a0 = instruction word

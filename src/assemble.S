@@ -128,12 +128,12 @@ assemble_GENERIC_next_argument:
 		li		t1, 0x1b					# no comma after c.lw/c.sw offset
 		beq		s3, t1, assemble_GENERIC_skip_comma
 	#endif
-	srai	t0, s0, 8
+	srli	t0, s0, 8
 	beqz	t0, assemble_GENERIC_done
 	jal		expect_comma
 	beqz	a0, assemble_GENERIC_error		# missing comma
 assemble_GENERIC_skip_comma:
-	srai	s0, s0, 8						# shift mask to next control word byte
+	srli	s0, s0, 8						# shift mask to next control word byte
 	j 		assemble_GENERIC_next_argument
 assemble_GENERIC_error:
 	mv		a1, zero
