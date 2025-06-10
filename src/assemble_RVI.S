@@ -7,7 +7,7 @@
 
 #ifdef WITH_CMD_A
 
-.global check_a1_value
+.global check_a1_value					# check range (min/max) and alignment of value in a1
 .global assemble_register
 
 # these are called via assemble_GENERIC
