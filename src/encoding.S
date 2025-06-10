@@ -892,10 +892,10 @@ encoding_table:
 	# RV32C
 	.word MASK_C_LW,		MATCH_C_LW,			string_OP_C_LW,			0x00151b17
 	.word MASK_C_SW,		MATCH_C_SW,			string_OP_C_SW,			0x00151b16
-	.word MASK_C_ADDI,		MATCH_C_ADDI,		string_OP_C_ADDI,		0x00001813	# todo: check
+	.word MASK_C_ADDI,		MATCH_C_ADDI,		string_OP_C_ADDI,		0x0000181c
 	.word MASK_C_JAL,		MATCH_C_JAL,		string_OP_C_JAL,		0x00000000	# todo
-	.word MASK_C_LI,		MATCH_C_LI,			string_OP_C_LI,			0x00001813	# todo: check
-	.word MASK_C_LUI,		MATCH_C_LUI,		string_OP_C_LUI,		0x00001813	# todo: check
+	.word MASK_C_LI,		MATCH_C_LI,			string_OP_C_LI,			0x0000181c
+	.word MASK_C_LUI,		MATCH_C_LUI,		string_OP_C_LUI,		0x0000181c	# todo: check rd != x2 and imm != 0
 	.word MASK_C_SRLI,		MATCH_C_SRLI,		string_OP_C_SRLI,		0x00000000	# todo
 	.word MASK_C_SRLI64,	MATCH_C_SRLI64,		string_OP_C_SRLI64,		0x00000000	# todo
 	.word MASK_C_SRAI,		MATCH_C_SRAI,		string_OP_C_SRAI,		0x00000000	# todo
