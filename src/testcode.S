@@ -684,6 +684,13 @@ testcode_RVC:
 	c.lw		x15, 124(x15)
 	# CS_type
 	c.sw		x8, 0(x8)
+	c.sw		x9, 4(x9)
+	c.sw		x10, 8(x10)
+	c.sw		x11, 16(x11)
+	c.sw		x12, 32(x12)
+	c.sw		x13, 64(x13)
+	c.sw		x14, 124(x14)
+	c.sw		x15, 124(x15)
 	c.sw		x8, 124(x8)
 	c.sw		x15, 124(x15)
 	c.and		x8, x9

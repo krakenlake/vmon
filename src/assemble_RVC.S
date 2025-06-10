@@ -321,6 +321,7 @@ ass_CL_LW_imm_done:
 # out: a0 = ptr to char after argument
 # out: a1 = insn word (0 on error)
 ass_CL_rel:
+ass_CS_rel:
 	PUSH_S1_S0_RA
 	mv		s1, a1						# save insn word
 	mv		s0, a0						# return string ptr later

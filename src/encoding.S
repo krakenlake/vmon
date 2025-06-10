@@ -626,7 +626,7 @@ disass_vectors:
 #ifdef DISASS_RVC
 	.word	ass_C_rd, dis_C_rd				# 0x13	( C_rd == C_rs1 )
 	.word	ass_C_rs2, dis_C_rs2			# 0x14
-	.word	ass_CL_rel, dis_CL_rel			# 0x15
+	.word	ass_CL_rel, dis_CL_rel			# 0x15	(== ass_CS_rel, dis_CS_rel)
 	.word	ass_C_rs1a, dis_C_rs1a			# 0x16
 	.word	ass_C_rs2a, dis_C_rs2a			# 0x17
 	.word	ass_CI_imm, dis_CI_imm			# 0x18
@@ -891,7 +891,7 @@ encoding_table:
 #ifdef DISASS_RVC
 	# RV32C
 	.word MASK_C_LW,		MATCH_C_LW,			string_OP_C_LW,			0x00151b17
-	.word MASK_C_SW,		MATCH_C_SW,			string_OP_C_SW,			0x00171b16	# todo: check
+	.word MASK_C_SW,		MATCH_C_SW,			string_OP_C_SW,			0x00151b16	# todo: check
 	.word MASK_C_ADDI,		MATCH_C_ADDI,		string_OP_C_ADDI,		0x00001813	# todo: check
 	.word MASK_C_JAL,		MATCH_C_JAL,		string_OP_C_JAL,		0x00000000	# todo
 	.word MASK_C_LI,		MATCH_C_LI,			string_OP_C_LI,			0x00001813	# todo: check

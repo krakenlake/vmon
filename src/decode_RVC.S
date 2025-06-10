@@ -167,6 +167,7 @@ dis_CA_imm:
 
 # in: instruction word in a0
 dis_CL_rel:
+dis_CS_rel:
 	addi	sp, sp, -(XLEN_BYTES*2)
 	SAVE_X	ra, 0(sp)
 	SAVE_X	a0, (XLEN_BYTES*1)(sp)
