@@ -37,8 +37,7 @@
 # out: a1 = value
 # out: a2 = 0 if OK, !=0 on error
 check_a1_value:
-	bnez	a2, check_value_done			# return error because a2 != 0
-	li		a2, 0
+	bnez	a2, check_value_error			# return error because a2 != 0
 	blt		a1, a3, check_value_error		# too small
 	bgt		a1, a4, check_value_error		# too big
 	and		t0, a1, a5
