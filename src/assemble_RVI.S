@@ -7,6 +7,7 @@
 
 #ifdef WITH_CMD_A
 
+.global check_a1_value
 .global assemble_register
 
 # these are called via assemble_GENERIC
@@ -26,6 +27,28 @@
 
 .global ass_C_rd
 .text
+
+
+# in: a1 = value
+# in: a2 = error code from get_numeric
+# in: a3 = min value
+# in: a4 = max value
+# in: a5 = alignment bitmask (set bits cannot be present; for example, 0b11 for 4-byte alignment)
+# out: a1 = value
+# out: a2 = 0 if OK, !=0 on error
+check_a1_value:
+	bnez	a2, check_value_done			# return error because a2 != 0
+	li		a2, 0
+	blt		a1, a3, check_value_error		# too small
+	bgt		a1, a4, check_value_error		# too big
+	and		t0, a1, a5
+	bnez	t0, check_value_error			# not properly aligned	
+	j		check_value_done
+check_value_error:
+	li		a2, 1
+check_value_done:
+	ret
+.size check_a1_value, .-check_a1_value
 
 
 # in: a0 = absolute target address 
@@ -241,11 +264,11 @@ ass_I_imm:
 	mv		s1, a1						# save insn word
 	jal		get_numeric
 	# imm  value in a1
+	li		a3, -2048					# min
+	li		a4, 2047					# max
+	li		a5, 0						# alignment
+	jal		check_a1_value
 	bnez	a2, ass_I_imm_error
-	li		t0, -2048
-	blt		a1, t0, ass_I_imm_error		# numeric too small
-	li		t0, 2047
-	bgt		a1, t0, ass_I_imm_error		# numeric too big
 	mv		s0, a0						# return string ptr later
 	# add imm value to instruction word
 	mv		a0, a1						# imm value
@@ -287,11 +310,11 @@ ass_S_imm:
 	PUSH_S0_RA
 	mv		s0, a1						# save insn word
 	jal		get_numeric
+	li		a3, -2048					# min
+	li		a4, 2047					# max
+	li		a5, 0						# alignment
+	jal		check_a1_value
 	bnez	a2, ass_S_rel_error
-	li		t0, -2048
-	blt		a1, t0, ass_S_rel_error		# numeric too small
-	li		t0, 2047
-	bgt		a1, t0, ass_S_rel_error		# numeric too big
 	# add S-type imm value to instruction word
 	slli	t0, a1, 7					# imm4:0 -> bit 7-11
 	li		t1, 0b111110000000

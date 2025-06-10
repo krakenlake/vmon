@@ -145,11 +145,11 @@ ass_CI_imm:
 	mv		s0, a1						# save insn word
 	jal		get_numeric
 	# imm  value in a1
+	li		a3, -32						# min
+	li		a4, 31						# max
+	li		a5, 0						# alignment
+	jal		check_a1_value
 	bnez	a2, ass_CI_imm_error
-	li		t0, -32
-	blt		a1, t0, ass_CI_imm_error	# numeric too small
-	li		t0, 31
-	bgt		a1, t0, ass_CI_imm_error	# numeric too big	
 	# assemble imm from numeric
 	slli	t0, a1, 2
 	andi	t0, t0, 0b1111100	
@@ -243,12 +243,11 @@ ass_CSS_imm:
 	mv		s0, a1						# save insn word
 	jal		get_numeric
 	# imm  value in a1
+	li		a3, 0						# min
+	li		a4, 252						# max
+	li		a5, 0b11					# alignment
+	jal		check_a1_value
 	bnez	a2, ass_CSS_imm_error
-	bltz	a1, ass_CSS_imm_error		# numeric too small
-	li		t0, 252
-	bgt		a1, t0, ass_CSS_imm_error	# numeric too big	
-	andi	t0, a1, 0b11
-	bnez	t0, ass_CSS_imm_error		# numeric not 4-byte aligned	
 	# assemble imm from numeric
 	andi	t0, a1,	0b11000000			# offset[7:6]
 	slli	t0, t0, 1					# -> imm[7:8]
@@ -287,12 +286,11 @@ ass_CL_LW_imm:
 	mv		s0, a1						# save insn word
 	jal		get_numeric
 	# imm  value in a1
+	li		a3, 0						# min
+	li		a4, 124						# max
+	li		a5, 0b11					# alignment
+	jal		check_a1_value
 	bnez	a2, ass_CL_LW_imm_error
-	bltz	a1, ass_CL_LW_imm_error		# numeric too small
-	li		t0, 124
-	bgt		a1, t0, ass_CL_LW_imm_error	# numeric too big	
-	andi	t0, a1, 0b11
-	bnez	t0, ass_CL_LW_imm_error		# numeric not 4-byte aligned	
 	# assemble imm from numeric
 	andi	t0, a1,0b111000
 	slli	t0, t0, 7
