@@ -107,10 +107,10 @@ print_hex_byte:
 	li		t0, 15
 	bgt		a0, t0, print_hex_byte_two_digits
 	# print a leading zero if necessary
-	mv		s0, a0					# save a0 for later
+	mv		s0, a0						# save a0 for later
 	li		a0, '0'
 	jal		print_char
-	mv		a0, s0					# restore a0
+	mv		a0, s0						# restore a0
 print_hex_byte_two_digits:
 	jal		print_hex_raw
 	POP_S0_RA_RET
@@ -132,9 +132,9 @@ print_hex_fixed_width:
 	call	print_char
 print_hex_fixed_width_loop:	
 	addi	s1, s1, -1
-	slli	t0, s1, 3		# t0 = a1 * 3
-	srl		a0, s0, t0  	# shift byte of interest to lowest byte
-	and		a0, a0, 0xff 	# mask low order byte and print
+	slli	t0, s1, 3					# t0 = a1 * 3
+	srl		a0, s0, t0  				# shift byte of interest to lowest byte
+	and		a0, a0, 0xff 				# mask low order byte and print
 	call	print_hex_byte
 	bnez	s1, print_hex_fixed_width_loop
 	POP_S1_S0_RA_RET
@@ -150,9 +150,9 @@ print_ascii:
 	blt		a0, t0, print_ascii_substitute
 	li		t0, 0x7e
 	bgt		a0, t0, print_ascii_substitute
-	j		print_ascii_out			# char is printable
+	j		print_ascii_out				# char is printable
 print_ascii_substitute:
-	li		a0, '.'					# print dot if char is not printable
+	li		a0, '.'						# print dot if char is not printable
 print_ascii_out:
 	jal		print_char
 	POP_RA_RET
