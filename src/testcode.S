@@ -741,10 +741,21 @@ testcode_RVC:
 	c.swsp		x15, 252(sp)
 	# CJ_type
 	c.j			testcode_RVC
+	
+	# c.jal is RV32C ONLY
+	#if XLEN == 32
+		c.jal		testcode_RVC
+	#endif
+	
 	# CR_type
+#	c.jr		x0				reserved
 	c.jr		x1
 	c.jr		x31
 	c.jalr		x1
+	c.jalr		x2
+	c.jalr		x4
+	c.jalr		x8
+	c.jalr		x16
 	c.jalr		x31
 	c.mv		x1, x1
 	c.mv		x31, x31

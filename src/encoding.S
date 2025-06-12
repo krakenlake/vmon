@@ -893,7 +893,7 @@ encoding_table:
 	.word MASK_C_LW,		MATCH_C_LW,			string_OP_C_LW,			0x00151b17
 	.word MASK_C_SW,		MATCH_C_SW,			string_OP_C_SW,			0x00151b16
 	.word MASK_C_ADDI,		MATCH_C_ADDI,		string_OP_C_ADDI,		0x0000181c
-	.word MASK_C_JAL,		MATCH_C_JAL,		string_OP_C_JAL,		0x00000000	# todo
+	.word MASK_C_JAL,		MATCH_C_JAL,		string_OP_C_JAL,		0x0000001e
 	.word MASK_C_LI,		MATCH_C_LI,			string_OP_C_LI,			0x0000181c
 	.word MASK_C_LUI,		MATCH_C_LUI,		string_OP_C_LUI,		0x0000181c	# todo: check rd != x2 and imm != 0
 	.word MASK_C_SRLI,		MATCH_C_SRLI,		string_OP_C_SRLI,		0x00000000	# todo
@@ -907,20 +907,20 @@ encoding_table:
 	.word MASK_C_AND,		MATCH_C_AND,		string_OP_C_AND,		0x00000000	# todo
 	.word MASK_C_SUBW,		MATCH_C_SUBW,		string_OP_C_SUBW,		0x00000000	# todo
 	.word MASK_C_ADDW,		MATCH_C_ADDW,		string_OP_C_ADDW,		0x00000000	# todo
-	.word MASK_C_J,			MATCH_C_J,			string_OP_C_J,			0x00000000	# todo
+	.word MASK_C_J,			MATCH_C_J,			string_OP_C_J,			0x0000001e
 	.word MASK_C_BEQZ,		MATCH_C_BEQZ,		string_OP_C_BEQZ,		0x00000000	# todo
 	.word MASK_C_BNEZ,		MATCH_C_BNEZ,		string_OP_C_BNEZ,		0x00000000	# todo
 	.word MASK_C_SLLI,		MATCH_C_SLLI,		string_OP_C_SLLI,		0x00000000	# todo
 	.word MASK_C_SLLI64,	MATCH_C_SLLI64,		string_OP_C_SLLI64,		0x00000000	# todo
 	.word MASK_C_LWSP,		MATCH_C_LWSP,		string_OP_C_LWSP,		0x00001f1c
 	.word MASK_C_EBREAK,	MATCH_C_EBREAK,		string_OP_C_EBREAK,		0x00000000	# before c.jalr, c.add
-	.word MASK_C_JALR,		MATCH_C_JALR,		string_OP_C_JALR,		0x00000013	# todo: check / before c.add
-	.word MASK_C_ADD,		MATCH_C_ADD,		string_OP_C_ADD,		0x00001413	# todo: check
+	.word MASK_C_JALR,		MATCH_C_JALR,		string_OP_C_JALR,		0x00000013	# before c.add
+	.word MASK_C_ADD,		MATCH_C_ADD,		string_OP_C_ADD,		0x00001413	# todo: test
 	.word MASK_C_SWSP,		MATCH_C_SWSP,		string_OP_C_SWSP,		0x00002014
 	.word MASK_C_NOP,		MATCH_C_NOP,		string_OP_C_NOP,		0x00000000
 	.word MASK_C_ADDI16SP,	MATCH_C_ADDI16SP,	string_OP_C_ADDI16SP,	0x00000000	# todo
-	.word MASK_C_JR,		MATCH_C_JR,			string_OP_C_JR,			0x00000013	# todo: check / before c.mv
-	.word MASK_C_MV,		MATCH_C_MV,			string_OP_C_MV,			0x00001413	# todo: check
+	.word MASK_C_JR,		MATCH_C_JR,			string_OP_C_JR,			0x00000013	# todo: check rs1 != 0
+	.word MASK_C_MV,		MATCH_C_MV,			string_OP_C_MV,			0x00001413	# todo: test
 	.word MASK_C_ADDIW,		MATCH_C_ADDIW,		string_OP_C_ADDIW,		0x00000000	# todo
 
 	# RV64C
@@ -941,7 +941,7 @@ encoding_table:
 	#if XLEN >= 128
 		.word MASK_C_LQ,		MATCH_C_LQ,		string_OP_C_LQ,		0x00000000	# todo
 		.word MASK_C_SQ,		MATCH_C_SQ,		string_OP_C_SQ,		0x00000000	# todo
-		.word MASK_C_LQSP,		MATCH_C_LQSP,	string_OP_C_LQSP,	0x0000221c	# todo check
+		.word MASK_C_LQSP,		MATCH_C_LQSP,	string_OP_C_LQSP,	0x0000221c	# todo test
 		.word MASK_C_SQSP,		MATCH_C_SQSP,	string_OP_C_SQSP,	0x00000000	# todo
 		#ifdef DISASS_RVQ
 			.word MASK_C_FLQ,	MATCH_C_FLQ,	string_OP_C_FLQ,	0x00000000	# todo

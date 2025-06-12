@@ -363,7 +363,44 @@ ass_CB_imm:
 # out: a0 = ptr to char after argument
 # out: a1 = insn word (0 on error)
 ass_CJ_off:
-	ret
+	PUSH_S1_S0_RA
+	mv		s0, a1						# save insn word
+	mv		s1, a2						# save insn word
+	jal		get_numeric
+	# subtract origin address
+	sub		a1, a1, s1
+	# imm  value in a1
+	li		a3, -2048					# min
+	li		a4, 2046					# max
+	li		a5, 0b1						# alignment
+	jal		check_a1_value
+	bnez	a2, ass_CJ_off_error
+	# assemble bits
+	andi	t0, a1, 0b100000
+	srli	t0, t0, 3
+	andi	t1, a1, 0b1110
+	slli	t1, t1, 2
+	li		t3, 0b101101000000
+	and		t2, a1, t3
+	slli	t2, t2, 1
+	andi	t3, a1, 0b10000000
+	srli	t3, t3, 1
+	andi	t4, a1, 0b10000000000
+	srli	t4, t4, 2
+	andi	t5, a1, 0b10000
+	slli	t5, t5, 7
+	or		a1, s0, t0
+	or		a1, a1, t1
+	or		a1, a1, t2
+	or		a1, a1, t3
+	or		a1, a1, t4
+	or		a1, a1, t5
+	# return a1 and a0
+	j		ass_CJ_off_done
+ass_CJ_off_error:
+	mv		a1, zero
+ass_CJ_off_done:
+	POP_S1_S0_RA_RET
 .size ass_CJ_off, .-ass_CJ_off
 
 

@@ -155,7 +155,36 @@ dis_CB_imm:
 
 # in: a0 = instruction word
 dis_CJ_off:
-	ret
+	PUSH_RA
+	# decode offset
+	slli	t0, a0, 3
+	andi	t0, t0, 0b100000
+	srli	t1, a0, 2
+	andi	t1, t1, 0b1110
+	srli	t2, a0, 1
+	li		t3, 0b101101000000
+	and		t2, t2, t3
+	slli	t3, a0, 1
+	andi	t3, t3, 0b10000000
+	slli	t4, a0, 2
+	andi	t4, t4, 0b10000000000
+	srli	t5, a0, 7
+	andi	t5, t5, 0b10000
+	or		a0, t0, t1
+	or		a0, a0, t2
+	or		a0, a0, t3
+	or		a0, a0, t4
+	or		a0, a0, t5
+	# sign extend
+	slli	a0, a0, 20
+	#if XLEN >=64
+		sext.w	a0, a0					# sign-extend to 64 bits
+	#endif
+	srai	a0, a0, 20
+	# add insn address
+	add		a0, s5, a0
+	jal		print_hex					# effective address
+	POP_RA_RET
 .size dis_CJ_off, .-dis_CJ_off
 
 
