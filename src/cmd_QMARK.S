@@ -18,9 +18,7 @@ cmd_QMARK_display:
 	la		a0, string_info_hex
 	jal		print_string
 	mv		a0, s0
-	li		a1, XLEN_BYTES
-	li		a2, 1
-	call	print_hex_fixed_width
+	call	print_hex_addr
 	la		a0, string_info_dec
 	jal		print_string
 	mv		a0, s0

@@ -8,6 +8,7 @@
 .global print_hex_raw
 .global print_hex_byte
 .global print_hex_fixed_width
+.global print_hex_addr
 .global print_ascii
 .global print_char
 .global print_string
@@ -139,6 +140,14 @@ print_hex_fixed_width_loop:
 	bnez	s1, print_hex_fixed_width_loop
 	POP_S1_S0_RA_RET
 .size print_hex_fixed_width, .-print_hex_fixed_width
+
+# shorthand for address printing
+# in: a0 = address to print
+print_hex_addr:
+	li		a1, XLEN_BYTES				# full address length
+	li		a2, 1						# with 0x prefix
+	j		print_hex_fixed_width
+.size print_hex_addr, .-print_hex_addr
 
 
 # print char to terminal (if printable, else '.')

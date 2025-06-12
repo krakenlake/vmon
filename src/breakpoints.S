@@ -43,9 +43,7 @@ break_list:
 break_list_loop:
 	LOAD_X	a0, 0(s0)
 	beqz	a0, break_list_skip_empty
-	li		a1, XLEN_BYTES
-	li		a2, 1
-	jal		print_hex_fixed_width
+	jal		print_hex_addr
 	jal		print_newline
 break_list_skip_empty:
 	addi	s0, s0, BP_ENTRY_SIZE

@@ -226,9 +226,7 @@ print_saved_registers_skip_space:
 	li		a0, '='
 	jal		print_char
 	LOAD_X	a0, 0(s0)					# saved value
-	li		a1, XLEN_BYTES
-	li		a2, 1
-	jal		print_hex_fixed_width
+	jal		print_hex_addr
 	# check if all registers done
 	li		t0, 31						# last valid index in any case
 	bge		s1, t0, print_saved_registers_done
