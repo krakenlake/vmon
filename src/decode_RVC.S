@@ -235,18 +235,15 @@ dis_CA_imm:
 # in: instruction word in a0
 dis_CL_rel:
 dis_CS_rel:
-	addi	sp, sp, -(XLEN_BYTES*2)
-	SAVE_X	ra, 0(sp)
-	SAVE_X	a0, (XLEN_BYTES*1)(sp)
+	PUSH_S0_RA
+	mv		s0, a0
 	li		a0, '('
 	jal		print_char
-	LOAD_X	a0, (XLEN_BYTES*1)(sp)
+	mv		a0, s0
 	jal		dis_C_rs1a
 	li		a0, ')'
 	jal		print_char
-	LOAD_X	ra, 0(sp)
-	addi	sp, sp, (XLEN_BYTES*2)
-	ret
+	POP_S0_RA_RET
 .size dis_CL_rel, .-dis_CL_rel
 
 
