@@ -26,7 +26,7 @@
 		#define	SAVE_F	fsd
 		#define LOAD_F	fld
 	#endif
+	#define FLEN_BYTES			(FLEN/8)
 #endif
-#define FLEN_BYTES			(FLEN/8)
 
 #endif /* VMON_REGISTER_H */

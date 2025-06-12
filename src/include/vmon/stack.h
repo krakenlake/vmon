@@ -6,10 +6,14 @@
 
 
 // size of runtime stack in bytes
-// runtime space + 32 int register + 32 float register
-#define STACK_SIZE			(512 + XLEN_BYTES*32 + FLEN_BYTES*32)
+// runtime space + 32 int register + 32 float register (if required)
+#ifdef TARGET_HAS_RVF
+	#define STACK_SIZE			(512 + XLEN_BYTES*32 + FLEN_BYTES*32)
+#else
+	#define STACK_SIZE			(512 + XLEN_BYTES*32)
+#endif
 
-// int register offsets from start of int stack frame
+	// int register offsets from start of int stack frame
 // store pc here; x0 is always 0 and will not be saved on stack
 #define STK_OFF_PC		(0)
 #define STK_OFF_X1		(XLEN_BYTES*1)
