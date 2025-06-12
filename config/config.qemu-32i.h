@@ -33,16 +33,16 @@
 
 // include test code in the binary?
 // if yes, the "i" command shows the location at runtime
-//#define WITH_TESTCODE
+#define WITH_TESTCODE
 
 // configure which parts of the test code will be present
 // in the executable
 #ifdef WITH_TESTCODE
 	#define WITH_TESTCODE_RV32I
-	#define WITH_TESTCODE_RV64I
-	#define WITH_TESTCODE_RVM
-	#define WITH_TESTCODE_RVA
-	#define WITH_TESTCODE_RVF
+	//#define WITH_TESTCODE_RV64I
+	//#define WITH_TESTCODE_RVM
+	//#define WITH_TESTCODE_RVA
+	//#define WITH_TESTCODE_RVF
 	//#define WITH_TESTCODE_RVD
 	//#define WITH_TESTCODE_RVQ
 	//#define WITH_TESTCODE_RVC
@@ -50,8 +50,8 @@
 	//#define WITH_TESTCODE_RVP
 	//#define WITH_TESTCODE_RVV
 	//#define WITH_TESTCODE_RVH
-	#define WITH_TESTCODE_RVZicsr
-	#define WITH_TESTCODE_RVZifencei
+	//#define WITH_TESTCODE_RVZicsr
+	//#define WITH_TESTCODE_RVZifencei
 	#define WITH_TESTCODE_RVPRIV
 	#define WITH_TESTCODE_PSEUDO
 #endif

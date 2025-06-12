@@ -39,10 +39,10 @@
 // in the executable
 #ifdef WITH_TESTCODE
 	#define WITH_TESTCODE_RV32I
-	#define WITH_TESTCODE_RV64I
-	#define WITH_TESTCODE_RVM
-	#define WITH_TESTCODE_RVA
-	#define WITH_TESTCODE_RVF
+	//#define WITH_TESTCODE_RV64I
+	//#define WITH_TESTCODE_RVM
+	//#define WITH_TESTCODE_RVA
+	//#define WITH_TESTCODE_RVF
 	//#define WITH_TESTCODE_RVD
 	//#define WITH_TESTCODE_RVQ
 	//#define WITH_TESTCODE_RVC
@@ -50,9 +50,9 @@
 	//#define WITH_TESTCODE_RVP
 	//#define WITH_TESTCODE_RVV
 	//#define WITH_TESTCODE_RVH
-	#define WITH_TESTCODE_RVZicsr
-	#define WITH_TESTCODE_RVZifencei
-	#define WITH_TESTCODE_RVPRIV
+	//#define WITH_TESTCODE_RVZicsr
+	//#define WITH_TESTCODE_RVZifencei
+	//#define WITH_TESTCODE_RVPRIV
 	#define WITH_TESTCODE_PSEUDO
 #endif
 
@@ -64,7 +64,7 @@
 //#define DISASS_RVF
 //#define DISASS_RVD
 //#define DISASS_RVQ
-//#define DISASS_RVC
+#define DISASS_RVC
 //#define DISASS_RVB
 //#define DISASS_RVP
 //#define DISASS_RVV
