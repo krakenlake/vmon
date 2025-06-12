@@ -18,6 +18,7 @@
 .global ass_CL_LW_imm
 .global ass_CS_imm
 .global ass_CB_imm
+.global ass_C_BRA
 .global ass_CJ_off
 .global ass_CI_4imm
 .global ass_CI_8imm
@@ -355,6 +356,48 @@ ass_CB_imm:
 	# accept only x8-15
 	ret
 .size ass_CB_imm, .-ass_CB_imm
+
+
+# in: a0 = ptr to first char of argument
+# in: a1 = insn word to be modifed
+# in: a2 = origin address
+# out: a0 = ptr to char after argument
+# out: a1 = insn word (0 on error)
+ass_C_BRA:
+	PUSH_S1_S0_RA
+	mv		s0, a1						# save insn word
+	mv		s1, a2						# save insn word
+	jal		get_numeric
+	# subtract origin address
+	sub		a1, a1, s1
+	# imm  value in a1
+	li		a3, -256					# min
+	li		a4, 254						# max
+	li		a5, 0b1						# alignment
+	jal		check_a1_value
+	bnez	a2, ass_C_BRA_error
+	# assemble bits
+	andi	t0, a1, 0b100000
+	srli	t0, t0, 3
+	and		t1, a1, 0b110
+	slli	t1, t1, 2
+	andi	t2, a1, 0b11000000
+	srli	t2, t2, 1
+	andi	t3, a1, 0b11000
+	slli	t3, t3, 7
+	andi	t4, a1, 0b100000000
+	slli	t4, t4, 4
+	or		a1, s0, t0
+	or		a1, a1, t1
+	or		a1, a1, t2
+	or		a1, a1, t3
+	or		a1, a1, t4
+	j		ass_C_BRA_done
+ass_C_BRA_error:
+	mv		a1, zero
+ass_C_BRA_done:
+	POP_S1_S0_RA_RET
+.size ass_C_BRA, .-ass_C_BRA
 
 
 # in: a0 = ptr to first char of argument

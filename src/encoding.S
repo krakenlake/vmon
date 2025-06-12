@@ -635,11 +635,12 @@ disass_vectors:
 	.word	ass_CL_LW_imm, dis_CL_LW_imm	# 0x1b
 	.word	ass_C_rd_nonzero, dis_C_rd		# 0x1c
 	.word	ass_CB_imm, dis_CB_imm			# 0x1d
-	.word	ass_CJ_off, dis_CJ_off			# 0x1e
+	.word	ass_CJ_off, dis_CJ_off			# 0x1e	(c.j, c.jal)
 	.word	ass_CI_4imm, dis_CI_4imm		# 0x1f
 	.word	ass_CSS_imm, dis_CSS_imm		# 0x20
 	.word	ass_CI_8imm, dis_CI_8imm		# 0x21
 	.word	ass_CI_16imm, dis_CI_16imm		# 0x22
+	.word	ass_C_BRA, dis_C_BRA			# 0x23	(c.beqz, c.bnez)
 #else
 	.word	0, 0							# 0x13	
 	.word	0, 0							# 0x14
@@ -657,6 +658,7 @@ disass_vectors:
 	.word	0, 0							# 0x20
 	.word	0, 0							# 0x21
 	.word	0, 0							# 0x22
+	.word	0, 0							# 0x23
 #endif /* DISASS_RVC */
 
 
@@ -908,8 +910,8 @@ encoding_table:
 	.word MASK_C_SUBW,		MATCH_C_SUBW,		string_OP_C_SUBW,		0x00000000	# todo
 	.word MASK_C_ADDW,		MATCH_C_ADDW,		string_OP_C_ADDW,		0x00000000	# todo
 	.word MASK_C_J,			MATCH_C_J,			string_OP_C_J,			0x0000001e
-	.word MASK_C_BEQZ,		MATCH_C_BEQZ,		string_OP_C_BEQZ,		0x00000000	# todo
-	.word MASK_C_BNEZ,		MATCH_C_BNEZ,		string_OP_C_BNEZ,		0x00000000	# todo
+	.word MASK_C_BEQZ,		MATCH_C_BEQZ,		string_OP_C_BEQZ,		0x00002316
+	.word MASK_C_BNEZ,		MATCH_C_BNEZ,		string_OP_C_BNEZ,		0x00002316
 	.word MASK_C_SLLI,		MATCH_C_SLLI,		string_OP_C_SLLI,		0x00000000	# todo
 	.word MASK_C_SLLI64,	MATCH_C_SLLI64,		string_OP_C_SLLI64,		0x00000000	# todo
 	.word MASK_C_LWSP,		MATCH_C_LWSP,		string_OP_C_LWSP,		0x00001f1c
