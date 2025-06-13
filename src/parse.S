@@ -101,6 +101,8 @@ parse_insn_string:
 	li		t1, '.'						# pre-load relevant chars to compare
 	li		t2, 'a'
 	li		t3, 'z'
+	li		t5, '0'
+	li		t6, '9'
 	li		t4, 2						# count dots here for RVA insns
 parse_insn_string_loop:
 	lb		t0, 0(a0)
@@ -113,9 +115,12 @@ parse_insn_string_loop:
 	mv		a1, a0
 	j 		parse_insn_string_valid_char
 parse_insn_string_no_dot:
-	# accept a-z
-	blt		t0, t2, parse_insn_string_done
+	# accept a-z and 0-9 in insn names
+	blt		t0, t5, parse_insn_string_done
 	bgt		t0, t3, parse_insn_string_done
+	ble		t0, t6, parse_insn_string_valid_char
+	bge		t0, t2, parse_insn_string_valid_char
+	j		parse_insn_string_done
 parse_insn_string_valid_char:
 	addi	a0, a0, 1
 	j		parse_insn_string_loop
