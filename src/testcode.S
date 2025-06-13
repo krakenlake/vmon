@@ -711,8 +711,16 @@ testcode_RVC:
 	c.addi		x31, 31
 	c.addi		x31, -32
 	c.addi16sp	sp, 16
-	c.addi16sp	sp, -16
+	c.addi16sp	sp, 32
+	c.addi16sp	sp, 64
+	c.addi16sp	sp, 128
+	c.addi16sp	sp, 256
 	c.addi16sp	sp, 496
+	c.addi16sp	sp, -16
+	c.addi16sp	sp, -32
+	c.addi16sp	sp, -64
+	c.addi16sp	sp, -128
+	c.addi16sp	sp, -256
 	c.addi16sp	sp, -512
 	c.slli		x0, 1
 	c.slli		x31, 1

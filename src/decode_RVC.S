@@ -23,6 +23,7 @@
 .global dis_CI_16imm
 .global dis_CSS_imm
 .global dis_CL_rel
+.global dis_C_16sp_imm
 
 .text
 
@@ -245,6 +246,35 @@ dis_CS_rel:
 	jal		print_char
 	POP_S0_RA_RET
 .size dis_CL_rel, .-dis_CL_rel
+
+
+# in: a0 = instruction word
+dis_C_16sp_imm:
+	PUSH_RA
+	slli	t0, a0, 3
+	andi	t0, t0, 0b100000
+	slli	t1, a0, 4
+	andi	t1, t1, 0b110000000
+	slli	t2, a0, 1
+	andi	t2, t2, 0b1000000
+	srli	t3, a0, 2
+	andi	t3, t3, 0b10000
+	srli	t4, a0, 3
+	andi	t4, t4, 0b1000000000
+	or		a0, t0, t1
+	or		a0, a0, t2
+	or		a0, a0, t3
+	or		a0, a0, t4
+	# sign extend
+	slli	a0, a0, 22
+	#if XLEN >=64
+		sext.w	a0, a0					# sign-extend to 64 bits
+	#endif
+	srai	a0, a0, 22
+	# add insn address
+	jal		print_decimal
+	POP_RA_RET
+.size dis_C_16sp_imm, .-dis_C_16sp_imm
 
 
 #endif /* (WITH_CMD_D) && defined (DISASS_RVC) */

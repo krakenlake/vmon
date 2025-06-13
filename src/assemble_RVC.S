@@ -25,7 +25,8 @@
 .global ass_CI_16imm
 .global ass_CSS_imm
 .global ass_CL_rel
-
+.global ass_rdsp
+.global ass_C_16sp_imm
 
 .text
 
@@ -408,7 +409,7 @@ ass_C_BRA_done:
 ass_CJ_off:
 	PUSH_S1_S0_RA
 	mv		s0, a1						# save insn word
-	mv		s1, a2						# save insn word
+	mv		s1, a2						# save origin address
 	jal		get_numeric
 	# subtract origin address
 	sub		a1, a1, s1
@@ -456,6 +457,64 @@ ass_CA_imm:
 	# accept only x8-15
 	ret
 .size ass_CA_imm, .-ass_CA_imm
+
+
+# in: a0 = ptr to first char of argument
+# in: a1 = insn word to be modifed
+# in: a2 = origin address
+# out: a0 = ptr to char after argument
+# out: a1 = insn word (0 on error)
+ass_rdsp:
+	PUSH_RA
+	jal		ass_C_rd_nonzero
+	# check if rd==2 now in insn word
+	srli	t0, a1, 7					
+	andi	t0, t0, 0b11111
+	li		t1, 2
+	beq		t0, t1, ass_rdsp_done
+ass_rdsp_eror:
+	mv		a1, zero
+ass_rdsp_done:
+	POP_RA_RET
+.size ass_rdsp, .-ass_rdsp
+
+
+# in: a0 = ptr to first char of argument
+# in: a1 = insn word to be modifed
+# in: a2 = origin address
+# out: a0 = ptr to char after argument
+# out: a1 = insn word (0 on error)
+ass_C_16sp_imm:
+	PUSH_S0_RA
+	mv		s0, a1						# save insn word
+	jal		get_numeric
+	# imm  value in a1
+	li		a3, -512					# min
+	li		a4, 496						# max
+	li		a5, 0b1111					# alignment
+	jal		check_a1_value
+	bnez	a2, ass_C_16sp_imm_error
+	andi	t0, a1, 0b100000
+	srli	t0, t0, 3
+	andi	t1, a1, 0b110000000
+	srli	t1, t1, 4
+	andi	t2, a1, 0b1000000
+	srli	t2, t2, 1
+	andi	t3, a1, 0b10000
+	slli	t3, t3, 2
+	andi	t4, a1, 0b1000000000
+	slli	t4, t4, 3
+	or		a1, s0, t0
+	or		a1, a1, t1
+	or		a1, a1, t2
+	or		a1, a1, t3
+	or		a1, a1, t4
+	j		ass_C_16sp_imm_done
+ass_C_16sp_imm_error:
+	mv		a1, zero
+ass_C_16sp_imm_done:
+	POP_S0_RA_RET
+.size ass_C_16sp_imm, .-ass_C_16sp_imm
 
 
 #endif /* defined (WITH_CMD_A) && defined (DISASS_RVD) */
