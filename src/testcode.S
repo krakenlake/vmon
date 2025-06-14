@@ -671,6 +671,7 @@ testcode_RVQ:
 
 #if defined (WITH_TESTCODE_RVC) && defined (DISASS_RVC)
 testcode_RVC:
+	
 	# CL_type
 	c.lw		x8, 0(x8)
 	c.lw		x9, 4(x9)
@@ -682,6 +683,7 @@ testcode_RVC:
 	c.lw		x15, 124(x15)
 	c.lw		x8, 124(x8)
 	c.lw		x15, 124(x15)
+	
 	# CS_type
 	c.sw		x8, 0(x8)
 	c.sw		x9, 4(x9)
@@ -697,8 +699,8 @@ testcode_RVC:
 	c.or		x8, x9
 	c.xor		x14, x15
 	c.sub		x14, x15
-	# CI_type
 	
+	# CI_type	
 	c.li		x1, 0
 	c.li		x1, 1
 	c.li		x31, 31
@@ -789,7 +791,6 @@ testcode_RVC:
 	c.andi		x13, 16
 	c.andi		x14, 31
 	c.andi		x15, 31
-
 	
 	c.mv		x1, x1
 	c.mv		x31, x31
@@ -860,6 +861,30 @@ testcode_RVC:
 	c.lwsp		x14, 128(sp)
 	c.lwsp		x15, 252(sp)
 
+	# CI_8imm
+	#if XLEN >= 64
+		c.ldsp		x8, 0(sp)
+		c.ldsp		x9, 8(sp)
+		c.ldsp		x10, 16(sp)
+		c.ldsp		x11, 32(sp)
+		c.ldsp		x12, 64(sp)
+		c.ldsp		x13, 128(sp)
+		c.ldsp		x14, 256(sp)
+		c.ldsp		x15, 504(sp)
+	#endif
+
+	# CI_16imm
+	#if XLEN >= 128
+		c.lqsp		x8, 0(sp)
+		c.lqsp		x9, 16(sp)
+		c.lqsp		x10, 32(sp)
+		c.lqsp		x11, 64(sp)
+		c.lqsp		x12, 128(sp)
+		c.lqsp		x13, 256(sp)
+		c.lqsp		x14, 512(sp)
+		c.lqsp		x15, 1008(sp)
+	#endif
+
 	# CSS_type
 	c.swsp		x8, 0(sp)
 	c.swsp		x9, 4(sp)
@@ -869,6 +894,29 @@ testcode_RVC:
 	c.swsp		x13, 64(sp)
 	c.swsp		x14, 128(sp)
 	c.swsp		x15, 252(sp)
+
+	#if XLEN >= 64
+		c.sdsp		x8, 0(sp)
+		c.sdsp		x9, 8(sp)
+		c.sdsp		x10, 16(sp)
+		c.sdsp		x11, 32(sp)
+		c.sdsp		x12, 64(sp)
+		c.sdsp		x13, 128(sp)
+		c.sdsp		x14, 256(sp)
+		c.sdsp		x15, 504(sp)
+	#endif
+
+	#if XLEN >= 128
+		c.sqsp		x8, 0(sp)
+		c.sqsp		x9, 16(sp)
+		c.sqsp		x10, 32(sp)
+		c.sqsp		x11, 64(sp)
+		c.sqsp		x12, 128(sp)
+		c.sqsp		x13, 256(sp)
+		c.sqsp		x14, 512(sp)
+		c.sqsp		x15, 1008(sp)
+	#endif
+
 	# CJ_type
 	c.j			testcode_RVC
 	

@@ -12,14 +12,16 @@
 .global dis_C_rs2a
 .global dis_C_rdasp
 .global dis_CI_imm
-.global dis_CSS_imm
+.global dis_CI_4imm
+.global dis_CI_8imm
+.global dis_CSS_4imm
+.global dis_CSS_8imm
+.global dis_CSS_16imm
 .global dis_CIW_imm
 .global dis_CL_LW_imm
 .global dis_CS_imm
 .global dis_C_BRA
 .global dis_CJ_off
-.global dis_CI_4imm
-.global dis_CI_8imm
 .global dis_CI_16imm
 .global dis_CSS_imm
 .global dis_CL_rel
@@ -90,20 +92,7 @@ dis_CI_imm:
 
 
 # in: a0 = instruction word
-# in: t3 = shift value (0 for LWSP, 1 for LDSP, 2 for LQSP)
 dis_CI_4imm:
-	li		t3, 0
-	j		dis_CI_lXsp
-.size dis_CI_lXsp, .-dis_CI_lXsp
-dis_CI_8imm:
-	li		t3, 1
-	j		dis_CI_lXsp
-.size dis_CI_8imm, .-dis_CI_8imm
-dis_CI_16imm:
-	li		t3, 2
-	j		dis_CI_lXsp
-.size dis_CI_16imm, .-dis_CI_16imm
-dis_CI_lXsp:
 	PUSH_RA
 	# insn[6:4] -> offset[4:2]
 	srli	t0, a0, 2
@@ -114,26 +103,69 @@ dis_CI_lXsp:
 	# insn[3:2] -> offset[7:6]
 	slli	t2, a0, 4
 	andi	t2, t2, 0b11000000
+	j		dis_CI_tail
+.size dis_CI_4imm, .-dis_CI_4imm
+dis_CI_8imm:
+	PUSH_RA
+	# insn[6:5] -> offset[4:3]
+	srli	t0, a0, 2
+	andi	t0, t0, 0b11000
+	# insn[12] -> offset[5]
+	srli	t1, a0, 7
+	andi	t1, t1, 0b100000
+	# insn[4:2] -> offset[8:6]
+	slli	t2, a0, 4
+	andi	t2, t2, 0b111000000
+	j		dis_CI_tail
+.size dis_CI_8imm, .-dis_CI_8imm
+dis_CI_16imm:
+	PUSH_RA
+	# insn[6] -> offset[4]
+	srli	t0, a0, 2
+	andi	t0, t0, 0b10000
+	# insn[12] -> offset[5]
+	srli	t1, a0, 7
+	andi	t1, t1, 0b100000
+	# insn[5:2] -> offset[9:6]
+	slli	t2, a0, 4
+	andi	t2, t2, 0b11110000
+dis_CI_tail:
 	# put everything together
 	or		a0, t0, t1
 	or		a0, a0, t2
-	sll		a0, a0, t3					# c.lwsp/c.ldsp/c.lqsp adjustment shift
 	jal		print_decimal
 	POP_RA_RET
-.size dis_CI_lXsp, .-dis_CI_lXsp
+.size dis_CI_16imm, .-dis_CI_16imm
 
 
 # in: a0 = instruction word
-dis_CSS_imm:
+dis_CSS_4imm:
 	PUSH_RA
 	srli	t0, a0, 7
 	andi	t0, t0, 0b111100
 	srli	t1, a0, 1
 	andi	t1, t1, 0b11000000
+	j		dis_CSS_tail
+.size dis_CSS_4imm, .-dis_CSS_4imm
+dis_CSS_8imm:
+	PUSH_RA
+	srli	t0, a0, 7
+	andi	t0, t0, 0b111000
+	srli	t1, a0, 1
+	andi	t1, t1, 0b111000000
+	j		dis_CSS_tail
+.size dis_CSS_8imm, .-dis_CSS_8imm
+dis_CSS_16imm:
+	PUSH_RA
+	srli	t0, a0, 7
+	andi	t0, t0, 0b110000
+	srli	t1, a0, 1
+	andi	t1, t1, 0b1111000000
+dis_CSS_tail:
 	or		a0, t0, t1
 	jal		print_decimal
 	POP_RA_RET
-.size dis_CSS_imm, .-dis_CSS_imm
+.size dis_CSS_16imm, .-dis_CSS_16imm
 
 
 # in: a0 = instruction word

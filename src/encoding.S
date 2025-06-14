@@ -631,20 +631,21 @@ disass_vectors:
 	.word	ass_C_rs1a, dis_C_rs1a			# 0x16
 	.word	ass_C_rs2a, dis_C_rs2a			# 0x17	(C_rda == C_rs2a in CL-type and CIW-type)
 	.word	ass_CI_imm, dis_CI_imm			# 0x18
-	.word	ass_CSS_imm, dis_CSS_imm		# 0x19
+	.word	ass_CSS_4imm, dis_CSS_4imm		# 0x19
 	.word	ass_CIW_imm, dis_CIW_imm		# 0x1a
 	.word	ass_CL_LW_imm, dis_CL_LW_imm	# 0x1b
 	.word	ass_C_rd_nz, dis_C_rd			# 0x1c
 	.word	ass_C_rs2_nz, dis_C_rs2			# 0x1d
 	.word	ass_CJ_off, dis_CJ_off			# 0x1e	(c.j, c.jal)
 	.word	ass_CI_4imm, dis_CI_4imm		# 0x1f
-	.word	ass_CSS_imm, dis_CSS_imm		# 0x20
+	.word	ass_CSS_8imm, dis_CSS_8imm		# 0x20
 	.word	ass_CI_8imm, dis_CI_8imm		# 0x21
 	.word	ass_CI_16imm, dis_CI_16imm		# 0x22
 	.word	ass_C_BRA, dis_C_BRA			# 0x23	(c.beqz, c.bnez)
 	.word	ass_rdsp, dis_C_rd				# 0x24	(rd==sp in c.addi16sp)
 	.word	ass_C_16sp_imm, dis_C_16sp_imm	# 0x25
 	.word	ass_rdasp, dis_C_rdasp			# 0x26	(rda==sp in c.addi4spn)
+	.word	ass_CSS_16imm, dis_CSS_16imm	# 0x27
 #else
 	.word	0, 0							# 0x13	
 	.word	0, 0							# 0x14
@@ -666,6 +667,7 @@ disass_vectors:
 	.word	0, 0							# 0x24
 	.word	0, 0							# 0x25
 	.word	0, 0							# 0x26
+	.word	0, 0							# 0x27
 #endif /* DISASS_RVC */
 
 
@@ -925,17 +927,17 @@ encoding_table:
 	.word MASK_C_EBREAK,	MATCH_C_EBREAK,		string_OP_C_EBREAK,		0x00000000	# before c.jalr, c.add
 	.word MASK_C_JALR,		MATCH_C_JALR,		string_OP_C_JALR,		0x00000013	# before c.add
 	.word MASK_C_ADD,		MATCH_C_ADD,		string_OP_C_ADD,		0x00001d1c
-	.word MASK_C_SWSP,		MATCH_C_SWSP,		string_OP_C_SWSP,		0x00002014
+	.word MASK_C_SWSP,		MATCH_C_SWSP,		string_OP_C_SWSP,		0x00001914
 	.word MASK_C_NOP,		MATCH_C_NOP,		string_OP_C_NOP,		0x00000000
 	.word MASK_C_JR,		MATCH_C_JR,			string_OP_C_JR,			0x00000013	# todo: check rs1 != 0
 	.word MASK_C_MV,		MATCH_C_MV,			string_OP_C_MV,			0x00001d1c
 
 	# RV64C
 	#if XLEN >= 64
-		.word MASK_C_LD,		MATCH_C_LD,		string_OP_C_LD,		0x00000000	# todo
+		.word MASK_C_LD,		MATCH_C_LD,		string_OP_C_LD,		0x0000001c	# todo
 		.word MASK_C_SD,		MATCH_C_SD,		string_OP_C_SD,		0x00000000	# todo
 		.word MASK_C_LDSP,		MATCH_C_LDSP,	string_OP_C_LDSP,	0x0000211c
-		.word MASK_C_SDSP,		MATCH_C_SDSP,	string_OP_C_SDSP,	0x00000000	# todo
+		.word MASK_C_SDSP,		MATCH_C_SDSP,	string_OP_C_SDSP,	0x00002014
 		#ifdef DISASS_RVD
 			.word MASK_C_FLD,	MATCH_C_FLD,	string_OP_C_FLD,	0x00000000	# todo
 			.word MASK_C_FSD,	MATCH_C_FSD,	string_OP_C_FSD,	0x00000000	# todo
@@ -951,8 +953,8 @@ encoding_table:
 		.word MASK_C_SLLI64,	MATCH_C_SLLI64,	string_OP_C_SLLI64,	0x00000000	# todo
 		.word MASK_C_LQ,		MATCH_C_LQ,		string_OP_C_LQ,		0x00000000	# todo
 		.word MASK_C_SQ,		MATCH_C_SQ,		string_OP_C_SQ,		0x00000000	# todo
-		.word MASK_C_LQSP,		MATCH_C_LQSP,	string_OP_C_LQSP,	0x0000221c	# todo test
-		.word MASK_C_SQSP,		MATCH_C_SQSP,	string_OP_C_SQSP,	0x00000000	# todo
+		.word MASK_C_LQSP,		MATCH_C_LQSP,	string_OP_C_LQSP,	0x0000221c
+		.word MASK_C_SQSP,		MATCH_C_SQSP,	string_OP_C_SQSP,	0x00002714
 		#ifdef DISASS_RVQ
 			.word MASK_C_FLQ,	MATCH_C_FLQ,	string_OP_C_FLQ,	0x00000000	# todo
 			.word MASK_C_FSQ,	MATCH_C_FSQ,	string_OP_C_FSQ,	0x00000000	# todo

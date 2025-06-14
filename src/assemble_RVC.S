@@ -14,14 +14,16 @@
 .global ass_C_rs1a
 .global ass_C_rs2a
 .global ass_CI_imm
-.global ass_CSS_imm
+.global ass_CI_4imm
+.global ass_CI_8imm
+.global ass_CSS_4imm
+.global ass_CSS_8imm
+.global ass_CSS_16imm
 .global ass_CIW_imm
 .global ass_CL_LW_imm
 .global ass_CS_imm
 .global ass_C_BRA
 .global ass_CJ_off
-.global ass_CI_4imm
-.global ass_CI_8imm
 .global ass_CI_16imm
 .global ass_CSS_imm
 .global ass_CL_rel
@@ -208,47 +210,23 @@ ass_CI_imm_done:
 .size ass_CI_imm, .-ass_CI_imm
 
 
-# c.lwsp facade for ass_CI_lXsp
-ass_CI_4imm:
-	li		t0, 0
-	li		t1, 0b11
-	j		ass_CI_lXsp
-.size ass_CI_4imm, .-ass_CI_4imm
-ass_CI_8imm:
-	li		t0, 1
-	li		t1, 0b111
-	j		ass_CI_lXsp
-.size ass_CI_8imm, .-ass_CI_8imm
-ass_CI_16imm:
-	li		t0, 2
-	li		t1, 0b1111
-	j		ass_CI_lXsp
-.size ass_CI_16imm, .-ass_CI_16imm
 # in: a0 = ptr to first char of argument
 # in: a1 = insn word to be modifed
 # in: a2 = origin address
-# in: t0 = shift value (0 for LWSP, 1 for LDSP, 2 for LQSP)
-# in: t1 = alignment bitmask (0b11 for LWSP, 0b111 for LDSP, 0b1111 for LQSP)
 # out: a0 = ptr to char after argument
 # out: a1 = modified instruction word
 # out: a2 = -1 on error
-ass_CI_lXsp:
-	PUSH_S2_S1_S0_RA
-	mv		s2, t1						# save shift value
-	mv		s1, t0						# save shift value
+ass_CI_4imm:
+	PUSH_S0_RA
 	mv		s0, a1						# save insn word
 	jal		get_numeric
 	# imm  value in a1
-	bnez	a2, ass_CI_lXsp_error
-	bltz	a1, ass_CI_lXsp_error		# numeric too small
-	li		t0, 252
-	sll		t0, t0, s1					# c.lwsp/c.ldsp/c.lqsp adjustment shift
-	bgt		a1, t0, ass_CI_lXsp_error	# numeric too big	
-	# check for numberic for proper alignment
-	and		t0, a1, s2					# bitmask for 16imm alignment
-	bnez	t0, ass_CI_lXsp_error		# numeric not 4/8/16 byte aligned, depending on s1
+	li		a3, 0						# min
+	li		a4, 252					# max
+	li		a5, 0b11					# alignment
+	jal		check_a1_value
+	bnez	a2, ass_CI_16imm_error
 	# assemble imm from numeric
-	srl		a1, a1, s1					# c.lwsp/c.ldsp/c.lqsp adjustment shift
 	# offset[7:6] -> insn[3:2]
 	andi	t0, a1, 0b11000000
 	srli	t0, t0, 4
@@ -262,15 +240,14 @@ ass_CI_lXsp:
 	or		a1, s0, t0
 	or		a1, a1, t1
 	or		a1, a1, t2
-ass_CI_lXsp_continue:
+ass_CI_4imm_continue:
 	# return a1 and a0
-	j		ass_CI_lXsp_done
-ass_CI_lXsp_error:
+	j		ass_CI_4imm_done
+ass_CI_4imm_error:
 	li		a2, -1
-ass_CI_lXsp_done:
-	POP_S2_S1_S0_RA_RET
-.size ass_CI_lXsp, .-ass_CI_lXsp
-
+ass_CI_4imm_done:
+	POP_S0_RA_RET
+.size ass_CI_4imm, .-ass_CI_4imm
 
 
 # in: a0 = ptr to first char of argument
@@ -279,7 +256,87 @@ ass_CI_lXsp_done:
 # out: a0 = ptr to char after argument
 # out: a1 = modified instruction word
 # out: a2 = -1 on error
-ass_CSS_imm:
+ass_CI_8imm:
+	PUSH_S0_RA
+	mv		s0, a1						# save insn word
+	jal		get_numeric
+	# imm  value in a1
+	li		a3, 0						# min
+	li		a4, 504					# max
+	li		a5, 0b111					# alignment
+	jal		check_a1_value
+	bnez	a2, ass_CI_16imm_error
+	# assemble imm from numeric
+	# offset[8:6] -> insn[4:2]
+	andi	t0, a1, 0b111000000
+	srli	t0, t0, 4
+	# offset[5] -> insn[12]
+	andi	t1, a1, 0b100000
+	slli	t1, t1, 7
+	# offset[4:3] -> insn[6:5]
+	andi	t2, a1, 0b11000
+	slli	t2, t2, 2
+	# put everything together
+	or		a1, s0, t0
+	or		a1, a1, t1
+	or		a1, a1, t2
+ass_CI_8imm_continue:
+	# return a1 and a0
+	j		ass_CI_8imm_done
+ass_CI_8imm_error:
+	li		a2, -1
+ass_CI_8imm_done:
+	POP_S0_RA_RET
+.size ass_CI_8imm, .-ass_CI_8imm
+
+
+# in: a0 = ptr to first char of argument
+# in: a1 = insn word to be modifed
+# in: a2 = origin address
+# out: a0 = ptr to char after argument
+# out: a1 = modified instruction word
+# out: a2 = -1 on error
+ass_CI_16imm:
+	PUSH_S0_RA
+	mv		s0, a1						# save insn word
+	jal		get_numeric
+	# imm  value in a1
+	li		a3, 0						# min
+	li		a4, 1008					# max
+	li		a5, 0b1111					# alignment
+	jal		check_a1_value
+	bnez	a2, ass_CI_16imm_error
+	# assemble imm from numeric
+	# offset[9:6] -> insn[5:2]
+	andi	t0, a1, 0b11110000
+	srli	t0, t0, 4
+	# offset[5] -> insn[12]
+	andi	t1, a1, 0b100000
+	slli	t1, t1, 7
+	# offset[4] -> insn[6]
+	andi	t2, a1, 0b10000
+	slli	t2, t2, 2
+	# put everything together
+	or		a1, s0, t0
+	or		a1, a1, t1
+	or		a1, a1, t2
+ass_CI_16imm_continue:
+	# return a1 and a0
+	j		ass_CI_16imm_done
+ass_CI_16imm_error:
+	li		a2, -1
+ass_CI_16imm_done:
+	POP_S0_RA_RET
+.size ass_CI_16imm, .-ass_CI_16imm
+
+
+# in: a0 = ptr to first char of argument
+# in: a1 = insn word to be modifed
+# in: a2 = origin address
+# out: a0 = ptr to char after argument
+# out: a1 = modified instruction word
+# out: a2 = -1 on error
+ass_CSS_4imm:
 	PUSH_S0_RA
 	mv		s0, a1						# save insn word
 	jal		get_numeric
@@ -288,22 +345,88 @@ ass_CSS_imm:
 	li		a4, 252						# max
 	li		a5, 0b11					# alignment
 	jal		check_a1_value
-	bnez	a2, ass_CSS_imm_error
+	bnez	a2, ass_CSS_4imm_error
 	# assemble imm from numeric
-	andi	t0, a1,	0b11000000			# offset[7:6]
-	slli	t0, t0, 1					# -> imm[7:8]
+	andi	t0, a1,	0b11000000
+	slli	t0, t0, 1
 	or		s0, s0, t0
-	andi	t0, a1, 0b111100			# offset[5:2] 
-	slli	t0, t0, 7					# -> imm[12:9]
+	andi	t0, a1, 0b111100
+	slli	t0, t0, 7
 	or		a1, s0, t0
-ass_CSS_imm_continue:
+ass_CSS_4imm_continue:
 	# return a1 and a0
-	j		ass_CSS_imm_done
-ass_CSS_imm_error:
+	j		ass_CSS_4imm_done
+ass_CSS_4imm_error:
 	li		a2, -1
-ass_CSS_imm_done:
+ass_CSS_4imm_done:
 	POP_S0_RA_RET
-.size ass_CSS_imm, .-ass_CSS_imm
+.size ass_CSS_4imm, .-ass_CSS_4imm
+
+
+# in: a0 = ptr to first char of argument
+# in: a1 = insn word to be modifed
+# in: a2 = origin address
+# out: a0 = ptr to char after argument
+# out: a1 = modified instruction word
+# out: a2 = -1 on error
+ass_CSS_8imm:
+	PUSH_S0_RA
+	mv		s0, a1						# save insn word
+	jal		get_numeric
+	# imm  value in a1
+	li		a3, 0						# min
+	li		a4, 504						# max
+	li		a5, 0b111					# alignment
+	jal		check_a1_value
+	bnez	a2, ass_CSS_8imm_error
+	# assemble imm from numeric
+	andi	t0, a1,	0b111000000
+	slli	t0, t0, 1
+	or		s0, s0, t0
+	andi	t0, a1, 0b111000
+	slli	t0, t0, 7
+	or		a1, s0, t0
+ass_CSS_8imm_continue:
+	# return a1 and a0
+	j		ass_CSS_8imm_done
+ass_CSS_8imm_error:
+	li		a2, -1
+ass_CSS_8imm_done:
+	POP_S0_RA_RET
+.size ass_CSS_8imm, .-ass_CSS_8imm
+
+
+# in: a0 = ptr to first char of argument
+# in: a1 = insn word to be modifed
+# in: a2 = origin address
+# out: a0 = ptr to char after argument
+# out: a1 = modified instruction word
+# out: a2 = -1 on error
+ass_CSS_16imm:
+	PUSH_S0_RA
+	mv		s0, a1						# save insn word
+	jal		get_numeric
+	# imm  value in a1
+	li		a3, 0						# min
+	li		a4, 1008					# max
+	li		a5, 0b1111					# alignment
+	jal		check_a1_value
+	bnez	a2, ass_CSS_16imm_error
+	# assemble imm from numeric
+	andi	t0, a1,	0b1111000000
+	slli	t0, t0, 1
+	or		s0, s0, t0
+	andi	t0, a1, 0b110000
+	slli	t0, t0, 7
+	or		a1, s0, t0
+ass_CSS_16imm_continue:
+	# return a1 and a0
+	j		ass_CSS_16imm_done
+ass_CSS_16imm_error:
+	li		a2, -1
+ass_CSS_16imm_done:
+	POP_S0_RA_RET
+.size ass_CSS_16imm, .-ass_CSS_16imm
 
 
 # in: a0 = ptr to first char of argument
@@ -337,7 +460,7 @@ ass_CIW_imm:
 	or		a1, a1, t3
 ass_CIW_imm_continue:
 	# return a1 and a0
-	j		ass_CSS_imm_done
+	j		ass_CIW_imm_done
 ass_CIW_imm_error:
 	li		a2, -1
 ass_CIW_imm_done:
