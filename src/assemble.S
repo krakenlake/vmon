@@ -128,7 +128,7 @@ assemble_GENERIC_next_argument:
 		li		t1, 0x1b					# no comma after c.lw/c.sw offset
 		beq		s3, t1, assemble_GENERIC_skip_comma
 	#endif
-	srli	t0, s0, 8
+	srli	t0, s0, 8						# do we expect more arguments?
 	beqz	t0, assemble_GENERIC_done
 	jal		expect_comma
 	beqz	a0, assemble_GENERIC_error		# missing comma

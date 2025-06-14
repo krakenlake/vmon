@@ -26,6 +26,7 @@
 .global ass_CSS_imm
 .global ass_CL_rel
 .global ass_rdsp
+.global ass_rdasp
 .global ass_C_16sp_imm
 
 .text
@@ -120,7 +121,7 @@ assemble_C_register:
 	jalr	s4
 	bltz	a0, assemble_C_register_error
 	# register number now in a0
-	li		t0, 8								# 8 <= rda/rs1a/rs2 <=15
+	li		t0, 8								# 8 <= rda/rs1a/rs2a <=15
 	blt		a0, t0, assemble_C_register_error 
 	li		t0, 15
 	bgt		a0, t0, assemble_C_register_error
@@ -273,8 +274,35 @@ ass_CSS_imm_done:
 # out: a0 = ptr to char after argument
 # out: a1 = insn word (0 on error)
 ass_CIW_imm:
-	# accept only x8-15
-	ret
+	PUSH_S0_RA
+	mv		s0, a1						# save insn word
+	jal		get_numeric
+	# imm  value in a1
+	li		a3, 4						# min
+	li		a4, 512						# max
+	li		a5, 0b11					# alignment
+	jal		check_a1_value
+	bnez	a2, ass_CIW_imm_error
+	# assemble imm from numeric
+	andi	t0, a1,	0b1000
+	slli	t0, t0, 2
+	andi	t1, a1, 0b100
+	slli	t1, t1, 4
+	andi	t2, a1, 0b1111000000
+	slli	t2, t2, 1
+	andi	t3, a1, 0b110000
+	slli	t3, t3, 7
+	or		a1, s0, t0					# from saved insn
+	or		a1, a1, t1
+	or		a1, a1, t2
+	or		a1, a1, t3
+ass_CIW_imm_continue:
+	# return a1 and a0
+	j		ass_CSS_imm_done
+ass_CIW_imm_error:
+	mv		a1, zero
+ass_CIW_imm_done:
+	POP_S0_RA_RET
 .size ass_CIW_imm, .-ass_CIW_imm
 
 
@@ -477,6 +505,37 @@ ass_rdsp_eror:
 ass_rdsp_done:
 	POP_RA_RET
 .size ass_rdsp, .-ass_rdsp
+
+
+# in: a0 = ptr to first char of argument
+# in: a1 = insn word to be modifed
+# in: a2 = origin address
+# out: a0 = ptr to char after argument
+# out: a1 = insn word (0 on error)
+ass_rdasp:
+	PUSH_S2_S1_S0_RA
+	mv		s1, a1								# save insn word
+	# parse register name
+	mv		s0, a0								# save string start
+	jal		find_register_name_end
+	# end in a0
+	mv		s2, a0								# save string end
+	mv		a1, a0								# reg name end
+	mv		a0, s0								# reg name start
+	# now look into either int register table or float register table
+	# and get the index of the register back (a0 < 0 on error)
+	jal		get_int_register_index_by_name
+	li		t0, 2								# accept only sp as register name
+	bne		a0, t0, ass_rdasp_error
+	# assemble nothing (this function is only used for c.addi4spn)
+	mv		a1, s1
+	j		ass_rdasp_done
+ass_rdasp_error:
+	mv		a1, zero
+ass_rdasp_done:
+	addi	a0, s2, 1							# return reg name end +1
+	POP_S2_S1_S0_RA_RET
+.size ass_rdasp, .-ass_rdasp
 
 
 # in: a0 = ptr to first char of argument

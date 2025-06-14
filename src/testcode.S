@@ -722,6 +722,16 @@ testcode_RVC:
 	c.addi16sp	sp, -128
 	c.addi16sp	sp, -256
 	c.addi16sp	sp, -512
+
+	c.addi4spn	x8, sp, 4
+	c.addi4spn	x9, sp, 8
+	c.addi4spn	x10, sp, 16
+	c.addi4spn	x11, sp, 32
+	c.addi4spn	x12, sp, 64
+	c.addi4spn	x13, sp, 128
+	c.addi4spn	x14, sp, 256
+	c.addi4spn	x15, sp, 512
+
 	c.slli		x0, 1
 	c.slli		x31, 1
 	c.slli		x0, 31

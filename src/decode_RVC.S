@@ -10,6 +10,7 @@
 .global dis_C_rda
 .global dis_C_rs1a
 .global dis_C_rs2a
+.global dis_C_rdasp
 .global dis_CI_imm
 .global dis_CSS_imm
 .global dis_CIW_imm
@@ -56,6 +57,16 @@ dis_C_rega:
 	addi	a0, a0, 8					# reg' registers start from x8
 	j		print_int_register_name
 .size dis_C_rega, .-dis_C_rega
+
+
+# in: a0 = instruction word
+dis_C_rdasp:
+	PUSH_RA
+	li		a0, 2
+	jal		get_int_register_name_by_index
+	jal		print_string
+	POP_RA_RET
+.size dis_C_rs2, .-dis_C_rs2
 
 
 # in: a0 = instruction word
@@ -128,7 +139,20 @@ dis_CSS_imm:
 
 # in: a0 = instruction word
 dis_CIW_imm:
-	ret
+	PUSH_RA
+	srli	t0, a0, 2
+	andi	t0, t0, 0b1000
+	srli	t1, a0, 4
+	andi	t1, t1, 0b100
+	srli	t2, a0, 1
+	andi	t2, t2, 0b1111000000
+	srli	t3, a0, 7
+	andi	t3, t3, 0b110000
+	or		a0, t0, t1
+	or		a0, a0, t2
+	or		a0, a0, t3
+	jal		print_decimal
+	POP_RA_RET
 .size dis_CIW_imm, .-dis_CIW_imm
 
 

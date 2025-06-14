@@ -541,6 +541,7 @@ string_OP_EBREAK:	.string "ebreak";
 	string_OP_C_SWSP:		.string "c.swsp";
 	string_OP_C_NOP:		.string "c.nop";
 	string_OP_C_ADDI16SP:	.string "c.addi16sp";
+	string_OP_C_ADDI4SPN:	.string "c.addi4spn";
 	string_OP_C_JR:			.string "c.jr";
 	string_OP_C_JALR:		.string "c.jalr";
 	string_OP_C_EBREAK:		.string "c.ebreak";
@@ -628,7 +629,7 @@ disass_vectors:
 	.word	ass_C_rs2, dis_C_rs2			# 0x14
 	.word	ass_CL_rel, dis_CL_rel			# 0x15	(== ass_CS_rel, dis_CS_rel)
 	.word	ass_C_rs1a, dis_C_rs1a			# 0x16
-	.word	ass_C_rs2a, dis_C_rs2a			# 0x17
+	.word	ass_C_rs2a, dis_C_rs2a			# 0x17	(C_rda == C_rs2a in CL-type and CIW-type)
 	.word	ass_CI_imm, dis_CI_imm			# 0x18
 	.word	ass_CSS_imm, dis_CSS_imm		# 0x19
 	.word	ass_CIW_imm, dis_CIW_imm		# 0x1a
@@ -641,8 +642,9 @@ disass_vectors:
 	.word	ass_CI_8imm, dis_CI_8imm		# 0x21
 	.word	ass_CI_16imm, dis_CI_16imm		# 0x22
 	.word	ass_C_BRA, dis_C_BRA			# 0x23	(c.beqz, c.bnez)
-	.word	ass_rdsp, dis_C_rd				# 0x24	(rd==sp fix in c.addi16sp)
+	.word	ass_rdsp, dis_C_rd				# 0x24	(rd==sp in c.addi16sp)
 	.word	ass_C_16sp_imm, dis_C_16sp_imm	# 0x25
+	.word	ass_rdasp, dis_C_rdasp			# 0x26	(rda==sp in c.addi4spn)
 #else
 	.word	0, 0							# 0x13	
 	.word	0, 0							# 0x14
@@ -663,6 +665,7 @@ disass_vectors:
 	.word	0, 0							# 0x23
 	.word	0, 0							# 0x24
 	.word	0, 0							# 0x25
+	.word	0, 0							# 0x26
 #endif /* DISASS_RVC */
 
 
@@ -900,7 +903,8 @@ encoding_table:
 	.word MASK_C_SW,		MATCH_C_SW,			string_OP_C_SW,			0x00151b16
 	.word MASK_C_ADDI,		MATCH_C_ADDI,		string_OP_C_ADDI,		0x0000181c	# todo: check imm != 0
 	.word MASK_C_ADDIW,		MATCH_C_ADDIW,		string_OP_C_ADDIW,		0x0000181c
-	.word MASK_C_ADDI16SP,	MATCH_C_ADDI16SP,	string_OP_C_ADDI16SP,	0x00002524	# todo
+	.word MASK_C_ADDI16SP,	MATCH_C_ADDI16SP,	string_OP_C_ADDI16SP,	0x00002524
+	.word MASK_C_ADDI4SPN,	MATCH_C_ADDI4SPN,	string_OP_C_ADDI4SPN,	0x001a2617	#! todo: wip
 	.word MASK_C_JAL,		MATCH_C_JAL,		string_OP_C_JAL,		0x0000001e
 	.word MASK_C_LI,		MATCH_C_LI,			string_OP_C_LI,			0x0000181c
 	.word MASK_C_LUI,		MATCH_C_LUI,		string_OP_C_LUI,		0x0000181c	# todo: check rd != x2 and imm != 0
