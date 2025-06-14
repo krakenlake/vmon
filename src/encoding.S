@@ -908,9 +908,9 @@ encoding_table:
 	.word MASK_C_JAL,		MATCH_C_JAL,		string_OP_C_JAL,		0x0000001e
 	.word MASK_C_LI,		MATCH_C_LI,			string_OP_C_LI,			0x0000181c
 	.word MASK_C_LUI,		MATCH_C_LUI,		string_OP_C_LUI,		0x0000181c	# todo: check rd != x2 and imm != 0
-	.word MASK_C_SRLI,		MATCH_C_SRLI,		string_OP_C_SRLI,		0x00000000	# todo
+	.word MASK_C_SRLI,		MATCH_C_SRLI,		string_OP_C_SRLI,		0x00001816
 	.word MASK_C_SRLI64,	MATCH_C_SRLI64,		string_OP_C_SRLI64,		0x00000000	# todo
-	.word MASK_C_SRAI,		MATCH_C_SRAI,		string_OP_C_SRAI,		0x00000000	# todo
+	.word MASK_C_SRAI,		MATCH_C_SRAI,		string_OP_C_SRAI,		0x00001816
 	.word MASK_C_SRAI64,	MATCH_C_SRAI64,		string_OP_C_SRAI64,		0x00000000	# todo
 	.word MASK_C_ANDI,		MATCH_C_ANDI,		string_OP_C_ANDI,		0x00000000	# todo
 	.word MASK_C_SUB,		MATCH_C_SUB,		string_OP_C_SUB,		0x00000000	# todo

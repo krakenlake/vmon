@@ -760,6 +760,26 @@ testcode_RVC:
 	c.slli		x8, 8
 	c.slli		x16, 16
 	c.slli		x31, 31
+
+	c.srli		x8, 1
+	c.srli		x9, 2
+	c.srli		x10, 4
+	c.srli		x11, 8
+	c.srli		x12, 16
+	c.srli		x13, 31
+	c.srli		x14, 31
+	c.srli		x15, 31
+
+	c.srai		x8, 1
+	c.srai		x9, 2
+	c.srai		x10, 4
+	c.srai		x11, 8
+	c.srai		x12, 16
+	c.srai		x13, 31
+	c.srai		x14, 31
+	c.srai		x15, 31
+
+
 	c.nop
 	
 	# CI_4imm
