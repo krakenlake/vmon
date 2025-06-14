@@ -913,12 +913,12 @@ encoding_table:
 	.word MASK_C_SRAI,		MATCH_C_SRAI,		string_OP_C_SRAI,		0x00001816
 	.word MASK_C_SRAI64,	MATCH_C_SRAI64,		string_OP_C_SRAI64,		0x00000000	# todo
 	.word MASK_C_ANDI,		MATCH_C_ANDI,		string_OP_C_ANDI,		0x00001817
-	.word MASK_C_SUB,		MATCH_C_SUB,		string_OP_C_SUB,		0x00000000	# todo
-	.word MASK_C_XOR,		MATCH_C_XOR,		string_OP_C_XOR,		0x00000000	# todo
-	.word MASK_C_OR,		MATCH_C_OR,			string_OP_C_OR,			0x00000000	# todo
-	.word MASK_C_AND,		MATCH_C_AND,		string_OP_C_AND,		0x00000000	# todo
-	.word MASK_C_SUBW,		MATCH_C_SUBW,		string_OP_C_SUBW,		0x00000000	# todo
-	.word MASK_C_ADDW,		MATCH_C_ADDW,		string_OP_C_ADDW,		0x00000000	# todo
+	.word MASK_C_SUB,		MATCH_C_SUB,		string_OP_C_SUB,		0x00001716
+	.word MASK_C_XOR,		MATCH_C_XOR,		string_OP_C_XOR,		0x00001716
+	.word MASK_C_OR,		MATCH_C_OR,			string_OP_C_OR,			0x00001716
+	.word MASK_C_AND,		MATCH_C_AND,		string_OP_C_AND,		0x00001716
+	.word MASK_C_SUBW,		MATCH_C_SUBW,		string_OP_C_SUBW,		0x00001716
+	.word MASK_C_ADDW,		MATCH_C_ADDW,		string_OP_C_ADDW,		0x00001716
 	.word MASK_C_J,			MATCH_C_J,			string_OP_C_J,			0x0000001e
 	.word MASK_C_BEQZ,		MATCH_C_BEQZ,		string_OP_C_BEQZ,		0x00002316
 	.word MASK_C_BNEZ,		MATCH_C_BNEZ,		string_OP_C_BNEZ,		0x00002316

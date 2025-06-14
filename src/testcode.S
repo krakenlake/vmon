@@ -796,6 +796,59 @@ testcode_RVC:
 	c.add		x1, x1
 	c.add		x31, x31
 
+	c.and		x8, x8
+	c.and		x9, x9
+	c.and		x10, x10
+	c.and		x11, x11
+	c.and		x12, x12
+	c.and		x13, x13
+	c.and		x14, x14
+	c.and		x15, x15
+
+	c.or		x8, x8
+	c.or		x9, x9
+	c.or		x10, x10
+	c.or		x11, x11
+	c.or		x12, x12
+	c.or		x13, x13
+	c.or		x14, x14
+	c.or		x15, x15
+
+	c.xor		x8, x8
+	c.xor		x9, x9
+	c.xor		x10, x10
+	c.xor		x11, x11
+	c.xor		x12, x12
+	c.xor		x13, x13
+	c.xor		x14, x14
+	c.xor		x15, x15
+
+	c.sub		x8, x8
+	c.sub		x9, x9
+	c.sub		x10, x10
+	c.sub		x11, x11
+	c.sub		x12, x12
+	c.sub		x13, x13
+	c.sub		x14, x14
+	c.sub		x15, x15
+
+	c.addw		x8, x8
+	c.addw		x9, x9
+	c.addw		x10, x10
+	c.addw		x11, x11
+	c.addw		x12, x12
+	c.addw		x13, x13
+	c.addw		x14, x14
+	c.addw		x15, x15
+
+	c.subw		x8, x8
+	c.subw		x9, x9
+	c.subw		x10, x10
+	c.subw		x11, x11
+	c.subw		x12, x12
+	c.subw		x13, x13
+	c.subw		x14, x14
+	c.subw		x15, x15
 
 	# CI_4imm
 	c.lwsp		x8, 0(sp)
