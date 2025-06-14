@@ -904,7 +904,7 @@ encoding_table:
 	.word MASK_C_ADDI,		MATCH_C_ADDI,		string_OP_C_ADDI,		0x0000181c	# todo: check imm != 0
 	.word MASK_C_ADDIW,		MATCH_C_ADDIW,		string_OP_C_ADDIW,		0x0000181c
 	.word MASK_C_ADDI16SP,	MATCH_C_ADDI16SP,	string_OP_C_ADDI16SP,	0x00002524
-	.word MASK_C_ADDI4SPN,	MATCH_C_ADDI4SPN,	string_OP_C_ADDI4SPN,	0x001a2617	#! todo: wip
+	.word MASK_C_ADDI4SPN,	MATCH_C_ADDI4SPN,	string_OP_C_ADDI4SPN,	0x001a2617
 	.word MASK_C_JAL,		MATCH_C_JAL,		string_OP_C_JAL,		0x0000001e
 	.word MASK_C_LI,		MATCH_C_LI,			string_OP_C_LI,			0x0000181c
 	.word MASK_C_LUI,		MATCH_C_LUI,		string_OP_C_LUI,		0x0000181c	# todo: check rd != x2 and imm != 0
