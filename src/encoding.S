@@ -909,9 +909,7 @@ encoding_table:
 	.word MASK_C_LI,		MATCH_C_LI,			string_OP_C_LI,			0x0000181c
 	.word MASK_C_LUI,		MATCH_C_LUI,		string_OP_C_LUI,		0x0000181c	# todo: check rd != x2 and imm != 0
 	.word MASK_C_SRLI,		MATCH_C_SRLI,		string_OP_C_SRLI,		0x00001816
-	.word MASK_C_SRLI64,	MATCH_C_SRLI64,		string_OP_C_SRLI64,		0x00000000	# todo
 	.word MASK_C_SRAI,		MATCH_C_SRAI,		string_OP_C_SRAI,		0x00001816
-	.word MASK_C_SRAI64,	MATCH_C_SRAI64,		string_OP_C_SRAI64,		0x00000000	# todo
 	.word MASK_C_ANDI,		MATCH_C_ANDI,		string_OP_C_ANDI,		0x00001817
 	.word MASK_C_SUB,		MATCH_C_SUB,		string_OP_C_SUB,		0x00001716
 	.word MASK_C_XOR,		MATCH_C_XOR,		string_OP_C_XOR,		0x00001716
@@ -923,7 +921,6 @@ encoding_table:
 	.word MASK_C_BEQZ,		MATCH_C_BEQZ,		string_OP_C_BEQZ,		0x00002316
 	.word MASK_C_BNEZ,		MATCH_C_BNEZ,		string_OP_C_BNEZ,		0x00002316
 	.word MASK_C_SLLI,		MATCH_C_SLLI,		string_OP_C_SLLI,		0x0000181c
-	.word MASK_C_SLLI64,	MATCH_C_SLLI64,		string_OP_C_SLLI64,		0x00000000	# todo
 	.word MASK_C_LWSP,		MATCH_C_LWSP,		string_OP_C_LWSP,		0x00001f1c
 	.word MASK_C_EBREAK,	MATCH_C_EBREAK,		string_OP_C_EBREAK,		0x00000000	# before c.jalr, c.add
 	.word MASK_C_JALR,		MATCH_C_JALR,		string_OP_C_JALR,		0x00000013	# before c.add
@@ -949,6 +946,9 @@ encoding_table:
 
 	# RV128C
 	#if XLEN >= 128
+		.word MASK_C_SRLI64,	MATCH_C_SRLI64,	string_OP_C_SRLI64,	0x00000000	# todo
+		.word MASK_C_SRAI64,	MATCH_C_SRAI64,	string_OP_C_SRAI64,	0x00000000	# todo
+		.word MASK_C_SLLI64,	MATCH_C_SLLI64,	string_OP_C_SLLI64,	0x00000000	# todo
 		.word MASK_C_LQ,		MATCH_C_LQ,		string_OP_C_LQ,		0x00000000	# todo
 		.word MASK_C_SQ,		MATCH_C_SQ,		string_OP_C_SQ,		0x00000000	# todo
 		.word MASK_C_LQSP,		MATCH_C_LQSP,	string_OP_C_LQSP,	0x0000221c	# todo test
