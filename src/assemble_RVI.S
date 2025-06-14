@@ -53,7 +53,8 @@ check_value_done:
 # in: a0 = absolute target address 
 # in: a1 = instruction word
 # in: a2 = absolute origin address of the branch instruction
-# out: a1 = modified instruction word (0 on error)
+# out: a1 = modified instruction word
+# out: a2 = -1 on error
 assemble_branch_target:
 	sub		a0, a0, a2					# compute relative address
 	# range check
@@ -83,7 +84,7 @@ assemble_branch_target:
 	or		a1, a1, t0
 	j 		assemble_branch_target_done
 assemble_branch_target_error:
-	mv		a1, zero
+	li		a2, -1
 assemble_branch_target_done:
 	ret
 .size assemble_branch_target, .-assemble_branch_target
@@ -101,7 +102,8 @@ assemble_I_imm_bool:
 
 # in: a0 = imm value (accepted values are 0 <= imm <= 31)
 # in: a1 = instruction word
-# out: a1 = modified instruction word (0 on error)
+# out: a1 = modified instruction word
+# out: a2 = -1 on error
 assemble_I_imm_shift:
 	bltz	a0, assemble_I_imm_shift_error
 	li		t0, 32
@@ -110,7 +112,7 @@ assemble_I_imm_shift:
 	or		a1, a1, a0
 	j		assemble_I_imm_shift_done
 assemble_I_imm_shift_error:
-	mv		a1, zero
+	li		a2, -1
 assemble_I_imm_shift_done:
 	ret
 .size assemble_I_imm_shift, .-assemble_I_imm_shift
@@ -122,7 +124,8 @@ assemble_I_imm_shift_done:
 # in: a1 = insn word to be modifed
 # in: a2 = origin address
 # out: a0 = ptr to char after argument
-# out: a1 = insn word (0 on error)
+# out: a1 = modified instruction word
+# out: a2 = -1 on error
 ass_I_rel:
 	PUSH_S1_S0_RA
 	mv		s1, a1						# save insn word
@@ -144,7 +147,7 @@ ass_I_rel_continue:
 	addi	a0, s0, 1					# string ptr +1
 	j		ass_I_rel_done
 ass_I_rel_error:
-	mv		a1, zero
+	li		a2, -1
 ass_I_rel_done:
 	POP_S1_S0_RA_RET
 .size ass_I_rel, .-ass_I_rel
@@ -194,7 +197,8 @@ ass_rs2:
 # in: t0 = number of slli shifts required (7 for rd, 15 for rs1, 20 for rs2)
 # in: t1 = register lookup function ptr
 # out: a0 = ptr to char after argument
-# out: a1 = insn word (0 on error)
+# out: a1 = modified instruction word
+# out: a2 = -1 on error
 assemble_register:
 	PUSH_S4_S3_S2_S1_S0_RA
 	mv		s3, t0
@@ -217,7 +221,7 @@ assemble_register:
 	or		a1, s1, a0
 	j		assemble_register_done
 assemble_register_error:
-	mv		a1, zero
+	li		a2, -1
 assemble_register_done:
 	addi	a0, s2, 1							# return reg name end +1
 	POP_S4_S3_S2_S1_S0_RA_RET
@@ -228,7 +232,8 @@ assemble_register_done:
 # in: a1 = insn word to be modifed
 # in: a2 = origin address
 # out: a0 = ptr to char after argument
-# out: a1 = insn word (0 on error)
+# out: a1 = modified instruction word
+# out: a2 = -1 on error
 ass_BRA:
 	PUSH_S2_S1_S0_RA
 	mv		s1, a1						# save insn word
@@ -247,7 +252,7 @@ ass_BRA:
 	addi	a0, s2, 1							# string ptr +1
 	j		ass_BRA_done
 ass_BRA_error:
-	mv		a1, zero
+	li		a2, -1
 ass_BRA_done:
 	POP_S2_S1_S0_RA_RET
 .size ass_BRA, .-ass_BRA
@@ -257,7 +262,8 @@ ass_BRA_done:
 # in: a1 = insn word to be modifed
 # in: a2 = origin address
 # out: a0 = ptr to char after argument
-# out: a1 = insn word (0 on error)
+# out: a1 = modified instruction word
+# out: a2 = -1 on error
 ass_I_imm:
 	PUSH_S1_S0_RA
 	mv		s1, a1						# save insn word
@@ -292,7 +298,7 @@ ass_I_imm_continue:
 	mv		a0, s0
 	j		ass_I_imm_done
 ass_I_imm_error:
-	mv		a1, zero
+	li		a2, -1
 ass_I_imm_done:
 	POP_S1_S0_RA_RET
 .size ass_I_imm, .-ass_I_imm
@@ -304,7 +310,8 @@ ass_I_imm_done:
 # in: a1 = insn word to be modifed
 # in: a2 = origin address
 # out: a0 = ptr to char after argument
-# out: a1 = insn word (0 on error)
+# out: a1 = modified instruction word
+# out: a2 = -1 on error
 ass_S_imm:
 	PUSH_S0_RA
 	mv		s0, a1						# save insn word
@@ -329,7 +336,7 @@ ass_S_rel_continue:
 	# return a1 and a0
 	j		ass_S_rel_done
 ass_S_rel_error:
-	mv		a1, zero
+	li		a2, -1
 ass_S_rel_done:
 	POP_S0_RA_RET
 .size ass_S_imm, .-ass_S_imm
@@ -340,7 +347,8 @@ ass_S_rel_done:
 # in: a2 = origin address
 # in: t0 = number of slli shifts (predecessor=24, sucessor=20)
 # out: a0 = ptr to char after argument
-# out: a1 = insn word (0 on error)
+# out: a1 = modified instruction word
+# out: a2 = -1 on error
 ass_iorw:
 	PUSH_S2_S1_S0_RA
 	mv		s0, t0						# shift value from ass_PRE or ass_SUC
@@ -354,7 +362,7 @@ ass_iorw:
 	or		a1, s1, a1						# instruction word
 	j		ass_iorw_done
 ass_iorw_error:
-	mv		a1, zero
+	li		a2, -1
 ass_iorw_done:
 	POP_S2_S1_S0_RA_RET
 .size ass_iorw, .-ass_iorw
@@ -364,7 +372,8 @@ ass_iorw_done:
 # in: a1 = insn word to be modifed
 # in: a2 = origin address
 # out: a0 = ptr to char after argument
-# out: a1 = insn word (0 on error)
+# out: a1 = modified instruction word
+# out: a2 = -1 on error
 ass_PRE:
 	li		t0, 24
 	j		ass_iorw
@@ -375,7 +384,8 @@ ass_PRE:
 # in: a1 = insn word to be modifed
 # in: a2 = origin address
 # out: a0 = ptr to char after argument
-# out: a1 = insn word (0 on error)
+# out: a1 = modified instruction word
+# out: a2 = -1 on error
 ass_SUC:
 	li		t0, 20
 	j		ass_iorw
@@ -386,7 +396,8 @@ ass_SUC:
 # in: a1 = insn word to be modifed
 # in: a2 = origin address
 # out: a0 = ptr to char after argument
-# out: a1 = insn word (0 on error)
+# out: a1 = modified instruction word
+# out: a2 = -1 on error
 ass_J:
 	PUSH_S2_S1_S0_RA
 	mv		s1, a1						# save insn word
@@ -422,7 +433,7 @@ ass_J:
 	addi	a0, s2, 1					# string ptr +1
 	j		ass_J_done
 ass_J_error:
-	mv		a1, zero
+	li		a2, -1
 ass_J_done:
 	POP_S2_S1_S0_RA_RET
 .size ass_J, .-ass_J
@@ -432,7 +443,8 @@ ass_J_done:
 # in: a1 = insn word to be modifed
 # in: a2 = origin address
 # out: a0 = ptr to char after argument
-# out: a1 = insn word (0 on error)
+# out: a1 = modified instruction word
+# out: a2 = -1 on error
 ass_U_imm:
 	PUSH_S1_S0_RA
 	mv		s1, a1						# save insn word
@@ -449,7 +461,7 @@ ass_U_imm:
 	addi	a0, s0, 1					# string ptr +1
 	j		ass_U_imm_done
 ass_U_imm_error:
-	mv		a1, zero
+	li		a2, -1
 ass_U_imm_done:
 	POP_S1_S0_RA_RET
 .size ass_U_imm, .-ass_U_imm

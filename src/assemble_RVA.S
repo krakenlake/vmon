@@ -16,7 +16,8 @@
 # in: a1 = insn word to be modifed
 # in: a2 = origin address
 # out: a0 = ptr to char after argument
-# out: a1 = insn word (0 on error)
+# out: a1 = modified instruction word
+# out: a2 = -1 on error
 ass_aqrl:
 	PUSH_S0_RA
 	mv		s0, a1						# save insn word
@@ -28,7 +29,7 @@ ass_aqrl:
 	or		a1 , s0, a1
 	j 		ass_aqrl_done
 ass_aqrl_error:
-	mv		a1, zero
+	li		a2, -1
 ass_aqrl_done:
 	POP_S0_RA_RET
 .size ass_aqrl, .-ass_aqrl

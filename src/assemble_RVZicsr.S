@@ -19,7 +19,8 @@
 # in: a1 = insn word to be modifed
 # in: a2 = origin address
 # out: a0 = ptr to char after argument
-# out: a1 = insn word (0 on error)
+# out: a1 = modified instruction word
+# out: a2 = -1 on error
 ass_csr:
 	PUSH_S0_RA
 	mv		s0, a1						# save insn word
@@ -35,7 +36,7 @@ ass_csr:
 	or		a1, s0, t0					# insn word
 	j 		ass_csr_done
 ass_csr_error:
-	mv		a1, zero
+	li		a2, -1
 ass_csr_done:
 	POP_S0_RA_RET
 .size ass_csr, .-ass_csr
@@ -47,7 +48,8 @@ ass_csr_done:
 # in: a1 = insn word to be modifed
 # in: a2 = origin address
 # out: a0 = ptr to char after argument
-# out: a1 = insn word (0 on error)
+# out: a1 = modified instruction word
+# out: a2 = -1 on error
 ass_csri:
 	PUSH_S0_RA
 	mv		s0, a1						# save insn word
@@ -62,7 +64,7 @@ ass_csri:
 	or		a1, s0, t0					# add to insn word
 	j 		ass_csr_done
 ass_csri_error:
-	mv		a1, zero
+	li		a2, -1
 ass_csri_done:
 	POP_S0_RA_RET
 .size ass_csri, .-ass_csri

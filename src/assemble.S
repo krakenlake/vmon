@@ -112,7 +112,9 @@ assemble_GENERIC_next_argument:
 	mv		a1, s1							# insn word in a1
 	mv		a2, s2							# origin address in a2
 	jalr 	t0
-	beqz	a1, assemble_GENERIC_error		# assembling argument failed
+	# it is an error if a2 == -1, so add 1 and check for zero
+	addi	a2, a2, 1							
+	beqz	a2, assemble_GENERIC_error		# assembling argument failed
 	mv		s1, a1							# save insn word
 	# check if we have processed 4 arguments already
 	addi	s4, s4, -1
