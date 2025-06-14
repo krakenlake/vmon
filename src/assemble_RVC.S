@@ -7,8 +7,9 @@
 
 #if defined (WITH_CMD_A) && defined (DISASS_RVC)
 
-.global ass_C_rd_nonzero
+.global ass_C_rd_nz
 .global ass_C_rs2
+.global ass_C_rs2_nz
 .global ass_C_rda
 .global ass_C_rs1a
 .global ass_C_rs2a
@@ -38,7 +39,7 @@
 # out: a0 = ptr to char after argument
 # out: a1 = modified instruction word
 # out: a2 = -1 on error
-ass_C_rd_nonzero:
+ass_C_rd_nz:
 	PUSH_S2_S1_S0_RA
 	mv		s1, a1								# save insn word
 	# parse register name
@@ -48,21 +49,54 @@ ass_C_rd_nonzero:
 	mv		s2, a0								# save string end
 	mv		a1, a0								# reg name end
 	mv		a0, s0								# reg name start
-	# now look into either int register table or float register table
+	# now look into int register table
 	# and get the index of the register back (a0 < 0 on error)
 	jal		get_int_register_index_by_name
-	blez	a0, ass_C_rd_nonzero_error			# register zero also not allowed
+	blez	a0, ass_C_rd_nz_error			# register zero also not allowed
 	# register number now in a0
 	# assemble into a1
 	sll		a0, a0, 7
 	or		a1, s1, a0
-	j		ass_C_rd_nonzero_done
-ass_C_rd_nonzero_error:
+	j		ass_C_rd_nz_done
+ass_C_rd_nz_error:
 	li		a2, -1
-ass_C_rd_nonzero_done:
+ass_C_rd_nz_done:
 	addi	a0, s2, 1							# return reg name end +1
 	POP_S2_S1_S0_RA_RET
-.size ass_C_rd_nonzero, .-ass_C_rd_nonzero
+.size ass_C_rd_nz, .-ass_C_rd_nz
+
+
+# in: a0 = ptr to first char
+# in: a1 = insn word to be modifed
+# in: a2 = origin address
+# out: a0 = ptr to char after argument
+# out: a1 = modified instruction word
+# out: a2 = -1 on error
+ass_C_rs2_nz:
+	PUSH_S2_S1_S0_RA
+	mv		s1, a1								# save insn word
+	# parse register name
+	mv		s0, a0								# save string start
+	jal		find_register_name_end
+	# end in a0
+	mv		s2, a0								# save string end
+	mv		a1, a0								# reg name end
+	mv		a0, s0								# reg name start
+	# now look into int register table
+	# and get the index of the register back (a0 < 0 on error)
+	jal		get_int_register_index_by_name
+	blez	a0, ass_C_rs2_nz_error			# register zero also not allowed
+	# register number now in a0
+	# assemble into a1
+	sll		a0, a0, 7
+	or		a1, s1, a0
+	j		ass_C_rs2_nz_done
+ass_C_rs2_nz_error:
+	li		a2, -1
+ass_C_rs2_nz_done:
+	addi	a0, s2, 1							# return reg name end +1
+	POP_S2_S1_S0_RA_RET
+.size ass_C_rs2_nz, .-ass_C_rs2_nz
 
 
 # facade for assemble_register:
@@ -507,7 +541,7 @@ ass_CA_imm:
 # out: a2 = -1 on error
 ass_rdsp:
 	PUSH_RA
-	jal		ass_C_rd_nonzero
+	jal		ass_C_rd_nz
 	# check if rd==2 now in insn word
 	srli	t0, a1, 7					
 	andi	t0, t0, 0b11111

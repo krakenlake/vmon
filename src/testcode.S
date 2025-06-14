@@ -790,6 +790,12 @@ testcode_RVC:
 	c.andi		x14, 31
 	c.andi		x15, 31
 
+	
+	c.mv		x1, x1
+	c.mv		x31, x31
+	c.add		x1, x1
+	c.add		x31, x31
+
 
 	# CI_4imm
 	c.lwsp		x8, 0(sp)
@@ -828,10 +834,6 @@ testcode_RVC:
 	c.jalr		x8
 	c.jalr		x16
 	c.jalr		x31
-	c.mv		x1, x1
-	c.mv		x31, x31
-	c.add		x1, x1
-	c.add		x31, x31
 	c.ebreak
 	# CB_type
 testcode_RVC_CB_type_start:
