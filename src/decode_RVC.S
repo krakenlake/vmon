@@ -16,7 +16,6 @@
 .global dis_CIW_imm
 .global dis_CL_LW_imm
 .global dis_CS_imm
-.global dis_CB_imm
 .global dis_C_BRA
 .global dis_CJ_off
 .global dis_CI_4imm
@@ -172,41 +171,10 @@ dis_CL_LW_imm:
 	POP_RA_RET
 .size dis_CL_LW_imm, .-dis_CL_LW_imm
 
-/*
-# in: a0 = instruction word
-dis_CB_imm:
-	PUSH_RA
-	jal		decode_CB_imm	
-	# sign extend
-	slli	a0, a0, 25
-	#if XLEN >=64
-		sext.w	a0, a0					# sign-extend to 64 bits
-	#endif
-	srai	a0, a0, 25
-	jal		print_hex					# effective address
-	POP_RA_RET
-.size dis_CB_imm, .-dis_CB_imm
-*/
 
 # in: a0 = instruction word
 dis_C_BRA:
 	PUSH_RA
-	jal		decode_CB_imm	
-	# sign extend
-	slli	a0, a0, 23
-	#if XLEN >=64
-		sext.w	a0, a0					# sign-extend to 64 bits
-	#endif
-	srai	a0, a0, 23
-	# add insn address
-	add		a0, s5, a0
-	jal		print_hex					# effective address
-	POP_RA_RET
-.size dis_C_BRA, .-dis_C_BRA
-
-
-# in: a0 = instruction word
-decode_CB_imm:
 	slli	t0, a0, 3
 	andi	t0, t0, 0b100000
 	srli	t1, a0, 2
@@ -221,8 +189,17 @@ decode_CB_imm:
 	or		a0, a0, t2
 	or		a0, a0, t3
 	or		a0, a0, t4
-	ret
-.size decode_CB_imm, .-decode_CB_imm
+	# sign extend
+	slli	a0, a0, 23
+	#if XLEN >=64
+		sext.w	a0, a0					# sign-extend to 64 bits
+	#endif
+	srai	a0, a0, 23
+	# add insn address
+	add		a0, s5, a0
+	jal		print_hex					# effective address
+	POP_RA_RET
+.size dis_C_BRA, .-dis_C_BRA
 
 
 # in: a0 = instruction word

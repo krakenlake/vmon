@@ -18,7 +18,6 @@
 .global ass_CIW_imm
 .global ass_CL_LW_imm
 .global ass_CS_imm
-.global ass_CB_imm
 .global ass_C_BRA
 .global ass_CJ_off
 .global ass_CI_4imm
@@ -416,18 +415,6 @@ ass_CL_rel_error:
 ass_CL_rel_done:
 	POP_S1_S0_RA_RET
 .size ass_CL_rel, .-ass_CL_rel
-
-
-# in: a0 = ptr to first char of argument
-# in: a1 = insn word to be modifed
-# in: a2 = origin address
-# out: a0 = ptr to char after argument
-# out: a1 = modified instruction word
-# out: a2 = -1 on error
-ass_CB_imm:
-	# accept only x8-15
-	ret
-.size ass_CB_imm, .-ass_CB_imm
 
 
 # in: a0 = ptr to first char of argument
