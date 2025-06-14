@@ -698,6 +698,7 @@ testcode_RVC:
 	c.xor		x14, x15
 	c.sub		x14, x15
 	# CI_type
+	
 	c.li		x1, 0
 	c.li		x1, 1
 	c.li		x31, 31
@@ -706,10 +707,30 @@ testcode_RVC:
 	c.lui		x1, 31
 	c.lui		x31, 1
 	c.lui		x31, 31
+
+	#c.addi		x0, 1					rd == 0 is reserved
+	#c.addi		x1, 0					imm == 0 is reserved
 	c.addi		x1, 0
 	c.addi		x1, 1
 	c.addi		x31, 31
 	c.addi		x31, -32
+
+	#c.addiw		x0, 1					rd == 0 is reserved
+	c.addiw		x1, 0
+	c.addiw		x2, 1
+	c.addiw		x4, 2
+	c.addiw		x8, 4
+	c.addiw		x16, 8
+	c.addiw		x31, 16
+	c.addiw		x31, 31
+	c.addiw		x2, -1
+	c.addiw		x4, -2
+	c.addiw		x8, -4
+	c.addiw		x16, -8
+	c.addiw		x31, -16
+	c.addiw		x31, -32
+
+	#c.addi16sp	sp, 0					imm == 0 is reserved
 	c.addi16sp	sp, 16
 	c.addi16sp	sp, 32
 	c.addi16sp	sp, 64
@@ -723,6 +744,7 @@ testcode_RVC:
 	c.addi16sp	sp, -256
 	c.addi16sp	sp, -512
 
+	#c.addi4spn	x8, sp, 0				imm == 0 is reserved
 	c.addi4spn	x8, sp, 4
 	c.addi4spn	x9, sp, 8
 	c.addi4spn	x10, sp, 16
@@ -732,9 +754,11 @@ testcode_RVC:
 	c.addi4spn	x14, sp, 256
 	c.addi4spn	x15, sp, 512
 
-	c.slli		x0, 1
-	c.slli		x31, 1
-	c.slli		x0, 31
+	#c.slli		x0, 1					rd == 0 is reserved
+	c.slli		x2, 2
+	c.slli		x4, 4
+	c.slli		x8, 8
+	c.slli		x16, 16
 	c.slli		x31, 31
 	c.nop
 	

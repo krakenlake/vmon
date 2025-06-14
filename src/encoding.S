@@ -922,7 +922,7 @@ encoding_table:
 	.word MASK_C_J,			MATCH_C_J,			string_OP_C_J,			0x0000001e
 	.word MASK_C_BEQZ,		MATCH_C_BEQZ,		string_OP_C_BEQZ,		0x00002316
 	.word MASK_C_BNEZ,		MATCH_C_BNEZ,		string_OP_C_BNEZ,		0x00002316
-	.word MASK_C_SLLI,		MATCH_C_SLLI,		string_OP_C_SLLI,		0x00000000	# todo
+	.word MASK_C_SLLI,		MATCH_C_SLLI,		string_OP_C_SLLI,		0x0000181c
 	.word MASK_C_SLLI64,	MATCH_C_SLLI64,		string_OP_C_SLLI64,		0x00000000	# todo
 	.word MASK_C_LWSP,		MATCH_C_LWSP,		string_OP_C_LWSP,		0x00001f1c
 	.word MASK_C_EBREAK,	MATCH_C_EBREAK,		string_OP_C_EBREAK,		0x00000000	# before c.jalr, c.add
