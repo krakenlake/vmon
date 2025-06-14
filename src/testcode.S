@@ -779,9 +779,18 @@ testcode_RVC:
 	c.srai		x14, 31
 	c.srai		x15, 31
 
-
 	c.nop
 	
+	c.andi		x8, 0
+	c.andi		x9, 1
+	c.andi		x10, 2
+	c.andi		x11, 4
+	c.andi		x12, 8
+	c.andi		x13, 16
+	c.andi		x14, 31
+	c.andi		x15, 31
+
+
 	# CI_4imm
 	c.lwsp		x8, 0(sp)
 	c.lwsp		x9, 4(sp)
@@ -830,12 +839,6 @@ testcode_RVC_CB_type_start:
 	c.beqz		x15, testcode_RVC_CB_type_start
 	c.bnez		x8, testcode_RVC_CB_type_end
 	c.bnez		x15, testcode_RVC_CB_type_end
-	c.srli		x8, 1
-	c.srli		x15, 31
-	c.srai		x8, 1
-	c.srai		x15, 31
-	c.andi		x8, 0
-	c.andi		x15, 31
 testcode_RVC_CB_type_end:	
 	#ifdef DISASS_RVF
 		#c.flw		 f8, 0(f8)

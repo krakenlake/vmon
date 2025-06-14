@@ -635,7 +635,8 @@ disass_vectors:
 	.word	ass_CIW_imm, dis_CIW_imm		# 0x1a
 	.word	ass_CL_LW_imm, dis_CL_LW_imm	# 0x1b
 	.word	ass_C_rd_nonzero, dis_C_rd		# 0x1c
-	.word	ass_CB_imm, dis_CB_imm			# 0x1d
+#	.word	ass_CB_imm, dis_CB_imm			# 0x1d
+	.word	0, 0							# 0x1d
 	.word	ass_CJ_off, dis_CJ_off			# 0x1e	(c.j, c.jal)
 	.word	ass_CI_4imm, dis_CI_4imm		# 0x1f
 	.word	ass_CSS_imm, dis_CSS_imm		# 0x20
@@ -912,7 +913,7 @@ encoding_table:
 	.word MASK_C_SRLI64,	MATCH_C_SRLI64,		string_OP_C_SRLI64,		0x00000000	# todo
 	.word MASK_C_SRAI,		MATCH_C_SRAI,		string_OP_C_SRAI,		0x00001816
 	.word MASK_C_SRAI64,	MATCH_C_SRAI64,		string_OP_C_SRAI64,		0x00000000	# todo
-	.word MASK_C_ANDI,		MATCH_C_ANDI,		string_OP_C_ANDI,		0x00000000	# todo
+	.word MASK_C_ANDI,		MATCH_C_ANDI,		string_OP_C_ANDI,		0x00001817
 	.word MASK_C_SUB,		MATCH_C_SUB,		string_OP_C_SUB,		0x00000000	# todo
 	.word MASK_C_XOR,		MATCH_C_XOR,		string_OP_C_XOR,		0x00000000	# todo
 	.word MASK_C_OR,		MATCH_C_OR,			string_OP_C_OR,			0x00000000	# todo

@@ -172,12 +172,21 @@ dis_CL_LW_imm:
 	POP_RA_RET
 .size dis_CL_LW_imm, .-dis_CL_LW_imm
 
-
+/*
 # in: a0 = instruction word
 dis_CB_imm:
-	ret
+	PUSH_RA
+	jal		decode_CB_imm	
+	# sign extend
+	slli	a0, a0, 25
+	#if XLEN >=64
+		sext.w	a0, a0					# sign-extend to 64 bits
+	#endif
+	srai	a0, a0, 25
+	jal		print_hex					# effective address
+	POP_RA_RET
 .size dis_CB_imm, .-dis_CB_imm
-
+*/
 
 # in: a0 = instruction word
 dis_C_BRA:
