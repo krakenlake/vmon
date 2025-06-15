@@ -93,49 +93,33 @@ dis_CI_imm:
 
 # in: a0 = instruction word
 dis_CI_4imm:
-	PUSH_RA
-	# insn[6:4] -> offset[4:2]
-	srli	t0, a0, 2
-	andi	t0, t0, 0b11100
-	# insn[12] -> offset[5]
-	srli	t1, a0, 7
-	andi	t1, t1, 0b100000
-	# insn[3:2] -> offset[7:6]
-	slli	t2, a0, 4
-	andi	t2, t2, 0b11000000
-	j		dis_CI_tail
+	li		a1, 0b11100
+	li		a2, 0b11000000
+	j		dis_CI_Ximm
 .size dis_CI_4imm, .-dis_CI_4imm
 dis_CI_8imm:
-	PUSH_RA
-	# insn[6:5] -> offset[4:3]
-	srli	t0, a0, 2
-	andi	t0, t0, 0b11000
-	# insn[12] -> offset[5]
-	srli	t1, a0, 7
-	andi	t1, t1, 0b100000
-	# insn[4:2] -> offset[8:6]
-	slli	t2, a0, 4
-	andi	t2, t2, 0b111000000
-	j		dis_CI_tail
+	li		a1, 0b11000
+	li		a2, 0b111000000
+	j		dis_CI_Ximm
 .size dis_CI_8imm, .-dis_CI_8imm
 dis_CI_16imm:
+	li		a1, 0b10000
+	li		a2, 0b11110000
+.size dis_CI_16imm, .-dis_CI_16imm
+dis_CI_Ximm:
 	PUSH_RA
-	# insn[6] -> offset[4]
 	srli	t0, a0, 2
-	andi	t0, t0, 0b10000
-	# insn[12] -> offset[5]
+	and		t0, t0, a1					# from above
 	srli	t1, a0, 7
-	andi	t1, t1, 0b100000
-	# insn[5:2] -> offset[9:6]
+	andi	t1, t1, 0b100000			# always the same
 	slli	t2, a0, 4
-	andi	t2, t2, 0b11110000
-dis_CI_tail:
+	and		t2, t2, a2					# from above
 	# put everything together
 	or		a0, t0, t1
 	or		a0, a0, t2
 	jal		print_decimal
 	POP_RA_RET
-.size dis_CI_16imm, .-dis_CI_16imm
+.size dis_CI_Ximm, .-dis_CI_Ximm
 
 
 # in: a0 = instruction word
