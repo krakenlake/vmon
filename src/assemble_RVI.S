@@ -142,7 +142,6 @@ ass_I_rel:
 	beqz	a0, ass_I_rel_error
 	# assemble in a1
 	mv		a1, s1
-ass_I_rel_continue:
 	# return a1 and a0
 	addi	a0, s0, 1					# string ptr +1
 	j		ass_I_rel_done
@@ -332,7 +331,6 @@ ass_S_imm:
 	or		s0, s0, t0
 	# assemble in a1
 	mv		a1, s0
-ass_S_rel_continue:
 	# return a1 and a0
 	j		ass_S_rel_done
 ass_S_rel_error:
