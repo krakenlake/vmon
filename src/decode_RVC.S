@@ -11,18 +11,21 @@
 .global dis_C_rs1a
 .global dis_C_rs2a
 .global dis_C_rdasp
+
 .global dis_CI_imm
 .global dis_CI_4imm
 .global dis_CI_8imm
+.global dis_CI_16imm
+
 .global dis_CSS_4imm
 .global dis_CSS_8imm
 .global dis_CSS_16imm
+
 .global dis_CIW_imm
 .global dis_CL_LW_imm
 .global dis_CS_imm
 .global dis_C_BRA
 .global dis_CJ_off
-.global dis_CI_16imm
 .global dis_CSS_imm
 .global dis_CL_rel
 .global dis_C_16sp_imm
