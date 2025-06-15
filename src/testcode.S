@@ -684,6 +684,32 @@ testcode_RVC:
 	c.lw		x8, 124(x8)
 	c.lw		x15, 124(x15)
 	
+	#if XLEN >= 64
+		c.ld		x8, 0(x8)
+		c.ld		x9, 8(x9)
+		c.ld		x10, 16(x10)
+		c.ld		x11, 32(x11)
+		c.ld		x12, 64(x12)
+		c.ld		x13, 128(x13)
+		c.ld		x14, 248(x14)
+		c.ld		x15, 248(x15)
+		c.ld		x8, 248(x8)
+		c.ld		x15, 248(x15)
+	#endif
+
+	#if XLEN >= 128
+		c.lq		x8, 0(x8)
+		c.lq		x9, 16(x9)
+		c.lq		x10, 32(x10)
+		c.lq		x11, 64(x11)
+		c.lq		x12, 128(x12)
+		c.lq		x13, 256(x13)
+		c.lq		x14, 496(x14)
+		c.lq		x15, 496(x15)
+		c.lq		x8, 496(x8)
+		c.lq		x15, 496(x15)
+	#endif
+
 	# CS_type
 	c.sw		x8, 0(x8)
 	c.sw		x9, 4(x9)
@@ -695,6 +721,33 @@ testcode_RVC:
 	c.sw		x15, 124(x15)
 	c.sw		x8, 124(x8)
 	c.sw		x15, 124(x15)
+
+	#if XLEN >= 64
+		c.sd		x8, 0(x8)
+		c.sd		x9, 8(x9)
+		c.sd		x10, 16(x10)
+		c.sd		x11, 32(x11)
+		c.sd		x12, 64(x12)
+		c.sd		x13, 128(x13)
+		c.sd		x14, 248(x14)
+		c.sd		x15, 248(x15)
+		c.sd		x8, 248(x8)
+		c.sd		x15, 248(x15)
+	#endif
+
+	#if XLEN >= 128
+		c.sq		x8, 0(x8)
+		c.sq		x9, 16(x9)
+		c.sq		x10, 32(x10)
+		c.sq		x11, 64(x11)
+		c.sq		x12, 128(x12)
+		c.sq		x13, 256(x13)
+		c.sq		x14, 496(x14)
+		c.sq		x15, 496(x15)
+		c.sq		x8, 496(x8)
+		c.sq		x15, 496(x15)
+	#endif
+
 	c.and		x8, x9
 	c.or		x8, x9
 	c.xor		x14, x15

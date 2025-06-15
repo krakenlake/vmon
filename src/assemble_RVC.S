@@ -7,28 +7,35 @@
 
 #if defined (WITH_CMD_A) && defined (DISASS_RVC)
 
-.global ass_C_rd_nz
 .global ass_C_rs2
-.global ass_C_rs2_nz
 .global ass_C_rda
 .global ass_C_rs1a
 .global ass_C_rs2a
+.global ass_C_rd_nz
+.global ass_C_rs2_nz
+.global ass_rdsp
+.global ass_rdasp
+
 .global ass_CI_imm
 .global ass_CI_4imm
 .global ass_CI_8imm
+.global ass_CI_16imm
+
 .global ass_CSS_4imm
 .global ass_CSS_8imm
 .global ass_CSS_16imm
+
 .global ass_CIW_imm
-.global ass_CL_LW_imm
+
+.global ass_CL_LW_4imm
+.global ass_CL_LW_8imm
+.global ass_CL_LW_16imm
+
 .global ass_CS_imm
 .global ass_C_BRA
 .global ass_CJ_off
-.global ass_CI_16imm
 .global ass_CSS_imm
 .global ass_CL_rel
-.global ass_rdsp
-.global ass_rdasp
 .global ass_C_16sp_imm
 
 .text
@@ -225,7 +232,7 @@ ass_CI_4imm:
 	li		a4, 252					# max
 	li		a5, 0b11					# alignment
 	jal		check_a1_value
-	bnez	a2, ass_CI_16imm_error
+	bnez	a2, ass_CI_4imm_error
 	# assemble imm from numeric
 	# offset[7:6] -> insn[3:2]
 	andi	t0, a1, 0b11000000
@@ -257,6 +264,7 @@ ass_CI_4imm_done:
 # out: a1 = modified instruction word
 # out: a2 = -1 on error
 ass_CI_8imm:
+#if XLEN >= 64
 	PUSH_S0_RA
 	mv		s0, a1						# save insn word
 	jal		get_numeric
@@ -265,7 +273,7 @@ ass_CI_8imm:
 	li		a4, 504					# max
 	li		a5, 0b111					# alignment
 	jal		check_a1_value
-	bnez	a2, ass_CI_16imm_error
+	bnez	a2, ass_CI_8imm_error
 	# assemble imm from numeric
 	# offset[8:6] -> insn[4:2]
 	andi	t0, a1, 0b111000000
@@ -287,6 +295,9 @@ ass_CI_8imm_error:
 	li		a2, -1
 ass_CI_8imm_done:
 	POP_S0_RA_RET
+#else
+	ret
+#endif
 .size ass_CI_8imm, .-ass_CI_8imm
 
 
@@ -297,6 +308,7 @@ ass_CI_8imm_done:
 # out: a1 = modified instruction word
 # out: a2 = -1 on error
 ass_CI_16imm:
+#if XLEN >= 128
 	PUSH_S0_RA
 	mv		s0, a1						# save insn word
 	jal		get_numeric
@@ -327,6 +339,9 @@ ass_CI_16imm_error:
 	li		a2, -1
 ass_CI_16imm_done:
 	POP_S0_RA_RET
+#else
+	ret
+#endif
 .size ass_CI_16imm, .-ass_CI_16imm
 
 
@@ -353,7 +368,6 @@ ass_CSS_4imm:
 	andi	t0, a1, 0b111100
 	slli	t0, t0, 7
 	or		a1, s0, t0
-ass_CSS_4imm_continue:
 	# return a1 and a0
 	j		ass_CSS_4imm_done
 ass_CSS_4imm_error:
@@ -370,6 +384,7 @@ ass_CSS_4imm_done:
 # out: a1 = modified instruction word
 # out: a2 = -1 on error
 ass_CSS_8imm:
+#if XLEN >= 64	
 	PUSH_S0_RA
 	mv		s0, a1						# save insn word
 	jal		get_numeric
@@ -386,13 +401,15 @@ ass_CSS_8imm:
 	andi	t0, a1, 0b111000
 	slli	t0, t0, 7
 	or		a1, s0, t0
-ass_CSS_8imm_continue:
 	# return a1 and a0
 	j		ass_CSS_8imm_done
 ass_CSS_8imm_error:
 	li		a2, -1
 ass_CSS_8imm_done:
 	POP_S0_RA_RET
+#else
+	ret
+#endif
 .size ass_CSS_8imm, .-ass_CSS_8imm
 
 
@@ -403,6 +420,7 @@ ass_CSS_8imm_done:
 # out: a1 = modified instruction word
 # out: a2 = -1 on error
 ass_CSS_16imm:
+#if XLEN >= 128
 	PUSH_S0_RA
 	mv		s0, a1						# save insn word
 	jal		get_numeric
@@ -419,13 +437,15 @@ ass_CSS_16imm:
 	andi	t0, a1, 0b110000
 	slli	t0, t0, 7
 	or		a1, s0, t0
-ass_CSS_16imm_continue:
 	# return a1 and a0
 	j		ass_CSS_16imm_done
 ass_CSS_16imm_error:
 	li		a2, -1
 ass_CSS_16imm_done:
 	POP_S0_RA_RET
+#else
+	ret
+#endif
 .size ass_CSS_16imm, .-ass_CSS_16imm
 
 
@@ -458,7 +478,6 @@ ass_CIW_imm:
 	or		a1, a1, t1
 	or		a1, a1, t2
 	or		a1, a1, t3
-ass_CIW_imm_continue:
 	# return a1 and a0
 	j		ass_CIW_imm_done
 ass_CIW_imm_error:
@@ -474,7 +493,7 @@ ass_CIW_imm_done:
 # out: a0 = ptr to char after argument
 # out: a1 = modified instruction word
 # out: a2 = -1 on error
-ass_CL_LW_imm:
+ass_CL_LW_4imm:
 	PUSH_S0_RA
 	mv		s0, a1						# save insn word
 	jal		get_numeric
@@ -483,7 +502,7 @@ ass_CL_LW_imm:
 	li		a4, 124						# max
 	li		a5, 0b11					# alignment
 	jal		check_a1_value
-	bnez	a2, ass_CL_LW_imm_error
+	bnez	a2, ass_CL_LW_4imm_error
 	# assemble imm from numeric
 	andi	t0, a1,0b111000
 	slli	t0, t0, 7
@@ -494,14 +513,87 @@ ass_CL_LW_imm:
 	or		a1, s0, t0					# from saved insn
 	or		a1, a1, t1
 	or		a1, a1, t2
-ass_CL_LW_imm_continue:
 	# return a1 and a0
-	j		ass_CL_LW_imm_done
-ass_CL_LW_imm_error:
+	j		ass_CL_LW_4imm_done
+ass_CL_LW_4imm_error:
 	li		a2, -1
-ass_CL_LW_imm_done:
+ass_CL_LW_4imm_done:
 	POP_S0_RA_RET
-.size ass_CL_LW_imm, .-ass_CL_LW_imm
+.size ass_CL_LW_4imm, .-ass_CL_LW_4imm
+
+
+# in: a0 = ptr to first char of argument
+# in: a1 = insn word to be modifed
+# in: a2 = origin address
+# out: a0 = ptr to char after argument
+# out: a1 = modified instruction word
+# out: a2 = -1 on error
+ass_CL_LW_8imm:
+#if XLEN >= 64	
+	PUSH_S0_RA
+	mv		s0, a1						# save insn word
+	jal		get_numeric
+	# imm  value in a1
+	li		a3, 0						# min
+	li		a4, 248						# max
+	li		a5, 0b111					# alignment
+	jal		check_a1_value
+	bnez	a2, ass_CL_LW_8imm_error
+	# assemble imm from numeric
+	andi	t0, a1,0b111000
+	slli	t0, t0, 7
+	andi	t1, a1, 0b11000000
+	srli	t1, t1, 1
+	or		a1, s0, t0					# from saved insn
+	or		a1, a1, t1
+	# return a1 and a0
+	j		ass_CL_LW_8imm_done
+ass_CL_LW_8imm_error:
+	li		a2, -1
+ass_CL_LW_8imm_done:
+	POP_S0_RA_RET
+#else
+	ret
+#endif
+.size ass_CL_LW_8imm, .-ass_CL_LW_8imm
+
+# in: a0 = ptr to first char of argument
+# in: a1 = insn word to be modifed
+# in: a2 = origin address
+# out: a0 = ptr to char after argument
+# out: a1 = modified instruction word
+# out: a2 = -1 on error
+ass_CL_LW_16imm:
+#if XLEN >= 128
+	PUSH_S0_RA
+	mv		s0, a1						# save insn word
+	jal		get_numeric
+	# imm  value in a1
+	li		a3, 0						# min
+	li		a4, 496						# max
+	li		a5, 0b1111					# alignment
+	jal		check_a1_value
+	bnez	a2, ass_CL_LW_16imm_error
+	# assemble imm from numeric
+	andi	t0, a1,0b110000
+	slli	t0, t0, 7
+	andi	t1, a1, 0b100000000
+	slli	t1, t1, 2
+	andi	t2, a1, 0b11000000
+	srli	t2, t2, 1
+	or		a1, s0, t0					# from saved insn
+	or		a1, a1, t1
+	or		a1, a1, t2
+	# return a1 and a0
+	j		ass_CL_LW_16imm_done
+ass_CL_LW_16imm_error:
+	li		a2, -1
+ass_CL_LW_16imm_done:
+	POP_S0_RA_RET
+#else
+	ret
+#endif
+.size ass_CL_LW_16imm, .-ass_CL_LW_16imm
 
 
 # process I-type register-relative parameter
@@ -529,7 +621,6 @@ ass_CS_rel:
 	beqz	a0, ass_CL_rel_error
 	# assemble in a1
 	mv		a1, s1
-ass_CL_rel_continue:
 	# return a1 and a0
 	addi	a0, s0, 1					# string ptr +1
 	j		ass_CL_rel_done

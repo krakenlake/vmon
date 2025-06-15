@@ -22,7 +22,11 @@
 .global dis_CSS_16imm
 
 .global dis_CIW_imm
-.global dis_CL_LW_imm
+
+.global dis_CL_LW_4imm
+.global dis_CL_LW_8imm
+.global dis_CL_LW_16imm
+
 .global dis_CS_imm
 .global dis_C_BRA
 .global dis_CJ_off
@@ -98,16 +102,22 @@ dis_CI_imm:
 dis_CI_4imm:
 	li		a1, 0b11100
 	li		a2, 0b11000000
+#if XLEN >= 64
 	j		dis_CI_Ximm
+#endif
 .size dis_CI_4imm, .-dis_CI_4imm
 dis_CI_8imm:
+#if XLEN >= 64
 	li		a1, 0b11000
 	li		a2, 0b111000000
 	j		dis_CI_Ximm
+#endif
 .size dis_CI_8imm, .-dis_CI_8imm
 dis_CI_16imm:
+#if XLEN >= 128
 	li		a1, 0b10000
 	li		a2, 0b11110000
+#endif
 .size dis_CI_16imm, .-dis_CI_16imm
 dis_CI_Ximm:
 	PUSH_RA
@@ -135,19 +145,23 @@ dis_CSS_4imm:
 	j		dis_CSS_tail
 .size dis_CSS_4imm, .-dis_CSS_4imm
 dis_CSS_8imm:
+#if XLEN >= 64
 	PUSH_RA
 	srli	t0, a0, 7
 	andi	t0, t0, 0b111000
 	srli	t1, a0, 1
 	andi	t1, t1, 0b111000000
 	j		dis_CSS_tail
+#endif
 .size dis_CSS_8imm, .-dis_CSS_8imm
 dis_CSS_16imm:
+#if XLEN >= 128
 	PUSH_RA
 	srli	t0, a0, 7
 	andi	t0, t0, 0b110000
 	srli	t1, a0, 1
 	andi	t1, t1, 0b1111000000
+#endif
 dis_CSS_tail:
 	or		a0, t0, t1
 	jal		print_decimal
@@ -175,7 +189,7 @@ dis_CIW_imm:
 
 
 # in: a0 = instruction word
-dis_CL_LW_imm:
+dis_CL_LW_4imm:
 	PUSH_RA
 	srli	t0, a0, 7
 	andi	t0, t0, 0b111000
@@ -188,7 +202,46 @@ dis_CL_LW_imm:
 	or		a0, a0, t2
 	jal		print_decimal
 	POP_RA_RET
-.size dis_CL_LW_imm, .-dis_CL_LW_imm
+.size dis_CL_LW_4imm, .-dis_CL_LW_4imm
+
+
+# in: a0 = instruction word
+dis_CL_LW_8imm:
+#if XLEN >= 64
+	PUSH_RA
+	srli	t0, a0, 7
+	andi	t0, t0, 0b111000
+	slli	t1, a0, 1
+	andi	t1, t1, 0b11000000
+	# join everything
+	or		a0, t0, t1
+	jal		print_decimal
+	POP_RA_RET
+#else
+	ret
+#endif
+.size dis_CL_LW_8imm, .-dis_CL_LW_8imm
+
+
+# in: a0 = instruction word
+dis_CL_LW_16imm:
+#if XLEN >= 128
+	PUSH_RA
+	srli	t0, a0, 7
+	andi	t0, t0, 0b110000
+	srli	t1, a0, 2
+	andi	t1, t1, 0b100000000
+	slli	t2, a0, 1
+	andi	t2, t2, 0b11000000
+	# join everything
+	or		a0, t0, t1
+	or		a0, a0, t2
+	jal		print_decimal
+	POP_RA_RET
+#else
+	ret
+#endif
+.size dis_CL_LW_16imm, .-dis_CL_LW_16imm
 
 
 # in: a0 = instruction word
