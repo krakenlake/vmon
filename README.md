@@ -9,19 +9,22 @@ communication written entirely in RISC-V assembly language.
 
 ## Features
 
-- hex and ASCII monitor
-- assembler/disassembler with hex and decimal output
-- currently RV64G instructions supported
+- hex and ASCII memory dump
+- disassembler with hex/dec output
+- assembler with hex/dec/bin input
+- RV64GC instructions supported (prepared for RV128)
 - (some) pseudo instructions supported
 - hex/dec/bin conversion
 - searching in memory areas
 - copying memory areas
 - exception catching
-- can be built for RV32 or RV64 targets
+- can be built for RV32/RV64/RV128 targets
 - runs in QEMU or on RISC-V hardware
+- runs in M-mode or S-mode
 - runs bare-metal or can be called from outside
 - terminal I/O via UART
 - set of included commands configurable in build process
+- supported ISA and extensions configurable in build process
 - executable can be built with or without RISC-V example code included
 
 ## Requirements
@@ -50,7 +53,7 @@ VMON understands the following commands:
 
 #### `a <start_addr>` ####
 
-Assembly input (press ENTER to stop) [alpha testing, currently RV64G instructions supported].
+Assembly input (press ENTER to stop) [still testing, so proceed with caution].
 
 #### `b` ####
 
@@ -76,7 +79,7 @@ Copy memory contents. This also works correctly when both areas overlap.
 
 #### `d [<start_addr>] [<end_addr]>` ####
 
-Disassemble from <start_addr> to <end_addr>.
+Disassemble from <start_addr> to <end_addr> [still testing, so proceed with caution].
 If <end_addr> is not given, 16 instructions are printed by default. 
 If no address is given, dump will start from the last address used before.
 
@@ -174,13 +177,13 @@ Offsets for `JALR` are expected as relative offsets:
 
 ### Exceptions ###
 
-VMON installs a trap handler (if running in M-mode and Zicsr is available) in order to catch exceptions.
-Exceptions are printed:
+VMON installs a trap handler in order to catch exceptions. Exceptions are printed:
 
 ![Screenshot 2025-05-16 at 09 36 18](https://github.com/user-attachments/assets/f344bbd6-ae28-46a1-8e33-ba65f898c903)
 
-The trap handler can only be enabled at runtime if the executable contains the trap handler (default if possible),
-the target platform implements the Zicsr extension and the executable runs in M-mode.
+VMON can only enable the trap handler during startup if the executable contains the trap
+handler (default if possible), the target platform implements the Zicsr extension and the
+executable runs in M-mode.
 
 ### Stack handling ###
 If VMON is running in M-mode, it will set up its own stack on startup.
