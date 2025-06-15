@@ -633,7 +633,7 @@ disass_vectors:
 	.word	ass_CI_imm, dis_CI_imm				# 0x18
 	.word	ass_CSS_4imm, dis_CSS_4imm			# 0x19
 	.word	ass_CIW_imm, dis_CIW_imm			# 0x1a
-	.word	ass_CL_LW_4imm, dis_CL_LW_4imm		# 0x1b	(c.lw)
+	.word	ass_CL_LW_4imm, dis_CL_LW_4imm		# 0x1b	(c.lw, c.sw)
 	.word	ass_C_rd_nz, dis_C_rd				# 0x1c
 	.word	ass_C_rs2_nz, dis_C_rs2				# 0x1d
 	.word	ass_CJ_off, dis_CJ_off				# 0x1e	(c.j, c.jal)
@@ -646,8 +646,8 @@ disass_vectors:
 	.word	ass_C_16sp_imm, dis_C_16sp_imm		# 0x25
 	.word	ass_rdasp, dis_C_rdasp				# 0x26	(rda==sp in c.addi4spn)
 	.word	ass_CSS_16imm, dis_CSS_16imm		# 0x27
-	.word	ass_CL_LW_8imm, dis_CL_LW_8imm		# 0x28	(c.ld)
-	.word	ass_CL_LW_16imm, dis_CL_LW_16imm	# 0x29	(c.lq)
+	.word	ass_CL_LW_8imm, dis_CL_LW_8imm		# 0x28	(c.ld, c.sd)
+	.word	ass_CL_LW_16imm, dis_CL_LW_16imm	# 0x29	(c.lq, c.sq)
 #else
 	.word	0, 0								# 0x13	
 	.word	0, 0								# 0x14
