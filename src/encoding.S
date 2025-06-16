@@ -520,9 +520,7 @@ string_OP_EBREAK:	.string "ebreak";
 	string_OP_C_LI:			.string "c.li";
 	string_OP_C_LUI:		.string "c.lui";
 	string_OP_C_SRLI:		.string "c.srli";
-	string_OP_C_SRLI64:		.string "c.srli64";
 	string_OP_C_SRAI:		.string "c.srai";
-	string_OP_C_SRAI64:		.string "c.srai64";
 	string_OP_C_ANDI:		.string "c.andi";
 	string_OP_C_SUB:		.string "c.sub";
 	string_OP_C_XOR:		.string "c.xor";
@@ -534,7 +532,6 @@ string_OP_EBREAK:	.string "ebreak";
 	string_OP_C_BEQZ:		.string "c.beqz";
 	string_OP_C_BNEZ:		.string "c.bnez";
 	string_OP_C_SLLI:		.string "c.slli";
-	string_OP_C_SLLI64:		.string "c.slli64";
 	string_OP_C_LWSP:		.string "c.lwsp";
 	string_OP_C_MV:			.string "c.mv";
 	string_OP_C_ADD:		.string "c.add";
@@ -545,21 +542,40 @@ string_OP_EBREAK:	.string "ebreak";
 	string_OP_C_JR:			.string "c.jr";
 	string_OP_C_JALR:		.string "c.jalr";
 	string_OP_C_EBREAK:		.string "c.ebreak";
-	string_OP_C_LD:			.string "c.ld";
-	string_OP_C_SD:			.string "c.sd";
 	string_OP_C_ADDIW:		.string "c.addiw";
-	string_OP_C_LDSP:		.string "c.ldsp";
-	string_OP_C_SDSP:		.string "c.sdsp";
+	
+	#if XLEN >= 64
+		string_OP_C_LD:			.string "c.ld";
+		string_OP_C_SD:			.string "c.sd";	
+		string_OP_C_LDSP:		.string "c.ldsp";
+		string_OP_C_SDSP:		.string "c.sdsp";
+	#endif
+
+	#if XLEN >= 128
+		string_OP_C_LD:			.string "c.lq";
+		string_OP_C_SD:			.string "c.sq";
+		string_OP_C_LDSP:		.string "c.lqsp";
+		string_OP_C_SDSP:		.string "c.sqsp";
+		string_OP_C_SRLI64:		.string "c.srli64";
+		string_OP_C_SRAI64:		.string "c.srai64";
+		string_OP_C_SLLI64:		.string "c.slli64";	
+	#endif
+	
 	#ifdef DISASS_RVF
-		string_OP_C_FLD:		.string "c.fld";
-		string_OP_C_FSD:		.string "c.fsd";
 		string_OP_C_FLW:		.string "c.flw";
 		string_OP_C_FSW:		.string "c.fsw";
-		string_OP_C_FLDSP:		.string "c.fldsp";
 		string_OP_C_FLWSP:		.string "c.flwsp";
-		string_OP_C_FSDSP:		.string "c.fsdsp";
 		string_OP_C_FSWSP:		.string "c.fswsp";
+
+		#if XLEN >= 64
+			string_OP_C_FLD:		.string "c.fld";
+			string_OP_C_FSD:		.string "c.fsd";
+			string_OP_C_FLDSP:		.string "c.fldsp";
+			string_OP_C_FSDSP:		.string "c.fsdsp";
+		#endif
+
 	#endif /* DISASS_RVF */
+
 #endif /* DISASS_RVC */
 
 # Pseudo
