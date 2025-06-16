@@ -1141,6 +1141,11 @@ testcode_PSEUDO:
 	# should not appear as "sext.w"
 	addiw	a0, a1, 1
 
+	# should be "seqz"
+	seqz		a0, a1
+	# should not appear as "seqz"
+	sltiu		a0, a1, 2
+
 	# should be "ret"
 	ret
 

@@ -583,6 +583,7 @@ string_OP_EBREAK:	.string "ebreak";
 	string_OP_MV:		.string "mv";
 	string_OP_NOT:		.string "not";
 	string_OP_NEG:		.string "neg";
+	string_OP_SEQZ:		.string "seqz";
 	string_OP_RET:		.string "ret";	
 	string_OP_NOP:		.string "nop";	
 	string_OP_UNIMP:	.string "unimp";	
@@ -728,21 +729,24 @@ encoding_table:
 	.word 0xffffffff, 0x00008067,	string_OP_RET,		0x00000000
 	.word 0xffffffff, 0x00000013,	string_OP_NOP,		0x00000000
 	
-	# for mv, look additionally at imm[31:20] which must be zero
+	# for mv, look additionally at imm[11:0] == insn[31:20] which must be zero
 	.word MASK_ADDI | 0xfff00000, MATCH_ADDI, string_OP_MV, 0x00000201
 
-	# for not, look additionally at imm[31:20] which must be -1
+	# for not, look additionally at imm[11:0] == insn[31:20] which must be -1
 	.word MASK_XORI | 0xfff00000, MATCH_XORI | 0xfff00000, string_OP_NOT, 0x00000201
 
 	# for neg, look additionally at rs1 which must be x0 (0)
 	.word MASK_SUB | 0b11111000000000000000, MATCH_SUB, string_OP_NEG, 0x00000301
+
+	# for seqz, look additionally at imm[11:0] == insn[31:20] which must be 1
+	.word MASK_SLTIU | 0xfff00000, MATCH_SLTIU | 0x00100000, string_OP_SEQZ, 0x00000201
 
 	#if XLEN >= 64
 
 		# for negw, look additionally at rs1 which must be x0 (0)
 		.word MASK_SUBW | 0b11111000000000000000, MATCH_SUBW, string_OP_NEGW, 0x00000301
 
-		# for sext.w, look additionally at imm[31:20] which must be zero
+		# for sext.w, look additionally at imm[11:0] == insn[31:20] which must be zero
 		.word MASK_ADDIW | 0xfff00000, MATCH_ADDIW, string_OP_SEXTW, 0x00000201
 
 	#endif
