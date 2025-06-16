@@ -586,9 +586,15 @@ string_OP_EBREAK:	.string "ebreak";
 	string_OP_RET:		.string "ret";	
 	string_OP_NOP:		.string "nop";	
 	string_OP_UNIMP:	.string "unimp";	
+
+	#if XLEN >= 64
+		string_OP_NEGW:		.string "negw";
+	#endif
+
 	#ifdef DISASS_RVC
 		string_OP_C_UNIMP:	.string "c.unimp";	
 	#endif
+
 #endif /* DISASS_PSEUDO */
 
 # Privileged
@@ -727,9 +733,13 @@ encoding_table:
 	# for not, look additionally at imm[31:20] which must be -1
 	.word MASK_XORI | 0xfff00000, MATCH_XORI | 0xfff00000, string_OP_NOT, 0x00000201
 
-	# for not, look additionally at imm[31:20] which must be -1
+	# for neg, look additionally at rs1 which must be x0 (0)
 	.word MASK_SUB | 0b11111000000000000000, MATCH_SUB, string_OP_NEG, 0x00000301
 
+	#if XLEN >= 64
+		# for negw, look additionally at rs1 which must be x0 (0)
+		.word MASK_SUBW | 0b11111000000000000000, MATCH_SUBW, string_OP_NEGW, 0x00000301
+	#endif
 
 #endif /* DISASS_PSEUDO */
 

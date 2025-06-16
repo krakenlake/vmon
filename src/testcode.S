@@ -1131,6 +1131,11 @@ testcode_PSEUDO:
 	# should not appear as "neg"
 	sub		a0, t0, a1
 
+	# should be "negw"
+	negw		a0, a1
+	# should not appear as "negw"
+	subw		a0, t0, a1
+
 	# should be "ret"
 	ret
 
