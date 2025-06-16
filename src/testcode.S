@@ -1151,6 +1151,19 @@ testcode_PSEUDO:
 	# should not appear as "sgtz"
 	slt			a0, t0, a1
 
+testcode_PSEUDO_branch_start:
+	
+	# should be "beqz"
+	beqz		a0, testcode_PSEUDO_branch_start
+	beqz		a0, testcode_PSEUDO_branch_end
+	# should not appear as "beqz"
+	beq			a0, t0, testcode_PSEUDO_branch_start
+	beq			a0, t0, testcode_PSEUDO_branch_end
+
+
+testcode_PSEUDO_branch_end:
+
+
 	# should be "ret"
 	ret
 

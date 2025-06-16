@@ -581,12 +581,18 @@ string_OP_EBREAK:	.string "ebreak";
 # Pseudo
 #ifdef DISASS_PSEUDO
 	string_OP_MV:		.string "mv";
+
 	string_OP_NOT:		.string "not";
 	string_OP_NEG:		.string "neg";
+
 	string_OP_SEQZ:		.string "seqz";
 	string_OP_SNEZ:		.string "snez";
 	string_OP_SLTZ:		.string "sltz";
 	string_OP_SGTZ:		.string "sgtz";
+
+	string_OP_BEQZ:		.string "beqz";
+
+
 	string_OP_RET:		.string "ret";	
 	string_OP_NOP:		.string "nop";	
 	string_OP_UNIMP:	.string "unimp";	
@@ -752,6 +758,10 @@ encoding_table:
 
 	# for sgtz, look additionally at rs1 which must be x0 (0)
 	.word MASK_SLT | 0b11111000000000000000, MATCH_SLT, string_OP_SGTZ, 0x00000301
+
+	# for beqz, look additionally at rs2 which must be x0 (0)
+	.word MASK_BEQ | 0b1111100000000000000000000, MATCH_BEQ, string_OP_BEQZ, 0x00000602
+
 
 	#if XLEN >= 64
 
