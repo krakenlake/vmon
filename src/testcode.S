@@ -1146,6 +1146,11 @@ testcode_PSEUDO:
 	# should not appear as "sltz"
 	slt			a0, a1, t0
 
+	# should be "sgtz"
+	sgtz		a0, a1
+	# should not appear as "sgtz"
+	slt			a0, t0, a1
+
 	# should be "ret"
 	ret
 

@@ -750,6 +750,9 @@ encoding_table:
 	# for sltz, look additionally at rs2 which must be x0 (0)
 	.word MASK_SLT | 0b1111100000000000000000000, MATCH_SLT, string_OP_SLTZ, 0x00000201
 
+	# for sgtz, look additionally at rs1 which must be x0 (0)
+	.word MASK_SLT | 0b11111000000000000000, MATCH_SLT, string_OP_SGTZ, 0x00000301
+
 	#if XLEN >= 64
 
 		# for negw, look additionally at rs1 which must be x0 (0)
