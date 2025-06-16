@@ -689,6 +689,7 @@ disass_vectors:
 	.word	0, 0								# 0x27
 	.word	0, 0								# 0x28
 	.word	0, 0								# 0x29
+	.word	0, 0								# 0x2a
 #endif /* DISASS_RVC */
 
 
