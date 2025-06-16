@@ -589,6 +589,7 @@ string_OP_EBREAK:	.string "ebreak";
 
 	#if XLEN >= 64
 		string_OP_NEGW:		.string "negw";
+		string_OP_SEXTW:	.string "sext.w";
 	#endif
 
 	#ifdef DISASS_RVC
@@ -737,8 +738,13 @@ encoding_table:
 	.word MASK_SUB | 0b11111000000000000000, MATCH_SUB, string_OP_NEG, 0x00000301
 
 	#if XLEN >= 64
+
 		# for negw, look additionally at rs1 which must be x0 (0)
 		.word MASK_SUBW | 0b11111000000000000000, MATCH_SUBW, string_OP_NEGW, 0x00000301
+
+		# for sext.w, look additionally at imm[31:20] which must be zero
+		.word MASK_ADDIW | 0xfff00000, MATCH_ADDIW, string_OP_SEXTW, 0x00000201
+
 	#endif
 
 #endif /* DISASS_PSEUDO */

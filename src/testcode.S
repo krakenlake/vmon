@@ -1136,6 +1136,11 @@ testcode_PSEUDO:
 	# should not appear as "negw"
 	subw		a0, t0, a1
 
+	# should be "sext.w"
+	sext.w		a0, a1
+	# should not appear as "sext.w"
+	addiw	a0, a1, 1
+
 	# should be "ret"
 	ret
 
