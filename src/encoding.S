@@ -585,6 +585,8 @@ string_OP_EBREAK:	.string "ebreak";
 	string_OP_NEG:		.string "neg";
 	string_OP_SEQZ:		.string "seqz";
 	string_OP_SNEZ:		.string "snez";
+	string_OP_SLTZ:		.string "sltz";
+	string_OP_SGTZ:		.string "sgtz";
 	string_OP_RET:		.string "ret";	
 	string_OP_NOP:		.string "nop";	
 	string_OP_UNIMP:	.string "unimp";	
@@ -744,6 +746,9 @@ encoding_table:
 
 	# for snez, look additionally at rs1 which must be x0 (0)
 	.word MASK_SLTU | 0b11111000000000000000, MATCH_SLTU, string_OP_SNEZ, 0x00000301
+
+	# for sltz, look additionally at rs2 which must be x0 (0)
+	.word MASK_SLT | 0b1111100000000000000000000, MATCH_SLT, string_OP_SLTZ, 0x00000201
 
 	#if XLEN >= 64
 

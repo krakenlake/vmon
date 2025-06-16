@@ -1131,16 +1131,6 @@ testcode_PSEUDO:
 	# should not appear as "neg"
 	sub		a0, t0, a1
 
-	# should be "negw"
-	negw		a0, a1
-	# should not appear as "negw"
-	subw		a0, t0, a1
-
-	# should be "sext.w"
-	sext.w		a0, a1
-	# should not appear as "sext.w"
-	addiw	a0, a1, 1
-
 	# should be "seqz"
 	seqz		a0, a1
 	# should not appear as "seqz"
@@ -1151,12 +1141,31 @@ testcode_PSEUDO:
 	# should not appear as "snez"
 	sltu		a0, t0, a1
 
+	# should be "sltz"
+	sltz		a0, a1
+	# should not appear as "sltz"
+	slt			a0, a1, t0
+
 	# should be "ret"
 	ret
 
 	# should be "nop"
 	addi	x0, x0, 0
 	nop
+
+	#if XLEN >= 64
+		# should be "negw"
+		negw		a0, a1
+		# should not appear as "negw"
+		subw		a0, t0, a1
+
+		# should be "sext.w"
+		sext.w		a0, a1
+		# should not appear as "sext.w"
+		addiw	a0, a1, 1
+	#endif
+
+
 .option pop /* norvc */
 .size testcode_PSEUDO, .-testcode_PSEUDO
 #endif /* WITH_TESTCODE_PSEUDO */
