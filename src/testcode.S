@@ -1160,6 +1160,13 @@ testcode_PSEUDO_branch_start:
 	beq			a0, t0, testcode_PSEUDO_branch_start
 	beq			a0, t0, testcode_PSEUDO_branch_end
 
+	# should be "bnez"
+	bnez		a0, testcode_PSEUDO_branch_start
+	bnez		a0, testcode_PSEUDO_branch_end
+	# should not appear as "bnez"
+	bne			a0, t0, testcode_PSEUDO_branch_start
+	bne			a0, t0, testcode_PSEUDO_branch_end
+
 
 testcode_PSEUDO_branch_end:
 
