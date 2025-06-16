@@ -11,6 +11,7 @@
 .global dis_C_rs1a
 .global dis_C_rs2a
 .global dis_C_rdasp
+.global dis_C_relsp
 
 .global dis_CI_imm
 .global dis_CI_4imm
@@ -75,6 +76,20 @@ dis_C_rdasp:
 	jal		print_string
 	POP_RA_RET
 .size dis_C_rs2, .-dis_C_rs2
+
+
+# in: a0 = instruction word
+dis_C_relsp:
+	PUSH_RA
+	li		a0, '('
+	jal		print_char
+	li		a0, 2
+	jal		get_int_register_name_by_index
+	jal		print_string
+	li		a0, ')'
+	jal		print_char
+	POP_RA_RET
+.size dis_C_relsp, .-dis_C_relsp
 
 
 # in: a0 = instruction word

@@ -997,10 +997,8 @@ testcode_RVC_CB_type_start:
 	c.bnez		x15, testcode_RVC_CB_type_end
 testcode_RVC_CB_type_end:	
 	#ifdef DISASS_RVF
-		#c.flw		 f8, 0(f8)
-		#c.fsw
-		#c.flwsp
-		#c.fswsp
+
+	
 		#if XLEN >= 64
 			c.fld		f8, 0(x8)
 			c.fld		f15, 248(x15)

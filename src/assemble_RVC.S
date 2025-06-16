@@ -15,6 +15,7 @@
 .global ass_C_rs2_nz
 .global ass_rdsp
 .global ass_rdasp
+.global ass_C_relsp
 
 .global ass_CI_imm
 .global ass_CI_4imm
@@ -135,6 +136,41 @@ ass_C_rs2a:
 	la		t1, get_int_register_index_by_name
 	j		assemble_C_register					# NOT all registers allowed
 .size ass_C_rs2a, .-ass_C_rs2a
+
+
+# accept "(sp)" or "(x2)" and nothing else
+#
+# in: a0 = ptr to first char of argument
+# in: a1 = insn word to be modifed
+# in: a2 = origin address
+# out: a0 = ptr to char after argument
+# out: a1 = modified instruction word
+# out: a2 = -1 on error
+ass_C_relsp:
+	PUSH_S2_S1_S0_RA
+	mv		s1, a1								# insn word
+	jal		expect_open_paren
+	beqz	a0, ass_C_relsp_error
+	mv		s0, a0								# save string start
+	jal		find_register_name_end
+	# end in a0
+	mv		s2, a0								# save string end
+	mv		a1, a0								# reg name end
+	mv		a0, s0								# reg name start
+	jal		get_int_register_index_by_name
+	li		t0, 2
+	bne		a0, t0, ass_C_relsp_error
+	addi	a0, s2, 1							# string ptr +1
+	jal		expect_close_paren
+	beqz	a0, ass_C_relsp_error
+	# return a1 and a0
+	mv		a1, s1								# return insn unchanged
+	j		ass_C_relsp_done
+ass_C_relsp_error:
+	li		a2, -1
+ass_C_relsp_done:
+	POP_S2_S1_S0_RA_RET
+.size ass_C_relsp, .-ass_C_relsp
 
 
 # We use this for C rd'/rs1'/rs2' registers ONLY.
