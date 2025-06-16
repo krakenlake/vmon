@@ -1203,6 +1203,11 @@ testcode_PSEUDO_branch_start:
 
 testcode_PSEUDO_branch_end:
 
+	# should be "j"
+	j			testcode_PSEUDO_branch_start
+	# should not appear as "j"
+	jal			a0, testcode_PSEUDO_branch_start
+
 
 	# should be "ret"
 	ret
