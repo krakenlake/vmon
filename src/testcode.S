@@ -1146,6 +1146,11 @@ testcode_PSEUDO:
 	# should not appear as "seqz"
 	sltiu		a0, a1, 2
 
+	# should be "snez"
+	snez		a0, a1
+	# should not appear as "snez"
+	sltu		a0, t0, a1
+
 	# should be "ret"
 	ret
 
