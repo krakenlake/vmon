@@ -592,7 +592,8 @@ string_OP_EBREAK:	.string "ebreak";
 
 	string_OP_BEQZ:		.string "beqz";
 	string_OP_BNEZ:		.string "bnez";
-
+	string_OP_BGEZ:		.string "bgez";
+	string_OP_BLTZ:		.string "bltz";
 
 	string_OP_RET:		.string "ret";	
 	string_OP_NOP:		.string "nop";	
@@ -731,10 +732,12 @@ encoding_table:
 # PSEUDO opcodes
 # order is important, these have to be at the beginning of the table
 #ifdef DISASS_PSEUDO
+
 	#ifdef DISASS_RVC
 		.word 0x0000ffff, 0x0000,	string_OP_C_UNIMP,	0x00000000
 		.word 0x0000ffff, 0x0001,	string_OP_C_NOP,	0x00000000
 	#endif /* DISASS_RVC */
+
 	.word 0xffffffff, 0x00000000,	string_OP_UNIMP,	0x00000000
 	.word 0xffffffff, 0x00008067,	string_OP_RET,		0x00000000
 	.word 0xffffffff, 0x00000013,	string_OP_NOP,		0x00000000
@@ -765,6 +768,12 @@ encoding_table:
 
 	# for bnez, look additionally at rs2 which must be x0 (0)
 	.word MASK_BNE | 0b1111100000000000000000000, MATCH_BNE, string_OP_BNEZ, 0x00000602
+
+	# for bgez, look additionally at rs2 which must be x0 (0)
+	.word MASK_BGE | 0b1111100000000000000000000, MATCH_BGE, string_OP_BGEZ, 0x00000602
+
+	# for bltz, look additionally at rs2 which must be x0 (0)
+	.word MASK_BLT | 0b1111100000000000000000000, MATCH_BLT, string_OP_BLTZ, 0x00000602
 
 	#if XLEN >= 64
 
