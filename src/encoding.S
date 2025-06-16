@@ -580,6 +580,7 @@ string_OP_EBREAK:	.string "ebreak";
 
 # Pseudo
 #ifdef DISASS_PSEUDO
+	string_OP_MV:		.string "mv";
 	string_OP_RET:		.string "ret";	
 	string_OP_NOP:		.string "nop";	
 	string_OP_UNIMP:	.string "unimp";	
@@ -717,6 +718,7 @@ encoding_table:
 	.word 0xffffffff, 0x00000000,	string_OP_UNIMP,	0x00000000
 	.word 0xffffffff, 0x00008067,	string_OP_RET,		0x00000000
 	.word 0xffffffff, 0x00000013,	string_OP_NOP,		0x00000000
+	.word MASK_ADDI, MATCH_ADDI,	string_OP_MV,		0x00000201
 #endif /* DISASS_PSEUDO */
 
 # RV32I
