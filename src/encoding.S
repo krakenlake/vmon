@@ -596,6 +596,10 @@ string_OP_EBREAK:	.string "ebreak";
 	string_OP_BLTZ:		.string "bltz";
 	string_OP_BLEZ:		.string "blez";
 	string_OP_BGTZ:		.string "bgtz";
+	string_OP_BGT:		.string "bgt";
+	string_OP_BLE:		.string "ble";
+	string_OP_BGTU:		.string "bgtu";
+	string_OP_BLEU:		.string "bleu";
 
 	string_OP_RET:		.string "ret";	
 	string_OP_NOP:		.string "nop";	
@@ -1097,6 +1101,20 @@ encoding_table:
 	.word MASK_SFENCE_VM,	MATCH_SFENCE_VM,	string_OP_SFENCE_VM,	0x00000000
 	.word MASK_SFENCE_VMA,	MATCH_SFENCE_VMA,	string_OP_SFENCE_VMA,	0x00000000
 #endif /* DISASS_RVPRIV */
+
+
+# we want to put these at the end, because we need them only for assembly
+# and we prefer the originals for disassembly
+#ifdef DISASS_PSEUDO
+	# bgt is blt with rs1, rs2 exchanged
+	.word MASK_BLT, MATCH_BLT, string_OP_BGT, 0x00060203
+	# ble is bge with rs1, rs2 exchanged
+	.word MASK_BGE, MATCH_BGE, string_OP_BLE, 0x00060203
+	# bgtu is bltu with rs1, rs2 exchanged
+	.word MASK_BLTU, MATCH_BLTU, string_OP_BGTU, 0x00060203
+	# bleu is bgtu with rs1, rs2 exchanged
+	.word MASK_BGEU, MATCH_BGEU, string_OP_BLEU, 0x00060203
+#endif
 
 # table end marker
 .word 0,0,0,0

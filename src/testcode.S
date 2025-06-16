@@ -1195,6 +1195,12 @@ testcode_PSEUDO_branch_start:
 	blt			a0, t0, testcode_PSEUDO_branch_start
 	blt			a0, t0, testcode_PSEUDO_branch_end
 
+	# should all be disassembled to their originals
+	bgt			a0, a1, testcode_PSEUDO_branch_start
+	ble			a0, a1, testcode_PSEUDO_branch_start
+	bgtu		a0, a1, testcode_PSEUDO_branch_start
+	bleu		a0, a1, testcode_PSEUDO_branch_start
+
 testcode_PSEUDO_branch_end:
 
 
