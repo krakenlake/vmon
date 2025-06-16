@@ -582,6 +582,7 @@ string_OP_EBREAK:	.string "ebreak";
 #ifdef DISASS_PSEUDO
 	string_OP_MV:		.string "mv";
 	string_OP_NOT:		.string "not";
+	string_OP_NEG:		.string "neg";
 	string_OP_RET:		.string "ret";	
 	string_OP_NOP:		.string "nop";	
 	string_OP_UNIMP:	.string "unimp";	
@@ -725,6 +726,10 @@ encoding_table:
 
 	# for not, look additionally at imm[31:20] which must be -1
 	.word MASK_XORI | 0xfff00000, MATCH_XORI | 0xfff00000, string_OP_NOT, 0x00000201
+
+	# for not, look additionally at imm[31:20] which must be -1
+	.word MASK_SUB | 0b11111000000000000000, MATCH_SUB, string_OP_NEG, 0x00000301
+
 
 #endif /* DISASS_PSEUDO */
 

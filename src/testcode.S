@@ -1126,6 +1126,11 @@ testcode_PSEUDO:
 	# should not appear as "not"
 	xori	a0, a1, 42
 
+	# should be "neg"
+	neg		a0, a1
+	# should not appear as "neg"
+	sub		a0, t0, a1
+
 	# should be "ret"
 	ret
 
