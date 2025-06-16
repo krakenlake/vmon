@@ -750,51 +750,36 @@ encoding_table:
 	
 	# for mv, look additionally at imm[11:0] == insn[31:20] which must be zero
 	.word MASK_ADDI | 0xfff00000, MATCH_ADDI, string_OP_MV, 0x00000201
-
 	# for not, look additionally at imm[11:0] == insn[31:20] which must be -1
 	.word MASK_XORI | 0xfff00000, MATCH_XORI | 0xfff00000, string_OP_NOT, 0x00000201
-
 	# for neg, look additionally at rs1 which must be x0 (0)
 	.word MASK_SUB | 0b11111000000000000000, MATCH_SUB, string_OP_NEG, 0x00000301
-
 	# for seqz, look additionally at imm[11:0] == insn[31:20] which must be 1
 	.word MASK_SLTIU | 0xfff00000, MATCH_SLTIU | 0x00100000, string_OP_SEQZ, 0x00000201
-
 	# for snez, look additionally at rs1 which must be x0 (0)
 	.word MASK_SLTU | 0b11111000000000000000, MATCH_SLTU, string_OP_SNEZ, 0x00000301
-
 	# for sltz, look additionally at rs2 which must be x0 (0)
 	.word MASK_SLT | 0b1111100000000000000000000, MATCH_SLT, string_OP_SLTZ, 0x00000201
-
 	# for sgtz, look additionally at rs1 which must be x0 (0)
 	.word MASK_SLT | 0b11111000000000000000, MATCH_SLT, string_OP_SGTZ, 0x00000301
-
 	# for beqz, look additionally at rs2 which must be x0 (0)
 	.word MASK_BEQ | 0b1111100000000000000000000, MATCH_BEQ, string_OP_BEQZ, 0x00000602
-
 	# for bnez, look additionally at rs2 which must be x0 (0)
 	.word MASK_BNE | 0b1111100000000000000000000, MATCH_BNE, string_OP_BNEZ, 0x00000602
-
 	# for bgez, look additionally at rs2 which must be x0 (0)
 	.word MASK_BGE | 0b1111100000000000000000000, MATCH_BGE, string_OP_BGEZ, 0x00000602
-
 	# for bltz, look additionally at rs2 which must be x0 (0)
 	.word MASK_BLT | 0b1111100000000000000000000, MATCH_BLT, string_OP_BLTZ, 0x00000602
-
 	# for blez, look additionally at rs1 which must be x0 (0)
 	.word MASK_BGE | 0b11111000000000000000, MATCH_BGE, string_OP_BLEZ, 0x00000603
-
 	# for bgtz, look additionally at rs1 which must be x0 (0)
 	.word MASK_BLT | 0b11111000000000000000, MATCH_BLT, string_OP_BGTZ, 0x00000603
 
 	#if XLEN >= 64
-
 		# for negw, look additionally at rs1 which must be x0 (0)
 		.word MASK_SUBW | 0b11111000000000000000, MATCH_SUBW, string_OP_NEGW, 0x00000301
-
 		# for sext.w, look additionally at imm[11:0] == insn[31:20] which must be zero
 		.word MASK_ADDIW | 0xfff00000, MATCH_ADDIW, string_OP_SEXTW, 0x00000201
-
 	#endif
 
 #endif /* DISASS_PSEUDO */
