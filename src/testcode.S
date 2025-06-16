@@ -1115,7 +1115,16 @@ testcode_RVPRIV:
 .option push
 .option norvc
 testcode_PSEUDO:
-	jalr	x0, x1, 0			# ret
+	
+	# should be "mv"
+	mv		a0, a1
+	mv		t0, t1
+	mv 		s0, s1
+	# should not appear as "mv"
+	addi	a0, a1, 1
+	addi	t0, t1, 1
+	addi	s0, s1, 1
+	
 	ret
 	addi	x0, x0, 0			# nop
 	nop
