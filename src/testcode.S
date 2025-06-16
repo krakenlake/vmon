@@ -1118,15 +1118,19 @@ testcode_PSEUDO:
 	
 	# should be "mv"
 	mv		a0, a1
-	mv		t0, t1
-	mv 		s0, s1
 	# should not appear as "mv"
 	addi	a0, a1, 1
-	addi	t0, t1, 1
-	addi	s0, s1, 1
 	
+	# should be "not"
+	not		a0, a1
+	# should not appear as "not"
+	xori	a0, a1, 42
+
+	# should be "ret"
 	ret
-	addi	x0, x0, 0			# nop
+
+	# should be "nop"
+	addi	x0, x0, 0
 	nop
 .option pop /* norvc */
 .size testcode_PSEUDO, .-testcode_PSEUDO
