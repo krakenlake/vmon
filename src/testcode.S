@@ -1181,6 +1181,20 @@ testcode_PSEUDO_branch_start:
 	blt			a0, t0, testcode_PSEUDO_branch_start
 	blt			a0, t0, testcode_PSEUDO_branch_end
 
+	# should be "blez"
+	blez		a0, testcode_PSEUDO_branch_start
+	blez		a0, testcode_PSEUDO_branch_end
+	# should not appear as "blez"
+	bge			a0, t0, testcode_PSEUDO_branch_start
+	bge			a0, t0, testcode_PSEUDO_branch_end
+
+	# should be "bgtz"
+	bgtz		a0, testcode_PSEUDO_branch_start
+	bgtz		a0, testcode_PSEUDO_branch_end
+	# should not appear as "bgtz"
+	blt			a0, t0, testcode_PSEUDO_branch_start
+	blt			a0, t0, testcode_PSEUDO_branch_end
+
 testcode_PSEUDO_branch_end:
 
 

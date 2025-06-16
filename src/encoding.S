@@ -594,6 +594,8 @@ string_OP_EBREAK:	.string "ebreak";
 	string_OP_BNEZ:		.string "bnez";
 	string_OP_BGEZ:		.string "bgez";
 	string_OP_BLTZ:		.string "bltz";
+	string_OP_BLEZ:		.string "blez";
+	string_OP_BGTZ:		.string "bgtz";
 
 	string_OP_RET:		.string "ret";	
 	string_OP_NOP:		.string "nop";	
@@ -774,6 +776,12 @@ encoding_table:
 
 	# for bltz, look additionally at rs2 which must be x0 (0)
 	.word MASK_BLT | 0b1111100000000000000000000, MATCH_BLT, string_OP_BLTZ, 0x00000602
+
+	# for blez, look additionally at rs1 which must be x0 (0)
+	.word MASK_BGE | 0b11111000000000000000, MATCH_BGE, string_OP_BLEZ, 0x00000603
+
+	# for bgtz, look additionally at rs1 which must be x0 (0)
+	.word MASK_BLT | 0b11111000000000000000, MATCH_BLT, string_OP_BGTZ, 0x00000603
 
 	#if XLEN >= 64
 
