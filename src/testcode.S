@@ -1208,6 +1208,16 @@ testcode_PSEUDO_branch_end:
 	# should not appear as "j"
 	jal			a0, testcode_PSEUDO_branch_start
 
+	# should be "j"
+	jr			a0
+	# should not appear as "j"
+	jalr		ra, a0, 0
+	jalr		zero, a0, 4
+
+	# should appear without rd
+	jal			testcode_PSEUDO_branch_start
+	# should appear with rd
+	jal			a0, testcode_PSEUDO_branch_start
 
 	# should be "ret"
 	ret

@@ -602,6 +602,7 @@ string_OP_EBREAK:	.string "ebreak";
 	string_OP_BLEU:		.string "bleu";
 
 	string_OP_J:		.string "j";
+	string_OP_JR:		.string "jr";
 
 	string_OP_RET:		.string "ret";	
 	string_OP_NOP:		.string "nop";	
@@ -783,6 +784,13 @@ encoding_table:
 
 	# for j, look additionally at rd which must be x0 (0)
 	.word MASK_JAL | 0b111110000000, MATCH_JAL, string_OP_J, 0x00000007
+	
+	# for jal <offset> (without rd), look additionally at rd which must be x1 (1)
+	# todo: if this is enabled, "jal rd, offset" does not work any more (same mnemonic with different syntax)
+	#.word MASK_JAL | 0b111110000000, MATCH_JAL | 0b10000000, string_OP_JAL, 0x00000007
+
+	# for jr, rd==0 and offset==0
+	.word MASK_JALR | 0xfff00000 | 0b111110000000 , MATCH_JALR, string_OP_JR, 0x00000002
 
 	#if XLEN >= 64
 		# for negw, look additionally at rs1 which must be x0 (0)
