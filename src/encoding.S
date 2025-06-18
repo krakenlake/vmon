@@ -1076,8 +1076,6 @@ encoding_table:
 		.word MASK_C_FSQSP,	MATCH_C_FSQSP,	string_OP_C_FSQSP,	0x002a2714
 	#endif /* defined DISASS_RVQ && XLEN >= 128 */
 
-	# do not move up
-
 #endif /* DISASS_RVC */
 
 # Zifencei
@@ -1114,7 +1112,7 @@ encoding_table:
 	.word MASK_BGE, MATCH_BGE, string_OP_BLE, 0x00060203
 	# bgtu is bltu with rs1, rs2 exchanged
 	.word MASK_BLTU, MATCH_BLTU, string_OP_BGTU, 0x00060203
-	# bleu is bgtu with rs1, rs2 exchanged
+	# bleu is bgeu with rs1, rs2 exchanged
 	.word MASK_BGEU, MATCH_BGEU, string_OP_BLEU, 0x00060203
 #endif
 
