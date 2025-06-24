@@ -13,8 +13,8 @@
 cmd_A:
 	# read dst_start from text buffer	
 	jal		skip_whitespace
-	jal		get_numeric				# read dst_start from text buffer
-	bnez	a2, cmd_A_error_params				# abort command if not found
+	jal		get_numeric						# read dst_start from text buffer
+	bnez	a2, cmd_A_error_params			# abort command if not found
 	mv		s0, a1
 
 	mv		a0, a1
@@ -35,14 +35,14 @@ cmd_A_input_loop:
 	jal		print_string
 	# get one line of asembly input (until ASCII_RETURN)
 	jal		uart_getline
-	#  buffer start in a0
+	# buffer start in a0
 	# exit loop if line was empty
 	jal		skip_whitespace
 	lb		t0, 0(a0)
 	li		t1, ASCII_RETURN
 	beq		t0, t1, cmd_A_done
 	# read input line and assemble one instruction
-	mv		a2, s0						# current memory address
+	mv		a2, s0							# current memory address
 	jal		assemble_instruction
 	# insn size now in a0
 	# insn now in a1
@@ -82,10 +82,10 @@ cmd_A_done:
 string_line_prefix_A:	.string "A ";
 .size string_line_prefix_A, .-string_line_prefix_A
 
-string_ass_prompt:	.string " := ";
+string_ass_prompt:		.string " := ";
 .size string_ass_prompt, .-string_ass_prompt
 
-string_ass_error:	.string "\t\t???\n\r";
+string_ass_error:		.string "\t\t???\n\r";
 .size string_ass_error, .-string_ass_error
 
 
