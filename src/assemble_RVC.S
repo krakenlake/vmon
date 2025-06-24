@@ -7,12 +7,11 @@
 
 #if defined (WITH_CMD_A) && defined (DISASS_RVC)
 
-.global ass_C_rs2
-.global ass_C_rda
-.global ass_C_rs1a
-.global ass_C_rs2a
 .global ass_C_rd_nz
 .global ass_C_rs2_nz
+.global ass_C_rs2
+.global ass_C_rs1a
+.global ass_C_rs2a
 .global ass_rdsp
 .global ass_rdasp
 .global ass_C_relsp
@@ -40,6 +39,51 @@
 .global ass_C_16sp_imm
 
 .text
+
+
+# We use this for C rd'/rs1'/rs2' registers ONLY.
+# This gets called from the ass_C_r* functions above.
+#
+# in: a0 = ptr to first char
+# in: a1 = insn word to be modifed
+# in: a2 = origin address
+# in: t0 = number of slli shifts required (7 for rd, 15 for rs1, 20 for rs2)
+# in: t1 = register lookup function ptr
+# out: a0 = ptr to char after argument
+# out: a1 = modified instruction word
+# out: a2 = -1 on error
+assemble_C_register:
+	PUSH_S4_S3_S2_S1_S0_RA
+	mv		s3, t0
+	mv		s4, t1
+	mv		s1, a1								# save insn word
+	# parse register name
+	mv		s0, a0								# save string start
+	jal		find_register_name_end
+	# end in a0
+	mv		s2, a0								# save string end
+	mv		a1, a0								# reg name end
+	mv		a0, s0								# reg name start
+	# now look into either int register table or float register table
+	# and get the index of the register back (a0 < 0 on error)
+	jalr	s4
+	bltz	a0, assemble_C_register_error
+	# register number now in a0
+	li		t0, 8								# 8 <= rda/rs1a/rs2a <=15
+	blt		a0, t0, assemble_C_register_error 
+	li		t0, 15
+	bgt		a0, t0, assemble_C_register_error
+	# assemble into a1
+	addi	a0, a0, -8							# convert to RVC register number
+	sll		a0, a0, s3							# shift into place
+	or		a1, s1, a0							# join with a1
+	j		assemble_C_register_done
+assemble_C_register_error:
+	li		a2, -1
+assemble_C_register_done:
+	addi	a0, s2, 1							# return reg name end +1
+	POP_S4_S3_S2_S1_S0_RA_RET
+.size assemble_C_register, .-assemble_C_register
 
 
 # in: a0 = ptr to first char
@@ -138,6 +182,59 @@ ass_C_rs2a:
 .size ass_C_rs2a, .-ass_C_rs2a
 
 
+# in: a0 = ptr to first char of argument
+# in: a1 = insn word to be modifed
+# in: a2 = origin address
+# out: a0 = ptr to char after argument
+# out: a1 = modified instruction word
+# out: a2 = -1 on error
+ass_rdsp:
+	PUSH_RA
+	jal		ass_C_rd_nz
+	# check if rd==2 now in insn word
+	srli	t0, a1, 7					
+	andi	t0, t0, 0b11111
+	li		t1, 2
+	beq		t0, t1, ass_rdsp_done
+ass_rdsp_eror:
+	li		a2, -1
+ass_rdsp_done:
+	POP_RA_RET
+.size ass_rdsp, .-ass_rdsp
+
+
+# in: a0 = ptr to first char of argument
+# in: a1 = insn word to be modifed
+# in: a2 = origin address
+# out: a0 = ptr to char after argument
+# out: a1 = modified instruction word
+# out: a2 = -1 on error
+ass_rdasp:
+	PUSH_S2_S1_S0_RA
+	mv		s1, a1								# save insn word
+	# parse register name
+	mv		s0, a0								# save string start
+	jal		find_register_name_end
+	# end in a0
+	mv		s2, a0								# save string end
+	mv		a1, a0								# reg name end
+	mv		a0, s0								# reg name start
+	# now look into either int register table or float register table
+	# and get the index of the register back (a0 < 0 on error)
+	jal		get_int_register_index_by_name
+	li		t0, 2								# accept only sp as register name
+	bne		a0, t0, ass_rdasp_error
+	# assemble nothing (this function is only used for c.addi4spn)
+	mv		a1, s1
+	j		ass_rdasp_done
+ass_rdasp_error:
+	li		a2, -1
+ass_rdasp_done:
+	addi	a0, s2, 1							# return reg name end +1
+	POP_S2_S1_S0_RA_RET
+.size ass_rdasp, .-ass_rdasp
+
+
 # accept "(sp)" or "(x2)" and nothing else
 #
 # in: a0 = ptr to first char of argument
@@ -171,51 +268,6 @@ ass_C_relsp_error:
 ass_C_relsp_done:
 	POP_S2_S1_S0_RA_RET
 .size ass_C_relsp, .-ass_C_relsp
-
-
-# We use this for C rd'/rs1'/rs2' registers ONLY.
-# This gets called from the ass_C_r* functions above.
-#
-# in: a0 = ptr to first char
-# in: a1 = insn word to be modifed
-# in: a2 = origin address
-# in: t0 = number of slli shifts required (7 for rd, 15 for rs1, 20 for rs2)
-# in: t1 = register lookup function ptr
-# out: a0 = ptr to char after argument
-# out: a1 = modified instruction word
-# out: a2 = -1 on error
-assemble_C_register:
-	PUSH_S4_S3_S2_S1_S0_RA
-	mv		s3, t0
-	mv		s4, t1
-	mv		s1, a1								# save insn word
-	# parse register name
-	mv		s0, a0								# save string start
-	jal		find_register_name_end
-	# end in a0
-	mv		s2, a0								# save string end
-	mv		a1, a0								# reg name end
-	mv		a0, s0								# reg name start
-	# now look into either int register table or float register table
-	# and get the index of the register back (a0 < 0 on error)
-	jalr	s4
-	bltz	a0, assemble_C_register_error
-	# register number now in a0
-	li		t0, 8								# 8 <= rda/rs1a/rs2a <=15
-	blt		a0, t0, assemble_C_register_error 
-	li		t0, 15
-	bgt		a0, t0, assemble_C_register_error
-	# assemble into a1
-	addi	a0, a0, -8							# convert to RVC register number
-	sll		a0, a0, s3							# shift into place
-	or		a1, s1, a0							# join with a1
-	j		assemble_C_register_done
-assemble_C_register_error:
-	li		a2, -1
-assemble_C_register_done:
-	addi	a0, s2, 1							# return reg name end +1
-	POP_S4_S3_S2_S1_S0_RA_RET
-.size assemble_C_register, .-assemble_C_register
 
 
 # in: a0 = ptr to first char of argument
@@ -593,6 +645,7 @@ ass_CL_LW_8imm_done:
 #endif
 .size ass_CL_LW_8imm, .-ass_CL_LW_8imm
 
+
 # in: a0 = ptr to first char of argument
 # in: a1 = insn word to be modifed
 # in: a2 = origin address
@@ -641,7 +694,6 @@ ass_CL_LW_16imm_done:
 # out: a1 = modified instruction word
 # out: a2 = -1 on error
 ass_CL_rel:
-ass_CS_rel:
 	PUSH_S1_S0_RA
 	mv		s1, a1						# save insn word
 	mv		s0, a0						# return string ptr later
@@ -756,59 +808,6 @@ ass_CJ_off_error:
 ass_CJ_off_done:
 	POP_S1_S0_RA_RET
 .size ass_CJ_off, .-ass_CJ_off
-
-
-# in: a0 = ptr to first char of argument
-# in: a1 = insn word to be modifed
-# in: a2 = origin address
-# out: a0 = ptr to char after argument
-# out: a1 = modified instruction word
-# out: a2 = -1 on error
-ass_rdsp:
-	PUSH_RA
-	jal		ass_C_rd_nz
-	# check if rd==2 now in insn word
-	srli	t0, a1, 7					
-	andi	t0, t0, 0b11111
-	li		t1, 2
-	beq		t0, t1, ass_rdsp_done
-ass_rdsp_eror:
-	li		a2, -1
-ass_rdsp_done:
-	POP_RA_RET
-.size ass_rdsp, .-ass_rdsp
-
-
-# in: a0 = ptr to first char of argument
-# in: a1 = insn word to be modifed
-# in: a2 = origin address
-# out: a0 = ptr to char after argument
-# out: a1 = modified instruction word
-# out: a2 = -1 on error
-ass_rdasp:
-	PUSH_S2_S1_S0_RA
-	mv		s1, a1								# save insn word
-	# parse register name
-	mv		s0, a0								# save string start
-	jal		find_register_name_end
-	# end in a0
-	mv		s2, a0								# save string end
-	mv		a1, a0								# reg name end
-	mv		a0, s0								# reg name start
-	# now look into either int register table or float register table
-	# and get the index of the register back (a0 < 0 on error)
-	jal		get_int_register_index_by_name
-	li		t0, 2								# accept only sp as register name
-	bne		a0, t0, ass_rdasp_error
-	# assemble nothing (this function is only used for c.addi4spn)
-	mv		a1, s1
-	j		ass_rdasp_done
-ass_rdasp_error:
-	li		a2, -1
-ass_rdasp_done:
-	addi	a0, s2, 1							# return reg name end +1
-	POP_S2_S1_S0_RA_RET
-.size ass_rdasp, .-ass_rdasp
 
 
 # in: a0 = ptr to first char of argument
