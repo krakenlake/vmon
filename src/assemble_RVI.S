@@ -7,8 +7,8 @@
 
 #ifdef WITH_CMD_A
 
-.global check_a1_value					# check range (min/max) and alignment of value in a1
 .global assemble_register
+.global check_a1_value					# check range (min/max) and alignment of value in a1
 
 # these are called via assemble_GENERIC
 .global ass_rd							# expect int register name and use it for rd
@@ -24,9 +24,50 @@
 .global ass_S_imm						# expect S-type offset for store
 .global ass_U_imm						# expect immediate for U-type (LUI/AUIPC)
 
-
 .global ass_C_rd
+
 .text
+
+
+# We use this for int and float registers, as they are the
+# same bits in insns - only the name is different.
+# This gets called from the ass_r* functions above.
+#
+# in: a0 = ptr to first char
+# in: a1 = insn word to be modifed
+# in: a2 = origin address
+# in: t0 = number of slli shifts required (7 for rd, 15 for rs1, 20 for rs2)
+# in: t1 = register lookup function ptr
+# out: a0 = ptr to char after argument
+# out: a1 = modified instruction word
+# out: a2 = -1 on error
+assemble_register:
+	PUSH_S4_S3_S2_S1_S0_RA
+	mv		s3, t0
+	mv		s4, t1
+	mv		s1, a1								# save insn word
+	# parse register name
+	mv		s0, a0								# save string start
+	jal		find_register_name_end
+	# end in a0
+	mv		s2, a0								# save string end
+	mv		a1, a0								# reg name end
+	mv		a0, s0								# reg name start
+	# now look into either int register table or float register table
+	# and get the index of the register back (a0 < 0 on error)
+	jalr	s4
+	bltz	a0, assemble_register_error
+	# register number now in a0
+	# assemble into a1
+	sll		a0, a0, s3
+	or		a1, s1, a0
+	j		assemble_register_done
+assemble_register_error:
+	li		a2, -1
+assemble_register_done:
+	addi	a0, s2, 1							# return reg name end +1
+	POP_S4_S3_S2_S1_S0_RA_RET
+.size assemble_register, .-assemble_register
 
 
 # in: a1 = value
@@ -48,6 +89,40 @@ check_value_error:
 check_value_done:
 	ret
 .size check_a1_value, .-check_a1_value
+
+
+# facade for assemble_register:
+# - add parameter for sll in t0
+# - add parameter for lookup function in t1
+# - jump to assemble_register 
+ass_rd:
+ass_C_rd:
+	li		t0, 7
+	la		t1, get_int_register_index_by_name
+	j		assemble_register
+.size ass_rd, .-ass_rd
+
+
+# facade for assemble_register:
+# - add parameter for sll in t0
+# - add parameter for lookup function in t1
+# - jump to assemble_register 
+ass_rs1:
+	li		t0, 15
+	la		t1, get_int_register_index_by_name
+	j		assemble_register
+.size ass_rs1, .-ass_rs1
+
+
+# facade for assemble_register:
+# - add parameter for sll in t0
+# - add parameter for lookup function in t1
+# - jump to assemble_register 
+ass_rs2:
+	li		t0, 20
+	la		t1, get_int_register_index_by_name
+	j		assemble_register
+.size ass_rs2, .-ass_rs2
 
 
 # in: a0 = absolute target address 
@@ -88,6 +163,36 @@ assemble_branch_target_error:
 assemble_branch_target_done:
 	ret
 .size assemble_branch_target, .-assemble_branch_target
+
+
+# in: a0 = ptr to first char of argument
+# in: a1 = insn word to be modifed
+# in: a2 = origin address
+# out: a0 = ptr to char after argument
+# out: a1 = modified instruction word
+# out: a2 = -1 on error
+ass_BRA:
+	PUSH_S2_S1_S0_RA
+	mv		s1, a1						# save insn word
+	mv		s0, a2						# save for later
+	jal		get_numeric
+	# address in a1
+	bnez	a2, ass_BRA_error
+	mv		s2, a0						# return string ptr later
+	# add branch target address to instruction word
+	mv		a0, a1						# absolute target address
+	mv		a1, s1						# instruction word
+	mv		a2, s0						# get saved origin addr back
+	jal		assemble_branch_target
+	beqz 	a1, ass_BRA_error			# address too far away
+	# return a1 and a0
+	addi	a0, s2, 1							# string ptr +1
+	j		ass_BRA_done
+ass_BRA_error:
+	li		a2, -1
+ass_BRA_done:
+	POP_S2_S1_S0_RA_RET
+.size ass_BRA, .-ass_BRA
 
 
 # in: a0 = imm value
@@ -150,111 +255,6 @@ ass_I_rel_error:
 ass_I_rel_done:
 	POP_S1_S0_RA_RET
 .size ass_I_rel, .-ass_I_rel
-
-
-# facade for assemble_register:
-# - add parameter for sll in t0
-# - add parameter for lookup function in t1
-# - jump to assemble_register 
-ass_rd:
-ass_C_rd:
-	li		t0, 7
-	la		t1, get_int_register_index_by_name
-	j		assemble_register
-.size ass_rd, .-ass_rd
-
-
-# facade for assemble_register:
-# - add parameter for sll in t0
-# - add parameter for lookup function in t1
-# - jump to assemble_register 
-ass_rs1:
-	li		t0, 15
-	la		t1, get_int_register_index_by_name
-	j		assemble_register
-.size ass_rs1, .-ass_rs1
-
-
-# facade for assemble_register:
-# - add parameter for sll in t0
-# - add parameter for lookup function in t1
-# - jump to assemble_register 
-ass_rs2:
-	li		t0, 20
-	la		t1, get_int_register_index_by_name
-	j		assemble_register
-.size ass_rs2, .-ass_rs2
-
-
-# We use this for int and float registers, as they are the
-# same bits in insns - only the name is different.
-# This gets called from the ass_r* functions above.
-#
-# in: a0 = ptr to first char
-# in: a1 = insn word to be modifed
-# in: a2 = origin address
-# in: t0 = number of slli shifts required (7 for rd, 15 for rs1, 20 for rs2)
-# in: t1 = register lookup function ptr
-# out: a0 = ptr to char after argument
-# out: a1 = modified instruction word
-# out: a2 = -1 on error
-assemble_register:
-	PUSH_S4_S3_S2_S1_S0_RA
-	mv		s3, t0
-	mv		s4, t1
-	mv		s1, a1								# save insn word
-	# parse register name
-	mv		s0, a0								# save string start
-	jal		find_register_name_end
-	# end in a0
-	mv		s2, a0								# save string end
-	mv		a1, a0								# reg name end
-	mv		a0, s0								# reg name start
-	# now look into either int register table or float register table
-	# and get the index of the register back (a0 < 0 on error)
-	jalr	s4
-	bltz	a0, assemble_register_error
-	# register number now in a0
-	# assemble into a1
-	sll		a0, a0, s3
-	or		a1, s1, a0
-	j		assemble_register_done
-assemble_register_error:
-	li		a2, -1
-assemble_register_done:
-	addi	a0, s2, 1							# return reg name end +1
-	POP_S4_S3_S2_S1_S0_RA_RET
-.size assemble_register, .-assemble_register
-
-
-# in: a0 = ptr to first char of argument
-# in: a1 = insn word to be modifed
-# in: a2 = origin address
-# out: a0 = ptr to char after argument
-# out: a1 = modified instruction word
-# out: a2 = -1 on error
-ass_BRA:
-	PUSH_S2_S1_S0_RA
-	mv		s1, a1						# save insn word
-	mv		s0, a2						# save for later
-	jal		get_numeric
-	# address in a1
-	bnez	a2, ass_BRA_error
-	mv		s2, a0						# return string ptr later
-	# add branch target address to instruction word
-	mv		a0, a1						# absolute target address
-	mv		a1, s1						# instruction word
-	mv		a2, s0						# get saved origin addr back
-	jal		assemble_branch_target
-	beqz 	a1, ass_BRA_error			# address too far away
-	# return a1 and a0
-	addi	a0, s2, 1							# string ptr +1
-	j		ass_BRA_done
-ass_BRA_error:
-	li		a2, -1
-ass_BRA_done:
-	POP_S2_S1_S0_RA_RET
-.size ass_BRA, .-ass_BRA
 
 
 # in: a0 = ptr to first char of argument
