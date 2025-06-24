@@ -764,18 +764,6 @@ ass_CJ_off_done:
 # out: a0 = ptr to char after argument
 # out: a1 = modified instruction word
 # out: a2 = -1 on error
-ass_CA_imm:
-	# accept only x8-15
-	ret
-.size ass_CA_imm, .-ass_CA_imm
-
-
-# in: a0 = ptr to first char of argument
-# in: a1 = insn word to be modifed
-# in: a2 = origin address
-# out: a0 = ptr to char after argument
-# out: a1 = modified instruction word
-# out: a2 = -1 on error
 ass_rdsp:
 	PUSH_RA
 	jal		ass_C_rd_nz
