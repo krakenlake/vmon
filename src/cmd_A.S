@@ -64,7 +64,7 @@ cmd_A_assembly_error:
 	jal		print_string
 
 cmd_A_continue:
-	# advance dst addr			
+	# advance dst addr
 	add		s0, s0, a0
 	j		cmd_A_input_loop
 

@@ -15,6 +15,7 @@
 
 .text
 
+
 uart_init:
 	li		t1, UART_BASE				   
 	li		t0, UART_MODE_8N1
@@ -171,7 +172,8 @@ uart_getline_done:
 
 .bss
 
+
 .align 8
+
 .comm uart_input_buffer, BUFFER_SIZE
 .size uart_input_buffer, BUFFER_SIZE
-

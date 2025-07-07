@@ -385,4 +385,3 @@ parse_aqrl_done:
 	slli	a1, a1, 25
 	ret
 .size parse_aqrl, .-parse_aqrl
-

@@ -262,4 +262,3 @@ print_binary_end:
 .align 8
 .comm out_buf, OUT_BUFFER_SIZE
 .size out_buf, OUT_BUFFER_SIZE
-

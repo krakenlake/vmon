@@ -281,6 +281,7 @@ string_asm_sep2:	.string " ";
 string_asm_comment: .string "\t# ";
 .size string_asm_comment, .-string_asm_comment
 
+
 .bss
 
 
@@ -289,4 +290,3 @@ start_bss:
 # last address used in m or d command
 .comm last_address, XLEN_BYTES	
 .size last_address, XLEN_BYTES
-

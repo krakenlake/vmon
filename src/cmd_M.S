@@ -5,13 +5,14 @@
 
 #ifdef WITH_CMD_M
 
+#ifndef M_BYTES_PER_LINE
+	#define M_BYTES_PER_LINE 8
+#endif
+
 .global cmd_M
 
 .text
 
-#ifndef M_BYTES_PER_LINE
-	#define M_BYTES_PER_LINE 8
-#endif
 
 cmd_M:
 	jal		skip_whitespace

@@ -17,7 +17,6 @@
 .global testcode_RVPRIV
 .global testcode_PSEUDO
 
-
 .text
 
 

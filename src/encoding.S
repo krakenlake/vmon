@@ -33,6 +33,8 @@
 
 .global string_OP_UNKNOWN
 
+.text
+
 
 # in: a0 = addr
 # out: a0 = addr

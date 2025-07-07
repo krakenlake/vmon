@@ -10,6 +10,7 @@
 
 .text
 
+
 cmd_B:
 	lb		t1, 0(a0)					# read byte following b
 	addi	a0, a0, 1

@@ -9,6 +9,7 @@
 
 .text
 
+
 cmd_F:
 	lb		t1, 0(a0)					# read byte following f
 	addi	a0, a0, 1

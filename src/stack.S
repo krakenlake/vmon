@@ -15,7 +15,7 @@
 .global pop_s0_ra_ret
 .global pop_s1_s0_ra_ret
 .global pop_s2_s1_s0_ra_ret
-.global pop_s3_s2_s1_s0_ra_ret
+# left out intentionally, see above
 .global pop_s4_s3_s2_s1_s0_ra_ret
 .global pop_s5_s4_s3_s2_s1_s0_ra_ret
 .global pop_s6_s5_s4_s3_s2_s1_s0_ra_ret
@@ -27,8 +27,8 @@
 .global print_int_registers
 .global print_float_registers
 
-
 .text
+
 
 # for function prologue optimisation (shorter code in total)
 
@@ -250,4 +250,3 @@ print_saved_registers_done:
 
 .comm stack, STACK_SIZE
 .size stack, STACK_SIZE
-

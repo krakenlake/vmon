@@ -5,6 +5,7 @@
 
 .text
 
+
 # Unsigned integer division without using M extension
 # Thanks to Bruce Hoult!
 # in: a0 = dividend

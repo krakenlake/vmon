@@ -10,7 +10,6 @@
 .text
 
 
-
 cmd_S:
 	jal		skip_whitespace
 	# get register
