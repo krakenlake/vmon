@@ -122,6 +122,7 @@ Write ("poke") <byte_value0> to <dst_addr>, <byte_value1> to <dst_addr+1>, ...
 #### `pw <dst_addr> <32bit_value0> [<32bit_value1>] [<32bit_value2>] [...]` ####
 
 Write ("poke") <32bit_value0> to <dst_addr>, <32bit_value1> to <dst_addr+4>, ...
+(in little endian order)
 
 #### `r` ####
 
@@ -130,8 +131,7 @@ Dump registers as they were saved on entry.
 #### `s <register_name> <numeric value>` ####
 
 Set the value of a register. For float registers, the effective bit pattern will 
-be taken as-is, so for example in order to set a float register to the value "42.0",
-you actually need to enter "set ft0 0x42280000", as 0x42280000 is a IEEE 754
+be taken as-is, so for example in order to set a float register to the value "42.0", you actually need to enter "s ft0 0x42280000", as 0x42280000 is a IEEE 754
 representation of that value.
 
 #### `x` ####
