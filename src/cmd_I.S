@@ -9,7 +9,7 @@
 
 
 cmd_I:
-	la		a0, string_info_instructionset
+	la		a0, string_info_disass
 	jal		print_string
 	li		a0, XLEN
 	jal		print_decimal
@@ -200,9 +200,9 @@ cmd_I:
 .data
 
 
-string_info_instructionset:
-	.string "instructions: rv";
-.size string_info_instructionset, .-string_info_instructionset
+string_info_disass:
+	.string "disass: rv";
+.size string_info_disass, .-string_info_disass
 string_info_Zicsr:
 	.string "_Zicsr";
 .size string_info_Zicsr, .-string_info_Zicsr
