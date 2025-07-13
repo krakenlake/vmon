@@ -61,7 +61,7 @@ start:
 
 			# restore sp as it were on entry
 			csrr	sp, mscratch
-			
+
 		#endif /* TARGET_HAS_Zicsr */
 	#endif /* M_MODE */
 
@@ -180,10 +180,6 @@ ebreak_entry:
 	la		a0, string_startup
 	jal		print_string
 
-	#ifdef WITH_CMD_B
-		# init breakpoints table all empty
-		jal		break_reset
-	#endif /* WITH_CMD_B */
 
 	# main loop
 main_prompt:
