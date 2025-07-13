@@ -123,7 +123,6 @@ trap_handler_irq:
 	SAVE_X	t1, 0(t0)
 	j		exit_trap_handler
 
-
 exit_trap_handler:
 	# pop stack
 	LOAD_X	ra, 0(sp)

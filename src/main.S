@@ -173,6 +173,10 @@ ebreak_entry:
 		SAVE_F	f31, (STK_OFF_F31)(sp)
 	#endif /* TARGET_HAS_RVF */
 
+	#ifdef WITH_CMD_B
+		jal		break_deactivate
+	#endif /* WITH_CMD_B */
+
 	# init UART 
 	jal		uart_init
 
@@ -180,17 +184,12 @@ ebreak_entry:
 	la		a0, string_startup
 	jal		print_string
 
-
 	# main loop
 main_prompt:
 	jal		print_newline
 
 main_prompt_no_newline:
 	
-	#ifdef WITH_CMD_B
-		jal		break_deactivate
-	#endif /* WITH_CMD_B */
-
 	la		a0, string_prompt
 	jal		print_string
 

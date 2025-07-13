@@ -41,10 +41,19 @@ break_list:
 	la		s0, bp_table
 	mv		s1, zero
 break_list_loop:
+	# print breakpoint addr
 	LOAD_X	a0, 0(s0)
 	beqz	a0, break_list_skip_empty
 	jal		print_hex_addr
+
+	# print saved original content
+	li		a0, ':'
+	jal		print_char
+	LWU		a0, (XLEN_BYTES)(s0)
+	jal		print_hex_addr
+
 	jal		print_newline
+
 break_list_skip_empty:
 	addi	s0, s0, BP_ENTRY_SIZE
 	addi	s1, s1, 1
@@ -125,8 +134,8 @@ break_clear_done:
 # activate all breakpoints by inserting ebreaks
 break_activate:
 	la		t0, bp_table
-	li		t2, 0
-	li		t3, BP_NUM
+	li		t2, 0						# index
+	li		t3, BP_NUM					# number of entries
 break_activate_loop:
 	LOAD_X	a0, 0(t0)					# get bp address from table
 	beqz	a0, break_activate_skip		# skip this slot if empty

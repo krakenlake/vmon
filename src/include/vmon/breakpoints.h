@@ -9,6 +9,7 @@
 
 
 #define BP_NUM				8
+
 // each entry consists of one address and one instruction
 #define BP_ENTRY_SIZE		(XLEN_BYTES + 4)
 #define BP_TABLE_SIZE		(BP_ENTRY_SIZE * BP_NUM)
