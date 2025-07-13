@@ -108,8 +108,12 @@ pop_ra_ret:
 # in: a0 = index of register
 # in: a1 = new value to write
 patch_int_register:
+#ifdef TARGET_HAS_RVF
 	li		t1, STK_FRAME_SIZE_FLOAT
 	add		t0, sp, t1
+#else
+	mv		t0, sp
+#endif
 patch_int_register_loop:
 	addi	t0, t0, (XLEN_BYTES*1)
 	addi 	a0, a0, -1
