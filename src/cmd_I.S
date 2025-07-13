@@ -77,6 +77,11 @@ cmd_I:
 	jal		print_hex
 
 #ifdef M_MODE
+	la		a0, string_info_breakpoints
+	jal		print_string
+	la		a0, bp_table
+	jal		print_hex
+
 	la		a0, string_info_stackstart
 	jal		print_string
 	la		a0, stack	
@@ -200,118 +205,106 @@ cmd_I:
 .data
 
 
-string_info_disass:
-	.string "disass: rv";
+string_info_disass:		.string "disass: rv";
 .size string_info_disass, .-string_info_disass
-string_info_Zicsr:
-	.string "_Zicsr";
+
+string_info_Zicsr:		.string "_Zicsr";
 .size string_info_Zicsr, .-string_info_Zicsr
-string_info_Zifencei:
-	.string "_Zifencei";
+
+string_info_Zifencei:	.string "_Zifencei";
 .size string_info_Zifencei, .-string_info_Zifencei
-string_info_text:
-	.string "\n.text:  ";
+
+string_info_text:		.string "\n.text:  ";
 .size string_info_text, .-string_info_text
-string_info_data:
-	.string "\n.data:  ";
+
+string_info_data:		.string "\n.data:  ";
 .size string_info_data, .-string_info_data
-string_info_bss:
-	.string "\n.bss:   ";
+
+string_info_bss:		.string "\n.bss:   ";
 .size string_info_bss, .-string_info_bss
-string_info_buffer:
-	.string "\nbuffer: ";
+
+string_info_buffer:		.string "\nbuffer: ";
 .size string_info_buffer, .-string_info_buffer
-string_info_stackstart:
-	.string "\nstack start: ";
+
+string_info_breakpoints:	.string "\nbreakpoints: ";
+.size string_info_breakpoints, .-string_info_breakpoints
+
+string_info_stackstart:		.string "\nstack start: ";
 .size string_info_stackstart, .-string_info_stackstart
-string_info_stackend:
-	.string "\nstack end:   ";
+
+string_info_stackend:		.string "\nstack end:   ";
 .size string_info_stackend, .-string_info_stackend
-string_info_stacksize:
-	.string "\nstack bytes free: ";
+
+string_info_stacksize:		.string "\nstack bytes free: ";
 .size string_info_stacksize, .-string_info_stacksize
 
 #ifdef WITH_TESTCODE
-string_info_testcode:
-	.string "\ntestcode: ";
-.size string_info_testcode, .-string_info_testcode
+	string_info_testcode:		.string "\ntestcode: ";
+	.size string_info_testcode, .-string_info_testcode
 
 	#ifdef WITH_TESTCODE_RV32I
-	string_info_testcode_RV32I:
-		.string "\n RV32I: ";
-	.size string_info_testcode_RV32I, .-string_info_testcode_RV32I
+		string_info_testcode_RV32I:	.string "\n RV32I: ";
+		.size string_info_testcode_RV32I, .-string_info_testcode_RV32I
 	#endif
 
 	#ifdef WITH_TESTCODE_RV64I
-	string_info_testcode_RV64I:
-		.string "\n RV64I: ";
-	.size string_info_testcode_RV64I, .-string_info_testcode_RV64I
+		string_info_testcode_RV64I:	.string "\n RV64I: ";
+		.size string_info_testcode_RV64I, .-string_info_testcode_RV64I
 	#endif
 
 	#ifdef WITH_TESTCODE_RVM
-	string_info_testcode_RVM:
-		.string "\n RVM: ";
-	.size string_info_testcode_RVM, .-string_info_testcode_RVM
+		string_info_testcode_RVM:	.string "\n RVM: ";
+		.size string_info_testcode_RVM, .-string_info_testcode_RVM
 	#endif
 
 	#ifdef WITH_TESTCODE_RVA
-	string_info_testcode_RVA:
-		.string "\n RVA: ";
-	.size string_info_testcode_RAM, .-string_info_testcode_RVA
+		string_info_testcode_RVA:	.string "\n RVA: ";
+		.size string_info_testcode_RAM, .-string_info_testcode_RVA
 	#endif
 
 	#ifdef WITH_TESTCODE_RVF
-	string_info_testcode_RVF:
-		.string "\n RVF: ";
-	.size string_info_testcode_RVF, .-string_info_testcode_RVF
+		string_info_testcode_RVF:	.string "\n RVF: ";
+		.size string_info_testcode_RVF, .-string_info_testcode_RVF
 	#endif
 
 	#ifdef WITH_TESTCODE_RVD
-	string_info_testcode_RVD:
-		.string "\n RVD: ";
-	.size string_info_testcode_RVD, .-string_info_testcode_RVD
+		string_info_testcode_RVD:	.string "\n RVD: ";
+		.size string_info_testcode_RVD, .-string_info_testcode_RVD
 	#endif
 
 	#ifdef WITH_TESTCODE_RVQ
-	string_info_testcode_RVQ:
-		.string "\n RVQ: ";
-	.size string_info_testcode_RVQ, .-string_info_testcode_RVQ
+		string_info_testcode_RVQ:	.string "\n RVQ: ";
+		.size string_info_testcode_RVQ, .-string_info_testcode_RVQ
 	#endif
 
 	#ifdef WITH_TESTCODE_RVC
-	string_info_testcode_RVC:
-		.string "\n RVC: ";
-	.size string_info_testcode_RVC, .-string_info_testcode_RVC
+		string_info_testcode_RVC:	.string "\n RVC: ";
+		.size string_info_testcode_RVC, .-string_info_testcode_RVC
 	#endif
 
 	#ifdef WITH_TESTCODE_RVV
-	string_info_testcode_RVV:
-		.string "\n RVV: ";
-	.size string_info_testcode_RVV, .-string_info_testcode_RVV
+		string_info_testcode_RVV:	.string "\n RVV: ";
+		.size string_info_testcode_RVV, .-string_info_testcode_RVV
 	#endif
 
 	#ifdef WITH_TESTCODE_RVZicsr
-	string_info_testcode_RVZicsr:
-		.string "\n RVZicsr: ";
-	.size string_info_testcode_RVZicsr, .-string_info_testcode_RVZicsr
+		string_info_testcode_RVZicsr:	.string "\n RVZicsr: ";
+		.size string_info_testcode_RVZicsr, .-string_info_testcode_RVZicsr
 	#endif
 
 	#ifdef WITH_TESTCODE_RVZifencei
-	string_info_testcode_RVZifencei:
-		.string "\n RVZifencei: ";
-	.size string_info_testcode_RVZifencei, .-string_info_testcode_RVZifencei
+		string_info_testcode_RVZifencei:	.string "\n RVZifencei: ";
+		.size string_info_testcode_RVZifencei, .-string_info_testcode_RVZifencei
 	#endif
 
 	#ifdef WITH_TESTCODE_RVPRIV
-	string_info_testcode_RVPRIV:
-		.string "\n RVPRIV: ";
-	.size string_info_testcode_RVPRIV, .-string_info_testcode_RVPRIV
+		string_info_testcode_RVPRIV:	.string "\n RVPRIV: ";
+		.size string_info_testcode_RVPRIV, .-string_info_testcode_RVPRIV
 	#endif
 
 	#ifdef WITH_TESTCODE_PSEUDO
-	string_info_testcode_PSEUDO:
-		.string "\n PSEUDO: ";
-	.size string_info_testcode_PSEUDO, .-string_info_testcode_PSEUDO
+		string_info_testcode_PSEUDO:	.string "\n PSEUDO: ";
+		.size string_info_testcode_PSEUDO, .-string_info_testcode_PSEUDO
 	#endif
 #endif /* WITH_TESTCODE */
 
