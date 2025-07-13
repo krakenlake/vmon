@@ -6,10 +6,15 @@ VMON - a RISC-V machine code monitor written in RISC-V assembly code
 #include "vmon/ASCII.h"
 #include "vmon/stack.h"
 #include "vmon/register.h"
+#include "vmon/trap.h"
 #include "vmon/error.h"
+
+#define TIMER_INTERVAL	10000000
+#define MTIMECMP 		0x2004000			# QEMU CLINT 0x2000000 + 0x4000 + 8*(hart_id)
 
 
 .global start
+.global ebreak_entry
 .global main_prompt
 .global string_asm_sep1
 .global string_asm_sep2
@@ -25,21 +30,51 @@ VMON - a RISC-V machine code monitor written in RISC-V assembly code
 start:
 	
 	# do not add anything before this
-	
 	#ifdef M_MODE
 		#ifdef TARGET_HAS_Zicsr
 			# immediately save sp in mscratch
 			csrw	mscratch, sp
+
 			# run only on hart 0
 			# as sp is already saved, we can use it now
 			csrr	sp, mhartid
 			bnez	sp, end
-		#endif /* TARGET_HAS_Zicsr */
 
-		# set up a stack 
-		la		sp, stack + STACK_SIZE		# point to end of our new stack
+			# set up trap vector
+			la		sp, trap_handler
+			csrw	mtvec, sp
+
+			# set up timer irq
+			/*
+			# enable all m-mode irqs
+			csrsi	mstatus, 0b1000
+			# set timer for the first time
+			rdtime	t0
+			li		t1, TIMER_INTERVAL
+			add		t1, t0, t1
+			la		t2, MTIMECMP
+			sd		t1, 0(t2)
+			# enable m-mode timer irq
+			li		t1, 0b10000000
+			csrs	mie, t1
+			*/
+
+			# restore sp as it were on entry
+			csrr	sp, mscratch
+			
+		#endif /* TARGET_HAS_Zicsr */
 	#endif /* M_MODE */
 
+	# intentionally execute ebreak in order to enter trap handler,
+	# which then will execute the main loop
+
+	ebreak
+	j		end
+
+	#########################################################################
+
+
+ebreak_entry:
 	# save int registers on stack
 	addi	sp, sp, -(STK_FRAME_SIZE_INT)
 	SAVE_X	ra, (STK_OFF_RA)(sp)
@@ -73,6 +108,7 @@ start:
 	SAVE_X	x29, (STK_OFF_X29)(sp)
 	SAVE_X	x30, (STK_OFF_X30)(sp)
 	SAVE_X	x31, (STK_OFF_X31)(sp)
+	
 	# now we can safely use t0 to get back and save sp in that same stack frame above
 	#ifdef M_MODE
 		#ifdef TARGET_HAS_Zicsr
@@ -82,6 +118,7 @@ start:
 	#else
 		SAVE_X	sp, (STK_OFF_SP)(sp)
 	#endif /* M_MODE */
+
 	# save mepc
 	#ifdef M_MODE
 		#ifdef TARGET_HAS_Zicsr
@@ -89,7 +126,6 @@ start:
 			SAVE_X	t0, (STK_OFF_PC)(sp)
 		#endif /* TARGET_HAS_Zicsr */
 	#endif /* M_MODE */
-
 
 	#ifdef TARGET_HAS_RVF
 		# enable RVF in mstatus of cpu (this is disabled in QEMU per default)
@@ -136,12 +172,6 @@ start:
 		SAVE_F	f30, (STK_OFF_F30)(sp)
 		SAVE_F	f31, (STK_OFF_F31)(sp)
 	#endif /* TARGET_HAS_RVF */
-
-	#ifdef M_MODE
-		#ifdef TARGET_HAS_Zicsr
-			jal		setup_trap_handler
-		#endif /* TARGET_HAS_Zicsr */
-	#endif /* M_MODE */
 
 	# init UART 
 	jal		uart_init
@@ -256,7 +286,6 @@ unknown_command:
 
 end:
 	#ifdef M_MODE
-		# only if hart !=0 
 		wfi
 		j		end
 	#endif /* M_MODE */
@@ -278,8 +307,6 @@ string_asm_sep1:	.string ":";
 #string_asm_sep2:	 .string "\t";
 string_asm_sep2:	.string " ";
 .size string_asm_sep2, .-string_asm_sep2
-string_asm_comment: .string "\t# ";
-.size string_asm_comment, .-string_asm_comment
 
 
 .bss

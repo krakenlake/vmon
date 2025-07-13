@@ -13,8 +13,13 @@
 cmd_X:
 	la		a0, string_exit
 	jal		print_string
-	la		a1, stack + STACK_SIZE - STK_FRAME_SIZE_INT + STK_OFF_RA
-	LOAD_X	a0, 0(a1)
+
+	#ifdef TARGET_HAS_RVF
+		LOAD_X	a0, (STK_FRAME_SIZE_FLOAT + STK_OFF_PC)(sp)
+	#else
+		LOAD_X	a0, (STK_OFF_PC)(sp)
+	#endif
+
 	jal		print_hex
 	jal		print_newline
 	j		vmon_exit
@@ -24,7 +29,7 @@ cmd_X:
 .data
 
 
-string_exit:			.string "exiting: ret, ra=";
+string_exit:			.string "exiting to ";
 .size string_exit, .-string_exit
 
 #endif /* WITH_CMD_X */

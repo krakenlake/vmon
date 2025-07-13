@@ -12,7 +12,13 @@
 
 vmon_exit:
 	
-	# TODO: disable trap handler now?
+	# set mstatus.MPP to 0b11 so that mret below will stay in M-mode
+	#ifdef M_MODE
+		#ifdef TARGET_HAS_Zicsr
+			li		t0, 0b11 << 11
+			csrs	mstatus, t0
+		#endif /* TARGET_HAS_Zicsr */
+	#endif /* M_MODE */ 
 
 	#ifdef TARGET_HAS_RVF
 		# restore float registers
@@ -54,7 +60,10 @@ vmon_exit:
 	# restore mepc
 	#ifdef M_MODE
 		#ifdef TARGET_HAS_Zicsr
-			LOAD_X	t0, STK_OFF_PC(sp)	
+			LOAD_X	t0, STK_OFF_PC(sp)
+			# advance one instruction
+			# todo: check for RVC
+#			addi	t0, t0, 4
 			csrw	mepc, t0
 		#endif /* TARGET_HAS_Zicsr */
 	#endif /* M_MODE */ 
@@ -93,20 +102,11 @@ vmon_exit:
 	LOAD_X	x31, (STK_OFF_X31)(sp)
 
 	# restore original sp saved from caller on entry
-	#ifdef M_MODE
-		LOAD_X	sp, (STK_OFF_SP)(sp)
-	#else
-		addi	sp, sp, (STK_FRAME_SIZE_INT)
-	#endif
+	LOAD_X	sp, (STK_OFF_SP)(sp)
 
-	# Reminder: if the trap handler is still active and the outside
-	# caller did not have a valid sp, the code after the jump will
-	# crash when the first trap occurs, because there's no stack
-	# to save to (and also memory at sp may be protected).
-	
-	# bye bye - jump to address in ra
-	jalr	zero, ra, 0					# == ret
-	
+	# bye bye - jump to address in mepc (while staying in M-mode, see above)
+	mret
+
 .size vmon_exit, .-vmon_exit
 
 

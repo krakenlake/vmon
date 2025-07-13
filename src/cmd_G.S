@@ -27,15 +27,19 @@ cmd_G_addr_valid:
 	mv		a0, s1
 	jal		print_hex
 
-	# patch ra that was saved on the stack on entry, exit routine will load it later
-	la		a0, stack + STACK_SIZE - STK_FRAME_SIZE_INT + STK_OFF_RA
-	SAVE_X	s1, 0(a0)
+	# patch pc that was saved on the stack on entry, exit routine will load it later
+	#ifdef TARGET_HAS_RVF
+		SAVE_X	s1, (STK_FRAME_SIZE_FLOAT + STK_OFF_PC)(sp)
+	#else
+		SAVE_X	s1, (STK_OFF_PC)(sp)
+	#endif
 
 	#ifdef WITH_CMD_B
 		jal		break_activate			# activate all breakpoints
 	#endif /* WITH_CMD_B */
 
 	j		vmon_exit
+
 cmd_G_error_params:
 	li		a0, ERR_CMD_PARAMS
 cmd_G_error:

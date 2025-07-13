@@ -89,7 +89,7 @@ cmd_I:
 
 	la		a0, string_info_stacksize
 	jal		print_string
-	la		t0, stack	 
+	la		t0, stack
 	sub		a0, sp, t0
 	jal		print_hex
 #endif /* M_MODE */

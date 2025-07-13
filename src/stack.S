@@ -108,7 +108,8 @@ pop_ra_ret:
 # in: a0 = index of register
 # in: a1 = new value to write
 patch_int_register:
-	la		t0, stack + STACK_SIZE - STK_FRAME_SIZE_INT
+	li		t1, STK_FRAME_SIZE_FLOAT
+	add		t0, sp, t1
 patch_int_register_loop:
 	addi	t0, t0, (XLEN_BYTES*1)
 	addi 	a0, a0, -1
@@ -126,7 +127,7 @@ patch_float_register:
 	# read it into float register back
 	LOAD_F	f0, 0(sp)
 	addi 	sp, sp, (FLEN_BYTES)
-	la		t0, stack + STACK_SIZE - STK_FRAME_SIZE_INT - STK_FRAME_SIZE_FLOAT
+	mv		t0, sp
 patch_float_register_loop:
 	beqz	a0, patch_float_register_do
 	addi	t0, t0, (FLEN_BYTES*1)
@@ -149,9 +150,15 @@ print_int_registers:
 	li		a1, 1
 	li		a2, 31
 	#ifdef M_MODE
-		la		a3, stack + (STACK_SIZE) - (STK_FRAME_SIZE_INT) + STK_OFF_RA
+		# set a3 to the address of ra in the current stack frame
+		# (XLEN_BYTES are also added to compensate for the pushing ra on entry here)
+		#ifdef TARGET_HAS_RVF
+			addi		a3, sp, XLEN_BYTES + STK_FRAME_SIZE_FLOAT + STK_OFF_RA
+		#else
+			addi		a3, sp, XLEN_BYTES + STK_OFF_RA
+		#endif
 	#else
-		# ???
+		# todo: ???
 	#endif
 	li		a4, XLEN_BYTES
 	jal		print_saved_registers
@@ -159,13 +166,13 @@ print_int_registers:
 .size print_int_registers, .-print_int_registers
 
 
-#ifdef DISASS_RVF
+#ifdef TARGET_HAS_RVF
 	print_float_registers:
 		PUSH_RA
 		la		a0, get_float_register_name_by_index
 		li		a1, 0
 		li		a2, 31 
-		la		a3, stack + (STACK_SIZE) - (STK_FRAME_SIZE_INT) - (STK_FRAME_SIZE_FLOAT)
+		addi	a3, sp,  XLEN_BYTES						# compensate for ra pushed on entry
 		li		a4, FLEN_BYTES
 		jal		print_saved_registers
 		POP_RA_RET
