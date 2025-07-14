@@ -28,7 +28,7 @@ VMON - a RISC-V machine code monitor written in RISC-V assembly code
 
 # application entry point - activate our trap handler
 start:
-	
+
 	# do not add anything before this
 	#ifdef M_MODE
 		#ifdef TARGET_HAS_Zicsr

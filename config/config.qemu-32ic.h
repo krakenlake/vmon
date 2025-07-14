@@ -4,6 +4,7 @@
 #define HW_QEMU
 #define XLEN	32
 #define FLEN	0
+#define TARGET_HAS_Zicsr
 
 // always use only one of these
 #define M_MODE
