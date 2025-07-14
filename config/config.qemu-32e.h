@@ -5,6 +5,7 @@
 #define XLEN	32
 #define FLEN	0
 #define TARGET_HAS_Zicsr
+#define TARGET_IS_RVE
 
 // always use only one of these
 #define M_MODE

@@ -8,13 +8,13 @@
 // size of runtime stack in bytes
 // runtime space + PC + 31 int register + 32 float register (if required)
 #ifdef TARGET_HAS_RVF
-	#define STACK_SIZE			(512 + XLEN_BYTES*32 + FLEN_BYTES*32)
+	#define STACK_SIZE			(512 + XLEN_BYTES * NUM_INT_REGISTERS + FLEN_BYTES * NUM_FLOAT_REGISTERS)
 #else
-	#define STACK_SIZE			(512 + XLEN_BYTES*32)
+	#define STACK_SIZE			(512 + XLEN_BYTES * NUM_INT_REGISTERS)
 #endif
 
-	// int register offsets from start of int stack frame
-// store pc here; x0 is always 0 and will not be saved on stack
+// int register offsets from start of int stack frame
+// store pc in position 0; x0 is always 0 and will not be saved on stack
 #define STK_OFF_PC		(0)
 #define STK_OFF_X1		(XLEN_BYTES*1)
 #define STK_OFF_X2		(XLEN_BYTES*2)
@@ -48,7 +48,7 @@
 #define STK_OFF_X30		(XLEN_BYTES*30)
 #define STK_OFF_X31		(XLEN_BYTES*31)
 
-#define STK_FRAME_SIZE_INT		(XLEN_BYTES*32)
+#define STK_FRAME_SIZE_INT		(XLEN_BYTES * NUM_INT_REGISTERS)
 
 // aliases
 #define STK_OFF_RA		(STK_OFF_X1)
@@ -89,7 +89,7 @@
 #define STK_OFF_F30		(FLEN_BYTES*30)
 #define STK_OFF_F31		(FLEN_BYTES*31)
 
-#define STK_FRAME_SIZE_FLOAT	(FLEN_BYTES*32)
+#define STK_FRAME_SIZE_FLOAT	(FLEN_BYTES * NUM_FLOAT_REGISTERS)
 
 // function prologue/epilogue optimisation
 

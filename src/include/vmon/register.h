@@ -16,6 +16,12 @@
 #endif
 #define XLEN_BYTES			(XLEN/8)
 
+#ifdef TARGET_RVE
+	#define NUM_INT_REGISTERS	16
+#else
+	#define NUM_INT_REGISTERS	32
+#endif
+
 // float register width
 #ifdef TARGET_HAS_RVF
 	#if FLEN == 32
@@ -28,5 +34,7 @@
 	#endif
 	#define FLEN_BYTES			(FLEN/8)
 #endif
+
+#define NUM_FLOAT_REGISTERS		32
 
 #endif /* VMON_REGISTER_H */
