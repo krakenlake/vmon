@@ -144,31 +144,18 @@ string_mtval_msg:			.string "\n\tmtval\t= ";
 string_mcause_msg:			.string "\n\tmcause\t= ";
 
 #ifdef MCAUSE_VERBOSE
-	#undef DECLARE_CAUSE
-	#define DECLARE_CAUSE(text, id) string_##id: .string #id
-	#include "riscv/riscv-opc.h"
-
-	# The above #define defines DECLARE_CLAUSE, which is called in riscv-opc.h.
-	# Including that file afterwards will generate us lines like the following,
-	# directly from the RISC-V spec instead of having to do it manually:
-
-/*
-	string_CAUSE_MISALIGNED_FETCH:		.string "CAUSE_MISALIGNED_FETCH";
-	string_CAUSE_FAULT_FETCH:			.string "CAUSE_FAULT_FETCH";
-	string_CAUSE_ILLEGAL_INSTRUCTION:	.string "CAUSE_ILLEGAL_INSTRUCTION";
-	string_CAUSE_BREAKPOINT:			.string "CAUSE_BREAKPOINT";
-	string_CAUSE_MISALIGNED_LOAD:		.string "CAUSE_MISALIGNED_LOAD";
-	string_CAUSE_FAULT_LOAD:			.string "CAUSE_FAULT_LOAD";
-	string_CAUSE_MISALIGNED_STORE:		.string "CAUSE_MISALIGNED_STORE";
-	string_CAUSE_FAULT_STORE:			.string "CAUSE_FAULT_STORE";
-	string_CAUSE_USER_ECALL:			.string "CAUSE_USER_ECALL";
-	string_CAUSE_SUPERVISOR_ECALL:		.string "CAUSE_SUPERVISOR_ECALL";
-	string_CAUSE_HYPERVISOR_ECALL:		.string "CAUSE_HYPERVISOR_ECALL";
-	string_CAUSE_MACHINE_ECALL:			.string "CAUSE_MACHINE_ECALL";
-*/
-
-	# todo: rewrite this so that we don't depend on the order in the include file
-	# todo: imlement a "id, string" table instead
+	string_CAUSE_MISALIGNED_FETCH:		.string "MISALIGNED_FETCH";
+	string_CAUSE_FAULT_FETCH:			.string "FAULT_FETCH";
+	string_CAUSE_ILLEGAL_INSTRUCTION:	.string "ILLEGAL_INSTRUCTION";
+	string_CAUSE_BREAKPOINT:			.string "BREAKPOINT";
+	string_CAUSE_MISALIGNED_LOAD:		.string "MISALIGNED_LOAD";
+	string_CAUSE_FAULT_LOAD:			.string "FAULT_LOAD";
+	string_CAUSE_MISALIGNED_STORE:		.string "MISALIGNED_STORE";
+	string_CAUSE_FAULT_STORE:			.string "FAULT_STORE";
+	string_CAUSE_USER_ECALL:			.string "USER_ECALL";
+	string_CAUSE_SUPERVISOR_ECALL:		.string "SUPERVISOR_ECALL";
+	string_CAUSE_HYPERVISOR_ECALL:		.string "HYPERVISOR_ECALL";
+	string_CAUSE_MACHINE_ECALL:			.string "MACHINE_ECALL";
 
 .align 4
 mcause_verbose_table:
