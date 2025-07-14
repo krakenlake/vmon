@@ -66,11 +66,6 @@ cmd_I:
 	la		a0, start	 
 	jal		print_hex
 
-	la		a0, string_info_data
-	jal		print_string
-	la		a0, start_data	  
-	jal		print_hex
-
 	la		a0, string_info_bss
 	jal		print_string
 	la		a0, start_bss	 
