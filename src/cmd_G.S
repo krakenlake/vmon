@@ -1,6 +1,4 @@
 #include "config.h"
-#include "vmon/stack.h"
-#include "vmon/register.h"
 #include "vmon/error.h"
 
 
@@ -22,17 +20,9 @@ cmd_G:
 	li		a0, ERR_INSN_ADDR
 	j		cmd_G_error
 cmd_G_addr_valid:
-	la		a0, string_go
-	jal		print_string
+	# patch pc that was saved on stack on entry
 	mv		a0, s1
-	jal		print_hex
-
-	# patch pc that was saved on the stack on entry, exit routine will load it later
-	#ifdef TARGET_HAS_RVF
-		SAVE_X	s1, (STK_FRAME_SIZE_FLOAT + STK_OFF_PC)(sp)
-	#else
-		SAVE_X	s1, (STK_OFF_PC)(sp)
-	#endif
+	jal		patch_pc
 
 	#ifdef WITH_CMD_B
 		jal		break_activate			# activate all breakpoints
@@ -46,12 +36,6 @@ cmd_G_error:
 	jal		print_error
 	j		main_prompt
 .size cmd_G, .-cmd_G
-
-
-.data
-
-string_go:	.string "jumping to ";
-.size string_go, .-string_go
 
 
 #endif /* WITH_CMD_G */

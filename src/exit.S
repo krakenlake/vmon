@@ -11,6 +11,11 @@
 
 
 vmon_exit:
+
+	la		a0, string_jump
+	jal		print_string
+	jal		print_pc
+	jal		print_newline
 	
 	# set mstatus.MPP to 0b11 so that mret below will stay in M-mode
 	#ifdef M_MODE
@@ -108,6 +113,12 @@ vmon_exit:
 	mret
 
 .size vmon_exit, .-vmon_exit
+
+
+.data
+
+string_jump:	.string "jumping to ";
+.size string_jump, .-string_jump
 
 
 #endif /* defined (WITH_CMD_X) || defined (WITH_CMD_G) */
