@@ -72,6 +72,11 @@ Reset (clear) all breakpoints.
 Set a breakpoint at given address. If the max. number of breakpoints has already been
 reached, the breakpoint will not be set. Only valid instruction adresses are accepted
 (4 byte alignment, or 2 byte alignment if RVC is enabled).
+If the given breakpoint address is not read/write-accessible to VMON, this will cause
+an exception later when command `g` is executed, as the `g` command will try to
+activate all breakpoints by saving the original instructions at all breakpoint addresses
+and overwriting them with `ebreak` instructions. VMON will restore the original instructions
+when coming back to the command line.
 
 #### `c <src_start> <src_end> <dst_addr>` ####
 
