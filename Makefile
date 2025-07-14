@@ -2,7 +2,7 @@
 
 default: this
 
-VERSION = 0.6.0
+VERSION = 0.6.1
 
 #TARGET ?= qemu-32e				# todo: not yet working/compiling
 #TARGET ?= qemu-32i
