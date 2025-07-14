@@ -6,6 +6,8 @@
 #define FLEN	64
 #define TARGET_HAS_Zicsr
 #define TARGET_HAS_RVF
+#define TARGET_HAS_RVD
+#define TARGET_HAS_RVQ
 
 // always use only one of these
 #define M_MODE
