@@ -45,15 +45,7 @@ break_list_loop:
 	LOAD_X	a0, 0(s0)
 	beqz	a0, break_list_skip_empty
 	jal		print_hex_addr
-
-	# print saved original content
-	li		a0, ':'
-	jal		print_char
-	LWU		a0, (XLEN_BYTES)(s0)
-	jal		print_hex_addr
-
 	jal		print_newline
-
 break_list_skip_empty:
 	addi	s0, s0, BP_ENTRY_SIZE
 	addi	s1, s1, 1
