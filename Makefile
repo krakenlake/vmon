@@ -2,6 +2,7 @@
 
 default: this
 
+VERSION = 0.5.12
 
 #TARGET ?= qemu-32i
 #TARGET ?= qemu-32ic
@@ -101,7 +102,7 @@ ARCH    ?= riscv$(TARGET_XLEN)-unknown-elf
 TOOLBIN ?= /opt/riscv/rv$(TARGET_XLEN)g/bin
 CC      = $(TOOLBIN)/$(ARCH)-gcc
 CPP     = $(TOOLBIN)/$(ARCH)-cpp
-CFLAGS	+= $(DEBUG) -nostartfiles -g -I"src/include"
+CFLAGS	+= $(DEBUG) -DVERSION=\"$(VERSION)\" -nostartfiles -g -I"src/include"
 LD		= $(TOOLBIN)/$(ARCH)-ld
 LDFLAGS = --no-warn-rwx-segments
 OBJCOPY = $(TOOLBIN)/$(ARCH)-objcopy

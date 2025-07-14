@@ -292,8 +292,16 @@ end:
 
 start_data:
 
-string_startup:		.string "\nVMON - RISC-V machine code monitor";
+/*
+string_startup:		.string "\nVMON " + "- RISC-V machine code monitor";
 .size string_startup, .-string_startup
+*/
+string_startup:		
+.ascii "\nVMON "
+.ascii VERSION
+.asciz " - RISC-V machine code monitor";
+.size string_startup, .-string_startup
+
 string_prompt:		.string "> ";
 .size string_prompt, .-string_prompt
 
