@@ -4,13 +4,13 @@ default: this
 
 VERSION = 0.5.12
 
-TARGET ?= qemu-32i
+#TARGET ?= qemu-32i
 #TARGET ?= qemu-32ic
 #TARGET ?= qemu-32i-micro
 #TARGET ?= qemu-32i-mini
 #TARGET ?= qemu-32ic-mini
 #TARGET ?= qemu-64g
-#TARGET ?= qemu-64gqc
+TARGET ?= qemu-64gqc
 #TARGET ?= qemu-64gc
 #TARGET ?= vf2
 

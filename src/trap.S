@@ -49,8 +49,6 @@ stack_exists:
 	bne		t0, t1, handle_exception
 	
 handle_ebreak:
-	# todo: if ebreak was at a breakpoint location, restore the original insn
-
 	# pop registers
 	LOAD_X	ra, 0(sp)
 	LOAD_X	a0, (XLEN_BYTES*1)(sp)
@@ -58,8 +56,8 @@ handle_ebreak:
 	LOAD_X	t1, (XLEN_BYTES*3)(sp)
 	LOAD_X	s0, (XLEN_BYTES*4)(sp)
 	addi	sp, sp, (XLEN_BYTES*5)
-	# start VMON
-	j		ebreak_entry
+	# start VMON command line
+	j		breakpoint_entry
 
 handle_exception:
 	# in case of an exception:

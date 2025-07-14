@@ -14,13 +14,13 @@ VMON - a RISC-V machine code monitor written in RISC-V assembly code
 
 
 .global start
-.global ebreak_entry
+.global breakpoint_entry
 .global main_prompt
+
 .global string_asm_sep1
 .global string_asm_sep2
 .global string_asm_comment
 .global string_OP_UNKNOWN
-.global start_data
 .global start_bss
 
 .text
@@ -70,11 +70,12 @@ start:
 
 	ebreak
 	j		end
+.size start, .-start
 
 #########################################################################
 
 # this is called every time the trap handler encounters a breakpoint exception
-ebreak_entry:
+breakpoint_entry:
 	# save int registers on stack
 	addi	sp, sp, -(STK_FRAME_SIZE_INT)
 	SAVE_X	ra, (STK_OFF_RA)(sp)
@@ -284,7 +285,7 @@ end:
 		wfi
 		j		end
 	#endif /* M_MODE */
-.size start, .-start
+.size breakpoint_entry, .-breakpoint_entry
 
 
 string_startup:		
