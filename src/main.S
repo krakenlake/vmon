@@ -62,6 +62,14 @@ start:
 			# restore sp as it were on entry
 			csrr	sp, mscratch
 
+
+			# enable RVF in mstatus of cpu (this is disabled in QEMU per default)
+			li		t0, 0b11
+			slli	t0, t0, 13
+			csrr	t1, mstatus
+			or		t1, t0, t1
+			csrw	mstatus, t1
+
 		#endif /* TARGET_HAS_Zicsr */
 	#endif /* M_MODE */
 
@@ -129,15 +137,6 @@ breakpoint_entry:
 	#endif /* M_MODE */
 
 	#ifdef TARGET_HAS_RVF
-		# enable RVF in mstatus of cpu (this is disabled in QEMU per default)
-		#ifdef TARGET_HAS_Zicsr
-			li		t0, 0b11
-			slli	t0, t0, 13
-			csrr	t1, mstatus
-			or		t1, t0, t1
-			csrw	mstatus, t1
-		#endif /* TARGET_HAS_Zicsr */
-	
 		# save f0-f31 registers on stack
 		addi	sp, sp, -(STK_FRAME_SIZE_FLOAT)
 		SAVE_F	f0, (STK_OFF_F0)(sp)
