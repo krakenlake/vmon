@@ -6,7 +6,7 @@
 
 
 // size of runtime stack in bytes
-// runtime space + 32 int register + 32 float register (if required)
+// runtime space + PC + 31 int register + 32 float register (if required)
 #ifdef TARGET_HAS_RVF
 	#define STACK_SIZE			(512 + XLEN_BYTES*32 + FLEN_BYTES*32)
 #else
