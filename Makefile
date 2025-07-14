@@ -4,12 +4,13 @@ default: this
 
 VERSION = 0.5.12
 
-#TARGET ?= qemu-32i
+TARGET ?= qemu-32i
 #TARGET ?= qemu-32ic
+#TARGET ?= qemu-32i-micro
 #TARGET ?= qemu-32i-mini
 #TARGET ?= qemu-32ic-mini
 #TARGET ?= qemu-64g
-TARGET ?= qemu-64gqc
+#TARGET ?= qemu-64gqc
 #TARGET ?= qemu-64gc
 #TARGET ?= vf2
 
@@ -28,6 +29,14 @@ ifeq ($(TARGET), qemu-32ic)
 	TARGET_START_ADDR	= 0x80000000
 	TARGET_XLEN			= 32
 	CFLAGS				+= -march=rv$(TARGET_XLEN)ic -mabi=ilp32
+	QEMU_FLAGS	= -machine virt -cpu rv$(TARGET_XLEN),pmp=false -smp 1 -gdb tcp::1234 -bios none -serial stdio -display none -kernel $(BUILD)/$(NAME).img
+	RUN			= qemu-system-riscv$(TARGET_XLEN) $(QEMU_FLAGS) 
+endif 
+
+ifeq ($(TARGET), qemu-32i-micro)
+	TARGET_START_ADDR	= 0x80000000
+	TARGET_XLEN			= 32
+	CFLAGS				+= -march=rv$(TARGET_XLEN)i -mabi=ilp32
 	QEMU_FLAGS	= -machine virt -cpu rv$(TARGET_XLEN),pmp=false -smp 1 -gdb tcp::1234 -bios none -serial stdio -display none -kernel $(BUILD)/$(NAME).img
 	RUN			= qemu-system-riscv$(TARGET_XLEN) $(QEMU_FLAGS) 
 endif 
@@ -183,6 +192,7 @@ device-tree:
 all: 
 	make TARGET=qemu-32i release
 	make TARGET=qemu-32ic release
+	make TARGET=qemu-32i-micro release
 	make TARGET=qemu-32i-mini release
 	make TARGET=qemu-32ic-mini release
 	make TARGET=qemu-64g release
