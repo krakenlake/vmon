@@ -4,9 +4,6 @@ default: this
 
 VERSION = 0.6.1
 
-# todo: RVE not yet working/compiling
-#TARGET ?= qemu-32e
-
 #TARGET ?= qemu-32i
 #TARGET ?= qemu-32ic
 #TARGET ?= qemu-32i-micro
@@ -17,6 +14,8 @@ TARGET ?= qemu-64gqc
 #TARGET ?= qemu-64gc
 #TARGET ?= vf2
 
+# todo: RVE not yet working/compiling
+#TARGET ?= qemu-32e
 
 DEBUG ?= -DDEBUG
 
