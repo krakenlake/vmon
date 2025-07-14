@@ -28,28 +28,39 @@
 
 
 # encoding helper functions
-.global is_valid_insn_addr
 .global insn_is_compressed
 
 .global string_OP_UNKNOWN
 
+#endif
+
+
+#if defined (WITH_CMD_D) || defined (WITH_CMD_A) || defined (WITH_CMD_G)
+	.global is_valid_insn_addr
+#endif /* defined (WITH_CMD_D) || defined (WITH_CMD_A) || defined (WITH_CMD_G) */
+
+
 .text
 
 
-# in: a0 = addr
-# out: a0 = addr
-# out: a1 = 0 if OK, nonzero if not OK
-is_valid_insn_addr:
-	li		a1, 0
-	#ifdef DISASS_RVC
-		andi	a1, a0, 0b1
-	#else
-		andi	a1, a0, 0b11
-	#endif
-break_check_addr_done:
-	ret
-.size is_valid_insn_addr, .-is_valid_insn_addr
+#if defined (WITH_CMD_D) || defined (WITH_CMD_A) || defined (WITH_CMD_G)
+	# in: a0 = addr
+	# out: a0 = addr
+	# out: a1 = 0 if OK, nonzero if not OK
+	is_valid_insn_addr:
+		li		a1, 0
+		#ifdef DISASS_RVC
+			andi	a1, a0, 0b1
+		#else
+			andi	a1, a0, 0b11
+		#endif
+	break_check_addr_done:
+		ret
+	.size is_valid_insn_addr, .-is_valid_insn_addr
+#endif /* defined (WITH_CMD_D) || defined (WITH_CMD_A) || defined (WITH_CMD_G) */
 
+
+#if defined (WITH_CMD_D) || defined (WITH_CMD_A)
 
 # evaluate if an instruction is an RVC instruction
 # in: a0 = instruction word
@@ -251,8 +262,6 @@ get_register_index_by_name_done:
 	POP_RA_RET
 .size get_register_index_by_name, .-get_register_index_by_name
 
-
-.data
 
 .align 4
 
