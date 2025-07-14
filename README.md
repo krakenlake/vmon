@@ -99,7 +99,9 @@ Find <32bit_value> in memory from <start_addr> to <end_addr>.
 
 #### `g <start_addr>` ####
 
-Go to <start_addr> (restore registers as they were on entry and then execute `j <start_addr>`).
+Go to <start_addr>.
+Restore registers as they were saved on entry and execute `j <start_addr>`).
+Breakpoints will be activated.
 
 #### `h` ####
 
@@ -136,7 +138,9 @@ representation of that value.
 
 #### `x` ####
 
-Exit VMON (restore registers as they were saved on entry and then go to address in `ra`).
+Exit VMON.
+Restore registers and pc as they were saved on entry.
+Breakpoints will not be activated.
 
 #### `? <numeric_value>` ####
 
