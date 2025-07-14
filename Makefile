@@ -2,7 +2,7 @@
 
 default: this
 
-VERSION = 0.5.12
+VERSION = 0.6.0
 
 #TARGET ?= qemu-32i
 #TARGET ?= qemu-32ic
