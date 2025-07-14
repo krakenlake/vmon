@@ -13,19 +13,19 @@
 
 // which user commands shall be in the binary?
 #define WITH_CMD_A			// assemble	
-//#define WITH_CMD_B			// breakpoints
+#define WITH_CMD_B			// breakpoints
 #define WITH_CMD_C			// copy memory	
 #define WITH_CMD_D			// disassemble	
 #define WITH_CMD_F			// find
 #define WITH_CMD_G			// go
-//#define WITH_CMD_H			// help
-//#define WITH_CMD_I			// info	
+#define WITH_CMD_H			// help
+#define WITH_CMD_I			// info	
 #define WITH_CMD_M			// memory dump
 #define WITH_CMD_P			// poke
 #define WITH_CMD_R			// register dump
 #define WITH_CMD_S			// set register
 #define WITH_CMD_X			// exit
-//#define WITH_CMD_QMARK		// base conversion	
+#define WITH_CMD_QMARK		// base conversion	
 
 // if undefined, simply "x0...x31" will be used instead
 #define ABI_REGISTER_NAMES
@@ -34,17 +34,17 @@
 
 // include test code in the binary?
 // if yes, the "i" command shows the location at runtime
-//#define WITH_TESTCODE
+#define WITH_TESTCODE
 
 // configure which parts of the test code will be present
 // in the executable
 #ifdef WITH_TESTCODE
-	//#define WITH_TESTCODE_RV32E
-	#define WITH_TESTCODE_RV32I
-	#define WITH_TESTCODE_RV64I
-	#define WITH_TESTCODE_RVM
-	#define WITH_TESTCODE_RVA
-	#define WITH_TESTCODE_RVF
+	#define WITH_TESTCODE_RV32E
+	//#define WITH_TESTCODE_RV32I
+	//#define WITH_TESTCODE_RV64I
+	//#define WITH_TESTCODE_RVM
+	//#define WITH_TESTCODE_RVA
+	//#define WITH_TESTCODE_RVF
 	//#define WITH_TESTCODE_RVD
 	//#define WITH_TESTCODE_RVQ
 	//#define WITH_TESTCODE_RVC
@@ -52,10 +52,10 @@
 	//#define WITH_TESTCODE_RVP
 	//#define WITH_TESTCODE_RVV
 	//#define WITH_TESTCODE_RVH
-	#define WITH_TESTCODE_RVZicsr
-	#define WITH_TESTCODE_RVZifencei
-	#define WITH_TESTCODE_RVPRIV
-	#define WITH_TESTCODE_PSEUDO
+	//#define WITH_TESTCODE_RVZicsr
+	//#define WITH_TESTCODE_RVZifencei
+	//#define WITH_TESTCODE_RVPRIV
+	//#define WITH_TESTCODE_PSEUDO
 #endif
 
 // configure which instructions and extensions the
@@ -76,13 +76,13 @@
 //#define DISASS_RVPRIV
 
 // enable printing of pseudo opcodes in disassembly?
-//#define DISASS_PSEUDO
+#define DISASS_PSEUDO
 
 // include strings for MCAUSE verbose output?
-//#define MCAUSE_VERBOSE
+#define MCAUSE_VERBOSE
 
 // include strings for verbose error messages?
-//#define ERROR_VERBOSE
+#define ERROR_VERBOSE
 
 // default number of lines for the "d" command if no end address is given
 #define	DEFAULT_D_LINES		16

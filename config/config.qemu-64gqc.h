@@ -40,6 +40,7 @@
 // configure which parts of the test code will be present
 // in the executable
 #ifdef WITH_TESTCODE
+	//#define WITH_TESTCODE_RV32E
 	#define WITH_TESTCODE_RV32I
 	#define WITH_TESTCODE_RV64I
 	#define WITH_TESTCODE_RVM

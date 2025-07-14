@@ -4,13 +4,14 @@ default: this
 
 VERSION = 0.6.0
 
+#TARGET ?= qemu-32e				# todo: not yet working/compiling
 #TARGET ?= qemu-32i
 #TARGET ?= qemu-32ic
 #TARGET ?= qemu-32i-micro
 #TARGET ?= qemu-32i-mini
 #TARGET ?= qemu-32ic-mini
-TARGET ?= qemu-64g
-#TARGET ?= qemu-64gqc
+#TARGET ?= qemu-64g
+TARGET ?= qemu-64gqc
 #TARGET ?= qemu-64gc
 #TARGET ?= vf2
 
@@ -53,6 +54,15 @@ ifeq ($(TARGET), qemu-32ic-mini)
 	TARGET_START_ADDR	= 0x80000000
 	TARGET_XLEN			= 32
 	CFLAGS				+= -march=rv$(TARGET_XLEN)ic_zicsr -mabi=ilp32
+	QEMU_FLAGS	= -machine virt -cpu rv$(TARGET_XLEN),pmp=false -smp 1 -gdb tcp::1234 -bios none -serial stdio -display none -kernel $(BUILD)/$(NAME).img
+	RUN			= qemu-system-riscv$(TARGET_XLEN) $(QEMU_FLAGS) 
+endif 
+
+# todo: RVE versions not yet working/compiling
+ifeq ($(TARGET), qemu-32e)
+	TARGET_START_ADDR	= 0x80000000
+	TARGET_XLEN			= 32
+	CFLAGS				+= -march=rv$(TARGET_XLEN)e_zicsr -mabi=ilp32e
 	QEMU_FLAGS	= -machine virt -cpu rv$(TARGET_XLEN),pmp=false -smp 1 -gdb tcp::1234 -bios none -serial stdio -display none -kernel $(BUILD)/$(NAME).img
 	RUN			= qemu-system-riscv$(TARGET_XLEN) $(QEMU_FLAGS) 
 endif 

@@ -174,6 +174,23 @@ testcode_jal_forward:
 .size testcode_RV32I, .-testcode_RV32I
 #endif /* WITH_TESTCODE_RV32I */
 
+#ifdef WITH_TESTCODE_RV32E
+.option push
+.option norvc
+testcode_RV32E:
+	add		x0, x0, x0
+	add		x15, x15, x15
+	sub		x0, x0, x0
+	sub		x15, x15, x15
+	xor		x0, x0, x0
+	xor		x15, x15, x15
+	or		x0, x0, x0
+	or		x15, x15, x15
+	and		x0, x0, x0
+	and		x15, x15, x15
+.option pop /* norvc */
+.size testcode_RV32E, .-testcode_RV32E
+#endif /* WITH_TESTCODE_RV32E */
 
 # RV64I
 #if defined(WITH_TESTCODE_RV64I) && (XLEN >= 64)
