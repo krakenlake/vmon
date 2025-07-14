@@ -224,16 +224,12 @@ pop_ra_ret:
 	# in: a3 = stack frame base addr
 	# in: a4 = size of one register in bytes
 	print_saved_registers:
-		addi	sp, sp, -(XLEN_BYTES*9)
+		PUSH_S4_S3_S2_S1_S0_RA
+		addi	sp, sp, -(XLEN_BYTES*3)
 		SAVE_X  s7, 0(sp)
 		SAVE_X  s6, (XLEN_BYTES*1)(sp)
 		SAVE_X  s5, (XLEN_BYTES*2)(sp)
-		SAVE_X	s4, (XLEN_BYTES*3)(sp)
-		SAVE_X	s3, (XLEN_BYTES*4)(sp)
-		SAVE_X	s2, (XLEN_BYTES*5)(sp)
-		SAVE_X	s1, (XLEN_BYTES*6)(sp)
-		SAVE_X	s0, (XLEN_BYTES*7)(sp)
-		SAVE_X	ra, (XLEN_BYTES*8)(sp)
+	
 		mv		s5, a0						# register name lookup func ptr
 		mv		s1, a1						# first register index
 		mv		s2, a2						# last register index
