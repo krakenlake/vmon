@@ -26,7 +26,7 @@ VMON - a RISC-V machine code monitor written in RISC-V assembly code
 .text
 
 
-# application entry point
+# application entry point - activate our trap handler
 start:
 	
 	# do not add anything before this
@@ -71,9 +71,9 @@ start:
 	ebreak
 	j		end
 
-	#########################################################################
+#########################################################################
 
-
+# this is called every time the trap handler encounters a breakpoint exception
 ebreak_entry:
 	# save int registers on stack
 	addi	sp, sp, -(STK_FRAME_SIZE_INT)
@@ -287,15 +287,6 @@ end:
 .size start, .-start
 
 
-.data
-
-
-start_data:
-
-/*
-string_startup:		.string "\nVMON " + "- RISC-V machine code monitor";
-.size string_startup, .-string_startup
-*/
 string_startup:		
 .ascii "\nVMON "
 .ascii VERSION
