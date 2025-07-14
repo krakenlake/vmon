@@ -107,6 +107,13 @@ cmd_I:
 		jal		print_hex
 	#endif /* WITH_TESTCODE_RV32I */
 
+	#ifdef WITH_TESTCODE_RV32E
+		la		a0, string_info_testcode_RV32E
+		jal		print_string
+		la		a0, testcode_RV32E
+		jal		print_hex
+	#endif /* WITH_TESTCODE_RV32E */
+
 	#if defined(WITH_TESTCODE_RV64I) && (XLEN >= 64)
 		la		a0, string_info_testcode_RV64I
 		jal		print_string
@@ -237,6 +244,11 @@ string_info_stacksize:		.string "\nstack bytes free: ";
 	#ifdef WITH_TESTCODE_RV32I
 		string_info_testcode_RV32I:	.string "\n RV32I: ";
 		.size string_info_testcode_RV32I, .-string_info_testcode_RV32I
+	#endif
+
+	#ifdef WITH_TESTCODE_RV32E
+		string_info_testcode_RV32E:	.string "\n RV32E: ";
+		.size string_info_testcode_RV32E, .-string_info_testcode_RV32E
 	#endif
 
 	#ifdef WITH_TESTCODE_RV64I
