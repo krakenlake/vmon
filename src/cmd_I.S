@@ -202,9 +202,6 @@ cmd_I:
 .size cmd_I, .-cmd_I
 
 
-.data
-
-
 string_info_disass:		.string "disass: rv";
 .size string_info_disass, .-string_info_disass
 

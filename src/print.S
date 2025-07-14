@@ -256,7 +256,7 @@ print_binary_end:
 #endif /* WITH_CMD_QMARK */
 
 
-.data
+.bss
 
 
 .align 8

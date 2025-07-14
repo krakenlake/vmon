@@ -224,10 +224,6 @@ dis_I_rel:
 .size dis_I_rel, .-dis_I_rel
 
 
-.data
-
-.align 4
-
 string_FENCE_bits:		.string "iorw";
 
 

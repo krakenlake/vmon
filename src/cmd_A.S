@@ -77,8 +77,6 @@ cmd_A_done:
 .size cmd_A, .-cmd_A
 
 
-.data
-
 string_line_prefix_A:	.string "A ";
 .size string_line_prefix_A, .-string_line_prefix_A
 

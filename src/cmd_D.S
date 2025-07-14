@@ -90,8 +90,6 @@ cmd_D_done:
 .size cmd_D, .-cmd_D
 
 
-.data
-
 string_OP_UNKNOWN:		.string "???";
 .size string_OP_UNKNOWN, .-string_OP_UNKNOWN
 

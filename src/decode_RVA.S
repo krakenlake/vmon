@@ -55,10 +55,6 @@ print_AMO_postfix_done:
 .size print_AMO_postfix, .-print_AMO_postfix
 
 
-.data
-
-.align 4
-
 string_OP_POSTFIX_AQ:	.string ".aq";
 	.size string_OP_POSTFIX_AQ, .-string_OP_POSTFIX_AQ
 

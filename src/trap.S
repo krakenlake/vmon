@@ -135,8 +135,6 @@ exit_trap_handler:
 .size trap_handler, .-trap_handler
 
 
-.data
-
 
 string_exception_msg:		.string "\nexception:"
 string_mepc_msg:			.string "\n\tmepc\t= ";
