@@ -12,11 +12,11 @@
 
 cmd_D:
 	jal		skip_whitespace
-	jal		get_numeric				# read start addr from text buffer
+	jal		get_numeric					# read start addr from text buffer
 	bnez	a2, cmd_D_from_last			# none given? continue from last saved addr
 	mv		s5, a1						# save start addr of dump
 	jal		skip_whitespace
-	jal		get_numeric				# read start addr from text buffer
+	jal		get_numeric					# read start addr from text buffer
 	mv		s7, a1						# save end addr of dump
 	beqz	a2, cmd_D_next_instruction
 	j		cmd_D_add_default 
@@ -50,12 +50,12 @@ cmd_D_word_not_RVC:
 	#ifdef DISASS_RVC
 		j		cmd_D_disass	
 	cmd_D_word_is_RVC:					 
-		lbu		a0, 1(s5)					# print 2 bytes only
+		lbu		a0, 1(s5)				# print 2 bytes only
 		jal		print_hex_byte
 		lbu		a0, 0(s5)
 		jal		print_hex_byte	
 		la		a0, string_WORD_ALIGN
-		jal		print_string				# print 4 spaces for alignment
+		jal		print_string			# print 4 spaces for alignment
 	#endif
 cmd_D_disass:
 	la		a0, string_asm_sep2		
@@ -72,10 +72,12 @@ cmd_D_opcode_unknown:
 	j		cmd_D_advance
 cmd_D_advance:
 	mv		a0, s6						# get instruction word again
-	addi	s5, s5, 2					# advance 2 bytes in any case
-	jal		insn_is_compressed
-	bnez	a0, cmd_D_check_end
-	addi	s5, s5, 2					# add 2 more bytes if not compressed
+	addi	s5, s5, 4					# advance 4 bytes
+	#ifdef DISASS_RVC
+		jal		insn_is_compressed
+		beqz	a0, cmd_D_check_end
+		addi	s5, s5, -2				# go 2 bytes back if compressed
+	#endif
 cmd_D_check_end:
 	bgt		s5, s7, cmd_D_done			# check if end address reached
 	addi	s8, s8, -1

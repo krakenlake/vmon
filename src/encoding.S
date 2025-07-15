@@ -62,22 +62,23 @@
 
 #if defined (WITH_CMD_D) || defined (WITH_CMD_A)
 
-# evaluate if an instruction is an RVC instruction
-# in: a0 = instruction word
-# out: a0 = 0 if not, nonzero if yes
-insn_is_compressed:
-	andi	a0, a0, 0b11				 # look at bit 0 and 1
-	# uncompressed instructions have 0b11 in the end
-	li		t1, 0b11				
-	bne		a0, t1, insn_is_compressed_yes	# it is a compressed instruction
-insn_is_compressed_no:
-	li		a0, 0
-	ret
-insn_is_compressed_yes:
-	li		a0, 1
-	ret
-.size insn_is_compressed, .-insn_is_compressed
-
+#ifdef DISASS_RVC
+	# evaluate if an instruction is an RVC instruction
+	# in: a0 = instruction word
+	# out: a0 = 0 if not, nonzero if yes
+	insn_is_compressed:
+		andi	a0, a0, 0b11				 # look at bit 0 and 1
+		# uncompressed instructions have 0b11 in the end
+		li		t1, 0b11				
+		bne		a0, t1, insn_is_compressed_yes	# it is a compressed instruction
+	insn_is_compressed_no:
+		li		a0, 0
+		ret
+	insn_is_compressed_yes:
+		li		a0, 1
+		ret
+	.size insn_is_compressed, .-insn_is_compressed
+#endif
 
 # in: s0 = ptr to search string start
 # in: s1 = ptr to last char of search string
