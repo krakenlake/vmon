@@ -38,20 +38,20 @@
 push_ra:
 	addi	sp, sp, -(XLEN_BYTES*1)	
 	SAVE_X	ra, 0(sp)
-	jr		t6
+	jr		gp
 
 push_s0_ra:
 	addi	sp, sp, -(XLEN_BYTES*2)
 	SAVE_X	s0, 0(sp)
 	SAVE_X	ra, (XLEN_BYTES*1)(sp)
-	jr		t6
+	jr		gp
 
 push_s1_s0_ra:
 	addi	sp, sp, -(XLEN_BYTES*3)
 	SAVE_X	s1, 0(sp)
 	SAVE_X	s0, (XLEN_BYTES*1)(sp)
 	SAVE_X	ra, (XLEN_BYTES*2)(sp)
-	jr		t6
+	jr		gp
 
 push_s2_s1_s0_ra:
 	addi	sp, sp, -(XLEN_BYTES*4)
@@ -59,7 +59,7 @@ push_s2_s1_s0_ra:
 	SAVE_X	s1, (XLEN_BYTES*1)(sp)
 	SAVE_X	s0, (XLEN_BYTES*2)(sp)
 	SAVE_X	ra, (XLEN_BYTES*3)(sp)
-	jr		t6
+	jr		gp
 
 # push_s3_s2_s1_s0_ra left out on purpose, just use push/pop_s4_s3_s1_s0_ra instead
 
@@ -71,7 +71,7 @@ push_s4_s3_s2_s1_s0_ra:
 	SAVE_X	s1, (XLEN_BYTES*3)(sp)
 	SAVE_X	s0, (XLEN_BYTES*4)(sp)
 	SAVE_X	ra, (XLEN_BYTES*5)(sp)
-	jr		t6
+	jr		gp
 
 
 # for function epilogue optimisation (shorter code in total)
