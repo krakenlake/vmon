@@ -23,18 +23,15 @@
 # in: a0 = buffer ptr
 # out: a0 = buffer ptr to next non-whitespace char
 skip_whitespace:
+	lb		t1, 0(a0)				# get byte from buffer
 	li		t0, ' '
-	li		t1, '\t'
-skip_whitespace_next:
-	lb		t2, 0(a0)				# get byte from buffer
-	beq		t2, t0, skip_whitespace_advance
-	beq		t2, t1, skip_whitespace_advance
-	j		skip_whitespace_done
+	beq		t1, t0, skip_whitespace_advance
+	li		t0, '\t'
+	beq		t1, t0, skip_whitespace_advance
+	ret
 skip_whitespace_advance:
 	addi	a0, a0, 1				# advance buffer pointer
-	j		skip_whitespace_next
-skip_whitespace_done:
-	ret
+	j		skip_whitespace
 .size skip_whitespace, .-skip_whitespace
 
 
