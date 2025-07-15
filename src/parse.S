@@ -335,10 +335,8 @@ parse_iorw_done:
 # in: buffer ptr in a0
 # out: buffer ptr in a0
 # out: aqrl bits in bits 25-26 of a1
-# out: error code in a2 (OK=0)
 parse_aqrl:
 	mv		a1, zero						# clear assembly bits return value
-	mv		a2, zero						# clear error
 parse_aqrl_loop:
 	lb		t0, 0(a0)						# get next input char
 	# accept "aq" or "rl" and set bits in a1 accordingly
