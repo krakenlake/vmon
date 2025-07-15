@@ -22,12 +22,13 @@
 
 # in: a0 = buffer ptr
 # out: a0 = buffer ptr to next non-whitespace char
+# PRESERVE t0
 skip_whitespace:
 	lb		t1, 0(a0)				# get byte from buffer
-	li		t0, ' '
-	beq		t1, t0, skip_whitespace_advance
-	li		t0, '\t'
-	beq		t1, t0, skip_whitespace_advance
+	li		t2, ' '
+	beq		t1, t2, skip_whitespace_advance
+	li		t2, '\t'
+	beq		t1, t2, skip_whitespace_advance
 	ret
 skip_whitespace_advance:
 	addi	a0, a0, 1				# advance buffer pointer
@@ -40,30 +41,17 @@ skip_whitespace_advance:
 # in: t0 = char to expect
 # out: a0 = buffer ptr after comma (0 on error)
 expect_char:
-	li		t2, ' '
-	li		a3, '\t'
-	mv		a4, zero					# found flag
-expect_char_loop:
+	PUSH_RA
+	jal 	skip_whitespace
 	lb		t1, 0(a0)
 	beq		t1, t0, expect_char_match	# found match
-	beqz	t1, expect_char_check_flag	# string ended
-	beq		t1, t2, expect_char_ws
-	beq		t1, a3, expect_char_ws
-	# anything else
-expect_char_check_flag:
-	bnez	a4, expect_char_ret
 	li		a0, 0
-	ret
+	j		expect_char_done
 expect_char_match:
-	bnez	a4, expect_char_ret
-	li		a4, 1						# set found flag
-expect_char_ws:
 	addi	a0, a0, 1
-	j		expect_char_loop
+	jal 	skip_whitespace
 expect_char_done:
-	addi	a0, a0, 1
-expect_char_ret:
-	ret
+	POP_RA_RET
 .size expect_char, .-expect_char
 
 
