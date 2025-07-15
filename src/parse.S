@@ -38,13 +38,13 @@ skip_whitespace_advance:
 
 # expect a specific char and advance buffer ptr to next non-whitespace char after that char
 # in: a0 = buffer ptr
-# in: t0 = char to expect
+# in: a4 = char to expect
 # out: a0 = buffer ptr after comma (0 on error)
 expect_char:
 	PUSH_RA
 	jal 	skip_whitespace
 	lb		t1, 0(a0)
-	beq		t1, t0, expect_char_match	# found match
+	beq		t1, a4, expect_char_match	# found match
 	li		a0, 0
 	j		expect_char_done
 expect_char_match:
@@ -58,7 +58,7 @@ expect_char_done:
 # in: buffer ptr in a0
 # out: a0 = buffer ptr after comma or a0 = 0 on error
 expect_open_paren:
-	li		t0, '('
+	li		a4, '('
 	j 		expect_char
 .size expect_open_paren, .-expect_open_paren
 
@@ -66,7 +66,7 @@ expect_open_paren:
 # in: buffer ptr in a0
 # out: a0 = buffer ptr after comma or a0 = 0 on error
 expect_close_paren:
-	li		t0, ')'
+	li		a4, ')'
 	j 		expect_char
 .size expect_close_paren, .-expect_close_paren
 

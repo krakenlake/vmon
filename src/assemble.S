@@ -103,41 +103,51 @@ assemble_GENERIC_next_argument:
 	add		t0, t2, t1
 	LWU		t0, 0(t0)
 	beqz	t0, assemble_GENERIC_OK
+
 	# assemble argument
 											# ptr to parameter start in a0
 	mv		a1, s1							# insn word in a1
 	mv		a2, s2							# origin address in a2
 	jalr 	t0
+
 	# it is an error if a2 == -1, so add 1 and check for zero
 	addi	a2, a2, 1							
 	beqz	a2, assemble_GENERIC_error		# assembling argument failed
 	mv		s1, a1							# save insn word
+
 	# check if we have processed 4 arguments already
 	addi	s4, s4, -1
 	beqz	s4, assemble_GENERIC_OK
+
 	# expect comma
 	li		t1, 0x04						# no comma after I-type offset
 	beq		s3, t1, assemble_GENERIC_skip_comma
 	li		t1, 0x05						# no comma after S-type offset
 	beq		s3, t1, assemble_GENERIC_skip_comma
+
 	#ifdef DISASS_RVC
 		li		t1, 0x1f					# no comma after I_4imm offset
 		beq		s3, t1, assemble_GENERIC_skip_comma
 		li		t1, 0x1b					# no comma after c.lw/c.sw offset
 		beq		s3, t1, assemble_GENERIC_skip_comma
 	#endif
+
 	srli	t0, s0, 8						# do we expect more arguments?
 	beqz	t0, assemble_GENERIC_OK
+	
 	# expect comma
-	li		t0, ','
+	li		a4, ','
 	jal		expect_char
 	beqz	a0, assemble_GENERIC_error		# missing comma
+
 assemble_GENERIC_skip_comma:
 	srli	s0, s0, 8						# shift mask to next control word byte
 	j 		assemble_GENERIC_next_argument
+
 assemble_GENERIC_error:
 	li		a2, ERR_INSN_SYNTAX
 	j		assemble_GENERIC_done
+
 assemble_GENERIC_OK:
 	li		a2, 0
 assemble_GENERIC_done:
