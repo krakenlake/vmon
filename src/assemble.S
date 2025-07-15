@@ -63,18 +63,6 @@ assemble_instruction_not_aqrl:
 	or		a1, a1, s3
 #endif /* DISASS_RVA */
 
-	# now return insn size in a0
-#ifdef DISASS_RVC
-	mv		a0, a1
-	jal		insn_is_compressed
-	bnez	a0, assemble_instruction_is_RVC
-	li		a0, 4
-	j		assemble_instruction_done
-assemble_instruction_is_RVC:
-	li		a0, 2
-#else
-	li		a0, 4
-#endif
 	j 		assemble_instruction_done
 assemble_instruction_error:
 	mv		a0, zero

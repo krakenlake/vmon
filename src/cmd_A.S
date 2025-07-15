@@ -48,25 +48,26 @@ cmd_A_input_loop:
 	# insn now in a1
 	beqz	a0, cmd_A_assembly_error
 
-	# write assembled insn to memory
-	li		t0, 4
-	beq		a0, t0, cmd_A_input_loop_write_4_bytes
-cmd_A_input_loop_write_2_bytes:
-	sh 		a1, 0(s0)
-	j 		cmd_A_continue
-cmd_A_input_loop_write_4_bytes: 
+#ifdef DISASS_RVC
+		mv		a0, a1
+		jal		insn_is_compressed
+		beqz	a0, cmd_A_write_4_bytes
+
+cmd_A_write_2_bytes:
+		sh 		a1, 0(s0)
+		addi	s0, s0, 2
+		j 		cmd_A_input_loop
+#endif
+
+cmd_A_write_4_bytes: 
 	sw		a1, 0(s0)
-	j 		cmd_A_continue
+	addi		s0, s0, 4
+	j 		cmd_A_input_loop
 
 cmd_A_assembly_error:
 	# user entered garbage in assembly line
 	la		a0, string_ass_error
 	jal		print_string
-
-cmd_A_continue:
-	# advance dst addr
-	add		s0, s0, a0
-	j		cmd_A_input_loop
 
 cmd_A_error_params:
 	li		a0, ERR_CMD_PARAMS
