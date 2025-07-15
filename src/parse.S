@@ -5,22 +5,23 @@
 
 
 .global skip_whitespace
-.global expect_comma
+.global expect_char
 .global expect_open_paren
 .global expect_close_paren
 .global parse_insn_string
 .global find_register_name_end
-.global is_ascii
 .global parse_binary
 .global	parse_decimal
 .global	parse_iorw
 .global	parse_aqrl
 .global	get_numeric
 
+
 .text
 
 
-# in: buffer ptr in a0
+# in: a0 = buffer ptr
+# out: a0 = buffer ptr to next non-whitespace char
 skip_whitespace:
 	li		t0, ' '
 	li		t1, '\t'
@@ -43,22 +44,22 @@ skip_whitespace_done:
 # out: a0 = buffer ptr after comma (0 on error)
 expect_char:
 	li		t2, ' '
-	li		t3, '\t'
-	mv		t4, zero					# found flag
+	li		a3, '\t'
+	mv		a4, zero					# found flag
 expect_char_loop:
 	lb		t1, 0(a0)
 	beq		t1, t0, expect_char_match	# found match
 	beqz	t1, expect_char_check_flag	# string ended
 	beq		t1, t2, expect_char_ws
-	beq		t1, t3, expect_char_ws
+	beq		t1, a3, expect_char_ws
 	# anything else
 expect_char_check_flag:
-	bnez	t4, expect_char_ret
+	bnez	a4, expect_char_ret
 	li		a0, 0
 	ret
 expect_char_match:
-	bnez	t4, expect_char_ret
-	li		t4, 1						# set found flag
+	bnez	a4, expect_char_ret
+	li		a4, 1						# set found flag
 expect_char_ws:
 	addi	a0, a0, 1
 	j		expect_char_loop
@@ -67,14 +68,6 @@ expect_char_done:
 expect_char_ret:
 	ret
 .size expect_char, .-expect_char
-
-
-# in: buffer ptr in a0
-# out: a0 = buffer ptr after comma or a0 = 0 on error
-expect_comma:
-	li		t0, ','
-	j 		expect_char
-.size expect_comma, .-expect_comma
 
 
 # in: buffer ptr in a0
@@ -97,58 +90,67 @@ expect_close_paren:
 # out: a0 = ptr to end of parsed insn word
 # out: a1 = ptr to second '.' if present (otherwise 0)
 parse_insn_string:
-	mv		a1, zero					# clear second dot ptr 
-	li		t1, '.'						# pre-load relevant chars to compare
-	li		t2, 'a'
-	li		t3, 'z'
-	li		t5, '0'
-	li		t6, '9'
-	li		t4, 2						# count dots here for RVA insns
+	PUSH_RA
+	li		a1, 0						# clear second dot ptr 
+	li		t2, 2						# count dots here for RVA insns
 parse_insn_string_loop:
 	lb		t0, 0(a0)
 	# accept '.'
+	li		t1, '.'
 	bne		t0, t1, parse_insn_string_no_dot
 	# we have a dot
-	addi	t4, t4, -1
-	bnez	t4, parse_insn_string_valid_char
+	addi	t2, t2, -1
+	bnez	t2, parse_insn_string_valid_char
 	# second dot is present
 	mv		a1, a0
 	j 		parse_insn_string_valid_char
 parse_insn_string_no_dot:
 	# accept a-z and 0-9 in insn names
-	blt		t0, t5, parse_insn_string_done
-	bgt		t0, t3, parse_insn_string_done
-	ble		t0, t6, parse_insn_string_valid_char
-	bge		t0, t2, parse_insn_string_valid_char
-	j		parse_insn_string_done
+	jal		isalnum
+	beqz	a2, parse_insn_string_done
 parse_insn_string_valid_char:
 	addi	a0, a0, 1
 	j		parse_insn_string_loop
 parse_insn_string_done:
-	ret
+	POP_RA_RET
 .size parse_insn_string, .-parse_insn_string
 
 
 # in: buffer ptr in a0
 # out: ptr to end of word in a0
 find_register_name_end:
+	PUSH_RA
+find_register_name_end_loop:
+	jal		isalnum
+	beqz	a2, find_register_name_end_done
+find_register_name_end_valid_char:
+	addi	a0, a0, 1
+	j		find_register_name_end_loop
+find_register_name_end_done:
+	addi	a0, a0, -1
+	POP_RA_RET
+.size find_register_name_end, .-find_register_name_end
+
+
+# in: buffer ptr in a0
+# out: a2 = 1 if yes, else 0
+isalnum:
+	li		a2, 0					# default no
 	lb		t0, 0(a0)
 	# accept a-z and 0-9
 	li		t1, '0'
-	blt		t0, t1, find_register_name_end_done
+	blt		t0, t1, isalnum_done
 	li		t1, 'z'
-	bgt		t0, t1, find_register_name_end_done
+	bgt		t0, t1, isalnum_done
 	li		t1, '9'
-	ble		t0, t1, find_register_name_end_valid_char
+	ble		t0, t1, isalnum_yes
 	li		t1, 'a'
-	bge		t0, t1, find_register_name_end_valid_char
-find_register_name_end_valid_char:
-	addi	a0, a0, 1
-	j		find_register_name_end
-find_register_name_end_done:
-	addi	a0, a0, -1
+	bge		t0, t1, isalnum_yes
+isalnum_yes:
+	li		a2, 1
+isalnum_done:
 	ret
-.size find_register_name_end, .-find_register_name_end
+.size isalnum, .-isalnum
 
 
 # in: buffer ptr in a0
@@ -196,7 +198,7 @@ get_numeric_done:
 parse_hex:
 	li		a1, 0					# reset return value
 	li		a2, -1					# set error flag
-	li		t3, 0					# digit found flag (0=no)
+	li		a5, 0					# digit found flag (0=no)
 parse_hex_next_byte:
 	lb		t0, 0(a0)				# get byte from buffer
 	addi	t1, t0, -'0'
@@ -207,13 +209,13 @@ parse_hex_next_byte:
 	beqz	t2, parse_hex_check		# found invalid char
 	add		t1, t1, 10				# t1 is now 10-15
 parse_hex_add_nibble:
-	li		t3, 1					# set digit found flag
+	li		a5, 1					# set digit found flag
 	slli	a1, a1, 4
 	or		a1, a1, t1
 	addi	a0, a0, 1
 	j		parse_hex_next_byte
 parse_hex_check:
-	beqz	t3, parse_hex_return	# no digits -> err return
+	beqz	a5, parse_hex_return	# no digits -> err return
 	li		a2, 0					# clear error code
 parse_hex_return:
 	ret
@@ -227,11 +229,11 @@ parse_hex_return:
 parse_binary:
 	li		a2, -1
 	addi	a1, x0, 0
-	li		t3, 0
+	li		a5, 0
 parse_binary_next_bit:
 	lb		t0, 0(a0)
-	addi	t1, t0, -'0' # valid digits will be 0 or 1
-	sltiu	t2, t1, 2	 # t2 = (t1 < 2U) ? 1 : 0 - check if t1 is 0 or 1
+	addi	t1, t0, -'0' 				# valid digits will be 0 or 1
+	sltiu	t2, t1, 2	 				# t2 = (t1 < 2U) ? 1 : 0 - check if t1 is 0 or 1
 	bnez	t2, parse_binary_bit
 	# check for valid terminators
 	li		t1, ' '
@@ -241,13 +243,13 @@ parse_binary_next_bit:
 	# character is not 0, 1, space, or return - return error
 	ret
 parse_binary_bit:
-	li		t3, 1
+	li		a5, 1
 	slli	a1, a1, 1
 	or		a1, a1, t1
 	addi	a0, a0, 1
 	j		parse_binary_next_bit
 parse_binary_return:
-	beqz	t3, parse_binary_return_error
+	beqz	a5, parse_binary_return_error
 	li		a2, 0
 parse_binary_return_error:
 	ret
@@ -260,45 +262,47 @@ parse_binary_return_error:
 # out: parsed binary number in a1
 # out: error code in a2 (OK=0)
 parse_decimal:
-	li		a2, -1 # error code
-	li		a1, 0  # result
-	li		t3, 0  # digit found flag
-	li		t6, 0  # negative flag
+	li		a1, 0							# result
+	li		a3, 0							# digit found flag
+	li		a2, 0							# negative flag
 	# check for negative number
 	lb		t0, 0(a0)
 	li		t1, '-'
 	bne		t0, t1, parse_decimal_plus
-	li		t6, 1  # number is negative
+	li		a2, 1							# number is negative
 	addi	a0, a0, 1
 	j		parse_decimal_loop
 parse_decimal_plus:
 	li		t1, '+'
-	bne		t0, t1, parse_decimal_loop # no leading +, assume positive
+	bne		t0, t1, parse_decimal_loop		# no leading +, assume positive
 	addi	a0, a0, 1
 parse_decimal_loop:
 	lb		t0, 0(a0)
-	addi	t1, t0, -'0'  # potential digit value
-	sltiu	t2, t1, 10	  # is potential digit 0-9? (t2=1 if yes)
-	beqz	t2, parse_decimal_check_flag # if not 0-9
+	addi	t1, t0, -'0'					# potential digit value
+	sltiu	t2, t1, 10						# is potential digit 0-9? (t2=1 if yes)
+	beqz	t2, parse_decimal_check_flag	# if not 0-9
 	# have a valid decimal digit, multiply accumulator by 10
 	# and add in the new digit value.
-	li		t3, 1
+	li		a3, 1
 	# a1 = a1 * 10
-	slli	t4, a1, 3	   # t4 = a1 * 8
-	slli	t5, a1, 1	   # t5 = a1 * 2
-	add		a1, t5, t4	   # a1 = a1 * 10
+	slli	a4, a1, 3						# a4 = a1 * 8
+	slli	a5, a1, 1						# a5 = a1 * 2
+	add		a1, a5, a4						# a1 = a1 * 10
 	# a1 = a1 + digit_value
 	add		a1, a1, t1
-	addi	a0, a0, 1	   # ptr++
+	addi	a0, a0, 1						# ptr++
 	j		parse_decimal_loop
 parse_decimal_check_flag:
-	beqz	t3, parse_decimal_final_return # If t3=0, error (a2 is -1)
+	beqz	a3, parse_decimal_error			# If a3=0, error
 	# apply sign, if necessary
-	beqz	t6, parse_decimal_set_success
-	sub		a1, x0, a1 # 2's complement negation
+	beqz	a2, parse_decimal_set_success
+	sub		a1, x0, a1						# 2's complement negation
 parse_decimal_set_success:
-	li		a2, 0
-parse_decimal_final_return:
+	li		a2, 0							# clear error code
+	j		parse_decimal_done
+parse_decimal_error:
+	li		a2, -1							# set error code
+parse_decimal_done:
 	ret
 .size parse_decimal, .-parse_decimal
 
@@ -312,20 +316,20 @@ parse_iorw:
 	mv		a1, zero					# clear return value
 	mv		a2, zero					# clear error
 	mv		t1, zero					# init value to be or'd in each step
-	li		t2, 'i'
-	li		t3, 'o'
-	li		t4, 'r'
-	li		t5, 'w'
 parse_iorw_loop:
 	or		a1, a1, t1					# first time this is empty
 	li		t1, 1						# init for bit shifting
 	lb		t0, 0(a0)					# get next input char
 	addi	a0, a0, 1					# advance one char
 	# accept 'i', 'o', 'r', 'w' and set bits in a1 accordingly
+	li		t2, 'i'
 	beq		t0, t2, parse_iorw_add_i
-	beq		t0, t3, parse_iorw_add_o
-	beq		t0, t4, parse_iorw_add_r
-	beq		t0, t5, parse_iorw_loop		# no further shift of t1 necessary
+	li		t2, 'o'
+	beq		t0, t2, parse_iorw_add_o
+	li		t2, 'r'
+	beq		t0, t2, parse_iorw_add_r
+	li		t2, 'w'
+	beq		t0, t2, parse_iorw_loop		# no further shift of t1 necessary
 	addi	a0, a0, -1					# one step back if no match
 	j		parse_iorw_done
 parse_iorw_add_i:
@@ -351,34 +355,32 @@ parse_iorw_done:
 parse_aqrl:
 	mv		a1, zero						# clear assembly bits return value
 	mv		a2, zero						# clear error
-	li		t2, 'a'
-	li		t3, 'q'
-	li		t4, 'r'
-	li		t5, 'l'
-	li		t6, 1
 parse_aqrl_loop:
 	lb		t0, 0(a0)						# get next input char
 	addi	a0, a0, 1						# advance one char
 	# accept "aq" or "rl" and set bits in a1 accordingly
+	li		t2, 'a'
 	beq		t0, t2, parse_aqrl_need_q
-	beq		t0, t4, parse_aqrl_need_r
+	li		t2, 'r'
+	beq		t0, t2, parse_aqrl_need_l
 	# when we encounter anything other than 'a' or 'r' we are done
 	j		parse_aqrl_done
 parse_aqrl_need_q:
 	lb		t0, 0(a0)						# get char after current
-	beq		t0, t3, parse_aqrl_add_aq_bit	# we have aq
+	li		t2, 'q'
+	beq		t0, t2, parse_aqrl_add_aq_bit	# we have aq
 	j		parse_aqrl_done
 parse_aqrl_add_aq_bit:
-	slli	t0, t6, 1
-	or		a1, a1, t0
+	ori		a1, a1, 0b10
 	addi	a0, a0, 1
 	j		parse_aqrl_loop
-parse_aqrl_need_r:
+parse_aqrl_need_l:
 	lb		t0, 0(a0)						# get char after current
-	beq		t0, t5, parse_aqrl_add_rl_bit	# we have rl
+	li		t2, 'l'
+	beq		t0, t2, parse_aqrl_add_rl_bit	# we have rl
 	j		parse_aqrl_done
 parse_aqrl_add_rl_bit:
-	or		a1, a1, t6
+	ori		a1, a1, 0b1
 	addi	a0, a0, 1
 	j		parse_aqrl_loop
 parse_aqrl_done:

@@ -132,7 +132,9 @@ assemble_GENERIC_next_argument:
 	#endif
 	srli	t0, s0, 8						# do we expect more arguments?
 	beqz	t0, assemble_GENERIC_done
-	jal		expect_comma
+	# expect comma
+	li		t0, ','
+	jal		expect_char
 	beqz	a0, assemble_GENERIC_error		# missing comma
 assemble_GENERIC_skip_comma:
 	srli	s0, s0, 8						# shift mask to next control word byte
