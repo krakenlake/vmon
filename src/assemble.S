@@ -15,12 +15,14 @@
 
 # in: a0 = ptr to input text
 # in: a2 = current memory address to write (needed for branch calculation)
-# out: a0 = insn size (normal 4, 2 for RVC, 0 if error)
+# out: a0 = error code (0=ERROR)
 # out: a1 = assembled instruction to be written into memory
 assemble_instruction:
-	PUSH_S4_S3_S2_S1_S0_RA
+	PUSH_S2_S1_S0_RA
 
-	mv		s3, zero							# clear RVA aqrl bits
+	addi	sp, sp, -(XLEN_BYTES*1)				# local: RVA aqrl bits
+	SAVE_X	zero, 0(sp)							# clear RVA aqrl bits
+
 	jal		skip_whitespace
 	mv		s0, a0								# insn string start
 	jal		parse_insn_string
@@ -36,7 +38,8 @@ assemble_instruction:
 	# - set up s1 so that only the part without extension will be used for lookup later
 	addi	a0, s2, 1							# advance to char after second dot
 	jal		parse_aqrl
-	mv		s3, a1
+	SAVE_X	a1, 0(sp)							# save aqrl bits
+
 	# set s1 so that the string between s0 and s1 is that part
 	# of the insn that does not contain the ".aqrl" extension
 	mv		a0, s1
@@ -60,14 +63,16 @@ assemble_instruction_not_aqrl:
 
 #ifdef DISASS_RVA
 	# add RVA aqrl bits if there were any from above
-	or		a1, a1, s3
+	LOAD_X	t0, 0(sp)
+	or		a1, a1, t0
 #endif /* DISASS_RVA */
 
 	j 		assemble_instruction_done
 assemble_instruction_error:
 	mv		a0, zero
 assemble_instruction_done:
-	POP_S4_S3_S2_S1_S0_RA_RET
+	addi	sp, sp, (XLEN_BYTES*1)	
+	POP_S2_S1_S0_RA_RET
 .size assemble_instruction, .-assemble_instruction
 
 

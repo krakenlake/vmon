@@ -44,7 +44,6 @@ cmd_A_input_loop:
 	# read input line and assemble one instruction
 	mv		a2, s0							# current memory address
 	jal		assemble_instruction
-	# insn size now in a0
 	# insn now in a1
 	beqz	a0, cmd_A_assembly_error
 
