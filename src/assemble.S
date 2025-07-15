@@ -19,7 +19,7 @@
 # out: a1 = assembled instruction to be written into memory
 # out: a2 = error code (0=OK)
 assemble_instruction:
-	PUSH_S2_S1_S0_RA
+	PUSH_S1_S0_RA
 
 	addi	sp, sp, -(XLEN_BYTES*1)				# local: RVA aqrl bits
 	SAVE_X	zero, 0(sp)							# clear RVA aqrl bits
@@ -27,17 +27,18 @@ assemble_instruction:
 	jal		skip_whitespace
 	mv		s0, a0								# insn string start
 	jal		parse_insn_string
+	# a0 = ptr to end of parsed insn word
+	# a1 = ptr to second '.' if present (otherwise 0)
 	mv		s1, a0								# insn string end
 
 #ifdef DISASS_RVA
-	mv		s2, a1								# ptr to second '.' in string (if present)
 	beqz	a1, assemble_instruction_not_aqrl
 	# RVA insns may end with ".aq", ".rl", or ".aqrl".
 	# Those insns are stored in the encoding table without these extensions.
 	# So if one of these extensions is present
 	# - assemble the aq/rl bits
 	# - set up s1 so that only the part without extension will be used for lookup later
-	addi	a0, s2, 1							# advance to char after second dot
+	addi	a0, a1, 1							# advance to char after second dot
 	jal		parse_aqrl
 	SAVE_X	a1, 0(sp)							# save aqrl bits
 
@@ -73,7 +74,7 @@ assemble_instruction_not_found:
 	li		a2, ERR_INSN_NOTFOUND
 assemble_instruction_done:
 	addi	sp, sp, (XLEN_BYTES*1)	
-	POP_S2_S1_S0_RA_RET
+	POP_S1_S0_RA_RET
 .size assemble_instruction, .-assemble_instruction
 
 
