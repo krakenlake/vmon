@@ -341,7 +341,6 @@ parse_aqrl:
 	mv		a2, zero						# clear error
 parse_aqrl_loop:
 	lb		t0, 0(a0)						# get next input char
-	addi	a0, a0, 1						# advance one char
 	# accept "aq" or "rl" and set bits in a1 accordingly
 	li		t2, 'a'
 	beq		t0, t2, parse_aqrl_need_q
@@ -350,22 +349,22 @@ parse_aqrl_loop:
 	# when we encounter anything other than 'a' or 'r' we are done
 	j		parse_aqrl_done
 parse_aqrl_need_q:
-	lb		t0, 0(a0)						# get char after current
+	lb		t0, 1(a0)						# get char after current
 	li		t2, 'q'
 	beq		t0, t2, parse_aqrl_add_aq_bit	# we have aq
 	j		parse_aqrl_done
 parse_aqrl_add_aq_bit:
 	ori		a1, a1, 0b10
-	addi	a0, a0, 1
-	j		parse_aqrl_loop
+	j		parse_aqrl_advance
 parse_aqrl_need_l:
-	lb		t0, 0(a0)						# get char after current
+	lb		t0, 1(a0)						# get char after current
 	li		t2, 'l'
 	beq		t0, t2, parse_aqrl_add_rl_bit	# we have rl
 	j		parse_aqrl_done
 parse_aqrl_add_rl_bit:
 	ori		a1, a1, 0b1
-	addi	a0, a0, 1
+parse_aqrl_advance:
+	addi	a0, a0, 2
 	j		parse_aqrl_loop
 parse_aqrl_done:
 	slli	a1, a1, 25
