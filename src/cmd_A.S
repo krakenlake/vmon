@@ -45,7 +45,7 @@ cmd_A_input_loop:
 	mv		a2, s0							# current memory address
 	jal		assemble_instruction
 	# insn now in a1
-	beqz	a0, cmd_A_assembly_error
+	bnez	a2, cmd_A_assembly_error
 
 #ifdef DISASS_RVC
 		mv		a0, a1
@@ -67,6 +67,7 @@ cmd_A_assembly_error:
 	# user entered garbage in assembly line
 	la		a0, string_ass_error
 	jal		print_string
+	j 		cmd_A_input_loop
 
 cmd_A_error_params:
 	li		a0, ERR_CMD_PARAMS

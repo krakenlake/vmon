@@ -3,6 +3,7 @@
 #include "vmon/encoding.h"
 #include "vmon/register.h"
 #include "vmon/stack.h"
+#include "vmon/error.h"
 
 
 #ifdef WITH_CMD_A
@@ -15,8 +16,8 @@
 
 # in: a0 = ptr to input text
 # in: a2 = current memory address to write (needed for branch calculation)
-# out: a0 = error code (0=ERROR)
 # out: a1 = assembled instruction to be written into memory
+# out: a2 = error code (0=OK)
 assemble_instruction:
 	PUSH_S2_S1_S0_RA
 
@@ -53,13 +54,13 @@ assemble_instruction_not_aqrl:
 	# function ptr now in a0
 	# MATCH value now in a1
 	# table entry ptr in a3
-	beqz	a0, assemble_instruction_done		# not found
+	beqz	a0, assemble_instruction_not_found	# not found
 	mv		a0, s1								# input  string ptr
 	# current memory addr already in a2
 	jal		assemble_GENERIC					# handle all insns
-	# now a1 = insn code
-	# in case insn == 0, 
-	beqz	a1, assemble_instruction_error		# error while assembling insn parameters
+	# a1 = insn word
+	# a2 = error code
+	bnez	a2, assemble_instruction_done		# error while assembling insn parameters
 
 #ifdef DISASS_RVA
 	# add RVA aqrl bits if there were any from above
@@ -68,8 +69,8 @@ assemble_instruction_not_aqrl:
 #endif /* DISASS_RVA */
 
 	j 		assemble_instruction_done
-assemble_instruction_error:
-	mv		a0, zero
+assemble_instruction_not_found:
+	li		a2, ERR_INSN_NOTFOUND
 assemble_instruction_done:
 	addi	sp, sp, (XLEN_BYTES*1)	
 	POP_S2_S1_S0_RA_RET
@@ -79,7 +80,8 @@ assemble_instruction_done:
 # in: a0 = ptr to remaining input string
 # in: a2 = origin address
 # in: a3 = ptr to encoding table entry
-# out: assembled instruction in a1
+# out: a1 = assembled instruction
+# out: a2 = error code (0=OK)
 assemble_GENERIC:
 	PUSH_S4_S3_S2_S1_S0_RA
 
@@ -91,7 +93,7 @@ assemble_GENERIC:
 	LWU		s0, ENC_OFF_CTRL(a3)
 assemble_GENERIC_next_argument:
 	andi	s3, s0, 0xff
-	beqz	s3, assemble_GENERIC_done
+	beqz	s3, assemble_GENERIC_OK
 	# advance string ptr to arg
 	jal		skip_whitespace
 	# compute func ptr
@@ -99,7 +101,7 @@ assemble_GENERIC_next_argument:
 	la		t1, disass_vectors
 	add		t0, t2, t1
 	LWU		t0, 0(t0)
-	beqz	t0, assemble_GENERIC_done
+	beqz	t0, assemble_GENERIC_OK
 	# assemble argument
 											# ptr to parameter start in a0
 	mv		a1, s1							# insn word in a1
@@ -111,7 +113,7 @@ assemble_GENERIC_next_argument:
 	mv		s1, a1							# save insn word
 	# check if we have processed 4 arguments already
 	addi	s4, s4, -1
-	beqz	s4, assemble_GENERIC_done
+	beqz	s4, assemble_GENERIC_OK
 	# expect comma
 	li		t1, 0x04						# no comma after I-type offset
 	beq		s3, t1, assemble_GENERIC_skip_comma
@@ -124,7 +126,7 @@ assemble_GENERIC_next_argument:
 		beq		s3, t1, assemble_GENERIC_skip_comma
 	#endif
 	srli	t0, s0, 8						# do we expect more arguments?
-	beqz	t0, assemble_GENERIC_done
+	beqz	t0, assemble_GENERIC_OK
 	# expect comma
 	li		t0, ','
 	jal		expect_char
@@ -133,7 +135,10 @@ assemble_GENERIC_skip_comma:
 	srli	s0, s0, 8						# shift mask to next control word byte
 	j 		assemble_GENERIC_next_argument
 assemble_GENERIC_error:
-	mv		a1, zero
+	li		a2, ERR_INSN_SYNTAX
+	j		assemble_GENERIC_done
+assemble_GENERIC_OK:
+	li		a2, 0
 assemble_GENERIC_done:
 	POP_S4_S3_S2_S1_S0_RA_RET
 .size assemble_GENERIC, .-assemble_GENERIC
