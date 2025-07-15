@@ -300,10 +300,7 @@ parse_decimal_done:
 parse_iorw:
 	mv		a1, zero					# clear return value
 	mv		a2, zero					# clear error
-	mv		t1, zero					# init value to be or'd in each step
 parse_iorw_loop:
-	or		a1, a1, t1					# first time this is empty
-	li		t1, 1						# init for bit shifting
 	lb		t0, 0(a0)					# get next input char
 	addi	a0, a0, 1					# advance one char
 	# accept 'i', 'o', 'r', 'w' and set bits in a1 accordingly
@@ -314,18 +311,20 @@ parse_iorw_loop:
 	li		t2, 'r'
 	beq		t0, t2, parse_iorw_add_r
 	li		t2, 'w'
-	beq		t0, t2, parse_iorw_loop		# no further shift of t1 necessary
+	beq		t0, t2, parse_iorw_add_w		# no further shift of t1 necessary
 	addi	a0, a0, -1					# one step back if no match
 	j		parse_iorw_done
 parse_iorw_add_i:
-	slli	t1, t1, 3
+	ori		a1, a1, 1 << 3
 	j		parse_iorw_loop
 parse_iorw_add_o:
-	slli	t1, t1, 2
-	or		a1, a1, t1
+	ori		a1, a1, 1 << 2
 	j		parse_iorw_loop
 parse_iorw_add_r:
-	slli	t1, t1, 1
+	ori		a1, a1, 1 << 1
+	j		parse_iorw_loop
+parse_iorw_add_w:
+	ori		a1, a1, 1
 	j		parse_iorw_loop
 parse_iorw_done:
 	ret
