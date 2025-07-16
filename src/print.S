@@ -86,8 +86,8 @@ print_hex_new_next_nibble:
 	addi	t2, t2, -1 
 	andi	t0, a0, 0x0f
 	# digit < 10?
-	sltiu	t3, t0, 10
-	bnez	t3, print_hex_new_decimal
+	sltiu	t1, t0, 10
+	bnez	t1, print_hex_new_decimal
 	addi	t0, t0, 39
 print_hex_new_decimal:
 	addi	t0, t0, 48
@@ -233,20 +233,20 @@ print_decimal_done:
 # in: a0 = value to print
 print_binary:
 	PUSH_S1_S0_RA
-	mv		s0, a0	       # Use s0 to store the number being processed
-	li		s1, XLEN       # Use s1 for the loop counter (32/64 down to 0)
+	mv		s0, a0						# Use s0 to store the number being processed
+	li		s1, XLEN					# Use s1 for the loop counter (32/64 down to 0)
 print_binary_loop:
-	beqz	s1, print_binary_end # If loop counter is 0, we are done.
-	srai	t2, s0, XLEN-1 # Arithmetically shift s0 right by 31/63. t2 = 0 or -1.
-	andi	t2, t2, 1      # Isolate the least significant bit. t2 is now 0 or 1.
-	addi	a0, t2, '0'    # Calculate ASCII char: '0' or '1'. a0 has the char.
+	beqz	s1, print_binary_end		# If loop counter is 0, we are done.
+	srai	t2, s0, XLEN-1				# Arithmetically shift s0 right by 31/63. t2 = 0 or -1.
+	andi	t2, t2, 1					# Isolate the least significant bit. t2 is now 0 or 1.
+	addi	a0, t2, '0'					# Calculate ASCII char: '0' or '1'. a0 has the char.
 	call	print_char
-	slli	s0, s0, 1      # Shift the number left by 1 bit.
-	addi	s1, s1, -1     # Decrement loop counter
+	slli	s0, s0, 1					# Shift the number left by 1 bit.
+	addi	s1, s1, -1					# Decrement loop counter
 	# Print a space every 8 bits for readability
 	beqz	s1, print_binary_skip_space # If loop counter is 0, we are finished
-	andi	t3, s1, 7		    # t3 = s1 & 0b111 (s1 mod 8).
-	bnez	t3, print_binary_skip_space # If loop counter is not a multiple of 8, skip space.
+	andi	t0, s1, 7					# t3 = s1 & 0b111 (s1 mod 8).
+	bnez	t0, print_binary_skip_space	# If loop counter is not a multiple of 8, skip space.
 	call	print_space
 print_binary_skip_space:
 	j		print_binary_loop
