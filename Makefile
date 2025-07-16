@@ -9,13 +9,11 @@ VERSION = 0.6.1
 #TARGET ?= qemu-32i-micro
 #TARGET ?= qemu-32i-mini
 #TARGET ?= qemu-32ic-mini
+#TARGET ?= qemu-32e
 #TARGET ?= qemu-64g
 TARGET ?= qemu-64gqc
 #TARGET ?= qemu-64gc
 #TARGET ?= vf2
-
-# todo: RVE not yet working/compiling
-#TARGET ?= qemu-32e
 
 DEBUG ?= -DDEBUG
 
@@ -59,7 +57,6 @@ ifeq ($(TARGET), qemu-32ic-mini)
 	RUN			= qemu-system-riscv$(TARGET_XLEN) $(QEMU_FLAGS) 
 endif 
 
-# todo: RVE versions not yet working/compiling
 ifeq ($(TARGET), qemu-32e)
 	TARGET_START_ADDR	= 0x80000000
 	TARGET_XLEN			= 32
@@ -206,6 +203,7 @@ all:
 	make TARGET=qemu-32i-micro release
 	make TARGET=qemu-32i-mini release
 	make TARGET=qemu-32ic-mini release
+	make TARGET=qemu-32e release
 	make TARGET=qemu-64g release
 	make TARGET=qemu-64gc release
 	make TARGET=qemu-64gqc release

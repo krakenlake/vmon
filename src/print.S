@@ -182,7 +182,7 @@ print_string:
 .size print_string, .-print_string
 
 
-#if defined(WITH_CMD_D) || defined(WITH_CMD_SLASH)
+#if defined(WITH_CMD_D) || defined(WITH_CMD_I) || defined(WITH_CMD_QMARK)
 # print 32/64-bit signed decimal to terminal
 # in: a0 = value to print
 print_decimal:
@@ -225,7 +225,7 @@ print_decimal_zero:
 print_decimal_done:
 	POP_S0_RA_RET
 .size print_decimal, .-print_decimal
-#endif /* defined(WITH_CMD_D) || defined(WITH_CMD_SLASH) */
+#endif /* defined(WITH_CMD_D) || defined(WITH_CMD_I) || defined(WITH_CMD_QMARK) */
 
 
 #ifdef WITH_CMD_QMARK

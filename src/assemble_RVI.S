@@ -7,8 +7,8 @@
 
 #ifdef WITH_CMD_A
 
-.global assemble_register
 .global check_a1_value					# check range (min/max) and alignment of value in a1
+.global assemble_register
 
 # these are called via assemble_GENERIC
 .global ass_rd							# expect int register name and use it for rd
@@ -27,6 +27,27 @@
 .global ass_C_rd
 
 .text
+
+
+# in: a1 = value
+# in: a2 = error code from get_numeric
+# in: a3 = min value
+# in: a4 = max value
+# in: a5 = alignment bitmask (set bits cannot be present; for example, 0b11 for 4-byte alignment)
+# out: a1 = value
+# out: a2 = 0 if OK, !=0 on error
+check_a1_value:
+	bnez	a2, check_value_error			# return error because a2 != 0
+	blt		a1, a3, check_value_error		# too small
+	bgt		a1, a4, check_value_error		# too big
+	and		t0, a1, a5
+	bnez	t0, check_value_error			# not properly aligned	
+	j		check_value_done
+check_value_error:
+	li		a2, 1
+check_value_done:
+	ret
+.size check_a1_value, .-check_a1_value
 
 
 # We use this for int and float registers, as they are the
@@ -51,6 +72,7 @@ assemble_register:
 	jal		find_register_name_end
 	# end in a0
 	mv		s2, a0								# save string end
+	
 	mv		a1, a0								# reg name end
 	mv		a0, s0								# reg name start
 	# now look into either int register table or float register table
@@ -68,27 +90,6 @@ assemble_register_done:
 	addi	a0, s2, 1							# return reg name end +1
 	POP_S4_S3_S2_S1_S0_RA_RET
 .size assemble_register, .-assemble_register
-
-
-# in: a1 = value
-# in: a2 = error code from get_numeric
-# in: a3 = min value
-# in: a4 = max value
-# in: a5 = alignment bitmask (set bits cannot be present; for example, 0b11 for 4-byte alignment)
-# out: a1 = value
-# out: a2 = 0 if OK, !=0 on error
-check_a1_value:
-	bnez	a2, check_value_error			# return error because a2 != 0
-	blt		a1, a3, check_value_error		# too small
-	bgt		a1, a4, check_value_error		# too big
-	and		t0, a1, a5
-	bnez	t0, check_value_error			# not properly aligned	
-	j		check_value_done
-check_value_error:
-	li		a2, 1
-check_value_done:
-	ret
-.size check_a1_value, .-check_a1_value
 
 
 # facade for assemble_register:

@@ -13,20 +13,20 @@
 //#define U_MODE
 
 // which user commands shall be in the binary?
-#define WITH_CMD_A			// assemble	
-#define WITH_CMD_B			// breakpoints
+//#define WITH_CMD_A			// assemble	
+//#define WITH_CMD_B			// breakpoints
 #define WITH_CMD_C			// copy memory	
-#define WITH_CMD_D			// disassemble	
-#define WITH_CMD_F			// find
+//#define WITH_CMD_D			// disassemble	
+//#define WITH_CMD_F			// find
 #define WITH_CMD_G			// go
 #define WITH_CMD_H			// help
-#define WITH_CMD_I			// info	
-#define WITH_CMD_M			// memory dump
+//#define WITH_CMD_I			// info	
+//#define WITH_CMD_M			// memory dump
 #define WITH_CMD_P			// poke
-#define WITH_CMD_R			// register dump
-#define WITH_CMD_S			// set register
+//#define WITH_CMD_R			// register dump
+//#define WITH_CMD_S			// set register
 #define WITH_CMD_X			// exit
-#define WITH_CMD_QMARK		// base conversion	
+//#define WITH_CMD_QMARK		// base conversion	
 
 // if undefined, simply "x0...x31" will be used instead
 #define ABI_REGISTER_NAMES
