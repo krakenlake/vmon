@@ -5,8 +5,6 @@ communication written entirely in RISC-V assembly language.
 
 ![Screenshot 2025-05-16 at 00 02 59](https://github.com/user-attachments/assets/d5b9390c-b760-4423-af9e-ff9bced5b0a2)
 
-
-
 ## Features
 
 - hex and ASCII memory dump
@@ -40,6 +38,36 @@ communication written entirely in RISC-V assembly language.
 - review `config/config.<TARGET>.h` and define/undefine to taste
 - review `src/include/vmon/UART.h` for target UART settings
 - `make`
+
+## Configuration Options
+
+### Commands
+
+You can use the `WITH_CMD_...` definitions to configure the set of commands that a specific version of VMON shall include. This is useful for systems with very small memory - you may configure your build to include only those commands that you need and you can leave chatty ones like `i` or `h` (which come with a lot of ASCII data) out.
+
+### Register Names
+
+Define `ABI_REGISTER_NAMES` if you want to work with ABI register names in VMON, otherwise `x0`-`x31` will be used.
+
+### Test Code
+
+Use the `WITH_TESTCODE_...`definitions to configure what test code will be in your executable.
+
+### Supported Instructions
+
+Use the `DISASS_...` definitions to define which set of instructions you will be able
+to assemble/disassemble using VMON.
+
+Note regarding RVC: As additonally supporting to assemble/disassemble RVC instructions
+makes the matter quite a bit more complex, an executable that supports RVC will be
+considerably larger. So, on systems that support RVC and have small memory, there are
+two options:
+
+1. Add RVC support, be able to assemble/disassemble RVC instructions but have a larger executable
+2. Do not add RVC support, work with non-RVC instructions only (which makes for larger
+hand-written assembly code), but have a smaller executable
+
+So, choose your poison wisely.
 
 ## Running
 
