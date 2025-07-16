@@ -88,7 +88,6 @@ assemble_GENERIC:
 	PUSH_S4_S3_S2_S1_S0_RA
 
 	mv		s2, a2							# origin address for jumps
-	li		s4,	4							# process max. 4 arguments
 	# assemble instruction word in s1, starting with MATCH value from table
 	LWU		s1, ENC_OFF_MATCH(a3)
 	# get control word for this insn
@@ -117,10 +116,6 @@ assemble_GENERIC_next_argument:
 	addi	a2, a2, 1							
 	beqz	a2, assemble_GENERIC_error		# assembling argument failed
 	mv		s1, a1							# save insn word
-
-	# check if we have processed 4 arguments already
-	addi	s4, s4, -1
-	beqz	s4, assemble_GENERIC_OK
 
 	# expect comma
 	andi	t0, s0, 0xff					# isolate control byte again
