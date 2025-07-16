@@ -40,28 +40,20 @@ cmd_D_next_instruction:
 	# print word at this memory address
 	LWU		a0, 0(s0)					# load instruction word
 	mv		s1, a0						# save for later
-	
+
+	li		a1, 4
+	li		a2, 0
 	#ifdef DISASS_RVC
 		jal		insn_is_compressed
-		bnez	a0, cmd_D_word_is_RVC
-	#endif
+		beqz	a0, cmd_D_word_not_RVC
 
-cmd_D_word_not_RVC:
-	LWU		a0, 0(s0)
-	li		a1, 4						# 4 bytes
-	li		a2, 0						# no "0x" prefix
-	jal		print_hex_fixed_width
-
-	#ifdef DISASS_RVC
-		j		cmd_D_disass	
-	cmd_D_word_is_RVC:					 
-		lbu		a0, 1(s0)				# print 2 bytes only
-		jal		print_hex_byte
-		lbu		a0, 0(s0)
-		jal		print_hex_byte	
 		la		a0, string_WORD_ALIGN
 		jal		print_string			# print 4 spaces for alignment
+		li		a1, 2
+	cmd_D_word_not_RVC:
+		LWU		a0, 0(s0)
 	#endif
+	jal		print_hex_fixed_width
 
 cmd_D_disass:
 	la		a0, string_asm_sep2		
