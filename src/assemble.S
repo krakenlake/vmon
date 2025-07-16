@@ -78,6 +78,7 @@ assemble_instruction_done:
 .size assemble_instruction, .-assemble_instruction
 
 
+
 # in: a0 = ptr to remaining input string
 # in: a2 = origin address
 # in: a3 = ptr to encoding table entry
@@ -86,19 +87,21 @@ assemble_instruction_done:
 assemble_GENERIC:
 	PUSH_S4_S3_S2_S1_S0_RA
 
-	mv		s2, a2
+	mv		s2, a2							# origin address for jumps
 	li		s4,	4							# process max. 4 arguments
 	# assemble instruction word in s1, starting with MATCH value from table
 	LWU		s1, ENC_OFF_MATCH(a3)
 	# get control word for this insn
 	LWU		s0, ENC_OFF_CTRL(a3)
 assemble_GENERIC_next_argument:
-	andi	s3, s0, 0xff
-	beqz	s3, assemble_GENERIC_OK
+	
 	# advance string ptr to arg
 	jal		skip_whitespace
+
+	andi	t0, s0, 0xff					# isolate current control byte
+	beqz	t0, assemble_GENERIC_OK
 	# compute func ptr
-	slli	t2, s3, 3						# *8
+	slli	t2, t0, 3						# *8
 	la		t1, disass_vectors
 	add		t0, t2, t1
 	LWU		t0, 0(t0)
@@ -106,8 +109,8 @@ assemble_GENERIC_next_argument:
 
 	# assemble argument
 											# ptr to parameter start in a0
-	mv		a1, s1							# insn word in a1
-	mv		a2, s2							# origin address in a2
+	mv		a1, s1							# insn word
+	mv		a2, s2							# origin address
 	jalr 	t0
 
 	# it is an error if a2 == -1, so add 1 and check for zero
@@ -120,16 +123,17 @@ assemble_GENERIC_next_argument:
 	beqz	s4, assemble_GENERIC_OK
 
 	# expect comma
+	andi	t0, s0, 0xff					# isolate control byte again
 	li		t1, 0x04						# no comma after I-type offset
-	beq		s3, t1, assemble_GENERIC_skip_comma
+	beq		t0, t1, assemble_GENERIC_skip_comma
 	li		t1, 0x05						# no comma after S-type offset
-	beq		s3, t1, assemble_GENERIC_skip_comma
+	beq		t0, t1, assemble_GENERIC_skip_comma
 
 	#ifdef DISASS_RVC
 		li		t1, 0x1f					# no comma after I_4imm offset
-		beq		s3, t1, assemble_GENERIC_skip_comma
+		beq		t0, t1, assemble_GENERIC_skip_comma
 		li		t1, 0x1b					# no comma after c.lw/c.sw offset
-		beq		s3, t1, assemble_GENERIC_skip_comma
+		beq		t0, t1, assemble_GENERIC_skip_comma
 	#endif
 
 	srli	t0, s0, 8						# do we expect more arguments?
