@@ -9,7 +9,6 @@
 .global uart_wait_get_char
 .global uart_output_char
 .global uart_output_string
-.global uart_output_buffer
 .global uart_getline
 
 
@@ -136,10 +135,10 @@ uart_output_string_done:
 uart_output_char:
 	PUSH_RA
 	li		t0, UART_BASE
-uart_output_buffer_wait_lsr:
+uart_output_char_wait_lsr:
 	lbu		t1, UART_REG_LSR(t0)
 	andi	t1, t1, 0b00100000 
-	beqz	t1, uart_output_buffer_wait_lsr
+	beqz	t1, uart_output_char_wait_lsr
 	sb		a0, UART_REG_THR(t0)				# print byte to UART
 	POP_RA_RET
 .size uart_output_char, .-uart_output_char
