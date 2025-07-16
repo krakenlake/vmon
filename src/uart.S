@@ -133,14 +133,13 @@ uart_output_string_done:
 # output one char
 # in: char (ASCII) in a0
 uart_output_char:
-	PUSH_RA
 	li		t0, UART_BASE
 uart_output_char_wait_lsr:
 	lbu		t1, UART_REG_LSR(t0)
 	andi	t1, t1, 0b00100000 
 	beqz	t1, uart_output_char_wait_lsr
 	sb		a0, UART_REG_THR(t0)				# print byte to UART
-	POP_RA_RET
+	ret
 .size uart_output_char, .-uart_output_char
 
 
