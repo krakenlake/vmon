@@ -5,13 +5,13 @@
 #include "vmon/stack.h"
 
 
-
 .global uart_init
 .global uart_wait_get_char
 .global uart_output_char
 .global uart_output_string
 .global uart_output_buffer
 .global uart_getline
+
 
 .text
 
@@ -48,69 +48,6 @@ uart_get_char_wait:
 	lbu		a0, 0(t0)							# get input from UART  
 	ret
 .size uart_wait_get_char, .-uart_wait_get_char
-
-
-# output zero-terminated string
-# in: string ptr in a0
-uart_output_string:
-	PUSH_RA
-	mv		a1, a0
-uart_output_string_loop:
-	lb		a0, 0(a1)
-	beqz	a0, uart_output_string_done
-	#ifdef USE_CRLF
-        li		t0, ASCII_NEWLINE
-        bne		a0, t0, uart_output_string_char
-        li		a0, ASCII_RETURN				# First output CR
-        jal		uart_output_char
-        li		a0, ASCII_NEWLINE				# Put LF back in a0
-uart_output_string_char:
-	#endif
-	jal		uart_output_char
-	addi	a1, a1, 1
-	j		uart_output_string_loop
-uart_output_string_done:
-	POP_RA_RET
-.size uart_output_string, .-uart_output_string
-
-
-# output one char
-# in: char (ASCII) in a0
-uart_output_char:
-	PUSH_RA
-	la		t0, out_buf
-	andi	a0, a0, 0xff						# make sure value is < 256
-	sh		a0, 0(t0)							# write char and zero termination to buffer
-	jal		uart_output_buffer
-	POP_RA_RET
-.size uart_output_char, .-uart_output_char
-
-
-# print zero-terminated string in output buffer out_buf to UART
-# buffer will be filled with zeros on return
-uart_output_buffer:
-	PUSH_RA
-	la		t1, out_buf
-	li		t4, UART_BASE
-uart_output_buffer_next_byte:
-	# TODO: output in blocks of x bytes? use FIFO?
-	lbu		t0, 0(t1)							# get next byte from buffer
-	sb		zero, 0(t1)							# clear buffer on the go
-	beq		t0, zero, uart_output_buffer_done
-	# busy wait for UART to become ready
-	# TODO: use interrupts
-	li		t2, UART_BASE
-uart_output_buffer_wait_lsr:
-	lbu		t3, UART_REG_LSR(t2)
-	andi	t3, t3, 0b00100000 
-	beqz	t3, uart_output_buffer_wait_lsr
-	# UART is now ready to receive data for TX
-	sb		t0, UART_REG_THR(t4)				# print byte to UART
-	addi	t1, t1, 1
-	j		uart_output_buffer_next_byte
-uart_output_buffer_done:
-	POP_RA_RET
-.size uart_output_buffer, .-uart_output_buffer
 
 
 # get a line of input from UART until RETURN is hit
@@ -168,6 +105,44 @@ uart_getline_done:
 
 	POP_S1_S0_RA_RET
 .size uart_getline, .-uart_getline
+
+
+# output zero-terminated string
+# in: string ptr in a0
+uart_output_string:
+	PUSH_RA
+	mv		a1, a0
+uart_output_string_loop:
+	lb		a0, 0(a1)
+	beqz	a0, uart_output_string_done
+	#ifdef USE_CRLF
+		li		t0, ASCII_NEWLINE
+		bne		a0, t0, uart_output_string_char
+		li		a0, ASCII_RETURN				# First output CR
+		jal		uart_output_char
+		li		a0, ASCII_NEWLINE				# Put LF back in a0
+uart_output_string_char:
+	#endif
+	jal		uart_output_char
+	addi	a1, a1, 1
+	j		uart_output_string_loop
+uart_output_string_done:
+	POP_RA_RET
+.size uart_output_string, .-uart_output_string
+
+
+# output one char
+# in: char (ASCII) in a0
+uart_output_char:
+	PUSH_RA
+	li		t0, UART_BASE
+uart_output_buffer_wait_lsr:
+	lbu		t1, UART_REG_LSR(t0)
+	andi	t1, t1, 0b00100000 
+	beqz	t1, uart_output_buffer_wait_lsr
+	sb		a0, UART_REG_THR(t0)				# print byte to UART
+	POP_RA_RET
+.size uart_output_char, .-uart_output_char
 
 
 .bss
