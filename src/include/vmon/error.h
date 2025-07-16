@@ -10,6 +10,8 @@
 #define ERR_INSN_ADDR			0x04
 #define ERR_INSN_NOTFOUND		0x05
 #define ERR_INSN_SYNTAX			0x06
+#define ERR_REGS_SYNTAX			0x07
+#define ERR_ARGS_SYNTAX			0x08
 
 #define ERR_UNDEFINED			0xff
 
