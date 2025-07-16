@@ -138,8 +138,8 @@ get_data_by_insn_word_search_next:
 	LWU		t2, ENC_OFF_MASK(t0)				# get mask word from table
 	beqz	t2, get_data_by_insn_word_done		# table end, no match found	  
 	and		t2, a0, t2							# apply mask
-	LWU		t3, ENC_OFF_MATCH(t0)				# get match word from table
-	bne		t2, t3, get_data_by_insn_word_continue
+	LWU		t1, ENC_OFF_MATCH(t0)				# get match word from table
+	bne		t2, t1, get_data_by_insn_word_continue
 	# found a match
 	mv		a3, t0
 	# last table entry is all zeros, so a3 = 0 if insn was not found
