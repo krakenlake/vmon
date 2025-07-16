@@ -102,6 +102,10 @@
 #define PUSH_S1_S0_RA				jal		gp, push_s1_s0_ra
 #define POP_S1_S0_RA_RET			j		pop_s1_s0_ra_ret
 
+#define PUSH_TP_S1_S0_RA			jal		gp, push_tp_s1_s0_ra
+#define POP_TP_S1_S0_RA_RET			j		pop_tp_s1_s0_ra_ret
+
+#! these need to go
 #define PUSH_S2_S1_S0_RA			jal		gp, push_s2_s1_s0_ra
 #define POP_S2_S1_S0_RA_RET			j		pop_s2_s1_s0_ra_ret
 

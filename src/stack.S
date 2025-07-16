@@ -4,16 +4,26 @@
 #include "vmon/register.h"
 
 
+# PUSH
 .global push_ra
 .global push_s0_ra
 .global push_s1_s0_ra
+.global push_tp_s1_s0_ra						# use tp like another s register 
+
+#! need to go
 .global push_s2_s1_s0_ra
 # push_s3_s2_s1_s0_ra left out on purpose, just use push/pop_s4_s3_s1_s0_ra instead
 .global push_s4_s3_s2_s1_s0_ra
 
+
+# POP
 .global pop_ra_ret
 .global pop_s0_ra_ret
 .global pop_s1_s0_ra_ret
+.global pop_tp_s1_s0_ra_ret						# use tp like another s register
+
+
+#! need to go
 .global pop_s2_s1_s0_ra_ret
 # left out intentionally, see above
 .global pop_s4_s3_s2_s1_s0_ra_ret
@@ -53,6 +63,18 @@ push_s1_s0_ra:
 	SAVE_X	ra, (XLEN_BYTES*2)(sp)
 	jr		gp
 
+push_tp_s1_s0_ra:
+	addi	sp, sp, -(XLEN_BYTES*4)
+	SAVE_X	tp, 0(sp)
+	SAVE_X	s1, (XLEN_BYTES*1)(sp)
+	SAVE_X	s0, (XLEN_BYTES*2)(sp)
+	SAVE_X	ra, (XLEN_BYTES*3)(sp)
+	jr		gp
+
+
+
+
+#! this needs to go for RVE
 push_s2_s1_s0_ra:
 	addi	sp, sp, -(XLEN_BYTES*4)
 	SAVE_X	s2, 0(sp)
@@ -63,6 +85,7 @@ push_s2_s1_s0_ra:
 
 # push_s3_s2_s1_s0_ra left out on purpose, just use push/pop_s4_s3_s1_s0_ra instead
 
+#! this needs to go for RVE
 push_s4_s3_s2_s1_s0_ra:
 	addi	sp, sp, -(XLEN_BYTES*6)
 	SAVE_X	s4, 0(sp)
@@ -76,18 +99,29 @@ push_s4_s3_s2_s1_s0_ra:
 
 # for function epilogue optimisation (shorter code in total)
 
+pop_tp_s1_s0_ra_ret:
+	LOAD_X	tp, 0(sp)
+	addi	sp, sp, (XLEN_BYTES*1)
+	j		pop_s1_s0_ra_ret
+
+
+#! this needs to go for RVE
 pop_s7_s6_s5_s4_s3_s2_s1_s0_ra_ret:
 	LOAD_X	s7, 0(sp)
 	addi	sp, sp, (XLEN_BYTES*1)
+#! this needs to go for RVE
 pop_s6_s5_s4_s3_s2_s1_s0_ra_ret:
 	LOAD_X	s6, 0(sp)
 	addi	sp, sp, (XLEN_BYTES*1)
+#! this needs to go for RVE
 pop_s5_s4_s3_s2_s1_s0_ra_ret:
 	LOAD_X	s5, 0(sp)
 	addi	sp, sp, (XLEN_BYTES*1)
+#! this needs to go for RVE
 pop_s4_s3_s2_s1_s0_ra_ret:
 	LOAD_X	s4, 0(sp)
 	addi	sp, sp, (XLEN_BYTES*1)
+#! this needs to go for RVE
 pop_s3_s2_s1_s0_ra_ret:
 	LOAD_X	s3, 0(sp)
 	addi	sp, sp, (XLEN_BYTES*1)

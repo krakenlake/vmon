@@ -85,9 +85,9 @@ assemble_instruction_done:
 # out: a1 = assembled instruction
 # out: a2 = error code (0=OK)
 assemble_GENERIC:
-	PUSH_S4_S3_S2_S1_S0_RA
+	PUSH_TP_S1_S0_RA
 
-	mv		s2, a2							# origin address for jumps
+	mv		tp, a2							# origin address for jumps
 	# assemble instruction word in s1, starting with MATCH value from table
 	LWU		s1, ENC_OFF_MATCH(a3)
 	# get control word for this insn
@@ -109,7 +109,7 @@ assemble_GENERIC_next_argument:
 	# assemble argument
 											# ptr to parameter start in a0
 	mv		a1, s1							# insn word
-	mv		a2, s2							# origin address
+	mv		a2, tp							# origin address
 	jalr 	t0
 
 	# it is an error if a2 == -1, so add 1 and check for zero
@@ -150,7 +150,7 @@ assemble_GENERIC_error:
 assemble_GENERIC_OK:
 	li		a2, 0
 assemble_GENERIC_done:
-	POP_S4_S3_S2_S1_S0_RA_RET
+	POP_TP_S1_S0_RA_RET
 .size assemble_GENERIC, .-assemble_GENERIC
 
 
