@@ -64,34 +64,33 @@ print_int_register_name:
 # in: a0 = instruction word
 # in: a1 = current instruction address
 dis_BRA:
-	PUSH_S0_RA
-	mv		s0, a0	 
+	PUSH_RA
 	# imm[0] := 0
 	# inst[11:8] -> imm[4:1] 
-	srli	a0, s0, 7
-	andi	a0, a0, 0b11110
+	srli	a2, a0, 7
+	andi	a2, a2, 0b11110
 	# inst[30:25] -> imm[10:5]
-	srli	t0, s0, 20
+	srli	t0, a0, 20
 	li		t1, 0b11111100000
 	and		t0, t0, t1
-	or		a0, a0, t0 
+	or		a2, a2, t0 
 	# inst[7] -> imm[11]
-	and		t0, s0, 0b10000000
+	and		t0, a0, 0b10000000
 	slli	t0, t0, 4
-	or		a0, a0, t0 
+	or		a2, a2, t0 
 	# inst[31] -> imm[63:12]
 	#if XLEN >=64
-		sext.w	s0, s0					# sign-extend to 64 bits
+		sext.w	a0, a0					# sign-extend to 64 bits
 	#endif
-	srai	t0, s0, 19
+	srai	t0, a0, 19
 	li		t1, 0xfffffffffffff000
 	and		t0, t0, t1
-	or		a0, a0, t0 
+	or		a2, a2, t0 
 	# add relative immediate to instruction address
-	add		a0, a1, a0
+	add		a0, a1, a2
 	# print absolute target address
 	jal		print_hex
-	POP_S0_RA_RET
+	POP_RA_RET
 .size dis_BRA, .-dis_BRA
 
 
@@ -99,6 +98,9 @@ dis_BRA:
 dis_I_imm:
 	PUSH_RA
 	# inst[31:20] -> imm[11:0]
+	#if XLEN >=64
+		sext.w	a0, a0					# sign-extend to 64 bits
+	#endif
 	srai	a0, a0, 20
 	jal		print_decimal
 	POP_RA_RET
@@ -117,6 +119,7 @@ dis_S_imm:
 	jal		print_decimal
 	POP_RA_RET
 .size dis_S_imm, .-dis_S_imm
+
 
 # in: instruction word in a0
 dis_U_imm:
@@ -139,15 +142,19 @@ dis_J:
 	andi	a2, a2, 0b11111111110	 
 	# inst[20] -> imm[11]
 	srli	t0, a0, 9
-	li		t1, 0b100000000000 
+	li		t1, 1 << 11 
 	and		t0, t0, t1
 	or		a2, a2, t0
 	# inst[19:12] -> imm[19:12]
 	li		t1, 0b11111111000000000000
 	and		t0, a0, t1
 	or		a2, a2, t0
+	# inst[31] -> imm[63:20]
+	#if XLEN >=64
+		sext.w	a0, a0					# sign-extend to 64 bits
+	#endif	
 	srai	t0, a0, 11
-	li		t1, 0xfffffffffff80000
+	li		t1, -1 << 20
 	and		t0, t0, t1
 	or		a2, a2, t0
 	add		a0, a1, a2
