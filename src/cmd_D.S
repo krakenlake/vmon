@@ -59,8 +59,10 @@ cmd_D_disass:
 	LWU		a0, 0(s0)					# load instruction word
 	jal		get_data_by_insn_word
 	beqz	a3, cmd_D_opcode_unknown
+	mv		a1, s0						# get origin address
 	jal		print_instruction
 	j		cmd_D_advance
+
 cmd_D_opcode_unknown:
 	la		a0, string_OP_UNKNOWN
 	jal		print_string
