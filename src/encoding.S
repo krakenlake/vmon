@@ -68,10 +68,11 @@
 # out: a1 = MATCH value for insn (undefined if string was not found)
 # out: a3 = ptr to table entry (undefined if string was not found)
 get_data_by_insn_name:
+	PUSH_TP_S1_S0_RA
 	la		t0, encoding_table
-	li		t6, '.'
+	li		tp, '.'
 get_data_by_insn_name_next:								# check string in next table entry
-	li		t5, -2										# count dots for RVA insns
+	li		a5, -2										# count dots for RVA insns
 	# load values from current table entry
 	LWU		a1, ENC_OFF_MATCH(t0)						# store MATCH value from table entry in a1
 	LWU		t1, ENC_OFF_OP_STRING(t0)					# get string ptr from table
@@ -79,17 +80,17 @@ get_data_by_insn_name_next:								# check string in next table entry
 	# compare strings
 	mv		t2, s0										# iterate with t2 over search string
 get_data_by_insn_name_cmp_next_byte:
-	lbu		t3, 0(t2)									# load char from search string
-	lbu		t4, 0(t1)									# load char from table string
+	lbu		a2, 0(t2)									# load char from search string
+	lbu		a4, 0(t1)									# load char from table string
 	# RVA insns may have two dots, as they may have an .aqrl extension.
 	# Count dots in search string, and if we arrive at the second one, its just a match.
-	bne		t3, t6, get_data_by_insn_name_no_dot
-	addi	t5, t5, 1
-	beqz	t5, get_data_by_insn_name_done				# we started with -2, so if it's 0 now, we found 2
+	bne		a2, tp, get_data_by_insn_name_no_dot
+	addi	a5, a5, 1
+	beqz	a5, get_data_by_insn_name_done				# we started with -2, so if it's 0 now, we found 2
 get_data_by_insn_name_no_dot:
 	beq		t2, s1, get_data_by_insn_name_check			# search string ended, check if match
-	bne		t3, t4, get_data_by_insn_name_next_entry	# strings not equal
-	beqz	t4, get_data_by_insn_name_next_entry		# string in table ended
+	bne		a2, a4, get_data_by_insn_name_next_entry	# strings not equal
+	beqz	a4, get_data_by_insn_name_next_entry		# string in table ended
 	addi	t1, t1, 1
 	addi	t2, t2, 1
 	j		get_data_by_insn_name_cmp_next_byte
@@ -100,11 +101,11 @@ get_data_by_insn_name_not_found:
 	mv		a0, zero
 	j 		get_data_by_insn_name_done
 get_data_by_insn_name_check:
-	lbu		t4, 0(t1)									# check next byte in table string
-	bnez	t4, get_data_by_insn_name_next_entry		# if table string did not end yet, no match 
+	lbu		a4, 0(t1)									# check next byte in table string
+	bnez	a4, get_data_by_insn_name_next_entry		# if table string did not end yet, no match 
 get_data_by_insn_name_done:
 	mv		a3, t0										# return also current table entry
-	ret
+	POP_TP_S1_S0_RA_RET
 .size get_data_by_insn_name, .-get_data_by_insn_name
 
 
