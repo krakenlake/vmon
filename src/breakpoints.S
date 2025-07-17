@@ -29,8 +29,8 @@ break_reset_loop:
 	# next
 	addi	t0, t0, BP_ENTRY_SIZE
 	addi	t2, t2, 1
-	li		t3, BP_NUM
-	bne		t2, t3, break_reset_loop
+	li		t1, BP_NUM
+	bne		t2, t1, break_reset_loop
 break_init_all_done:
 	ret
 .size break_reset, .-break_reset
@@ -68,14 +68,14 @@ break_set:
 break_set_valid_addr:
 	la		t0, bp_table
 	li		t2, 0
-	li		t3, BP_NUM
+	li		a3, BP_NUM
 	# first check if this breakpoint is already in the list
 break_set_check_loop:
 	LOAD_X	t1, 0(t0)
 	beq		t1, a0, break_set_done
 	addi	t0, t0, BP_ENTRY_SIZE
 	addi	t2, t2, 1
-	bne		t2, t3, break_set_check_loop
+	bne		t2, a3, break_set_check_loop
 	# breakpoint does not yet exist, so store it
 	la		t0, bp_table
 	li		t2, 0
@@ -85,7 +85,7 @@ break_set_find_loop:
 	beqz	t1, break_set_free_slot
 	addi	t0, t0, BP_ENTRY_SIZE
 	addi	t2, t2, 1
-	bne		t2, t3, break_set_find_loop
+	bne		t2, a3, break_set_find_loop
 	li		a0, ERR_BREAK_FULL
 break_set_error:
 	jal		print_error
@@ -107,8 +107,8 @@ break_clear_find_loop:
 	beq		t1, a0, break_clear_do		# match?
 	addi	t0, t0, BP_ENTRY_SIZE
 	addi	t2, t2, 1
-	li		t3, BP_NUM
-	bne		t2, t3, break_clear_find_loop
+	li		a3, BP_NUM
+	bne		t2, a3, break_clear_find_loop
 	j		break_clear_done	
 break_clear_do:
 	# restore original insn
@@ -127,7 +127,7 @@ break_clear_done:
 break_activate:
 	la		t0, bp_table
 	li		t2, 0						# index
-	li		t3, BP_NUM					# number of entries
+	li		a3, BP_NUM					# number of entries
 break_activate_loop:
 	LOAD_X	a0, 0(t0)					# get bp address from table
 	beqz	a0, break_activate_skip		# skip this slot if empty
@@ -141,7 +141,7 @@ break_activate_skip:
 	# next
 	addi	t0, t0, BP_ENTRY_SIZE
 	addi	t2, t2, 1
-	bne		t2, t3, break_activate_loop
+	bne		t2, a3, break_activate_loop
 break_activate_done:
 	ret
 .size break_activate, .-break_activate
