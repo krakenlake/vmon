@@ -100,6 +100,6 @@
 #define USE_CRLF
 
 // size of character input buffer in bytes
-#define BUFFER_SIZE			128
+#define BUFFER_SIZE			80
 
 #endif /* VMON_CONFIG_H */

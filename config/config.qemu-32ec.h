@@ -16,7 +16,7 @@
 //#define WITH_CMD_A			// assemble	
 #define WITH_CMD_B			// breakpoints
 #define WITH_CMD_C			// copy memory	
-//#define WITH_CMD_D			// disassemble	
+#define WITH_CMD_D			// disassemble	
 #define WITH_CMD_F			// find
 #define WITH_CMD_G			// go
 #define WITH_CMD_H			// help
@@ -101,6 +101,6 @@
 #define USE_CRLF
 
 // size of character input buffer in bytes
-#define BUFFER_SIZE			128
+#define BUFFER_SIZE			80
 
 #endif /* VMON_CONFIG_H */
