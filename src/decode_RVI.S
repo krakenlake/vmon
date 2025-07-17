@@ -166,23 +166,23 @@ dis_J:
 # in: a0: instruction word
 # in: a1: number of start bit (27 for pre, 23 for sucessor)
 decode_FENCE_bits:
-	PUSH_S4_S3_S2_S1_S0_RA
-	mv		s2, a0
-	li		s3, 1
-	sll		s3, s3, a1					# set up initial bit mask
-	la		s1, string_FENCE_bits
+	PUSH_TP_S1_S0_RA
+	mv		tp, a0
+	li		s1, 1
+	sll		s1, s1, a1					# set up initial bit mask
 	li		s0, 4						# 4 bits
+	la		a5, string_FENCE_bits
 decode_FENCE_bits_loop:
-	and		t0, s2, s3
+	and		t0, tp, s1
 	beqz	t0, decode_FENCE_bits_skip
-	lb		a0, 0(s1)
-	jal		print_char
+	lb		a0, 0(a5)
+	jal		print_char					#* print_char does not use a5
 decode_FENCE_bits_skip:
-	srli	s3, s3, 1
-	addi	s1, s1, 1
+	srli	s1, s1, 1
+	addi	a5, a5, 1
 	addi	s0, s0, -1
 	bnez	s0, decode_FENCE_bits_loop
-	POP_S4_S3_S2_S1_S0_RA_RET
+	POP_TP_S1_S0_RA_RET
 .size decode_FENCE_bits, .-decode_FENCE_bits
 
 
