@@ -20,14 +20,18 @@ cmd_F:
 	li		t0, 'w'
 	beq		t0, t1, cmd_F_find_w
 	addi	a0, a0, -1
+
 cmd_F_find_b:
 	li		s0, 1
 	j	cmd_F_read_start
+
 cmd_F_find_h:
 	li		s0, 2
 	j	cmd_F_read_start
+
 cmd_F_find_w:
 	li		s0, 4
+
 cmd_F_read_start:
 	# read src_start from text buffer
 	jal		skip_whitespace
@@ -52,17 +56,18 @@ cmd_F_read_start:
 	# a5: value to search for
 
 cmd_F_loop_forward:
-	li		t4, 1
-	bne		s0, t4, cmd_F_loop_h
+	li		t2, 1
+	bne		s0, t2, cmd_F_loop_h
 	lbu		t0, 0(a3)
 	j		cmd_F_compare
 cmd_F_loop_h:
-	li		t4, 2
-	bne		s0, t4, cmd_F_loop_w
+	li		t2, 2
+	bne		s0, t2, cmd_F_loop_w
 	lhu		t0, 0(a3)
 	j		cmd_F_compare
 cmd_F_loop_w:
 	LWU		t0, 0(a3)
+
 cmd_F_compare:
 	beq		t0, a5, cmd_F_found
 	addi	a3, a3, 1
