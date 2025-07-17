@@ -186,16 +186,16 @@ print_string:
 # print 32/64-bit signed decimal to terminal
 # in: a0 = value to print
 print_decimal:
-	PUSH_S0_RA
+	PUSH_S1_S0_RA
 	beqz	a0, print_decimal_zero
 	# save a0
-	mv		t6, a0
+	mv		s1, a0
 	# terminate buffer at the end
 	la		s0, out_buf
 	addi	s0, s0, (OUT_BUFFER_SIZE-1)
 	sb		zero, 0(s0)
 	# invert if negative
-	bgtz	t6, print_decimal_skip_invert
+	bgtz	s1, print_decimal_skip_invert
 	neg		a0, a0
 print_decimal_skip_invert:
 	# write ASCII digits to buffer backward starting at the end
@@ -211,7 +211,7 @@ print_decimal_loop:
 	# repeat
 	bnez	a0, print_decimal_loop
 	# print minus if negative
-	bgtz	t6, print_decimal_skip_minus
+	bgtz	s1, print_decimal_skip_minus
 	li		a0, '-'
 	jal		print_char
 print_decimal_skip_minus:
@@ -223,7 +223,7 @@ print_decimal_zero:
 	li		a0, '0'
 	jal		print_char
 print_decimal_done:
-	POP_S0_RA_RET
+	POP_S1_S0_RA_RET
 .size print_decimal, .-print_decimal
 #endif /* defined(WITH_CMD_D) || defined(WITH_CMD_I) || defined(WITH_CMD_QMARK) */
 
