@@ -19,10 +19,10 @@
 # out: a1 = assembled instruction to be written into memory
 # out: a2 = error code (0=OK)
 assemble_instruction:
-	PUSH_S1_S0_RA
-
+	PUSH_TP_S1_S0_RA
 	addi	sp, sp, -(XLEN_BYTES*1)				# local: RVA aqrl bits
 	SAVE_X	zero, 0(sp)							# clear RVA aqrl bits
+	mv		tp, a2
 
 	jal		skip_whitespace
 	mv		s0, a0								# insn string start
@@ -57,6 +57,7 @@ assemble_instruction_not_aqrl:
 	# table entry ptr in a3
 	beqz	a0, assemble_instruction_not_found	# not found
 	mv		a0, s1								# input  string ptr
+	mv		a2, tp
 	# current memory addr already in a2
 	jal		assemble_GENERIC					# handle all insns
 	# a1 = insn word
@@ -74,7 +75,7 @@ assemble_instruction_not_found:
 	li		a2, ERR_INSN_NOTFOUND
 assemble_instruction_done:
 	addi	sp, sp, (XLEN_BYTES*1)	
-	POP_S1_S0_RA_RET
+	POP_TP_S1_S0_RA_RET
 .size assemble_instruction, .-assemble_instruction
 
 
