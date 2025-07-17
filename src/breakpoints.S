@@ -151,7 +151,7 @@ break_activate_done:
 break_deactivate:
 	la		t0, bp_table
 	li		t2, 0
-	li		t3, BP_NUM
+	li		a3, BP_NUM
 break_deactivate_loop:
 	# restore original insns at all breakpoints
 	# todo: check if insn at addr was RVC and write only 2 bytes if so
@@ -163,7 +163,7 @@ break_deactivate_skip:
 	# next
 	addi	t0, t0, BP_ENTRY_SIZE
 	addi	t2, t2, 1
-	bne		t2, t3, break_deactivate_loop
+	bne		t2, a3, break_deactivate_loop
 break_deactivate_done:
 	ret
 .size break_deactivate, .-break_deactivate
