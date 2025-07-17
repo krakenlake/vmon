@@ -5,12 +5,14 @@
 #include "vmon/stack.h"
 
 
-#if defined (WITH_CMD_A) && defined (DISASS_RVZicsr)
-
 .global ass_csr						# expect CSR specifier
 .global ass_csri					# expect CSR immediate value
 
+
 .text
+
+
+#if defined (WITH_CMD_A) && defined (DISASS_RVZicsr)
 
 
 # expect CSR specifier
@@ -69,5 +71,12 @@ ass_csri_done:
 	POP_S0_RA_RET
 .size ass_csri, .-ass_csri
 
+
+#else
+
+	# dummies in case cmd_A is disabled, table in encoding.S needs it
+	# and working with ifdefs inside the table is too painful
+	ass_csr:
+	ass_csri:
 
 #endif /* defined (WITH_CMD_A) && defined (DISASS_RVZicsr) */

@@ -5,8 +5,6 @@
 #include "vmon/stack.h"
 
 
-#ifdef WITH_CMD_A
-
 .global check_a1_value					# check range (min/max) and alignment of value in a1
 .global assemble_register
 
@@ -26,7 +24,11 @@
 
 .global ass_C_rd
 
+
 .text
+
+
+#if defined WITH_CMD_A
 
 
 # in: a1 = value
@@ -465,5 +467,22 @@ ass_U_imm_done:
 	POP_S1_S0_RA_RET
 .size ass_U_imm, .-ass_U_imm
 
+#else
+
+	# dummies in case cmd_A is disabled, table in encoding.S needs it
+	# and working with ifdefs inside the table is too painful
+	ass_rd:
+	ass_rs1:
+	ass_rs2:
+	ass_BRA:
+	ass_I_imm:
+	ass_I_shift:
+	ass_PRE:
+	ass_SUC:
+	ass_J:
+	ass_I_rel:
+	ass_S_imm:
+	ass_U_imm:
+	ass_C_rd:
 
 #endif /* WITH_CMD_A */
