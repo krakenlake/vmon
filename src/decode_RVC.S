@@ -192,13 +192,13 @@ dis_CIW_imm:
 	andi	t0, t0, 0b1000
 	srli	t1, a0, 4
 	andi	t1, t1, 0b100
-	srli	t2, a0, 1
-	andi	t2, t2, 0b1111000000
-	srli	t3, a0, 7
-	andi	t3, t3, 0b110000
-	or		a0, t0, t1
-	or		a0, a0, t2
-	or		a0, a0, t3
+	or		a1, t0, t1
+	srli	t0, a0, 1
+	andi	t0, t0, 0b1111000000
+	or		a1, a1, t0
+	srli	t0, a0, 7
+	andi	t0, t0, 0b110000
+	or		a0, a1, t0
 	jal		print_decimal
 	POP_RA_RET
 .size dis_CIW_imm, .-dis_CIW_imm
@@ -247,22 +247,23 @@ dis_CL_LW_imm_tail:
 
 
 # in: a0 = instruction word
+# in: a5 = origin address
 dis_C_BRA:
 	PUSH_RA
 	slli	t0, a0, 3
 	andi	t0, t0, 0b100000
 	srli	t1, a0, 2
 	andi	t1, t1, 0b110
-	slli	t2, a0, 1
-	andi	t2, t2, 0b11000000
-	srli	t3, a0, 7
-	andi	t3, t3, 0b11000
-	srli	t4, a0, 4
-	andi	t4, t4, 0b100000000
-	or		a0, t0, t1
-	or		a0, a0, t2
-	or		a0, a0, t3
-	or		a0, a0, t4
+	or		a1, t0, t1
+	slli	t0, a0, 1
+	andi	t0, t0, 0b11000000
+	or		a1, a1, t0
+	srli	t0, a0, 7
+	andi	t0, t0, 0b11000
+	or		a1, a1, t0
+	srli	t0, a0, 4
+	andi	t0, t0, 0b100000000
+	or		a0, a1, t0
 	# sign extend
 	slli	a0, a0, 23
 	#if XLEN >=64
@@ -270,13 +271,14 @@ dis_C_BRA:
 	#endif
 	srai	a0, a0, 23
 	# add insn address
-	add		a0, s5, a0
+	add		a0, a5, a0
 	jal		print_hex					# effective address
 	POP_RA_RET
 .size dis_C_BRA, .-dis_C_BRA
 
 
 # in: a0 = instruction word
+# in: a5 = origin address
 dis_CJ_off:
 	PUSH_RA
 	# decode offset
@@ -284,20 +286,20 @@ dis_CJ_off:
 	andi	t0, t0, 0b100000
 	srli	t1, a0, 2
 	andi	t1, t1, 0b1110
-	srli	t2, a0, 1
-	li		t3, 0b101101000000
-	and		t2, t2, t3
-	slli	t3, a0, 1
-	andi	t3, t3, 0b10000000
-	slli	t4, a0, 2
-	andi	t4, t4, 0b10000000000
-	srli	t5, a0, 7
-	andi	t5, t5, 0b10000
-	or		a0, t0, t1
-	or		a0, a0, t2
-	or		a0, a0, t3
-	or		a0, a0, t4
-	or		a0, a0, t5
+	or		a1, t0, t1
+	srli	t0, a0, 1
+	li		t1, 0b101101000000
+	and		t0, t0, t1
+	or		a1, a1, t0
+	slli	t0, a0, 1
+	andi	t0, t0, 0b10000000
+	or		a1, a1, t0
+	slli	t0, a0, 2
+	andi	t0, t0, 0b10000000000
+	or		a1, a1, t0
+	srli	t0, a0, 7
+	andi	t0, t0, 0b10000
+	or		a0, a1, t0
 	# sign extend
 	slli	a0, a0, 20
 	#if XLEN >=64
@@ -305,7 +307,7 @@ dis_CJ_off:
 	#endif
 	srai	a0, a0, 20
 	# add insn address
-	add		a0, s5, a0
+	add		a0, a5, a0
 	jal		print_hex					# effective address
 	POP_RA_RET
 .size dis_CJ_off, .-dis_CJ_off
@@ -339,16 +341,16 @@ dis_C_16sp_imm:
 	andi	t0, t0, 0b100000
 	slli	t1, a0, 4
 	andi	t1, t1, 0b110000000
-	slli	t2, a0, 1
-	andi	t2, t2, 0b1000000
-	srli	t3, a0, 2
-	andi	t3, t3, 0b10000
-	srli	t4, a0, 3
-	andi	t4, t4, 0b1000000000
-	or		a0, t0, t1
-	or		a0, a0, t2
-	or		a0, a0, t3
-	or		a0, a0, t4
+	or		a1, t0, t1
+	slli	t0, a0, 1
+	andi	t0, t0, 0b1000000
+	or		a1, a1, t0
+	srli	t0, a0, 2
+	andi	t0, t0, 0b10000
+	or		a1, a1, t0
+	srli	t0, a0, 3
+	andi	t0, t0, 0b1000000000
+	or		a0, a1, t0
 	# sign extend
 	slli	a0, a0, 22
 	#if XLEN >=64
