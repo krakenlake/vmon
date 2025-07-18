@@ -23,7 +23,7 @@
 #define WITH_CMD_I			// info	
 #define WITH_CMD_M			// memory dump
 #define WITH_CMD_P			// poke
-//#define WITH_CMD_R			// register dump
+#define WITH_CMD_R			// register dump
 #define WITH_CMD_S			// set register
 #define WITH_CMD_X			// exit
 #define WITH_CMD_QMARK		// base conversion	

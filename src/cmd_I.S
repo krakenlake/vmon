@@ -13,7 +13,12 @@ cmd_I:
 	jal		print_string
 	li		a0, XLEN
 	jal		print_decimal
+
+#ifndef TARGET_RVE
 	li		a0, 'i'
+#else
+	li		a0, 'e'
+#endif
 	jal		print_char
 
 #ifdef DISASS_RVM

@@ -225,7 +225,13 @@ pop_ra_ret:
 		PUSH_RA
 		la		a0, get_int_register_name_by_index
 		li		a1, 1
-		li		a2, 31
+		
+		#ifndef TARGET_RVE
+			li		a2, 31
+		#else
+			li		a2, 15
+		#endif
+		
 		#ifdef M_MODE
 			# set a3 to the address of ra in the current stack frame
 			# (XLEN_BYTES are also added to compensate for the pushing ra on entry here)
@@ -262,46 +268,44 @@ pop_ra_ret:
 	# in: a1 = first register index
 	# in: a2 = last register index
 	# in: a3 = stack frame base addr
-	# in: a4 = size of one register in bytes
 	print_saved_registers:
-		PUSH_S4_S3_S2_S1_S0_RA
-		addi	sp, sp, -(XLEN_BYTES*3)
-		SAVE_X  s7, 0(sp)
-		SAVE_X  s6, (XLEN_BYTES*1)(sp)
-		SAVE_X  s5, (XLEN_BYTES*2)(sp)
-	
-		mv		s5, a0						# register name lookup func ptr
+		PUSH_TP_S1_S0_RA
+		addi	sp, sp, -(XLEN_BYTES*3)		# 3 extra local vars
+		SAVE_X 	a0, 0(sp)					# register name lookup func ptr
+		SAVE_X 	zero, (XLEN_BYTES*1)(sp)	# counting regs per line
+		SAVE_X	zero, (XLEN_BYTES*2)(sp)	# name string ptr
+
 		mv		s1, a1						# first register index
-		mv		s2, a2						# last register index
+		mv		tp, a2						# last register index
 		mv		s0, a3						# stack frame base addr
-		mv		s4, a4						# register size
 	print_saved_registers_next:
-		li		s3, 3						# print newline after every 3 registers
+		li		t0, 3
+		SAVE_X	t0, (XLEN_BYTES*1)(sp)
 		jal		print_newline
 	print_saved_registers_skip_newline:
 		mv		a0, s1						# index of register
-		jalr	s5
-		mv		s7, a0						# name string ptr
+		LOAD_X	t0, 0(sp)					# register name lookup func ptr
+		jalr	t0
+		SAVE_X	a0, (XLEN_BYTES*2)(sp)
 		# determine length of found name
-		mv		t0, s7						# string ptr
 		li		t1, 0						# len counter
 	print_saved_registers_len_loop:
-		lb		t3, 0(t0)
-		beqz	t3, print_saved_registers_len_done
-		addi	t0, t0, 1
+		lb		t0, 0(a0)
+		beqz	t0, print_saved_registers_len_done
+		addi	a0, a0, 1
 		addi	t1, t1, 1
 		j		print_saved_registers_len_loop
 	print_saved_registers_len_done:
 		# length now in t1, print spaces if register name is shorter than 6
 		li		t2, 6						
-		sub 	s6, t2, t1
+		sub 	a5, t2, t1
 	print_saved_registers_space_loop:
-		beqz	s6, print_saved_registers_skip_space
+		beqz	a5, print_saved_registers_skip_space
 		jal		print_space
-		addi	s6, s6, -1
+		addi	a5, a5, -1
 		j 		print_saved_registers_space_loop
 	print_saved_registers_skip_space:
-		mv		a0, s7
+		LOAD_X	a0, (XLEN_BYTES*2)(sp)
 		jal		print_string				# register name
 		li		a0, '='
 		jal		print_char
@@ -310,16 +314,19 @@ pop_ra_ret:
 		# check if all registers done
 		li		t0, 31						# last valid index in any case
 		bge		s1, t0, print_saved_registers_done
-		# stop also if register specified in s2 reached
-		beq		s1, s2, print_saved_registers_done
-		add		s0, s0, s4					# next register
+		# stop also if register specified in tp reached
+		beq		s1, tp, print_saved_registers_done
+		addi	s0, s0, XLEN_BYTES			# next register
 		addi	s1, s1, 1					# next register name
-		addi	s3, s3, -1					# count number of printed registers
-		beqz	s3, print_saved_registers_next
+		LOAD_X	t0, (XLEN_BYTES*1)(sp)
+		addi	t0, t0, -1					# count number of printed registers
+		SAVE_X	t0, (XLEN_BYTES*1)(sp)
+		beqz	t0, print_saved_registers_next
 		j		print_saved_registers_skip_newline
 	print_saved_registers_done:
 		jal		print_newline
-		j		pop_s7_s6_s5_s4_s3_s2_s1_s0_ra_ret
+		addi	sp, sp, (XLEN_BYTES*3)		# discard 5 extra local vars
+		POP_TP_S1_S0_RA_RET
 	.size print_saved_registers, .-print_saved_registers
 
 #endif /* WITH_CMD_R */
