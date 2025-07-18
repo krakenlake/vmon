@@ -77,7 +77,7 @@
 //#define DISASS_RVPRIV
 
 // enable printing of pseudo opcodes in disassembly?
-//#define DISASS_PSEUDO
+#define DISASS_PSEUDO
 
 // include strings for MCAUSE verbose output?
 //#define MCAUSE_VERBOSE

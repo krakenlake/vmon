@@ -27,7 +27,7 @@
 #endif /* defined (WITH_CMD_D) || defined (WITH_CMD_A) || defined (WITH_CMD_G) */
 
 
-.text
+.section .rodata
 
 
 #if defined (WITH_CMD_D) || defined (WITH_CMD_A) || defined (WITH_CMD_G)
@@ -137,6 +137,11 @@ get_data_by_insn_word_done:
 
 # ---------- opcode strings ----------
 
+# unimp
+string_OP_UNIMP:	.string "unimp";
+#ifdef DISASS_RVC
+	string_OP_C_UNIMP:	.string "c.unimp";	
+#endif
 
 # RV32I
 string_opcodes:
@@ -447,15 +452,10 @@ string_OP_EBREAK:	.string "ebreak";
 
 	string_OP_RET:		.string "ret";	
 	string_OP_NOP:		.string "nop";	
-	string_OP_UNIMP:	.string "unimp";	
 
 	#if XLEN >= 64
 		string_OP_NEGW:		.string "negw";
 		string_OP_SEXTW:	.string "sext.w";
-	#endif
-
-	#ifdef DISASS_RVC
-		string_OP_C_UNIMP:	.string "c.unimp";	
 	#endif
 
 #endif /* DISASS_PSEUDO */
@@ -581,14 +581,20 @@ encoding_table:
 
 # PSEUDO opcodes
 # order is important, these have to be at the beginning of the table
+
+
+.word 0xffffffff, 0x00000000,	string_OP_UNIMP,	0x00000000
+#ifdef DISASS_RVC
+	.word 0x0000ffff, 0x0000,	string_OP_C_UNIMP,	0x00000000
+#endif /* DISASS_RVC */
+
+
 #ifdef DISASS_PSEUDO
 
 	#ifdef DISASS_RVC
-		.word 0x0000ffff, 0x0000,	string_OP_C_UNIMP,	0x00000000
 		.word 0x0000ffff, 0x0001,	string_OP_C_NOP,	0x00000000
 	#endif /* DISASS_RVC */
 
-	.word 0xffffffff, 0x00000000,	string_OP_UNIMP,	0x00000000
 	.word 0xffffffff, 0x00008067,	string_OP_RET,		0x00000000
 	.word 0xffffffff, 0x00000013,	string_OP_NOP,		0x00000000
 	
