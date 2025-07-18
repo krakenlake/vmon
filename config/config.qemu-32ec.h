@@ -13,7 +13,7 @@
 //#define U_MODE
 
 // which user commands shall be in the binary?
-//#define WITH_CMD_A			// assemble	
+#define WITH_CMD_A			// assemble	
 #define WITH_CMD_B			// breakpoints
 #define WITH_CMD_C			// copy memory	
 #define WITH_CMD_D			// disassemble	
@@ -40,7 +40,7 @@
 // configure which parts of the test code will be present
 // in the executable
 #ifdef WITH_TESTCODE
-	#define WITH_TESTCODE_RV32E
+	//#define WITH_TESTCODE_RV32E
 	//#define WITH_TESTCODE_RV32I
 	//#define WITH_TESTCODE_RV64I
 	//#define WITH_TESTCODE_RVM
@@ -77,13 +77,13 @@
 //#define DISASS_RVPRIV
 
 // enable printing of pseudo opcodes in disassembly?
-#define DISASS_PSEUDO
+//#define DISASS_PSEUDO
 
 // include strings for MCAUSE verbose output?
-#define MCAUSE_VERBOSE
+//#define MCAUSE_VERBOSE
 
 // include strings for verbose error messages?
-#define ERROR_VERBOSE
+//#define ERROR_VERBOSE
 
 // default number of lines for the "d" command if no end address is given
 #define	DEFAULT_D_LINES		16

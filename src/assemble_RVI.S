@@ -65,32 +65,35 @@ check_value_done:
 # out: a1 = modified instruction word
 # out: a2 = -1 on error
 assemble_register:
-	PUSH_S4_S3_S2_S1_S0_RA
-	mv		s3, t0
-	mv		s4, t1
+	PUSH_TP_S1_S0_RA
+	addi	sp, sp, -(XLEN_BYTES*2)				# 2 extra local vars
+	SAVE_X	t0, 0(sp)
+	SAVE_X	t1, (XLEN_BYTES*1)(sp)
 	mv		s1, a1								# save insn word
 	# parse register name
 	mv		s0, a0								# save string start
 	jal		find_register_name_end
 	# end in a0
-	mv		s2, a0								# save string end
-	
+	mv		tp, a0								# save string end
 	mv		a1, a0								# reg name end
 	mv		a0, s0								# reg name start
 	# now look into either int register table or float register table
 	# and get the index of the register back (a0 < 0 on error)
-	jalr	s4
+	LOAD_X	t1, (XLEN_BYTES*1)(sp)
+	jalr	t1
 	bltz	a0, assemble_register_error
 	# register number now in a0
 	# assemble into a1
-	sll		a0, a0, s3
+	LOAD_X	t0,0(sp)
+	sll		a0, a0, t0
 	or		a1, s1, a0
 	j		assemble_register_done
 assemble_register_error:
 	li		a2, -1
 assemble_register_done:
-	addi	a0, s2, 1							# return reg name end +1
-	POP_S4_S3_S2_S1_S0_RA_RET
+	addi	a0, tp, 1							# return reg name end +1
+	addi	sp, sp, (XLEN_BYTES*2)				# discard local vars
+	POP_TP_S1_S0_RA_RET
 .size assemble_register, .-assemble_register
 
 
@@ -175,13 +178,13 @@ assemble_branch_target_done:
 # out: a1 = modified instruction word
 # out: a2 = -1 on error
 ass_BRA:
-	PUSH_S2_S1_S0_RA
+	PUSH_TP_S1_S0_RA
 	mv		s1, a1						# save insn word
 	mv		s0, a2						# save for later
 	jal		get_numeric
 	# address in a1
 	bnez	a2, ass_BRA_error
-	mv		s2, a0						# return string ptr later
+	mv		tp, a0						# return string ptr later
 	# add branch target address to instruction word
 	mv		a0, a1						# absolute target address
 	mv		a1, s1						# instruction word
@@ -189,12 +192,12 @@ ass_BRA:
 	jal		assemble_branch_target
 	beqz 	a1, ass_BRA_error			# address too far away
 	# return a1 and a0
-	addi	a0, s2, 1							# string ptr +1
+	addi	a0, tp, 1							# string ptr +1
 	j		ass_BRA_done
 ass_BRA_error:
 	li		a2, -1
 ass_BRA_done:
-	POP_S2_S1_S0_RA_RET
+	POP_TP_S1_S0_RA_RET
 .size ass_BRA, .-ass_BRA
 
 
@@ -351,13 +354,12 @@ ass_S_rel_done:
 # out: a1 = modified instruction word
 # out: a2 = -1 on error
 ass_iorw:
-	PUSH_S2_S1_S0_RA
+	PUSH_S1_S0_RA
 	mv		s0, t0						# shift value from ass_PRE or ass_SUC
 	mv		s1, a1						# save insn word
 	jal		parse_iorw
 	# iorw bits in bits 0-3 of a1
 	bnez	a2, ass_iorw_error
-	mv		s2, a0						# return string ptr later
 	# add iorw bits to instruction word
 	sll		a1, a1, s0
 	or		a1, s1, a1						# instruction word
@@ -365,7 +367,7 @@ ass_iorw:
 ass_iorw_error:
 	li		a2, -1
 ass_iorw_done:
-	POP_S2_S1_S0_RA_RET
+	POP_S1_S0_RA_RET
 .size ass_iorw, .-ass_iorw
 
 
@@ -400,13 +402,13 @@ ass_SUC:
 # out: a1 = modified instruction word
 # out: a2 = -1 on error
 ass_J:
-	PUSH_S2_S1_S0_RA
+	PUSH_TP_S1_S0_RA
 	mv		s1, a1						# save insn word
 	mv		s0, a2						# save origin address
 	jal		get_numeric
 	# imm  value in a1
 	bnez	a2, ass_J_error
-	mv		s2, a0						# return string ptr later
+	mv		tp, a0						# return string ptr later
 	mv		a0, a1						# imm value
 	mv		a1, s1						# instruction word
 	# compute from origin address
@@ -431,12 +433,12 @@ ass_J:
 	slli	t0, t0, 11
 	or		a1, a1, t0
 	# return a1 and a0
-	addi	a0, s2, 1					# string ptr +1
+	addi	a0, tp, 1					# string ptr +1
 	j		ass_J_done
 ass_J_error:
 	li		a2, -1
 ass_J_done:
-	POP_S2_S1_S0_RA_RET
+	POP_TP_S1_S0_RA_RET
 .size ass_J, .-ass_J
 
 
