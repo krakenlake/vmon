@@ -93,13 +93,13 @@ assemble_C_register_done:
 # out: a1 = modified instruction word
 # out: a2 = -1 on error
 ass_C_rd_nz:
-	PUSH_S2_S1_S0_RA
+	PUSH_TP_S1_S0_RA
 	mv		s1, a1								# save insn word
 	# parse register name
 	mv		s0, a0								# save string start
 	jal		find_register_name_end
 	# end in a0
-	mv		s2, a0								# save string end
+	mv		tp, a0								# save string end
 	mv		a1, a0								# reg name end
 	mv		a0, s0								# reg name start
 	# now look into int register table
@@ -114,8 +114,8 @@ ass_C_rd_nz:
 ass_C_rd_nz_error:
 	li		a2, -1
 ass_C_rd_nz_done:
-	addi	a0, s2, 1							# return reg name end +1
-	POP_S2_S1_S0_RA_RET
+	addi	a0, tp, 1							# return reg name end +1
+	POP_TP_S1_S0_RA_RET
 .size ass_C_rd_nz, .-ass_C_rd_nz
 
 
@@ -126,13 +126,13 @@ ass_C_rd_nz_done:
 # out: a1 = modified instruction word
 # out: a2 = -1 on error
 ass_C_rs2_nz:
-	PUSH_S2_S1_S0_RA
+	PUSH_TP_S1_S0_RA
 	mv		s1, a1								# save insn word
 	# parse register name
 	mv		s0, a0								# save string start
 	jal		find_register_name_end
 	# end in a0
-	mv		s2, a0								# save string end
+	mv		tp, a0								# save string end
 	mv		a1, a0								# reg name end
 	mv		a0, s0								# reg name start
 	# now look into int register table
@@ -147,8 +147,8 @@ ass_C_rs2_nz:
 ass_C_rs2_nz_error:
 	li		a2, -1
 ass_C_rs2_nz_done:
-	addi	a0, s2, 1							# return reg name end +1
-	POP_S2_S1_S0_RA_RET
+	addi	a0, tp, 1							# return reg name end +1
+	POP_TP_S1_S0_RA_RET
 .size ass_C_rs2_nz, .-ass_C_rs2_nz
 
 
@@ -210,13 +210,13 @@ ass_rdsp_done:
 # out: a1 = modified instruction word
 # out: a2 = -1 on error
 ass_rdasp:
-	PUSH_S2_S1_S0_RA
+	PUSH_TP_S1_S0_RA
 	mv		s1, a1								# save insn word
 	# parse register name
 	mv		s0, a0								# save string start
 	jal		find_register_name_end
 	# end in a0
-	mv		s2, a0								# save string end
+	mv		tp, a0								# save string end
 	mv		a1, a0								# reg name end
 	mv		a0, s0								# reg name start
 	# now look into either int register table or float register table
@@ -230,8 +230,8 @@ ass_rdasp:
 ass_rdasp_error:
 	li		a2, -1
 ass_rdasp_done:
-	addi	a0, s2, 1							# return reg name end +1
-	POP_S2_S1_S0_RA_RET
+	addi	a0, tp, 1							# return reg name end +1
+	POP_TP_S1_S0_RA_RET
 .size ass_rdasp, .-ass_rdasp
 
 
@@ -244,20 +244,20 @@ ass_rdasp_done:
 # out: a1 = modified instruction word
 # out: a2 = -1 on error
 ass_C_relsp:
-	PUSH_S2_S1_S0_RA
+	PUSH_TP_S1_S0_RA
 	mv		s1, a1								# insn word
 	jal		expect_open_paren
 	beqz	a0, ass_C_relsp_error
 	mv		s0, a0								# save string start
 	jal		find_register_name_end
 	# end in a0
-	mv		s2, a0								# save string end
+	mv		tp, a0								# save string end
 	mv		a1, a0								# reg name end
 	mv		a0, s0								# reg name start
 	jal		get_int_register_index_by_name
 	li		t0, 2
 	bne		a0, t0, ass_C_relsp_error
-	addi	a0, s2, 1							# string ptr +1
+	addi	a0, tp, 1							# string ptr +1
 	jal		expect_close_paren
 	beqz	a0, ass_C_relsp_error
 	# return a1 and a0
@@ -266,7 +266,7 @@ ass_C_relsp:
 ass_C_relsp_error:
 	li		a2, -1
 ass_C_relsp_done:
-	POP_S2_S1_S0_RA_RET
+	POP_TP_S1_S0_RA_RET
 .size ass_C_relsp, .-ass_C_relsp
 
 
@@ -556,16 +556,16 @@ ass_CIW_imm:
 	# assemble imm from numeric
 	andi	t0, a1,	0b1000
 	slli	t0, t0, 2
-	andi	t1, a1, 0b100
-	slli	t1, t1, 4
-	andi	t2, a1, 0b1111000000
-	slli	t2, t2, 1
-	andi	t3, a1, 0b110000
-	slli	t3, t3, 7
-	or		a1, s0, t0					# from saved insn
-	or		a1, a1, t1
-	or		a1, a1, t2
-	or		a1, a1, t3
+	or		s0, s0, t0
+	andi	t0, a1, 0b100
+	slli	t0, t0, 4
+	or		s0, s0, t0
+	andi	t0, a1, 0b1111000000
+	slli	t0, t0, 1
+	or		s0, s0, t0
+	andi	t0, a1, 0b110000
+	slli	t0, t0, 7
+	or		a1, s0, t0
 	# return a1 and a0
 	j		ass_CIW_imm_done
 ass_CIW_imm_error:
@@ -741,19 +741,19 @@ ass_C_BRA:
 	# assemble bits
 	andi	t0, a1, 0b100000
 	srli	t0, t0, 3
-	and		t1, a1, 0b110
-	slli	t1, t1, 2
-	andi	t2, a1, 0b11000000
-	srli	t2, t2, 1
-	andi	t3, a1, 0b11000
-	slli	t3, t3, 7
-	andi	t4, a1, 0b100000000
-	slli	t4, t4, 4
+	or		s0, s0, t0
+	and		t0, a1, 0b110
+	slli	t0, t0, 2
+	or		s0, s0, t0
+	andi	t0, a1, 0b11000000
+	srli	t0, t0, 1
+	or		s0, s0, t0
+	andi	t0, a1, 0b11000
+	slli	t0, t0, 7
+	or		s0, s0, t0
+	andi	t0, a1, 0b100000000
+	slli	t0, t0, 4
 	or		a1, s0, t0
-	or		a1, a1, t1
-	or		a1, a1, t2
-	or		a1, a1, t3
-	or		a1, a1, t4
 	j		ass_C_BRA_done
 ass_C_BRA_error:
 	li		a2, -1
@@ -784,23 +784,23 @@ ass_CJ_off:
 	# assemble bits
 	andi	t0, a1, 0b100000
 	srli	t0, t0, 3
-	andi	t1, a1, 0b1110
-	slli	t1, t1, 2
-	li		t3, 0b101101000000
-	and		t2, a1, t3
-	slli	t2, t2, 1
-	andi	t3, a1, 0b10000000
-	srli	t3, t3, 1
-	andi	t4, a1, 0b10000000000
-	srli	t4, t4, 2
-	andi	t5, a1, 0b10000
-	slli	t5, t5, 7
+	or		s0, s0, t0
+	andi	t0, a1, 0b1110
+	slli	t0, t0, 2
+	or		s0, s0, t0
+	li		t1, 0b101101000000
+	and		t0, a1, t1
+	slli	t0, t0, 1
+	or		s0, s0, t0
+	andi	t0, a1, 0b10000000
+	srli	t0, t0, 1
+	or		s0, s0, t0
+	andi	t0, a1, 0b10000000000
+	srli	t0, t0, 2
+	or		s0, s0, t0
+	andi	t0, a1, 0b10000
+	slli	t0, t0, 7
 	or		a1, s0, t0
-	or		a1, a1, t1
-	or		a1, a1, t2
-	or		a1, a1, t3
-	or		a1, a1, t4
-	or		a1, a1, t5
 	# return a1 and a0
 	j		ass_CJ_off_done
 ass_CJ_off_error:
@@ -828,19 +828,19 @@ ass_C_16sp_imm:
 	bnez	a2, ass_C_16sp_imm_error
 	andi	t0, a1, 0b100000
 	srli	t0, t0, 3
-	andi	t1, a1, 0b110000000
-	srli	t1, t1, 4
-	andi	t2, a1, 0b1000000
-	srli	t2, t2, 1
-	andi	t3, a1, 0b10000
-	slli	t3, t3, 2
-	andi	t4, a1, 0b1000000000
-	slli	t4, t4, 3
+	or		s0, s0, t0
+	andi	t0, a1, 0b110000000
+	srli	t0, t0, 4
+	or		s0, s0, t0
+	andi	t0, a1, 0b1000000
+	srli	t0, t0, 1
+	or		s0, s0, t0
+	andi	t0, a1, 0b10000
+	slli	t0, t0, 2
+	or		s0, s0, t0
+	andi	t0, a1, 0b1000000000
+	slli	t0, t0, 3
 	or		a1, s0, t0
-	or		a1, a1, t1
-	or		a1, a1, t2
-	or		a1, a1, t3
-	or		a1, a1, t4
 	j		ass_C_16sp_imm_done
 ass_C_16sp_imm_error:
 	li		a2, -1
