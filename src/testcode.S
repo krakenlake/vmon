@@ -4,6 +4,7 @@
 
 .global testcode
 .global testcode_RV32I
+.global testcode_RV32E
 .global testcode_RV64I
 .global testcode_RVM
 .global testcode_RVA

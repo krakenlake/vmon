@@ -20,7 +20,7 @@
 #define WITH_CMD_F			// find
 #define WITH_CMD_G			// go
 #define WITH_CMD_H			// help
-//#define WITH_CMD_I			// info	
+#define WITH_CMD_I			// info	
 #define WITH_CMD_M			// memory dump
 #define WITH_CMD_P			// poke
 //#define WITH_CMD_R			// register dump
