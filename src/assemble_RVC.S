@@ -53,20 +53,22 @@
 # out: a1 = modified instruction word
 # out: a2 = -1 on error
 assemble_C_register:
-	PUSH_S4_S3_S2_S1_S0_RA
-	mv		s3, t0
-	mv		s4, t1
+	PUSH_TP_S1_S0_RA
+	addi	sp, sp, -(XLEN_BYTES*2)				# 2 extra local vars
+	SAVE_X	t0, 0(sp)
+	SAVE_X	t1, (XLEN_BYTES*1)(sp)
 	mv		s1, a1								# save insn word
 	# parse register name
 	mv		s0, a0								# save string start
 	jal		find_register_name_end
 	# end in a0
-	mv		s2, a0								# save string end
+	mv		tp, a0								# save string end
 	mv		a1, a0								# reg name end
 	mv		a0, s0								# reg name start
 	# now look into either int register table or float register table
 	# and get the index of the register back (a0 < 0 on error)
-	jalr	s4
+	LOAD_X	t1, (XLEN_BYTES*1)(sp)
+	jalr	t1
 	bltz	a0, assemble_C_register_error
 	# register number now in a0
 	li		t0, 8								# 8 <= rda/rs1a/rs2a <=15
@@ -75,14 +77,16 @@ assemble_C_register:
 	bgt		a0, t0, assemble_C_register_error
 	# assemble into a1
 	addi	a0, a0, -8							# convert to RVC register number
-	sll		a0, a0, s3							# shift into place
+	LOAD_X	t0,0(sp)
+	sll		a0, a0, t0							# shift into place
 	or		a1, s1, a0							# join with a1
 	j		assemble_C_register_done
 assemble_C_register_error:
 	li		a2, -1
 assemble_C_register_done:
-	addi	a0, s2, 1							# return reg name end +1
-	POP_S4_S3_S2_S1_S0_RA_RET
+	addi	a0, tp, 1							# return reg name end +1
+	addi	sp, sp, (XLEN_BYTES*2)				# discard local vars
+	POP_TP_S1_S0_RA_RET
 .size assemble_C_register, .-assemble_C_register
 
 
