@@ -117,7 +117,11 @@ vmon_exit:
 .size vmon_exit, .-vmon_exit
 
 
-string_jump:	.string "jumping to ";
+.section .rodata
+
+
+string_jump:
+	.string "jumping to ";
 .size string_jump, .-string_jump
 
 

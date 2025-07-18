@@ -127,7 +127,8 @@ get_register_index_by_name_done:
 .size get_register_index_by_name, .-get_register_index_by_name
 
 
-.align 4
+.section .rodata
+
 
 int_register_names:
 #ifndef ABI_REGISTER_NAMES
@@ -158,7 +159,6 @@ int_register_names:
 
 
 #ifdef DISASS_RVF
-	.align 4
 	float_register_names:
 	#ifndef ABI_REGISTER_NAMES
 		.string	 "f0",	"f1",  "f2",  "f3",	 "f4",	"f5",  "f6",  "f7"

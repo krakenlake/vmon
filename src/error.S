@@ -51,31 +51,36 @@
 	POP_S0_RA_RET
 #endif /* ERROR_VERBOSE */
 
-.data
+
+.section .rodata
 
 
-error_unknown_command:	.string "ERROR: unknown command";
+error_unknown_command:
+	.string "ERROR: unknown command";
 .size error_unknown_command, .-error_unknown_command
 
 #ifdef WITH_CMD_B
-	error_break_table_full:	.string "ERROR: no more free breakpoints";
+	error_break_table_full:
+		.string "ERROR: no more free breakpoints";
 	.size error_break_table_full, .-error_break_table_full
 
-	error_break_addr_invalid:	.string "ERROR: not a valid breakpoint address";
+	error_break_addr_invalid:
+		.string "ERROR: not a valid breakpoint address";
 	.size error_break_addr_invalid, .-error_break_addr_invalid
 #endif /* WITH_CMD_B */
 
 
 string_error_prefix:
 .string "ERROR: "
+.size string_error_prefix, .-string_error_prefix
 
 #ifdef ERROR_VERBOSE
-error_table:
-# errorcode, string
-.byte ERR_CMD_PARAMS;	.string "parameter missing or invalid"
-.byte ERR_CMD_UNKNOWN;	.string "unknown command"
-.byte ERR_BREAK_FULL;	.string "out of breakpoints"
-.byte ERR_INSN_ADDR;	.string "not a valid instruction address"
-
-.byte ERR_UNDEFINED;	.string "undefined error"
+	error_table:
+		# errorcode, string
+		.byte ERR_CMD_PARAMS;	.string "parameter missing or invalid"
+		.byte ERR_CMD_UNKNOWN;	.string "unknown command"
+		.byte ERR_BREAK_FULL;	.string "out of breakpoints"
+		.byte ERR_INSN_ADDR;	.string "not a valid instruction address"
+		.byte ERR_UNDEFINED;	.string "undefined error"
+	.size error_table, .-error_table
 #endif /* ERROR_VERBOSE */

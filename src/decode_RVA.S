@@ -55,14 +55,20 @@ print_AMO_postfix_done:
 .size print_AMO_postfix, .-print_AMO_postfix
 
 
-string_OP_POSTFIX_AQ:	.string ".aq";
-	.size string_OP_POSTFIX_AQ, .-string_OP_POSTFIX_AQ
+.section .rodata
 
-string_OP_POSTFIX_RL:	.string ".rl";
-	.size string_OP_POSTFIX_RL, .-string_OP_POSTFIX_RL
 
-string_OP_POSTFIX_AQRL:	.string ".aqrl";
-	.size string_OP_POSTFIX_AQRL, .-string_OP_POSTFIX_AQRL
+string_OP_POSTFIX_AQ:
+	.string ".aq";
+.size string_OP_POSTFIX_AQ, .-string_OP_POSTFIX_AQ
+
+string_OP_POSTFIX_RL:
+	.string ".rl";
+.size string_OP_POSTFIX_RL, .-string_OP_POSTFIX_RL
+
+string_OP_POSTFIX_AQRL:
+	.string ".aqrl";
+.size string_OP_POSTFIX_AQRL, .-string_OP_POSTFIX_AQRL
 
 
 #endif /* (WITH_CMD_D) && defined (DISASS_RVA) */

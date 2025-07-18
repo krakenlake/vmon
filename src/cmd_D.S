@@ -91,11 +91,16 @@ cmd_D_done:
 .size cmd_D, .-cmd_D
 
 
-string_OP_UNKNOWN:		.string "???";
+.section .rodata
+
+
+string_OP_UNKNOWN:
+	.string "???";
 .size string_OP_UNKNOWN, .-string_OP_UNKNOWN
 
 #ifdef DISASS_RVC
-	string_WORD_ALIGN:		.string "    ";
+	string_WORD_ALIGN:		
+		.string "    ";
 	.size string_WORD_ALIGN, .-string_WORD_ALIGN
 #endif /* DISASS_RVC */
 

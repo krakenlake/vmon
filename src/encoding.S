@@ -27,7 +27,7 @@
 #endif /* defined (WITH_CMD_D) || defined (WITH_CMD_A) || defined (WITH_CMD_G) */
 
 
-.section .rodata
+.text
 
 
 #if defined (WITH_CMD_D) || defined (WITH_CMD_A) || defined (WITH_CMD_G)
@@ -133,6 +133,9 @@ get_data_by_insn_word_continue:
 get_data_by_insn_word_done:
 	POP_RA_RET
 .size get_data_by_insn_word, .-get_data_by_insn_word
+
+
+.section .rodata
 
 
 # ---------- opcode strings ----------

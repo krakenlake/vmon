@@ -218,7 +218,12 @@ dis_I_rel:
 .size dis_I_rel, .-dis_I_rel
 
 
-string_FENCE_bits:		.string "iorw";
+.section .rodata
+
+
+string_FENCE_bits:
+	.string "iorw";
+.size string_FENCE_bits, .-string_FENCE_bits
 
 
 #endif /* WITH_CMD_D */

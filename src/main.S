@@ -23,6 +23,7 @@ VMON - a RISC-V machine code monitor written in RISC-V assembly code
 .global string_OP_UNKNOWN
 .global start_bss
 
+
 .text
 
 
@@ -290,19 +291,26 @@ end:
 .size breakpoint_entry, .-breakpoint_entry
 
 
-string_startup:		
-.ascii "\nVMON "
-.ascii VERSION
-.asciz " - RISC-V machine code monitor";
+.section .rodata
+
+
+string_startup:
+	.ascii "\nVMON "
+	.ascii VERSION
+	.asciz " - RISC-V machine code monitor";
 .size string_startup, .-string_startup
 
-string_prompt:		.string "> ";
+string_prompt:
+	.string "> ";
 .size string_prompt, .-string_prompt
 
-string_asm_sep1:	.string ":";
+string_asm_sep1:
+	.string ":";
 .size string_asm_sep1, .-string_asm_sep1
-#string_asm_sep2:	 .string "\t";
-string_asm_sep2:	.string " ";
+
+string_asm_sep2:
+#	.string "\t";
+	.string " ";
 .size string_asm_sep2, .-string_asm_sep2
 
 

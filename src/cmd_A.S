@@ -78,13 +78,19 @@ cmd_A_done:
 .size cmd_A, .-cmd_A
 
 
-string_line_prefix_A:	.string "A ";
+.section .rodata
+
+
+string_line_prefix_A:	
+	.string "A ";
 .size string_line_prefix_A, .-string_line_prefix_A
 
-string_ass_prompt:		.string " := ";
+string_ass_prompt:		
+	.string " := ";
 .size string_ass_prompt, .-string_ass_prompt
 
-string_ass_error:		.string "\t\t???\n\r";
+string_ass_error:		
+	.string "\t\t???\n\r";
 .size string_ass_error, .-string_ass_error
 
 

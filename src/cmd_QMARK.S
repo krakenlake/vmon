@@ -40,6 +40,9 @@ cmd_QMARK_end:
 .size cmd_QMARK, .-cmd_QMARK
 
 
+.section .rodata
+
+
 string_info_hex:
 	.string	"hex: "
 .size string_info_hex, .-string_info_hex
