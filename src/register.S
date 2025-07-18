@@ -34,9 +34,7 @@ get_int_register_name_by_index:
 # in:	a0 = n
 # in:	a1 = ptr to table (int_register_names or float_register_names)
 # out:	a0 = string ptr
-get_register_name_by_index:
-	PUSH_RA
-get_register_name_by_index_search:
+get_register_name_by_index:	
 	beqz	a0, get_register_name_by_index_found
 	addi	a1, a1, 1
 get_register_name_by_index_skip_next_zero:
@@ -48,10 +46,10 @@ get_register_name_by_index_skip_next_zero:
 get_register_name_by_index_next_zero:
 	addi	a0, a0, -1
 	addi	a1, a1, 1
-	j		get_register_name_by_index_search
+	j		get_register_name_by_index
 get_register_name_by_index_found:
 	mv		a0, a1
-	POP_RA_RET
+	ret
 .size get_register_name_by_index, .-get_register_name_by_index
 
 
@@ -86,7 +84,6 @@ get_int_register_index_by_name:
 # in: a3 = number of registers
 # out: a0 = index number of register (-1 if error)
 get_register_index_by_name:
-	PUSH_RA
 	li		a5, 0											# init index counter
 	mv		a4, a0											# save a0 for reuse
 get_register_index_by_name_compare_next:
@@ -126,7 +123,7 @@ get_register_index_by_name_found:
 get_register_index_by_name_not_found:
 	li		a0, -1											# return error
 get_register_index_by_name_done:
-	POP_RA_RET
+	ret
 .size get_register_index_by_name, .-get_register_index_by_name
 
 
