@@ -1,6 +1,14 @@
+// ******************************************************************
+// 
+// Config for StarFive VisionFive 2 board (RV64GC CPU)
+//
+// ******************************************************************
+
+
 #ifndef VMON_CONFIG_H
 #define VMON_CONFIG_H
 
+// hardware
 #define HW_VF2
 #define TARGET_HAS_Zicsr
 #define TARGET_HAS_RVF

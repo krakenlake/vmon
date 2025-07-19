@@ -1,7 +1,6 @@
 // ******************************************************************
 // 
-// Config for QEMU RV64G (=RV64IMAF) full version 
-// (all features)
+// Config for QEMU RV32E version
 //
 // ******************************************************************
 
@@ -11,10 +10,10 @@
 
 // hardware
 #define HW_QEMU
-#define XLEN	64
-#define FLEN	64
+#define XLEN	32
+#define FLEN	0
 #define TARGET_HAS_Zicsr
-#define TARGET_HAS_RVF
+#define TARGET_RVE
 
 // always use only one of these
 #define M_MODE
@@ -50,11 +49,11 @@
 // in the executable
 #ifdef WITH_TESTCODE
 	//#define WITH_TESTCODE_RV32E
-	#define WITH_TESTCODE_RV32I
-	#define WITH_TESTCODE_RV64I
-	#define WITH_TESTCODE_RVM
-	#define WITH_TESTCODE_RVA
-	#define WITH_TESTCODE_RVF
+	//#define WITH_TESTCODE_RV32I
+	//#define WITH_TESTCODE_RV64I
+	//#define WITH_TESTCODE_RVM
+	//#define WITH_TESTCODE_RVA
+	//#define WITH_TESTCODE_RVF
 	//#define WITH_TESTCODE_RVD
 	//#define WITH_TESTCODE_RVQ
 	//#define WITH_TESTCODE_RVC
@@ -62,37 +61,37 @@
 	//#define WITH_TESTCODE_RVP
 	//#define WITH_TESTCODE_RVV
 	//#define WITH_TESTCODE_RVH
-	#define WITH_TESTCODE_RVZicsr
-	#define WITH_TESTCODE_RVZifencei
-	#define WITH_TESTCODE_RVPRIV
-	#define WITH_TESTCODE_PSEUDO
+	//#define WITH_TESTCODE_RVZicsr
+	//#define WITH_TESTCODE_RVZifencei
+	//#define WITH_TESTCODE_RVPRIV
+	//#define WITH_TESTCODE_PSEUDO
 #endif
 
 // configure which instructions and extensions the
 // executable will be able to assemble/disassemble
 // (this is independent of the target platforms actual instruction set!)
-#define DISASS_RVM
-#define DISASS_RVA
-#define DISASS_RVF
+//#define DISASS_RVM
+//#define DISASS_RVA
+//#define DISASS_RVF
 //#define DISASS_RVD
 //#define DISASS_RVQ
-//#define DISASS_RVC
+#define DISASS_RVC
 //#define DISASS_RVB
 //#define DISASS_RVP
 //#define DISASS_RVV
 //#define DISASS_RVH
 #define DISASS_RVZicsr
-#define DISASS_RVZifencei
-#define DISASS_RVPRIV
+//#define DISASS_RVZifencei
+//#define DISASS_RVPRIV
 
 // enable printing of pseudo opcodes in disassembly?
 #define DISASS_PSEUDO
 
 // include strings for MCAUSE verbose output?
-#define MCAUSE_VERBOSE
+//#define MCAUSE_VERBOSE
 
 // include strings for verbose error messages?
-#define ERROR_VERBOSE
+//#define ERROR_VERBOSE
 
 // default number of lines for the "d" command if no end address is given
 #define	DEFAULT_D_LINES		16
