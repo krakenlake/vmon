@@ -24,7 +24,7 @@ VMON - a RISC-V machine code monitor written in RISC-V assembly code
 .global start_bss
 
 
-.text
+.section .init
 
 
 # application entry point - activate our trap handler
