@@ -2,7 +2,7 @@
 
 default: this
 
-VERSION = 0.6.5
+VERSION = 0.6.6
 
 #TARGET ?= qemu-32i
 #TARGET ?= qemu-32ic
@@ -10,6 +10,7 @@ VERSION = 0.6.5
 #TARGET ?= qemu-32i-mini
 #TARGET ?= qemu-32ic-mini
 #TARGET ?= qemu-32ec
+#TARGET ?= olimex-ch32v003-uart
 #TARGET ?= qemu-64g
 TARGET ?= qemu-64gqc
 #TARGET ?= qemu-64gc
@@ -17,132 +18,70 @@ TARGET ?= qemu-64gqc
 
 DEBUG ?= -DDEBUG
 
+
+# set default values for all targets
+FLASH_START			= 0x80000000
+FLASH_SIZE			= 32K
+RAM_START			= 0x80020000
+RAM_SIZE			= 8K
+TARGET_XLEN			= 32
+QEMU_FLAGS			= -machine virt -cpu rv$(TARGET_XLEN),pmp=false -smp 1 -gdb tcp::1234 -bios none -serial stdio -display none -kernel $(BUILD)/$(NAME).img
+RUN					= qemu-system-riscv$(TARGET_XLEN) $(QEMU_FLAGS) 
+
+
+# overwrite target-specific values
 ifeq ($(TARGET), qemu-32i)
-	FLASH_START			= 0x80000000
-	FLASH_SIZE			= 32K
-	RAM_START			= 0x80020000
-	RAM_SIZE			= 8K
-	TARGET_XLEN			= 32
 	CFLAGS				+= -march=rv$(TARGET_XLEN)i_zicsr -mabi=ilp32
-	QEMU_FLAGS	= -machine virt -cpu rv$(TARGET_XLEN),pmp=false -smp 1 -gdb tcp::1234 -bios none -serial stdio -display none -kernel $(BUILD)/$(NAME).img
-	RUN			= qemu-system-riscv$(TARGET_XLEN) $(QEMU_FLAGS) 
 endif 
 
 ifeq ($(TARGET), qemu-32ic)
-	FLASH_START			= 0x80000000
-	FLASH_SIZE			= 32K
-	RAM_START			= 0x80020000
-	RAM_SIZE			= 8K
-	TARGET_XLEN			= 32
 	CFLAGS				+= -march=rv$(TARGET_XLEN)ic_zicsr -mabi=ilp32
-	QEMU_FLAGS	= -machine virt -cpu rv$(TARGET_XLEN),pmp=false -smp 1 -gdb tcp::1234 -bios none -serial stdio -display none -kernel $(BUILD)/$(NAME).img
-	RUN			= qemu-system-riscv$(TARGET_XLEN) $(QEMU_FLAGS) 
 endif 
 
 ifeq ($(TARGET), qemu-32i-micro)
-	FLASH_START			= 0x80000000
-	FLASH_SIZE			= 32K
-	RAM_START			= 0x80020000
-	RAM_SIZE			= 8K
-	TARGET_XLEN			= 32
 	CFLAGS				+= -march=rv$(TARGET_XLEN)i_zicsr -mabi=ilp32
-	QEMU_FLAGS	= -machine virt -cpu rv$(TARGET_XLEN),pmp=false -smp 1 -gdb tcp::1234 -bios none -serial stdio -display none -kernel $(BUILD)/$(NAME).img
-	RUN			= qemu-system-riscv$(TARGET_XLEN) $(QEMU_FLAGS) 
 endif 
 
 ifeq ($(TARGET), qemu-32i-mini)
-	FLASH_START			= 0x80000000
-	FLASH_SIZE			= 32K
-	RAM_START			= 0x80020000
-	RAM_SIZE			= 8K
-	TARGET_XLEN			= 32
 	CFLAGS				+= -march=rv$(TARGET_XLEN)i_zicsr -mabi=ilp32
-	QEMU_FLAGS	= -machine virt -cpu rv$(TARGET_XLEN),pmp=false -smp 1 -gdb tcp::1234 -bios none -serial stdio -display none -kernel $(BUILD)/$(NAME).img
-	RUN			= qemu-system-riscv$(TARGET_XLEN) $(QEMU_FLAGS) 
 endif 
 
 ifeq ($(TARGET), qemu-32ic-mini)
-	FLASH_START			= 0x80000000
-	FLASH_SIZE			= 32K
-	RAM_START			= 0x80020000
-	RAM_SIZE			= 8K
-	TARGET_XLEN			= 32
 	CFLAGS				+= -march=rv$(TARGET_XLEN)ic_zicsr -mabi=ilp32
-	QEMU_FLAGS	= -machine virt -cpu rv$(TARGET_XLEN),pmp=false -smp 1 -gdb tcp::1234 -bios none -serial stdio -display none -kernel $(BUILD)/$(NAME).img
-	RUN			= qemu-system-riscv$(TARGET_XLEN) $(QEMU_FLAGS) 
 endif 
 
 ifeq ($(TARGET), qemu-32e)
-	FLASH_START			= 0x80000000
-	FLASH_SIZE			= 32K
-	RAM_START			= 0x80020000
-	RAM_SIZE			= 8K
-	TARGET_XLEN			= 32
 	CFLAGS				+= -march=rv$(TARGET_XLEN)e_zicsr -mabi=ilp32e
-	QEMU_FLAGS	= -machine virt -cpu rv$(TARGET_XLEN),pmp=false -smp 1 -gdb tcp::1234 -bios none -serial stdio -display none -kernel $(BUILD)/$(NAME).img
-	RUN			= qemu-system-riscv$(TARGET_XLEN) $(QEMU_FLAGS) 
 endif 
 
 ifeq ($(TARGET), qemu-32ec)
-	FLASH_START			= 0x80000000
-	FLASH_SIZE			= 32K
-	RAM_START			= 0x80020000
-	RAM_SIZE			= 8K
-	TARGET_XLEN			= 32
 	CFLAGS				+= -march=rv$(TARGET_XLEN)ec_zicsr -mabi=ilp32e
-	QEMU_FLAGS	= -machine virt -cpu rv$(TARGET_XLEN),pmp=false -smp 1 -gdb tcp::1234 -bios none -serial stdio -display none -kernel $(BUILD)/$(NAME).img
-	RUN			= qemu-system-riscv$(TARGET_XLEN) $(QEMU_FLAGS) 
 endif 
 
-ifeq ($(TARGET), olimex-ch32v003)
+ifeq ($(TARGET), olimex-ch32v003-uart)
 	FLASH_START			= 0x80000000
 	FLASH_SIZE			= 16K
 	RAM_START			= 0x20000000
 	RAM_SIZE			= 2K
-	TARGET_XLEN			= 32
 	CFLAGS				+= -march=rv$(TARGET_XLEN)ec_zicsr -mabi=ilp32e
-	QEMU_FLAGS	= -machine virt -cpu rv$(TARGET_XLEN),pmp=false -smp 1 -gdb tcp::1234 -bios none -serial stdio -display none -kernel $(BUILD)/$(NAME).img
-	RUN			= qemu-system-riscv$(TARGET_XLEN) $(QEMU_FLAGS) 
 endif 
 
 ifeq ($(TARGET), qemu-64g)
-	FLASH_START			= 0x80000000
-	FLASH_SIZE			= 32K
-	RAM_START			= 0x80020000
-	RAM_SIZE			= 8K
 	TARGET_XLEN			= 64
 	CFLAGS				+= -march=rv$(TARGET_XLEN)g
-	QEMU_FLAGS	= -machine virt -cpu rv$(TARGET_XLEN),pmp=false -smp 2 -gdb tcp::1234 -bios none -serial stdio -display none -kernel $(BUILD)/$(NAME).img
-	RUN			= qemu-system-riscv$(TARGET_XLEN) $(QEMU_FLAGS) 
 endif 
 
 ifeq ($(TARGET), qemu-64gc)
-	FLASH_START			= 0x80000000
-	FLASH_SIZE			= 32K
-	RAM_START			= 0x80020000
-	RAM_SIZE			= 8K
 	TARGET_XLEN			= 64
 	CFLAGS				+= -march=rv$(TARGET_XLEN)gc
-	QEMU_FLAGS	= -machine virt -cpu rv$(TARGET_XLEN),pmp=false -smp 2 -gdb tcp::1234 -bios none -serial stdio -display none -kernel $(BUILD)/$(NAME).img
-	RUN			= qemu-system-riscv$(TARGET_XLEN) $(QEMU_FLAGS) 
 endif 
 
 ifeq ($(TARGET), qemu-64gqc)
-	FLASH_START			= 0x80000000
-	FLASH_SIZE			= 32K
-	RAM_START			= 0x80020000
-	RAM_SIZE			= 8K
 	TARGET_XLEN			= 64
 	CFLAGS				+= -march=rv$(TARGET_XLEN)gqc
-	QEMU_FLAGS	= -machine virt -cpu rv$(TARGET_XLEN),pmp=false -smp 2 -gdb tcp::1234 -bios none -serial stdio -display none -kernel $(BUILD)/$(NAME).img
-	RUN			= qemu-system-riscv$(TARGET_XLEN) $(QEMU_FLAGS) 
 endif 
 
 ifeq ($(TARGET), vf2)
-	FLASH_START			= 0x44000000
-	FLASH_SIZE			= 32K
-	RAM_START			= 0x44010000
-	RAM_SIZE			= 8K
 	TARGET_XLEN			= 64
 	CFLAGS				+= -march=rv$(TARGET_XLEN)gc
 define VF2_RUN_MSG
@@ -257,7 +196,7 @@ all:
 	make TARGET=qemu-32ic-mini release
 	make TARGET=qemu-32e release
 	make TARGET=qemu-32ec release
-	make TARGET=olimex-ch32v003 release
+	make TARGET=olimex-ch32v003-uart release
 	make TARGET=qemu-64g release
 	make TARGET=qemu-64gc release
 	make TARGET=qemu-64gqc release
