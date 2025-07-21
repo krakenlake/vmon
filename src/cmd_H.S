@@ -15,7 +15,7 @@ cmd_H:
 .size cmd_H, .-cmd_H
 
 
-.data
+.section .rodata
 
 
 string_help:
