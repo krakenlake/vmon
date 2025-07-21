@@ -9,6 +9,7 @@
 
 
 cmd_R:
+	jal		print_pc
 	# dump registers as they were on entry
 	jal		print_int_registers
 	#ifdef DISASS_RVF

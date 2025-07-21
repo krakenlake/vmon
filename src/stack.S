@@ -32,12 +32,14 @@ push_ra:
 	addi	sp, sp, -(XLEN_BYTES*1)	
 	SAVE_X	ra, 0(sp)
 	jr		gp
+.size push_ra, .-push_ra	
 
 push_s0_ra:
 	addi	sp, sp, -(XLEN_BYTES*2)
 	SAVE_X	s0, 0(sp)
 	SAVE_X	ra, (XLEN_BYTES*1)(sp)
 	jr		gp
+.size push_s0_ra, .-push_s0_ra	
 
 push_s1_s0_ra:
 	addi	sp, sp, -(XLEN_BYTES*3)
@@ -45,6 +47,7 @@ push_s1_s0_ra:
 	SAVE_X	s0, (XLEN_BYTES*1)(sp)
 	SAVE_X	ra, (XLEN_BYTES*2)(sp)
 	jr		gp
+.size push_s1_s0_ra, .-push_s1_s0_ra	
 
 push_tp_s1_s0_ra:
 	addi	sp, sp, -(XLEN_BYTES*4)
@@ -53,6 +56,7 @@ push_tp_s1_s0_ra:
 	SAVE_X	s0, (XLEN_BYTES*2)(sp)
 	SAVE_X	ra, (XLEN_BYTES*3)(sp)
 	jr		gp
+.size push_tp_s1_s0_ra, .-push_tp_s1_s0_ra	
 
 
 # for function epilogue optimisation (shorter code in total)
@@ -69,19 +73,30 @@ pop_ra_ret:
 	LOAD_X	ra, 0(sp)
 	addi	sp, sp, (XLEN_BYTES*1)
 	ret
+.size pop_tp_s1_s0_ra_ret, .-pop_tp_s1_s0_ra_ret	
 
 
-#if defined (WITH_CMD_X) || defined (WITH_CMD_G)
+#if defined (WITH_CMD_X) || defined (WITH_CMD_G) || defined (WITH_CMD_R)
 
 	print_pc:
 		PUSH_RA
+		la		a0, string_pc
+		jal		print_string
 		#ifdef TARGET_HAS_RVF
 			LOAD_X	a0, (XLEN_BYTES + STK_FRAME_SIZE_FLOAT + STK_OFF_PC)(sp)
 		#else
 			LOAD_X	a0, (XLEN_BYTES + STK_OFF_PC)(sp)
 		#endif
-		jal		print_hex
+		jal		print_hex_addr
+		jal		print_newline
 		POP_RA_RET
+	.size print_pc, .-print_pc	
+
+	.section .rodata
+	string_pc:
+		.string "    pc=";
+	.size string_pc, .-string_pc
+	.text
 
 #endif /* defined (WITH_CMD_X) || defined (WITH_CMD_G) */
 
@@ -97,6 +112,7 @@ pop_ra_ret:
 			SAVE_X	a0, (STK_OFF_PC)(sp)
 		#endif
 		ret
+	.size patch_pc, .-patch_pc	
 
 #endif /* WITH_CMD_G */
 
@@ -118,7 +134,7 @@ pop_ra_ret:
 		bnez	a0, patch_int_register_loop
 		SAVE_X	a1, 0(t0)
 		ret
-
+	.size patch_int_register, .-patch_int_register
 
 	# in: a0 = index of register
 	# in: a1 = new representation value to write
@@ -139,6 +155,7 @@ pop_ra_ret:
 	patch_float_register_do:
 		SAVE_F	f0, 0(t0)
 		ret
+	.size patch_float_register, .-patch_float_register
 	#endif /* TARGET_HAS_RVF */
 
 #endif /* WITH_CMD_S */
