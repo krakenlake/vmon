@@ -12,7 +12,9 @@ SECTIONS{
   .text :{
     . = ALIGN(4);
     *(.init)
+    . = ALIGN(4);
     *(.text .text*)
+    . = ALIGN(4);
     *(.rodata .rodata*)
     . = ALIGN(4);
     _etext = .;
