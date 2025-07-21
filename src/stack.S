@@ -10,35 +10,19 @@
 .global push_s1_s0_ra
 .global push_tp_s1_s0_ra						# use tp like another s register 
 
-#! need to go
-.global push_s2_s1_s0_ra
-# push_s3_s2_s1_s0_ra left out on purpose, just use push/pop_s4_s3_s1_s0_ra instead
-.global push_s4_s3_s2_s1_s0_ra
-
-
 # POP
 .global pop_ra_ret
 .global pop_s0_ra_ret
 .global pop_s1_s0_ra_ret
 .global pop_tp_s1_s0_ra_ret						# use tp like another s register
 
-
-#! need to go
-.global pop_s2_s1_s0_ra_ret
-# left out intentionally, see above
-.global pop_s4_s3_s2_s1_s0_ra_ret
-.global pop_s5_s4_s3_s2_s1_s0_ra_ret
-.global pop_s6_s5_s4_s3_s2_s1_s0_ra_ret
-.global pop_s7_s6_s5_s4_s3_s2_s1_s0_ra_ret
-
 .global print_pc
-
+.global print_int_registers
+.global print_float_registers
 .global patch_pc
 .global patch_int_register
 .global patch_float_register
 
-.global print_int_registers
-.global print_float_registers
 
 .text
 
