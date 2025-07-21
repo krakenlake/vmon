@@ -9,8 +9,8 @@
 #define STACK_SIZE_RUNTIME		32 * XLEN_BYTES
 
 
-// size of runtime stack in bytes
-// runtime space + PC + 31 int register + 32 float register (if required)
+// stack space needed to save all registers on entry
+// (x0 will not be saved, but slot will be used for PC instead)
 #ifdef TARGET_HAS_RVF
 	#define STACK_SIZE_REGISTERS			(XLEN_BYTES * NUM_INT_REGISTERS + FLEN_BYTES * NUM_FLOAT_REGISTERS)
 #else
