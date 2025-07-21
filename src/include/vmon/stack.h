@@ -5,13 +5,20 @@
 #include "vmon/register.h"
 
 
+// this is actually enough at the moment, but might be tight for further extensions
+#define STACK_SIZE_RUNTIME		32 * XLEN_BYTES
+
+
 // size of runtime stack in bytes
 // runtime space + PC + 31 int register + 32 float register (if required)
 #ifdef TARGET_HAS_RVF
-	#define STACK_SIZE			(512 + XLEN_BYTES * NUM_INT_REGISTERS + FLEN_BYTES * NUM_FLOAT_REGISTERS)
+	#define STACK_SIZE_REGISTERS			(XLEN_BYTES * NUM_INT_REGISTERS + FLEN_BYTES * NUM_FLOAT_REGISTERS)
 #else
-	#define STACK_SIZE			(512 + XLEN_BYTES * NUM_INT_REGISTERS)
+	#define STACK_SIZE_REGISTERS			(XLEN_BYTES * NUM_INT_REGISTERS)
 #endif
+
+#define STACK_SIZE				STACK_SIZE_RUNTIME + STACK_SIZE_REGISTERS
+
 
 // int register offsets from start of int stack frame
 // store pc in position 0; x0 is always 0 and will not be saved on stack
