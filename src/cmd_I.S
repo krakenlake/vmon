@@ -221,9 +221,6 @@ string_info_Zifencei:	.string "_Zifencei";
 string_info_text:		.string "\n.text:  ";
 .size string_info_text, .-string_info_text
 
-string_info_data:		.string "\n.data:  ";
-.size string_info_data, .-string_info_data
-
 string_info_bss:		.string "\n.bss:   ";
 .size string_info_bss, .-string_info_bss
 
