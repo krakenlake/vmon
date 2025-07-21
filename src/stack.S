@@ -44,7 +44,6 @@
 
 
 # for function prologue optimisation (shorter code in total)
-
 push_ra:
 	addi	sp, sp, -(XLEN_BYTES*1)	
 	SAVE_X	ra, 0(sp)
@@ -72,68 +71,10 @@ push_tp_s1_s0_ra:
 	jr		gp
 
 
-#ifndef TARGET_RVE
-
-#! this needs to go for RVE
-push_s2_s1_s0_ra:
-	addi	sp, sp, -(XLEN_BYTES*4)
-	SAVE_X	s2, 0(sp)
-	SAVE_X	s1, (XLEN_BYTES*1)(sp)
-	SAVE_X	s0, (XLEN_BYTES*2)(sp)
-	SAVE_X	ra, (XLEN_BYTES*3)(sp)
-	jr		gp
-
-#! this needs to go for RVE
-push_s4_s3_s2_s1_s0_ra:
-	addi	sp, sp, -(XLEN_BYTES*6)
-	SAVE_X	s4, 0(sp)
-	SAVE_X	s3, (XLEN_BYTES*1)(sp)
-	SAVE_X	s2, (XLEN_BYTES*2)(sp)
-	SAVE_X	s1, (XLEN_BYTES*3)(sp)
-	SAVE_X	s0, (XLEN_BYTES*4)(sp)
-	SAVE_X	ra, (XLEN_BYTES*5)(sp)
-	jr		gp
-#endif
-
-
 # for function epilogue optimisation (shorter code in total)
-
-
 pop_tp_s1_s0_ra_ret:
 	LOAD_X	tp, 0(sp)
 	addi	sp, sp, (XLEN_BYTES*1)
-	j		pop_s1_s0_ra_ret
-
-
-#ifndef TARGET_RVE
-
-#! this needs to go for RVE
-pop_s7_s6_s5_s4_s3_s2_s1_s0_ra_ret:
-	LOAD_X	s7, 0(sp)
-	addi	sp, sp, (XLEN_BYTES*1)
-	LOAD_X	s6, 0(sp)
-	addi	sp, sp, (XLEN_BYTES*1)
-	LOAD_X	s5, 0(sp)
-	addi	sp, sp, (XLEN_BYTES*1)
-
-#! this needs to go for RVE
-pop_s4_s3_s2_s1_s0_ra_ret:
-	LOAD_X	s4, 0(sp)
-	addi	sp, sp, (XLEN_BYTES*1)
-
-#! this needs to go for RVE
-pop_s3_s2_s1_s0_ra_ret:
-	LOAD_X	s3, 0(sp)
-	addi	sp, sp, (XLEN_BYTES*1)
-
-#! this needs to go for RVE
-pop_s2_s1_s0_ra_ret:
-	LOAD_X	s2, 0(sp)
-	addi	sp, sp, (XLEN_BYTES*1)
-
-#endif
-
-
 pop_s1_s0_ra_ret:
 	LOAD_X	s1, 0(sp)
 	addi	sp, sp, (XLEN_BYTES*1)
