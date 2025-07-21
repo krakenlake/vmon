@@ -9,31 +9,17 @@ _estack = ORIGIN(RAM) + LENGTH(RAM);
 
 SECTIONS{
 
-  .init :{ 
-    . = ALIGN(4);
-    *(.init)
-    . = ALIGN(4);
-  } >FLASH
-
   .text :{
     . = ALIGN(4);
+    *(.init)
     *(.text .text*)
     *(.rodata .rodata*)
-    *(.srodata .srodata*)
     . = ALIGN(4);
+    _etext = .;
   } >FLASH
-
-  .data :{
-    . = ALIGN(4);
-    *(.data .data.*)
-    . = ALIGN(4);
-    _edata = .;
-  } >RAM AT>FLASH
 
   .bss :{
     . = ALIGN(4);
-    _sbss = .;
-    *(.sbss*)
     *(.bss*)
     . = ALIGN(4);
     _ebss = .;

@@ -20,11 +20,11 @@ trap_handler:
 	bnez	sp, stack_exists
 
 	# set up stack
-	la		sp, stack + STACK_SIZE
+	la		sp, _estack					# linker will provide _estack
 
 stack_exists:
 	# push stack
-	addi	sp, sp, -(XLEN_BYTES*5)				 
+	addi	sp, sp, -(XLEN_BYTES*5)
 	SAVE_X	ra, 0(sp)
 	SAVE_X	a0, (XLEN_BYTES*1)(sp)
 	SAVE_X	t0, (XLEN_BYTES*2)(sp)

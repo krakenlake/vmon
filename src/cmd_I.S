@@ -73,7 +73,7 @@ cmd_I:
 
 	la		a0, string_info_bss
 	jal		print_string
-	la		a0, start_bss	 
+	la		a0, start_bss
 	jal		print_hex
 
 #ifdef M_MODE
@@ -82,20 +82,15 @@ cmd_I:
 	la		a0, bp_table
 	jal		print_hex
 
-	la		a0, string_info_stackstart
-	jal		print_string
-	la		a0, stack	
-	jal		print_hex
-
 	la		a0, string_info_stackend
 	jal		print_string
-	la		a0, stack + STACK_SIZE	 
+	la		a0, _estack
 	jal		print_hex
 
 	la		a0, string_info_stacksize
 	jal		print_string
-	la		t0, stack
-	sub		a0, sp, t0
+	la		t0, _estack
+	sub		a0, t0, sp
 	jal		print_hex
 #endif /* M_MODE */
 
@@ -224,19 +219,13 @@ string_info_text:		.string "\n.text:  ";
 string_info_bss:		.string "\n.bss:   ";
 .size string_info_bss, .-string_info_bss
 
-string_info_buffer:		.string "\nbuffer: ";
-.size string_info_buffer, .-string_info_buffer
-
 string_info_breakpoints:	.string "\nbreakpoints: ";
 .size string_info_breakpoints, .-string_info_breakpoints
-
-string_info_stackstart:		.string "\nstack start: ";
-.size string_info_stackstart, .-string_info_stackstart
 
 string_info_stackend:		.string "\nstack end:   ";
 .size string_info_stackend, .-string_info_stackend
 
-string_info_stacksize:		.string "\nstack bytes free: ";
+string_info_stacksize:		.string "\nstack bytes used: ";
 .size string_info_stacksize, .-string_info_stacksize
 
 #ifdef WITH_TESTCODE
