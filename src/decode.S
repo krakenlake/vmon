@@ -43,8 +43,6 @@ decode_GENERIC_next_argument:
 		li		t0, 0x1f					# skip comma after I_4imm offset
 		beq		tp, t0, decode_GENERIC_skip_comma
 	#endif
-	li		t0, 0x05						# skip comma after S-type offset
-	beq		tp, t0, decode_GENERIC_skip_comma
 
 	# decode more arguments?
 	srli	t0, s0, 8
