@@ -10,6 +10,7 @@ _estack = ORIGIN(RAM) + LENGTH(RAM);
 SECTIONS{
 
   .text :{
+    _stext = .;
     . = ALIGN(4);
     *(.init)
     . = ALIGN(4);
@@ -21,6 +22,7 @@ SECTIONS{
   } >FLASH
 
   .bss :{
+    _sbss = .;
     . = ALIGN(4);
     *(.bss*)
     . = ALIGN(4);

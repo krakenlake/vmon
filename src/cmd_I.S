@@ -68,20 +68,19 @@ cmd_I:
 
 	la		a0, string_info_text
 	jal		print_string
-	la		a0, start	 
+	la		a0, _stext
+	jal		print_hex
+	li		a0, '-'
+	jal		print_char
+	la		a0, _etext
 	jal		print_hex
 
 	la		a0, string_info_bss
 	jal		print_string
-	la		a0, start_bss
+	la		a0, _sbss
 	jal		print_hex
 
 #ifdef M_MODE
-	la		a0, string_info_breakpoints
-	jal		print_string
-	la		a0, bp_table
-	jal		print_hex
-
 	la		a0, string_info_stackend
 	jal		print_string
 	la		a0, _estack
@@ -218,9 +217,6 @@ string_info_text:		.string "\n.text:  ";
 
 string_info_bss:		.string "\n.bss:   ";
 .size string_info_bss, .-string_info_bss
-
-string_info_breakpoints:	.string "\nbreakpoints: ";
-.size string_info_breakpoints, .-string_info_breakpoints
 
 string_info_stackend:		.string "\nstack end:   ";
 .size string_info_stackend, .-string_info_stackend
