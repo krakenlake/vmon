@@ -59,7 +59,7 @@ ifeq ($(TARGET), qemu-32ec)
 endif 
 
 ifeq ($(TARGET), olimex-ch32v003-uart)
-	FLASH_START			= 0x80000000
+	FLASH_START			= 0x00000000
 	FLASH_SIZE			= 16K
 	RAM_START			= 0x20000000
 	RAM_SIZE			= 2K
