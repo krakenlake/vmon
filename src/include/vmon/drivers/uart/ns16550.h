@@ -26,7 +26,7 @@
 #endif
 
 #ifdef HW_CH32V003
-	#define UART_BASE		0x40010400
+	#define UART_BASE		0x40013800
 	#define UART_REG_RDR	0x00
 	#define UART_REG_THR	0x00
 	#define UART_REG_IER	2
