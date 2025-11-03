@@ -30,23 +30,13 @@
 
 
 # in: instruction word in a0
-dis_rd:
-dis_C_rd:
-	srli	a0, a0, 7
-	j		print_int_register_name
-.size dis_rd, .-dis_rd
-
-
-# in: instruction word in a0
+dis_rs2:								# rs2 needs 20 shifts in total, so fall through after this
+	srli	a0, a0, 5
 dis_rs1:
-	srli	a0, a0, 15
-	j		print_int_register_name
-.size dis_rs1, .-dis_rs1
-
-
-# in: instruction word in a0
-dis_rs2:
-	srli	a0, a0, 20
+	srli	a0, a0, 8					# rs1 needs 15 shifts in total, so fall through after this
+dis_rd:
+dis_C_rd:								# rd needs 7 shifts
+	srli	a0, a0, 7
 	j		print_int_register_name
 .size dis_rs2, .-dis_rs2
 
