@@ -86,47 +86,40 @@ dis_BRA:
 
 # in: instruction word in a0
 dis_I_imm:
-	PUSH_RA
 	# inst[31:20] -> imm[11:0]
 	#if XLEN >=64
 		sext.w	a0, a0					# sign-extend to 64 bits
 	#endif
 	srai	a0, a0, 20
-	jal		print_decimal
-	POP_RA_RET
+	j		print_decimal
 .size dis_I_imm, .-dis_I_imm
 
 
 # in: instruction word in a0
 dis_S_imm:
-	PUSH_RA
 	# inst[31:25] -> imm[11:5]
 	srai	t0, a0, 25					# shift the 5 lower bits out to clear them
 	slli	t0, t0, 5					# shift 5 back
 	srai	t1, a0, 7
 	andi	t1, t1, 0b11111
 	or		a0, t0, t1
-	jal		print_decimal
-	POP_RA_RET
+	j		print_decimal
 .size dis_S_imm, .-dis_S_imm
 
 
 # in: instruction word in a0
 dis_U_imm:
-	PUSH_RA
 	# extract imm
 	li		t0, 0xffffffff
 	and		a0, a0, t0
 	srli	a0, a0, 12 
-	jal		print_hex
-	POP_RA_RET
+	j		print_hex
 .size dis_U_imm, .-dis_U_imm
 
 
 # in: a0 = instruction word
 # in: a1 = current instruction address
 dis_J:
-	PUSH_RA
 	# inst[30:21] -> imm[10:1]
 	srli	a2, a0, 20
 	andi	a2, a2, 0b11111111110	 
@@ -148,8 +141,7 @@ dis_J:
 	and		t0, t0, t1
 	or		a2, a2, t0
 	add		a0, a1, a2
-	jal		print_hex
-	POP_RA_RET
+	j		print_hex
 .size dis_J, .-dis_J
 
 
@@ -178,19 +170,15 @@ decode_FENCE_bits_skip:
 
 # in: a0 = instruction word
 dis_PRE:
-	PUSH_RA
 	li		a1, 27
-	jal		decode_FENCE_bits
-	POP_RA_RET
+	j		decode_FENCE_bits
 .size dis_PRE, .-dis_PRE
 
 
 # in: a0 = instruction word
 dis_SUC:
-	PUSH_RA
 	li		a1, 23
-	jal		decode_FENCE_bits
-	POP_RA_RET
+	j		decode_FENCE_bits
 .size dis_SUC, .-dis_SUC
 
 
