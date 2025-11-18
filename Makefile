@@ -11,8 +11,7 @@ VERSION = 0.6.7
 #TARGET ?= qemu-32ic-mini
 #TARGET ?= qemu-32ec
 #TARGET ?= olimex-ch32v003-uart
-#TARGET ?= qemu-64g
-TARGET ?= qemu-64gqc
+TARGET ?= qemu-64g
 #TARGET ?= qemu-64gc
 #TARGET ?= vf2
 
@@ -76,11 +75,6 @@ ifeq ($(TARGET), qemu-64gc)
 	CFLAGS				+= -march=rv$(TARGET_XLEN)gc
 endif 
 
-ifeq ($(TARGET), qemu-64gqc)
-	TARGET_XLEN			= 64
-	CFLAGS				+= -march=rv$(TARGET_XLEN)gqc
-endif 
-
 ifeq ($(TARGET), vf2)
 	TARGET_XLEN			= 64
 	CFLAGS				+= -march=rv$(TARGET_XLEN)gc
@@ -106,17 +100,17 @@ endif
 
 
 # tools
-ARCH    ?= riscv$(TARGET_XLEN)-unknown-elf
-TOOLBIN ?= /opt/riscv/rv$(TARGET_XLEN)g/bin
-CC      = $(TOOLBIN)/$(ARCH)-gcc
-CPP     = $(TOOLBIN)/$(ARCH)-cpp
+GCCBIN	?= /usr/local/Cellar/riscv64-elf-gcc/15.2.0/bin
+TOOLBIN ?= /usr/local/Cellar/riscv64-elf-binutils/2.45.1/bin
+CC      = $(GCCBIN)/riscv64-elf-gcc
+CPP     = $(GCCBIN)/riscv64-elf-cpp
 CFLAGS	+= $(DEBUG) -DVERSION=\"$(VERSION)\" -nostartfiles -g -I"src/include"
-LD		= $(TOOLBIN)/$(ARCH)-ld
-LDFLAGS = --no-warn-rwx-segments
-OBJCOPY = $(TOOLBIN)/$(ARCH)-objcopy
-OBJDUMP = $(TOOLBIN)/$(ARCH)-objdump
-STRIP   = $(TOOLBIN)/$(ARCH)-strip
-GDB		= $(TOOLBIN)/$(ARCH)-gdb
+LD		= $(TOOLBIN)/riscv64-elf-ld
+LDFLAGS = --no-warn-rwx-segments -m elf$(TARGET_XLEN)lriscv
+OBJCOPY = $(TOOLBIN)/riscv64-elf-objcopy
+OBJDUMP = $(TOOLBIN)/riscv64-elf-objdump
+STRIP   = $(TOOLBIN)/riscv64-elf-strip
+GDB		= $(TOOLBIN)/riscv64-elf-gdb
 
 
 # directories
@@ -199,7 +193,6 @@ all:
 	make TARGET=olimex-ch32v003-uart release
 	make TARGET=qemu-64g release
 	make TARGET=qemu-64gc release
-	make TARGET=qemu-64gqc release
 	make TARGET=vf2 release
 
 
