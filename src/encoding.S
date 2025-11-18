@@ -468,7 +468,6 @@ string_OP_EBREAK:	.string "ebreak";
 	string_OP_WFI:			.string "wfi";	
 	string_OP_MRET:			.string "mret";	
 	string_OP_SRET:			.string "sret";	
-	string_OP_SFENCE_VM:	.string "sfence.vm";	
 	string_OP_SFENCE_VMA:	.string "sfence.vma";	
 #endif /* DISASS_PSEUDO */
 
@@ -948,7 +947,6 @@ encoding_table:
 	.word MASK_WFI,			MATCH_WFI,			string_OP_WFI,			0x00000000
 	.word MASK_MRET,		MATCH_MRET,			string_OP_MRET,			0x00000000
 	.word MASK_SRET,		MATCH_SRET,			string_OP_SRET,			0x00000000
-	.word MASK_SFENCE_VM,	MATCH_SFENCE_VM,	string_OP_SFENCE_VM,	0x00000000
 	.word MASK_SFENCE_VMA,	MATCH_SFENCE_VMA,	string_OP_SFENCE_VMA,	0x00000000
 #endif /* DISASS_RVPRIV */
 
