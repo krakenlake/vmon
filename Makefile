@@ -2,7 +2,7 @@
 
 default: this
 
-VERSION = 0.6.7
+VERSION = 0.6.8
 
 #TARGET ?= qemu-32i
 #TARGET ?= qemu-32ic
@@ -10,10 +10,12 @@ VERSION = 0.6.7
 #TARGET ?= qemu-32i-mini
 #TARGET ?= qemu-32ic-mini
 #TARGET ?= qemu-32ec
-#TARGET ?= olimex-ch32v003-uart
 TARGET ?= qemu-64g
 #TARGET ?= qemu-64gc
+
+# TODO: not working
 #TARGET ?= vf2
+#TARGET ?= olimex-ch32v003-uart
 
 DEBUG ?= -DDEBUG
 
@@ -104,7 +106,7 @@ GCCBIN	?= /usr/local/Cellar/riscv64-elf-gcc/15.2.0/bin
 TOOLBIN ?= /usr/local/Cellar/riscv64-elf-binutils/2.45.1/bin
 CC      = $(GCCBIN)/riscv64-elf-gcc
 CPP     = $(GCCBIN)/riscv64-elf-cpp
-CFLAGS	+= $(DEBUG) -DVERSION=\"$(VERSION)\" -nostartfiles -g -I"src/include"
+CFLAGS	+= $(DEBUG) -DVERSION=\"$(VERSION)\" -nostartfiles -O2 -g -I"src/include"
 LD		= $(TOOLBIN)/riscv64-elf-ld
 LDFLAGS = --no-warn-rwx-segments -m elf$(TARGET_XLEN)lriscv
 OBJCOPY = $(TOOLBIN)/riscv64-elf-objcopy
@@ -190,9 +192,10 @@ all:
 	make TARGET=qemu-32ic-mini release
 	make TARGET=qemu-32e release
 	make TARGET=qemu-32ec release
-	make TARGET=olimex-ch32v003-uart release
+#	make TARGET=olimex-ch32v003-uart release
 	make TARGET=qemu-64g release
 	make TARGET=qemu-64gc release
-	make TARGET=vf2 release
+#	make TARGET=vf2 release
+
 
 
