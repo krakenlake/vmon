@@ -102,8 +102,8 @@ endif
 
 
 # tools
-GCCBIN	?= /usr/local/Cellar/riscv64-elf-gcc/15.2.0/bin
-TOOLBIN ?= /usr/local/Cellar/riscv64-elf-binutils/2.45.1/bin
+GCCBIN	?= /usr/local/bin
+TOOLBIN ?= /usr/local/bin
 CC      = $(GCCBIN)/riscv64-elf-gcc
 CPP     = $(GCCBIN)/riscv64-elf-cpp
 CFLAGS	+= $(DEBUG) -DVERSION=\"$(VERSION)\" -nostartfiles -O2 -g -I"src/include"
