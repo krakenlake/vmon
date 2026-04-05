@@ -32,6 +32,9 @@ start:
 
 	# do not add anything before this
 	#ifdef M_MODE
+
+		# we are running without OpenSBI
+
 		#ifdef TARGET_HAS_Zicsr
 			# immediately save sp in mscratch
 			csrw	mscratch, sp
@@ -39,7 +42,7 @@ start:
 			# run only on hart 0
 			# as sp is already saved, we can use it now
 			csrr	sp, mhartid
-			bnez	sp, end
+			bnez	sp, vmon_end
 
 			# set up trap vector
 			la		sp, trap_handler
@@ -70,7 +73,7 @@ start:
 	# which then will execute the main loop
 
 	ebreak
-	j		end
+	j		vmon_end
 .size start, .-start
 
 #########################################################################
@@ -283,11 +286,11 @@ unknown_command:
 	j		main_prompt
 	# end of main loop
 
-end:
+vmon_end:
 	#ifdef M_MODE
 		wfi
-		j		end
 	#endif /* M_MODE */
+	j	vmon_end
 .size breakpoint_entry, .-breakpoint_entry
 
 
@@ -296,7 +299,7 @@ end:
 
 string_startup:
 	.ascii "\nVMON "
-	.ascii VERSION
+	.ascii VMON_VERSION
 	.asciz " - RISC-V machine code monitor";
 .size string_startup, .-string_startup
 

@@ -2,7 +2,7 @@
 
 default: this
 
-VERSION = 0.6.8
+VMON_VERSION = 0.6.9
 
 #TARGET ?= qemu-32i
 #TARGET ?= qemu-32ic
@@ -13,7 +13,7 @@ VERSION = 0.6.8
 TARGET ?= qemu-64g
 #TARGET ?= qemu-64gc
 
-# TODO: not working
+# TODO: currently not working
 #TARGET ?= vf2
 #TARGET ?= olimex-ch32v003-uart
 
@@ -26,7 +26,14 @@ FLASH_SIZE			= 32K
 RAM_START			= 0x80020000
 RAM_SIZE			= 8K
 TARGET_XLEN			= 32
-QEMU_FLAGS			= -machine virt -cpu rv$(TARGET_XLEN),pmp=false -smp 1 -gdb tcp::1234 -bios none -serial stdio -display none -kernel $(BUILD)/$(NAME).img
+
+# QEMU settings
+QEMU_BIOS			= none
+# this would load OpenSBI first and run VMON in S-mode
+#QEMU_BIOS			= default
+# number of emulated CPUs
+QEMU_HARTS			= 4
+QEMU_FLAGS			= -machine virt -cpu rv$(TARGET_XLEN),pmp=false -smp $(QEMU_HARTS) -gdb tcp::1234 -bios $(QEMU_BIOS) -serial stdio -display none -kernel $(BUILD)/$(NAME).img
 RUN					= qemu-system-riscv$(TARGET_XLEN) $(QEMU_FLAGS) 
 
 
@@ -106,7 +113,7 @@ GCCBIN	?= /usr/local/bin
 TOOLBIN ?= /usr/local/bin
 CC      = $(GCCBIN)/riscv64-elf-gcc
 CPP     = $(GCCBIN)/riscv64-elf-cpp
-CFLAGS	+= $(DEBUG) -DVERSION=\"$(VERSION)\" -nostartfiles -O2 -g -I"src/include"
+CFLAGS	+= $(DEBUG) -DVMON_VERSION=\"$(VMON_VERSION)\" -nostartfiles -O2 -g -I"src/include"
 LD		= $(TOOLBIN)/riscv64-elf-ld
 LDFLAGS = --no-warn-rwx-segments -m elf$(TARGET_XLEN)lriscv
 OBJCOPY = $(TOOLBIN)/riscv64-elf-objcopy
@@ -192,10 +199,10 @@ all:
 	make TARGET=qemu-32ic-mini release
 	make TARGET=qemu-32e release
 	make TARGET=qemu-32ec release
-#	make TARGET=olimex-ch32v003-uart release
 	make TARGET=qemu-64g release
 	make TARGET=qemu-64gc release
 #	make TARGET=vf2 release
+#	make TARGET=olimex-ch32v003-uart release
 
 
 
