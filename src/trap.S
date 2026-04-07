@@ -94,10 +94,17 @@ handle_exception:
 	jal		print_char
 	# each entry in CAUSE string table is 4 bytes
 	# TODO: use a loop to go to the n-th entry in the table, would save "cause_verbose_table" and require less space
+	addi	t0, s0, -20							# highest known cause +1		
+	blt		t0, zero, known_cause
+	# cause not in table
+	LWU		a0, string_CAUSE_RESERVED
+	j		output_cause
+known_cause:
 	slli	a0, s0, 2							# set a0 = xcause * 4
 	la		s0, cause_verbose_table				# start of CAUSE string table
 	add		a0, a0, s0
 	LWU		a0, 0(a0)
+output_cause:
 	jal		print_string
 	li		a0, ')'
 	jal		print_char
@@ -159,21 +166,35 @@ string_cause_msg:			.string "\n\tcause\t= ";
 	string_CAUSE_SUPERVISOR_ECALL:		.string "SUPERVISOR_ECALL";
 	string_CAUSE_HYPERVISOR_ECALL:		.string "HYPERVISOR_ECALL";
 	string_CAUSE_MACHINE_ECALL:			.string "MACHINE_ECALL";
+	string_CAUSE_FETCH_PAGE_FAULT:		.string "FETCH_PAGE_FAULT";
+	string_CAUSE_LOAD_PAGE_FAULT:		.string "LOAD_PAGE_FAULT";
+	string_CAUSE_STORE_PAGE_FAULT:		.string "STORE_PAGE_FAULT";
+	string_CAUSE_SOFTWARE_CHECK:		.string "SOFTWARE_CHECK";
+	string_CAUSE_HARDWARE_ERROR:		.string "HARDWARE_ERROR";
+	string_CAUSE_RESERVED:				.string "RESERVED_OR_CUSTOM";
 
 .align 4
 cause_verbose_table:
-	.word string_CAUSE_MISALIGNED_FETCH
-	.word string_CAUSE_FAULT_FETCH
-	.word string_CAUSE_ILLEGAL_INSTRUCTION
-	.word string_CAUSE_BREAKPOINT
-	.word string_CAUSE_MISALIGNED_LOAD
-	.word string_CAUSE_FAULT_LOAD
-	.word string_CAUSE_MISALIGNED_STORE
-	.word string_CAUSE_FAULT_STORE
-	.word string_CAUSE_USER_ECALL
-	.word string_CAUSE_SUPERVISOR_ECALL
-	.word string_CAUSE_HYPERVISOR_ECALL
-	.word string_CAUSE_MACHINE_ECALL
+	.word string_CAUSE_MISALIGNED_FETCH			#  0
+	.word string_CAUSE_FAULT_FETCH				#  1
+	.word string_CAUSE_ILLEGAL_INSTRUCTION		#  2
+	.word string_CAUSE_BREAKPOINT				#  3
+	.word string_CAUSE_MISALIGNED_LOAD			#  4
+	.word string_CAUSE_FAULT_LOAD				#  5
+	.word string_CAUSE_MISALIGNED_STORE			#  6
+	.word string_CAUSE_FAULT_STORE				#  7
+	.word string_CAUSE_USER_ECALL				#  8
+	.word string_CAUSE_SUPERVISOR_ECALL			#  9
+	.word string_CAUSE_HYPERVISOR_ECALL			# 10
+	.word string_CAUSE_MACHINE_ECALL			# 11
+	.word string_CAUSE_FETCH_PAGE_FAULT			# 12
+	.word string_CAUSE_LOAD_PAGE_FAULT			# 13
+	.word string_CAUSE_RESERVED					# 14
+	.word string_CAUSE_STORE_PAGE_FAULT			# 15
+	.word string_CAUSE_RESERVED					# 16
+	.word string_CAUSE_RESERVED					# 17
+	.word string_CAUSE_SOFTWARE_CHECK			# 18
+	.word string_CAUSE_HARDWARE_ERROR			# 19
 #endif /* CAUSE_VERBOSE */
 
 
