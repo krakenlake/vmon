@@ -36,6 +36,7 @@ uart_clear_buffer_loop:
 
 # wait and get one character from UART
 # out: char (ASCII) in a0
+#ifdef M_MODE
 uart_wait_get_char:
 	li		t0, UART_BASE
 uart_get_char_wait:
@@ -47,6 +48,29 @@ uart_get_char_wait:
 	lbu		a0, 0(t0)							# get input from UART  
 	ret
 .size uart_wait_get_char, .-uart_wait_get_char
+#endif /* M_MODE */
+
+
+#ifdef S_MODE
+uart_wait_get_char:
+	addi	sp, sp, -(XLEN_BYTES*2)	
+	SAVE_X	a6, 0(sp)
+	SAVE_X	a7, (XLEN_BYTES*1)(sp)
+uart_get_char_wait:
+	# busy wait for key pressed
+	# TODO: use interrupt instead of polling
+	mv		a6, zero				# SBI fid
+	li		a7, 2					# SBI eid
+	ecall							# returns char or -1 on failure
+	li		t0, -1
+	beq		a0, t0, uart_get_char_wait
+	# now we got a valid input char
+	LOAD_X	a6, 0(sp)
+	LOAD_X	a7, (XLEN_BYTES*1)(sp)
+	addi	sp, sp, (XLEN_BYTES*2)
+	ret
+.size uart_wait_get_char, .-uart_wait_get_char
+#endif /* S_MODE */
 
 
 # get a line of input from UART until RETURN is hit
@@ -148,33 +172,18 @@ uart_output_char_wait_lsr:
 # in: char (ASCII) in a0
 #ifdef S_MODE
 uart_output_char:
-	addi	sp, sp, -(XLEN_BYTES*8)	
+	addi	sp, sp, -(XLEN_BYTES*4)	
 	SAVE_X	a0, 0(sp)
-	SAVE_X	a1, (XLEN_BYTES*1)(sp)
-	SAVE_X	a2, (XLEN_BYTES*2)(sp)
-	SAVE_X	a3, (XLEN_BYTES*3)(sp)
-	SAVE_X	a4, (XLEN_BYTES*4)(sp)
-	SAVE_X	a5, (XLEN_BYTES*5)(sp)
-	SAVE_X	a6, (XLEN_BYTES*6)(sp)
-	SAVE_X	a7, (XLEN_BYTES*7)(sp)
+	SAVE_X	a6, (XLEN_BYTES*1)(sp)
+	SAVE_X	a7, (XLEN_BYTES*2)(sp)
 									# char to be printed in a0 already
-	mv		a1, zero				# 
-	mv		a2, zero				# 
-	mv		a3, zero				# 
-	mv		a4, zero				# 
-	mv		a5, zero				# 
 	mv		a6, zero				# SBI fid
 	li		a7, 1					# SBI eid
 	ecall
 	LOAD_X	a0, 0(sp)
-	LOAD_X	a1, (XLEN_BYTES*1)(sp)
-	LOAD_X	a2, (XLEN_BYTES*2)(sp)
-	LOAD_X	a3, (XLEN_BYTES*3)(sp)
-	LOAD_X	a4, (XLEN_BYTES*4)(sp)
-	LOAD_X	a5, (XLEN_BYTES*5)(sp)
-	LOAD_X	a6, (XLEN_BYTES*6)(sp)
-	LOAD_X	a7, (XLEN_BYTES*7)(sp)
-	addi	sp, sp, (XLEN_BYTES*8)
+	LOAD_X	a6, (XLEN_BYTES*1)(sp)
+	LOAD_X	a7, (XLEN_BYTES*2)(sp)
+	addi	sp, sp, (XLEN_BYTES*4)
 	ret
 .size uart_output_char, .-uart_output_char
 #endif /* S_MODE */

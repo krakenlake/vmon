@@ -2,7 +2,7 @@
 
 default: this
 
-VMON_VERSION = 0.7.1
+VMON_VERSION = 0.7.2
 
 #TARGET ?= qemu-32i
 #TARGET ?= qemu-32ic
@@ -20,9 +20,9 @@ TARGET ?= qemu-64g
 DEBUG ?= -DDEBUG
 
 # QEMU settings
-QEMU_BIOS			= none
+#QEMU_BIOS			= none
 # this would load OpenSBI first and run VMON in S-mode
-#QEMU_BIOS			= default
+QEMU_BIOS			= default
 # number of emulated CPUs
 QEMU_HARTS			= 4
 QEMU_FLAGS			= -machine virt -cpu rv$(TARGET_XLEN),pmp=false -smp $(QEMU_HARTS) -gdb tcp::1234 -bios $(QEMU_BIOS) -serial stdio -display none -kernel $(BUILD)/$(NAME).img
