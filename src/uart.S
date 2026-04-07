@@ -132,6 +132,7 @@ uart_output_string_done:
 
 # output one char
 # in: char (ASCII) in a0
+#ifdef M_MODE
 uart_output_char:
 	li		t0, UART_BASE
 uart_output_char_wait_lsr:
@@ -141,7 +142,42 @@ uart_output_char_wait_lsr:
 	sb		a0, UART_REG_THR(t0)				# print byte to UART
 	ret
 .size uart_output_char, .-uart_output_char
+#endif /* M_MODE */
 
+# output one char
+# in: char (ASCII) in a0
+#ifdef S_MODE
+uart_output_char:
+	addi	sp, sp, -(XLEN_BYTES*8)	
+	SAVE_X	a0, 0(sp)
+	SAVE_X	a1, (XLEN_BYTES*1)(sp)
+	SAVE_X	a2, (XLEN_BYTES*2)(sp)
+	SAVE_X	a3, (XLEN_BYTES*3)(sp)
+	SAVE_X	a4, (XLEN_BYTES*4)(sp)
+	SAVE_X	a5, (XLEN_BYTES*5)(sp)
+	SAVE_X	a6, (XLEN_BYTES*6)(sp)
+	SAVE_X	a7, (XLEN_BYTES*7)(sp)
+									# char to be printed in a0 already
+	mv		a1, zero				# 
+	mv		a2, zero				# 
+	mv		a3, zero				# 
+	mv		a4, zero				# 
+	mv		a5, zero				# 
+	mv		a6, zero				# SBI fid
+	li		a7, 1					# SBI eid
+	ecall
+	LOAD_X	a0, 0(sp)
+	LOAD_X	a1, (XLEN_BYTES*1)(sp)
+	LOAD_X	a2, (XLEN_BYTES*2)(sp)
+	LOAD_X	a3, (XLEN_BYTES*3)(sp)
+	LOAD_X	a4, (XLEN_BYTES*4)(sp)
+	LOAD_X	a5, (XLEN_BYTES*5)(sp)
+	LOAD_X	a6, (XLEN_BYTES*6)(sp)
+	LOAD_X	a7, (XLEN_BYTES*7)(sp)
+	addi	sp, sp, (XLEN_BYTES*8)
+	ret
+.size uart_output_char, .-uart_output_char
+#endif /* S_MODE */
 
 .bss
 
