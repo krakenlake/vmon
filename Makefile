@@ -2,7 +2,7 @@
 
 default: this
 
-VMON_VERSION = 0.7.0
+VMON_VERSION = 0.7.1
 
 #TARGET ?= qemu-32i
 #TARGET ?= qemu-32ic
@@ -19,14 +19,6 @@ TARGET ?= qemu-64g
 
 DEBUG ?= -DDEBUG
 
-
-# set default values for all targets
-FLASH_START			= 0x80000000
-FLASH_SIZE			= 32K
-RAM_START			= 0x80020000
-RAM_SIZE			= 8K
-TARGET_XLEN			= 32
-
 # QEMU settings
 QEMU_BIOS			= none
 # this would load OpenSBI first and run VMON in S-mode
@@ -39,10 +31,17 @@ RUN					= qemu-system-riscv$(TARGET_XLEN) $(QEMU_FLAGS)
 # if QEMU will run with SBI, compile for S-Mode, else for M-Mode
 ifneq ($(QEMU_BIOS), none)
 	CFLAGS += -DS_MODE
+	FLASH_START			= 0x80200000
+	RAM_START			= 0x80220000
 else
 	CFLAGS += -DM_MODE
+	FLASH_START			= 0x80000000
+	RAM_START			= 0x80020000
 endif
-
+# set default values for all targets
+FLASH_SIZE			= 64K
+RAM_SIZE			= 32K
+TARGET_XLEN			= 32
 
 # overwrite target-specific values
 ifeq ($(TARGET), qemu-32i)
