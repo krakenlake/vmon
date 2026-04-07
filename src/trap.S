@@ -134,7 +134,7 @@ exit_trap_handler:
 	LOAD_X	t1, (XLEN_BYTES*3)(sp)
 	LOAD_X	s0, (XLEN_BYTES*4)(sp)
 	addi	sp, sp, (XLEN_BYTES*5)
-	mret
+	MODE_PREFIX(ret)
 .size trap_handler, .-trap_handler
 
 
