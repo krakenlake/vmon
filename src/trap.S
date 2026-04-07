@@ -68,19 +68,19 @@ handle_exception:
 	la		a0, string_exception_msg
 	jal		print_string
 
-	# print mepc
+	# print xepc
 	la		a0, string_epc_msg
 	jal		print_string
 	csrr	a0, MODE_PREFIX(epc)
 	jal		print_hex
 
-	# print mtval
+	# print xtval
 	la		a0, string_tval_msg
 	jal		print_string
 	csrr	a0, MODE_PREFIX(tval)
 	jal		print_hex
 
-	# print cause
+	# print xcause
 	la		a0, string_cause_msg
 	jal		print_string
 	csrr	a0, MODE_PREFIX(cause)
@@ -93,8 +93,9 @@ handle_exception:
 	li		a0, '('
 	jal		print_char
 	# each entry in CAUSE string table is 4 bytes
+	# TODO: use a loop to go to the n-th entry in the table, would save "cause_verbose_table" and require less space
 	slli	a0, s0, 2							# set a0 = xcause * 4
-	la		s0, cause_verbose_table			# start of CAUSE string table
+	la		s0, cause_verbose_table				# start of CAUSE string table
 	add		a0, a0, s0
 	LWU		a0, 0(a0)
 	jal		print_string
@@ -112,6 +113,7 @@ handle_exception:
 # as that is not automatically guaranteed with RVC enabled
 .align 4
 trap_handler_irq:
+/*
 	li		a0, '#'
 	jal		print_char
 	# reset timer
@@ -120,7 +122,9 @@ trap_handler_irq:
 	add		t1, t0, t1
 	la		t0, MTIMECMP
 	SAVE_X	t1, 0(t0)
+*/
 	j		exit_trap_handler
+
 
 exit_trap_handler:
 	# pop stack
@@ -138,7 +142,7 @@ exit_trap_handler:
 
 
 string_exception_msg:		.string "\nexception:"
-string_epc_msg:			.string "\n\tepc\t= ";
+string_epc_msg:				.string "\n\tepc\t= ";
 string_tval_msg:			.string "\n\ttval\t= ";
 string_cause_msg:			.string "\n\tcause\t= ";
 
