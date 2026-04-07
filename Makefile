@@ -2,7 +2,7 @@
 
 default: this
 
-VMON_VERSION = 0.6.9
+VMON_VERSION = 0.7.0
 
 #TARGET ?= qemu-32i
 #TARGET ?= qemu-32ic
@@ -36,6 +36,13 @@ QEMU_HARTS			= 4
 QEMU_FLAGS			= -machine virt -cpu rv$(TARGET_XLEN),pmp=false -smp $(QEMU_HARTS) -gdb tcp::1234 -bios $(QEMU_BIOS) -serial stdio -display none -kernel $(BUILD)/$(NAME).img
 RUN					= qemu-system-riscv$(TARGET_XLEN) $(QEMU_FLAGS) 
 
+# if QEMU will run with SBI, compile for S-Mode, else for M-Mode
+ifneq ($(QEMU_BIOS), none)
+	CFLAGS += -DS_MODE
+else
+	CFLAGS += -DM_MODE
+endif
+
 
 # overwrite target-specific values
 ifeq ($(TARGET), qemu-32i)
@@ -66,14 +73,6 @@ ifeq ($(TARGET), qemu-32ec)
 	CFLAGS				+= -march=rv$(TARGET_XLEN)ec_zicsr -mabi=ilp32e
 endif 
 
-ifeq ($(TARGET), olimex-ch32v003-uart)
-	FLASH_START			= 0x00000000
-	FLASH_SIZE			= 16K
-	RAM_START			= 0x20000000
-	RAM_SIZE			= 2K
-	CFLAGS				+= -march=rv$(TARGET_XLEN)ec_zicsr -mabi=ilp32e
-endif 
-
 ifeq ($(TARGET), qemu-64g)
 	TARGET_XLEN			= 64
 	CFLAGS				+= -march=rv$(TARGET_XLEN)g
@@ -82,6 +81,14 @@ endif
 ifeq ($(TARGET), qemu-64gc)
 	TARGET_XLEN			= 64
 	CFLAGS				+= -march=rv$(TARGET_XLEN)gc
+endif 
+
+ifeq ($(TARGET), olimex-ch32v003-uart)
+	FLASH_START			= 0x00000000
+	FLASH_SIZE			= 16K
+	RAM_START			= 0x20000000
+	RAM_SIZE			= 2K
+	CFLAGS				+= -march=rv$(TARGET_XLEN)ec_zicsr -mabi=ilp32e
 endif 
 
 ifeq ($(TARGET), vf2)

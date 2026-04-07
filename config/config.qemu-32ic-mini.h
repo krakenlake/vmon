@@ -15,11 +15,6 @@
 #define FLEN	0
 #define TARGET_HAS_Zicsr
 
-// always use only one of these
-#define M_MODE
-//#define S_MODE
-//#define U_MODE
-
 // which user commands shall be in the binary?
 #define WITH_CMD_A			// assemble
 //#define WITH_CMD_B			// breakpoints
@@ -87,8 +82,8 @@
 // enable printing of pseudo opcodes in disassembly?
 //#define DISASS_PSEUDO
 
-// include strings for MCAUSE verbose output?
-//#define MCAUSE_VERBOSE
+// include strings for CAUSE verbose output?
+//#define CAUSE_VERBOSE
 
 // include strings for verbose error messages?
 //#define ERROR_VERBOSE

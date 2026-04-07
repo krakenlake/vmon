@@ -16,11 +16,6 @@
 #define TARGET_HAS_Zicsr
 #define TARGET_HAS_RVF
 
-// always use only one of these
-#define M_MODE
-//#define S_MODE
-//#define U_MODE
-
 // which user commands shall be in the binary?
 #define WITH_CMD_A			// assemble
 #define WITH_CMD_B			// breakpoints
@@ -55,7 +50,7 @@
 	#define WITH_TESTCODE_RVM
 	#define WITH_TESTCODE_RVA
 	#define WITH_TESTCODE_RVF
-	//#define WITH_TESTCODE_RVD
+	#define WITH_TESTCODE_RVD
 	//#define WITH_TESTCODE_RVQ
 	//#define WITH_TESTCODE_RVC
 	//#define WITH_TESTCODE_RVB
@@ -74,7 +69,7 @@
 #define DISASS_RVM
 #define DISASS_RVA
 #define DISASS_RVF
-//#define DISASS_RVD
+#define DISASS_RVD
 //#define DISASS_RVQ
 //#define DISASS_RVC
 //#define DISASS_RVB
@@ -88,8 +83,8 @@
 // enable printing of pseudo opcodes in disassembly?
 #define DISASS_PSEUDO
 
-// include strings for MCAUSE verbose output?
-#define MCAUSE_VERBOSE
+// include strings for CAUSE verbose output?
+#define CAUSE_VERBOSE
 
 // include strings for verbose error messages?
 #define ERROR_VERBOSE

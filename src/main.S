@@ -31,43 +31,41 @@ VMON - a RISC-V machine code monitor written in RISC-V assembly code
 start:
 
 	# do not add anything before this
-	#ifdef M_MODE
 
-		# we are running without OpenSBI
+	#ifdef TARGET_HAS_Zicsr
+		# immediately save sp in mscratch
+		csrw	MODE_PREFIX(scratch), sp
 
-		#ifdef TARGET_HAS_Zicsr
-			# immediately save sp in mscratch
-			csrw	mscratch, sp
-
-			# run only on hart 0
+		#ifdef M_MODE
+			# in M-Mode we need to make sure that we run only on one hart
 			# as sp is already saved, we can use it now
 			csrr	sp, mhartid
+			# hart 0 only
 			bnez	sp, vmon_end
+		#endif /* M_MODE */
 
-			# set up trap vector
-			la		sp, trap_handler
-			csrw	mtvec, sp
+		# set up trap vector
+		la		sp, trap_handler
+		csrw	MODE_PREFIX(tvec), sp
 
-			# set up timer irq
-			/*
-			# enable all m-mode irqs
-			csrsi	mstatus, 0b1000
-			# set timer for the first time
-			rdtime	t0
-			li		t1, TIMER_INTERVAL
-			add		t1, t0, t1
-			la		t2, MTIMECMP
-			sd		t1, 0(t2)
-			# enable m-mode timer irq
-			li		t1, 0b10000000
-			csrs	mie, t1
-			*/
+		# set up timer irq
+		/*
+		# enable all m-mode irqs
+		csrsi	mstatus, 0b1000
+		# set timer for the first time
+		rdtime	t0
+		li		t1, TIMER_INTERVAL
+		add		t1, t0, t1
+		la		t2, MTIMECMP
+		sd		t1, 0(t2)
+		# enable m-mode timer irq
+		li		t1, 0b10000000
+		csrs	mie, t1
+		*/
 
-			# restore sp as it were on entry
-			csrr	sp, mscratch
-
-		#endif /* TARGET_HAS_Zicsr */
-	#endif /* M_MODE */
+		# restore sp as it were on entry
+		csrr	sp, MODE_PREFIX(scratch)
+	#endif /* TARGET_HAS_Zicsr */
 
 	# intentionally execute ebreak in order to enter trap handler,
 	# which then will execute the main loop
@@ -117,31 +115,33 @@ breakpoint_entry:
 	#endif /* TARGET_RVE */
 	
 	# now we can safely use t0 to get back and save sp in that same stack frame above
-	#ifdef M_MODE
+	#if defined(M_MODE) || defined(S_MODE)
 		#ifdef TARGET_HAS_Zicsr
-			csrr	t0, mscratch					# read original sp back
+			csrr	t0, MODE_PREFIX(scratch)		# read original sp back
 			SAVE_X	t0, (STK_OFF_SP)(sp)			# and save it
 		#endif /* TARGET_HAS_Zicsr */
 	#else
 		SAVE_X	sp, (STK_OFF_SP)(sp)
-	#endif /* M_MODE */
+	#endif /* M_MODE || S_MODE */
 
-	# save mepc
-	#ifdef M_MODE
+	# save epc
+	#if defined(M_MODE) || defined(S_MODE)
 		#ifdef TARGET_HAS_Zicsr
-			csrr	t0, mepc
+			csrr	t0, MODE_PREFIX(epc)
 			SAVE_X	t0, (STK_OFF_PC)(sp)
 		#endif /* TARGET_HAS_Zicsr */
-	#endif /* M_MODE */
-
+	#endif /* M_MODE || S_MODE */
+	
 	#ifdef TARGET_HAS_RVF
 		# enable RVF in mstatus of cpu (this is disabled in QEMU per default)
 		#ifdef TARGET_HAS_Zicsr
 			li		t0, 0b11
 			slli	t0, t0, 13
-			csrr	t1, mstatus
-			or		t1, t0, t1
-			csrw	mstatus, t1
+			#if defined(M_MODE) || defined(S_MODE)
+				csrr	t1, MODE_PREFIX(status)
+				or		t1, t0, t1
+				csrw	MODE_PREFIX(status), t1
+			#endif /* M_MODE || S_MODE */
 		#endif /* TARGET_HAS_Zicsr */
 	
 		# save f0-f31 registers on stack

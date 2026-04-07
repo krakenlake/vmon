@@ -4,9 +4,6 @@
 #include "vmon/stack.h"
 
 
-#if defined(M_MODE) && defined(TARGET_HAS_Zicsr)
-
-
 .global trap_handler
 
 
@@ -16,6 +13,10 @@
 # trap handler needs to be aligned manually 
 # as that is not automatically guaranteed with RVC enabled
 .align 4
+
+
+#if defined(TARGET_HAS_Zicsr)
+
 trap_handler:
 	bnez	sp, stack_exists
 
@@ -33,10 +34,10 @@ stack_exists:
 
 	# clear irq
 	li		t0, 0b10000000
-	csrc	mip, t0
+	csrc	MODE_PREFIX(ip), t0
 
-	# irq or exception? check leftmost bit of mcause
-	csrr	a0, mcause
+	# irq or exception? check leftmost bit of xcause
+	csrr	a0, MODE_PREFIX(cause)
 	li		t0, 0b1
 	slli	t0, t0, XLEN-1
 	and		a0, a0, t0
@@ -44,7 +45,7 @@ stack_exists:
 
 	# we have an exception
 	# check if exception was caused by ebreak
-	csrr	t0, mcause
+	csrr	t0, MODE_PREFIX(cause)
 	li		t1, 3						# breakpoint exception?
 	bne		t0, t1, handle_exception
 	
@@ -68,32 +69,32 @@ handle_exception:
 	jal		print_string
 
 	# print mepc
-	la		a0, string_mepc_msg
+	la		a0, string_epc_msg
 	jal		print_string
-	csrr	a0, mepc
+	csrr	a0, MODE_PREFIX(epc)
 	jal		print_hex
 
 	# print mtval
-	la		a0, string_mtval_msg
+	la		a0, string_tval_msg
 	jal		print_string
-	csrr	a0, mtval
+	csrr	a0, MODE_PREFIX(tval)
 	jal		print_hex
 
-	# print mcause
-	la		a0, string_mcause_msg
+	# print cause
+	la		a0, string_cause_msg
 	jal		print_string
-	csrr	a0, mcause
+	csrr	a0, MODE_PREFIX(cause)
 	mv		s0, a0								# save for later
 	jal		print_hex
-	# print MCAUSE verbose
+	# print CAUSE verbose
 
-#ifdef MCAUSE_VERBOSE
+#ifdef CAUSE_VERBOSE
 	jal		print_space
 	li		a0, '('
 	jal		print_char
-	# each entry in MCAUSE string table is 4 bytes
-	slli	a0, s0, 2							# set a0 = mcause * 4
-	la		s0, mcause_verbose_table			# start of MCAUSE string table
+	# each entry in CAUSE string table is 4 bytes
+	slli	a0, s0, 2							# set a0 = xcause * 4
+	la		s0, cause_verbose_table			# start of CAUSE string table
 	add		a0, a0, s0
 	LWU		a0, 0(a0)
 	jal		print_string
@@ -103,7 +104,7 @@ handle_exception:
 
 	# set return address for leaving trap handler
 	la		a0, main_prompt
-	csrw	mepc, a0
+	csrw	MODE_PREFIX(epc), a0
 	j		exit_trap_handler
 
 
@@ -137,11 +138,11 @@ exit_trap_handler:
 
 
 string_exception_msg:		.string "\nexception:"
-string_mepc_msg:			.string "\n\tmepc\t= ";
-string_mtval_msg:			.string "\n\tmtval\t= ";
-string_mcause_msg:			.string "\n\tmcause\t= ";
+string_epc_msg:			.string "\n\tepc\t= ";
+string_tval_msg:			.string "\n\ttval\t= ";
+string_cause_msg:			.string "\n\tcause\t= ";
 
-#ifdef MCAUSE_VERBOSE
+#ifdef CAUSE_VERBOSE
 	string_CAUSE_MISALIGNED_FETCH:		.string "MISALIGNED_FETCH";
 	string_CAUSE_FAULT_FETCH:			.string "FAULT_FETCH";
 	string_CAUSE_ILLEGAL_INSTRUCTION:	.string "ILLEGAL_INSTRUCTION";
@@ -156,7 +157,7 @@ string_mcause_msg:			.string "\n\tmcause\t= ";
 	string_CAUSE_MACHINE_ECALL:			.string "MACHINE_ECALL";
 
 .align 4
-mcause_verbose_table:
+cause_verbose_table:
 	.word string_CAUSE_MISALIGNED_FETCH
 	.word string_CAUSE_FAULT_FETCH
 	.word string_CAUSE_ILLEGAL_INSTRUCTION
@@ -169,7 +170,7 @@ mcause_verbose_table:
 	.word string_CAUSE_SUPERVISOR_ECALL
 	.word string_CAUSE_HYPERVISOR_ECALL
 	.word string_CAUSE_MACHINE_ECALL
-#endif /* MCAUSE_VERBOSE */
+#endif /* CAUSE_VERBOSE */
 
 
-#endif /* defined(M_MODE) && defined(TARGET_HAS_Zicsr) */
+#endif /* defined(TARGET_HAS_Zicsr) */
