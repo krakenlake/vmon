@@ -25,7 +25,7 @@ DEBUG ?= -DDEBUG
 QEMU_BIOS			= default
 # number of emulated CPUs
 QEMU_HARTS			= 4
-QEMU_FLAGS			= -machine virt -cpu rv$(TARGET_XLEN),pmp=false -smp $(QEMU_HARTS) -gdb tcp::1234 -bios $(QEMU_BIOS) -serial stdio -display none -kernel $(BUILD)/$(NAME).img
+QEMU_FLAGS			= -machine virt -cpu rv$(TARGET_XLEN),pmp=false,h=true -smp $(QEMU_HARTS) -gdb tcp::1234 -bios $(QEMU_BIOS) -serial stdio -display none -kernel $(BUILD)/$(NAME).img
 RUN					= qemu-system-riscv$(TARGET_XLEN) $(QEMU_FLAGS) 
 
 # if QEMU will run with SBI, compile for S-Mode, else for M-Mode
