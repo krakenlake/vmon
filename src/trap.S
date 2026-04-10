@@ -148,10 +148,21 @@ exit_trap_handler:
 .section .rodata
 
 
-string_exception_msg:		.string "\nexception:"
-string_epc_msg:				.string "\n\tepc\t= ";
-string_tval_msg:			.string "\n\ttval\t= ";
-string_cause_msg:			.string "\n\tcause\t= ";
+string_exception_msg:
+	.string "\nexception:"
+string_epc_msg:				
+	.ascii "\n\t"; 
+	.ascii MODE_PREFIX_CHAR; 
+	.asciz "epc\t= ";
+string_tval_msg:			
+	.ascii "\n\t";
+	.ascii MODE_PREFIX_CHAR; 
+	.asciz "tval\t= ";
+string_cause_msg:
+	.ascii "\n\t"; 
+	.ascii MODE_PREFIX_CHAR; 
+	.asciz "cause\t= ";
+
 
 #ifdef CAUSE_VERBOSE
 	string_CAUSE_MISALIGNED_FETCH:		.string "MISALIGNED_FETCH";

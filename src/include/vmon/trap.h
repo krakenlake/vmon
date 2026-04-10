@@ -8,8 +8,10 @@
 
 #ifdef S_MODE
 	#define MODE_PREFIX(__suffix)	s##__suffix
+	#define MODE_PREFIX_CHAR		"s"
 #else
 	#define MODE_PREFIX(__suffix)	m##__suffix
+	#define MODE_PREFIX_CHAR		"m"
 #endif
 
 
