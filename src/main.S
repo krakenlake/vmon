@@ -41,7 +41,7 @@ start:
 			# as sp is already saved, we can use it now
 			csrr	sp, mhartid
 			# hart 0 only
-			bnez	sp, vmon_end
+			bnez	sp, vmon_wait_hart
 		#endif /* M_MODE */
 
 		# set up trap vector
@@ -70,8 +70,9 @@ start:
 	# intentionally execute ebreak in order to enter trap handler,
 	# which then will execute the main loop
 
+vmon_loop:
 	ebreak
-	j		vmon_end
+	j		vmon_loop
 .size start, .-start
 
 #########################################################################
@@ -285,13 +286,12 @@ unknown_command:
 	jal		print_error
 	j		main_prompt
 	# end of main loop
-
-vmon_end:
-	#ifdef M_MODE
-		wfi
-	#endif /* M_MODE */
-	j	vmon_end
 .size breakpoint_entry, .-breakpoint_entry
+
+vmon_wait_hart:
+	wfi
+	j	vmon_wait_hart
+.size vmon_wait_hart, .-vmon_wait_hart
 
 
 .section .rodata

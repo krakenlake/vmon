@@ -184,6 +184,11 @@ pop_ra_ret:
 			#endif
 		#else
 			# todo: ???
+			#ifdef TARGET_HAS_RVF
+				addi		a3, sp, XLEN_BYTES + STK_FRAME_SIZE_FLOAT + STK_OFF_RA
+			#else
+				addi		a3, sp, XLEN_BYTES + STK_OFF_RA
+			#endif
 		#endif
 		li		a4, XLEN_BYTES
 		jal		print_saved_registers

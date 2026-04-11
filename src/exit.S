@@ -1,5 +1,6 @@
 #include "config.h"
 #include "vmon/stack.h"
+#include "vmon/trap.h"
 #include "vmon/register.h"
 
 
@@ -17,13 +18,11 @@ vmon_exit:
 	jal		print_pc
 	jal		print_newline
 	
-	# set mstatus.MPP to 0b11 so that mret below will stay in M-mode
-	#ifdef M_MODE
-		#ifdef TARGET_HAS_Zicsr
-			li		t0, 0b11 << 11
-			csrs	mstatus, t0
-		#endif /* TARGET_HAS_Zicsr */
-	#endif /* M_MODE */ 
+	# set xstatus.MPP to 0b11 so that xret below will stay in current mode
+	#ifdef TARGET_HAS_Zicsr
+		li		t0, 0b11 << 11
+		csrs	MODE_PREFIX(status), t0
+	#endif /* TARGET_HAS_Zicsr */
 
 	#ifdef TARGET_HAS_RVF
 		# restore float registers
@@ -62,16 +61,14 @@ vmon_exit:
 		addi	sp, sp, (STK_FRAME_SIZE_FLOAT)
 	#endif /* TARGET_HAS_RVF */
 
-	# restore mepc
-	#ifdef M_MODE
-		#ifdef TARGET_HAS_Zicsr
-			LOAD_X	t0, STK_OFF_PC(sp)
-			# advance one instruction
-			# todo: check for RVC
+	# restore xepc
+	#ifdef TARGET_HAS_Zicsr
+		LOAD_X	t0, STK_OFF_PC(sp)
+		# advance one instruction
+		# todo: check for RVC
 #			addi	t0, t0, 4
-			csrw	mepc, t0
-		#endif /* TARGET_HAS_Zicsr */
-	#endif /* M_MODE */ 
+		csrw	MODE_PREFIX(epc), t0
+	#endif /* TARGET_HAS_Zicsr */
 	
 	# restore int registers
 	LOAD_X	ra, (STK_OFF_RA)(sp)
@@ -111,8 +108,8 @@ vmon_exit:
 	# restore original sp saved from caller on entry
 	LOAD_X	sp, (STK_OFF_SP)(sp)
 
-	# bye bye - jump to address in mepc (while staying in M-mode, see above)
-	mret
+	# bye bye - jump to address in xepc (while staying in current mode, see above)
+	MODE_PREFIX(ret)
 
 .size vmon_exit, .-vmon_exit
 
@@ -121,7 +118,7 @@ vmon_exit:
 
 
 string_jump:
-	.string "jumping to ";
+	.string "exiting to ";
 .size string_jump, .-string_jump
 
 
