@@ -14,7 +14,7 @@ VMON - a RISC-V machine code monitor written in RISC-V assembly code
 
 
 .global start
-.global breakpoint_entry
+.global vmon_entry
 .global main_prompt
 
 .global string_asm_sep1
@@ -72,114 +72,13 @@ start:
 
 vmon_loop:
 	ebreak
-	j		vmon_loop
+	ret
 .size start, .-start
 
 #########################################################################
 
 # this is called every time the trap handler encounters a breakpoint exception
-breakpoint_entry:
-	# save int registers on stack
-	addi	sp, sp, -(STK_FRAME_SIZE_INT)
-	SAVE_X	ra, (STK_OFF_RA)(sp)
-	# sp intentionally missing here, see below
-	SAVE_X	x3, (STK_OFF_X3)(sp)
-	SAVE_X	x4, (STK_OFF_X4)(sp)
-	SAVE_X	x5, (STK_OFF_X5)(sp)
-	SAVE_X	x6, (STK_OFF_X6)(sp)
-	SAVE_X	x7, (STK_OFF_X7)(sp)
-	SAVE_X	x8, (STK_OFF_X8)(sp)
-	SAVE_X	x9, (STK_OFF_X9)(sp)
-	SAVE_X	x10, (STK_OFF_X10)(sp)
-	SAVE_X	x11, (STK_OFF_X11)(sp)
-	SAVE_X	x12, (STK_OFF_X12)(sp)
-	SAVE_X	x13, (STK_OFF_X13)(sp)
-	SAVE_X	x14, (STK_OFF_X14)(sp)
-	SAVE_X	x15, (STK_OFF_X15)(sp)
-	#ifndef TARGET_RVE
-		SAVE_X	x16, (STK_OFF_X16)(sp)
-		SAVE_X	x17, (STK_OFF_X17)(sp)
-		SAVE_X	x18, (STK_OFF_X18)(sp)
-		SAVE_X	x19, (STK_OFF_X19)(sp)
-		SAVE_X	x20, (STK_OFF_X20)(sp)
-		SAVE_X	x21, (STK_OFF_X21)(sp)
-		SAVE_X	x22, (STK_OFF_X22)(sp)
-		SAVE_X	x23, (STK_OFF_X23)(sp)
-		SAVE_X	x24, (STK_OFF_X24)(sp)
-		SAVE_X	x25, (STK_OFF_X25)(sp)
-		SAVE_X	x26, (STK_OFF_X26)(sp)
-		SAVE_X	x27, (STK_OFF_X27)(sp)
-		SAVE_X	x28, (STK_OFF_X28)(sp)
-		SAVE_X	x29, (STK_OFF_X29)(sp)
-		SAVE_X	x30, (STK_OFF_X30)(sp)
-		SAVE_X	x31, (STK_OFF_X31)(sp)
-	#endif /* TARGET_RVE */
-	
-	# now we can safely use t0 to get back and save sp in that same stack frame above
-	#if defined(M_MODE) || defined(S_MODE)
-		#ifdef TARGET_HAS_Zicsr
-			csrr	t0, MODE_PREFIX(scratch)		# read original sp back
-			SAVE_X	t0, (STK_OFF_SP)(sp)			# and save it
-		#endif /* TARGET_HAS_Zicsr */
-	#else
-		SAVE_X	sp, (STK_OFF_SP)(sp)
-	#endif /* M_MODE || S_MODE */
-
-	# save epc
-	#if defined(M_MODE) || defined(S_MODE)
-		#ifdef TARGET_HAS_Zicsr
-			csrr	t0, MODE_PREFIX(epc)
-			SAVE_X	t0, (STK_OFF_PC)(sp)
-		#endif /* TARGET_HAS_Zicsr */
-	#endif /* M_MODE || S_MODE */
-	
-	#ifdef TARGET_HAS_RVF
-		# enable RVF in mstatus of cpu (this is disabled in QEMU per default)
-		#ifdef TARGET_HAS_Zicsr
-			li		t0, 0b11
-			slli	t0, t0, 13
-			#if defined(M_MODE) || defined(S_MODE)
-				csrr	t1, MODE_PREFIX(status)
-				or		t1, t0, t1
-				csrw	MODE_PREFIX(status), t1
-			#endif /* M_MODE || S_MODE */
-		#endif /* TARGET_HAS_Zicsr */
-	
-		# save f0-f31 registers on stack
-		addi	sp, sp, -(STK_FRAME_SIZE_FLOAT)
-		SAVE_F	f0, (STK_OFF_F0)(sp)
-		SAVE_F	f1, (STK_OFF_F1)(sp)
-		SAVE_F	f2, (STK_OFF_F2)(sp)
-		SAVE_F	f3, (STK_OFF_F3)(sp)
-		SAVE_F	f4, (STK_OFF_F4)(sp)
-		SAVE_F	f5, (STK_OFF_F5)(sp)
-		SAVE_F	f6, (STK_OFF_F6)(sp)
-		SAVE_F	f7, (STK_OFF_F7)(sp)
-		SAVE_F	f8, (STK_OFF_F8)(sp)
-		SAVE_F	f9, (STK_OFF_F9)(sp)
-		SAVE_F	f10, (STK_OFF_F10)(sp)
-		SAVE_F	f11, (STK_OFF_F11)(sp)
-		SAVE_F	f12, (STK_OFF_F12)(sp)
-		SAVE_F	f13, (STK_OFF_F13)(sp)
-		SAVE_F	f14, (STK_OFF_F14)(sp)
-		SAVE_F	f15, (STK_OFF_F15)(sp)
-		SAVE_F	f16, (STK_OFF_F16)(sp)
-		SAVE_F	f17, (STK_OFF_F17)(sp)
-		SAVE_F	f18, (STK_OFF_F18)(sp)
-		SAVE_F	f19, (STK_OFF_F19)(sp)
-		SAVE_F	f20, (STK_OFF_F20)(sp)
-		SAVE_F	f21, (STK_OFF_F21)(sp)
-		SAVE_F	f22, (STK_OFF_F22)(sp)
-		SAVE_F	f23, (STK_OFF_F23)(sp)
-		SAVE_F	f24, (STK_OFF_F24)(sp)
-		SAVE_F	f25, (STK_OFF_F25)(sp)
-		SAVE_F	f26, (STK_OFF_F26)(sp)
-		SAVE_F	f27, (STK_OFF_F27)(sp)
-		SAVE_F	f28, (STK_OFF_F28)(sp)
-		SAVE_F	f29, (STK_OFF_F29)(sp)
-		SAVE_F	f30, (STK_OFF_F30)(sp)
-		SAVE_F	f31, (STK_OFF_F31)(sp)
-	#endif /* TARGET_HAS_RVF */
+vmon_entry:
 
 	#ifdef WITH_CMD_B
 		jal		break_deactivate
@@ -286,7 +185,7 @@ unknown_command:
 	jal		print_error
 	j		main_prompt
 	# end of main loop
-.size breakpoint_entry, .-breakpoint_entry
+.size vmon_entry, .-vmon_entry
 
 vmon_wait_hart:
 	wfi
