@@ -33,20 +33,20 @@ start:
 	# do not add anything before this
 
 	#ifdef TARGET_HAS_Zicsr
-		# immediately save sp in mscratch
-		csrw	MODE_PREFIX(scratch), sp
+		# immediately save t0 in mscratch
+		csrw	MODE_PREFIX(scratch), t0
 
 		#ifdef M_MODE
 			# in M-Mode we need to make sure that we run only on one hart
-			# as sp is already saved, we can use it now
-			csrr	sp, mhartid
+			# as t0 is already saved, we can use it now
+			csrr	t0, mhartid
 			# hart 0 only
-			bnez	sp, vmon_wait_hart
+			bnez	t0, vmon_wait_hart
 		#endif /* M_MODE */
 
 		# set up trap vector
-		la		sp, trap_handler
-		csrw	MODE_PREFIX(tvec), sp
+		la		t0, trap_handler
+		csrw	MODE_PREFIX(tvec), t0
 
 		# set up timer irq
 		/*
@@ -63,8 +63,8 @@ start:
 		csrs	mie, t1
 		*/
 
-		# restore sp as it were on entry
-		csrr	sp, MODE_PREFIX(scratch)
+		# restore t0 as it were on entry
+		csrr	t0, MODE_PREFIX(scratch)
 	#endif /* TARGET_HAS_Zicsr */
 
 	# intentionally execute ebreak in order to enter trap handler,
