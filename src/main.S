@@ -85,7 +85,9 @@ vmon_entry:
 	#endif /* WITH_CMD_B */
 
 	# init UART 
-	jal		uart_init
+	#ifdef M_MODE
+		jal		uart_init
+	#endif
 
 	# startup message
 	la		a0, string_startup

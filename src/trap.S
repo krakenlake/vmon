@@ -20,10 +20,11 @@
 #if defined(TARGET_HAS_Zicsr)
 
 trap_handler:
-	#bnez	sp, stack_exists
+	# save caller sp
+	csrw	MODE_PREFIX(scratch), sp
 
-	# set up stack
-	la		sp, _estack					# linker will provide _estack
+	# set up vmon stack with _estack from linker
+	la		sp, _estack
 
 stack_exists:
 	# save int registers on stack
@@ -125,6 +126,8 @@ stack_exists:
 		SAVE_F	f30, (STK_OFF_F30)(sp)
 		SAVE_F	f31, (STK_OFF_F31)(sp)
 	#endif /* TARGET_HAS_RVF */
+
+
 
 	# clear irq
 	li		t0, 0b10000000
