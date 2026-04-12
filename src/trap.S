@@ -20,6 +20,9 @@
 #if defined(TARGET_HAS_Zicsr)
 
 trap_handler:
+	# disable all interrupts - clear xIE in xstatus
+	csrci	MODE_PREFIX(status), 0b1000
+
 	# save caller sp
 	csrw	MODE_PREFIX(scratch), sp
 
@@ -127,11 +130,12 @@ stack_exists:
 		SAVE_F	f31, (STK_OFF_F31)(sp)
 	#endif /* TARGET_HAS_RVF */
 
-
-
 	# clear irq
 	li		t0, 0b10000000
 	csrc	MODE_PREFIX(ip), t0
+
+	# enable IRQs again - set xIE in xstatus
+	csrsi	MODE_PREFIX(status), 0b1000
 
 	# irq or exception? check leftmost bit of xcause
 	csrr	a0, MODE_PREFIX(cause)
