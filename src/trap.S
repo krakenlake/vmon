@@ -135,7 +135,7 @@ stack_exists:
 	li		t0, 0b1
 	slli	t0, t0, XLEN-1
 	and		a0, a0, t0
-	bnez	a0, trap_handler_irq
+	bnez	a0, handle_irq
 
 	# we have an exception
 	# check if exception was caused by ebreak
@@ -206,7 +206,7 @@ output_cause:
 # trap handler needs to be aligned manually 
 # as that is not automatically guaranteed with RVC enabled
 .align 4
-trap_handler_irq:
+handle_irq:
 /*
 	li		a0, '#'
 	jal		print_char
