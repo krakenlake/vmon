@@ -88,9 +88,7 @@ stack_exists:
 			li		t0, 0b11
 			slli	t0, t0, 13
 			#if defined(M_MODE) || defined(S_MODE)
-				csrr	t1, MODE_PREFIX(status)
-				or		t1, t0, t1
-				csrw	MODE_PREFIX(status), t1
+				csrs	MODE_PREFIX(status), t0
 			#endif /* M_MODE || S_MODE */
 		#endif /* TARGET_HAS_Zicsr */
 	
