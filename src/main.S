@@ -44,6 +44,15 @@ start:
 			bnez	t0, vmon_wait_hart
 		#endif /* M_MODE */
 
+		#ifdef TARGET_HAS_RVF
+			# enable RVF in mstatus of cpu (this is disabled in QEMU per default)
+			li		t0, 0b11
+			slli	t0, t0, 13
+			#if defined(M_MODE) || defined(S_MODE)
+				csrs	MODE_PREFIX(status), t0
+			#endif /* M_MODE || S_MODE */
+		#endif /* TARGET_HAS_RVF */
+
 		# set up trap vector
 		la		t0, trap_handler
 		csrw	MODE_PREFIX(tvec), t0

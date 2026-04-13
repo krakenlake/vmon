@@ -82,16 +82,7 @@ stack_exists:
 		SAVE_X	t0, (STK_OFF_PC)(sp)
 	#endif /* TARGET_HAS_Zicsr */
 	
-	#ifdef TARGET_HAS_RVF
-		# enable RVF in mstatus of cpu (this is disabled in QEMU per default)
-		#ifdef TARGET_HAS_Zicsr
-			li		t0, 0b11
-			slli	t0, t0, 13
-			#if defined(M_MODE) || defined(S_MODE)
-				csrs	MODE_PREFIX(status), t0
-			#endif /* M_MODE || S_MODE */
-		#endif /* TARGET_HAS_Zicsr */
-	
+	#ifdef TARGET_HAS_RVF	
 		# save f0-f31 registers on stack
 		addi	sp, sp, -(STK_FRAME_SIZE_FLOAT)
 		SAVE_F	f0, (STK_OFF_F0)(sp)
