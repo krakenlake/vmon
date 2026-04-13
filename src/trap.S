@@ -139,9 +139,7 @@ stack_exists:
 
 	# irq or exception? check leftmost bit of xcause
 	csrr	a0, MODE_PREFIX(cause)
-	li		t0, 0b1
-	slli	t0, t0, XLEN-1
-	and		a0, a0, t0
+	srli	a0, a0, XLEN-1
 	bnez	a0, handle_irq
 
 	# we have an exception
