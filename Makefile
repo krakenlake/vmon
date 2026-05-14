@@ -117,15 +117,15 @@ endif
 # tools
 GCCBIN	?= /usr/local/bin
 TOOLBIN ?= /usr/local/bin
-CC      = $(GCCBIN)/riscv64-elf-gcc
-CPP     = $(GCCBIN)/riscv64-elf-cpp
+CC      = $(GCCBIN)/riscv64-unknown-elf-gcc
+CPP     = $(GCCBIN)/riscv64-unknown-elf-cpp
 CFLAGS	+= $(DEBUG) -DVMON_VERSION=\"$(VMON_VERSION)\" -nostartfiles -O2 -g -I"src/include"
-LD		= $(TOOLBIN)/riscv64-elf-ld
+LD		= $(TOOLBIN)/riscv64-unknown-elf-ld
 LDFLAGS = --no-warn-rwx-segments -m elf$(TARGET_XLEN)lriscv
-OBJCOPY = $(TOOLBIN)/riscv64-elf-objcopy
-OBJDUMP = $(TOOLBIN)/riscv64-elf-objdump
-STRIP   = $(TOOLBIN)/riscv64-elf-strip
-GDB		= $(TOOLBIN)/riscv64-elf-gdb
+OBJCOPY = $(TOOLBIN)/riscv64-unknown-elf-objcopy
+OBJDUMP = $(TOOLBIN)/riscv64-unknown-elf-objdump
+STRIP   = $(TOOLBIN)/riscv64-unknown-elf-strip
+GDB		= $(TOOLBIN)/riscv64-unknown-elf-gdb
 
 
 # directories
@@ -210,5 +210,8 @@ all:
 #	make TARGET=vf2 release
 #	make TARGET=olimex-ch32v003-uart release
 
-
+# install or update development toolchain on MacOS
+devtools-mac:
+	brew install riscv-gnu-toolchain
+	brew install qemu
 
