@@ -16,6 +16,7 @@ TARGET ?= qemu-64g
 # TODO: currently not working
 #TARGET ?= vf2
 #TARGET ?= olimex-ch32v003-uart
+#TARGET ?= spacemit-k3
 
 DEBUG ?= -DDEBUG
 
@@ -88,6 +89,11 @@ ifeq ($(TARGET), olimex-ch32v003-uart)
 	RAM_START			= 0x20000000
 	RAM_SIZE			= 2K
 	CFLAGS				+= -march=rv$(TARGET_XLEN)ec_zicsr -mabi=ilp32e
+endif 
+
+ifeq ($(TARGET), spacemit-k3)
+	TARGET_XLEN			= 64
+	CFLAGS				+= -march=rv$(TARGET_XLEN)gc
 endif 
 
 ifeq ($(TARGET), vf2)
@@ -168,7 +174,7 @@ $(BUILD)/config.h: $(CONFIG)/config.$(TARGET).h
 	cp $< $@
 
 $(BUILD)/%.o: $(SRCD)/%.S Makefile $(BUILD)/config.h
-	-$(CC) $(CFLAGS) -I$(BUILD) -MMD -c $< -o $@
+	$(CC) $(CFLAGS) -I$(BUILD) -MMD -c $< -o $@
 
 $(BUILD)/$(NAME)-stripped.elf: $(BUILD)/$(NAME).elf
 	$(STRIP) $< -o $@
@@ -208,6 +214,7 @@ all:
 	make TARGET=qemu-64g release
 	make TARGET=qemu-64gc release
 #	make TARGET=vf2 release
+#	make TARGET=vf2 spacemit-k3
 #	make TARGET=olimex-ch32v003-uart release
 
 # install or update development toolchain on MacOS
